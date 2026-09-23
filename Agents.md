@@ -31,6 +31,8 @@ This repository documents and validates StoryWeaver: a programmatic visual story
 - docs/07-decision-log.md — dated decisions and evidence.
 - docs/08-research-log.md — research findings and sources.
 - docs/09-glossary.md — canonical terminology.
+- specs/ — machine-readable schemas and renderer-independent visual grammar.
+- experiments/ — controlled experiment inputs, prompts, rubrics, and results.
 
 ## Documentation Rules
 
@@ -40,6 +42,8 @@ This repository documents and validates StoryWeaver: a programmatic visual story
 - Include source links for externally verified claims.
 - Do not silently change project scope.
 - Do not add implementation complexity before an experiment demonstrates the need.
+- Experiment prompts and evaluation criteria must be versioned with the experiment record.
+- Keep baseline and treatment variables explicit so results remain comparable.
 
 ## Change Discipline
 
