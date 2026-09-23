@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "StoryWeaver Scene Program",
+  "type": "object",
+  "required": ["version", "fps", "scenes"],
+  "properties": {
+    "version": {"type": "string"},
+    "fps": {"type": "integer", "minimum": 1},
+    "duration_ms": {"type": "integer", "minimum": 1},
+    "scenes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "purpose", "semantic_refs", "elements", "timeline"],
+        "properties": {
+          "id": {"type": "string"},
+          "purpose": {"type": "string"},
+          "semantic_refs": {"type": "array", "items": {"type": "string"}},
+          "visual_rule": {"type": "string"},
+          "elements": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "kind"],
+              "properties": {
+                "id": {"type": "string"},
+                "kind": {"enum": ["text", "shape", "icon", "image", "chart", "character", "group"]},
+                "content": {},
+                "role": {"type": "string"}
+              },
+              "additionalProperties": false
+            }
+          },
+          "timeline": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["start_ms", "duration_ms", "action"],
+              "properties": {
+                "start_ms": {"type": "integer", "minimum": 0},
+                "duration_ms": {"type": "integer", "minimum": 1},
+                "action": {"type": "string"},
+                "target": {"type": "string"}
+              },
+              "additionalProperties": false
+            }
+          },
+          "camera": {"type": "object"},
+          "audio_refs": {"type": "array", "items": {"type": "string"}},
+          "caption_refs": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
