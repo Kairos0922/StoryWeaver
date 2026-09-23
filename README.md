@@ -57,4 +57,15 @@ The project does not initially aim to:
 
 The project should continue only if experiments provide evidence for a durable advantage.
 
-See docs/00-overview.md for the current project state.
+## Current Status
+
+**Phase:** Experiment 001 — controlled baseline/treatment validation.
+
+Experiment 001 fixes the source narration, output constraints, renderer, and evaluation protocol before implementation. See:
+- `experiments/001-source.md`
+- `experiments/001-baseline-prompt.md`
+- `experiments/001-storyweaver-prompt.md`
+- `experiments/001-evaluation-rubric.md`
+- `experiments/001-record.md`
+
+See `docs/00-overview.md` for the project state.
