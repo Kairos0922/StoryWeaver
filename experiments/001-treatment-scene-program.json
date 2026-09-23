@@ -1,0 +1,67 @@
+{
+  "version":"0.1",
+  "fps":30,
+  "duration_ms":55000,
+  "scenes":[
+    {
+      "id":"s1",
+      "purpose":"Establish that buoyancy is the upward force involved.",
+      "semantic_refs":["c1","c2"],
+      "visual_rule":"definition + example",
+      "elements":[
+        {"id":"balloon","kind":"shape","role":"main object","content":"hot-air balloon"},
+        {"id":"air","kind":"group","role":"surrounding air","content":"ambient air field"},
+        {"id":"buoyancy","kind":"icon","role":"upward force","content":"up arrow"}
+      ],
+      "timeline":[{"start_ms":0,"duration_ms":7000,"action":"reveal","target":"balloon"}]
+    },
+    {
+      "id":"s2",
+      "purpose":"Show the relationship between displaced air and buoyancy.",
+      "semantic_refs":["c2"],
+      "visual_rule":"cause → effect",
+      "elements":[
+        {"id":"volume","kind":"shape","role":"displaced volume","content":"balloon volume"},
+        {"id":"force","kind":"icon","role":"buoyant force","content":"up arrow"}
+      ],
+      "timeline":[{"start_ms":7000,"duration_ms":9000,"action":"highlight","target":"volume"},{"start_ms":11000,"duration_ms":5000,"action":"reveal","target":"force"}]
+    },
+    {
+      "id":"s3",
+      "purpose":"Show heating causes lower density inside the balloon.",
+      "semantic_refs":["c3","c4"],
+      "visual_rule":"cause → effect",
+      "elements":[
+        {"id":"burner","kind":"shape","role":"heating source","content":"burner"},
+        {"id":"hotair","kind":"group","role":"heated air","content":"moving particles"},
+        {"id":"density","kind":"text","role":"density state","content":"密度降低"}
+      ],
+      "timeline":[{"start_ms":16000,"duration_ms":6000,"action":"reveal","target":"burner"},{"start_ms":22000,"duration_ms":7000,"action":"transform","target":"hotair"}]
+    },
+    {
+      "id":"s4",
+      "purpose":"Explain why lower internal air mass allows upward net force.",
+      "semantic_refs":["c4","c5"],
+      "visual_rule":"comparison",
+      "elements":[
+        {"id":"inside","kind":"group","role":"lighter internal air","content":"low-density air"},
+        {"id":"weight","kind":"shape","role":"total weight","content":"basket + passengers"},
+        {"id":"buoyancy2","kind":"icon","role":"buoyant force","content":"up arrow"},
+        {"id":"net","kind":"icon","role":"net upward force","content":"up arrow"}
+      ],
+      "timeline":[{"start_ms":29000,"duration_ms":5000,"action":"compare","target":"inside"},{"start_ms":34000,"duration_ms":7000,"action":"highlight","target":"net"}]
+    },
+    {
+      "id":"s5",
+      "purpose":"Show control of net lift through heating.",
+      "semantic_refs":["c6"],
+      "visual_rule":"state change",
+      "elements":[
+        {"id":"heat","kind":"shape","role":"heating control","content":"heat level"},
+        {"id":"rise","kind":"icon","role":"upward trend","content":"up arrow"},
+        {"id":"cool","kind":"shape","role":"cooling state","content":"cooling"}
+      ],
+      "timeline":[{"start_ms":41000,"duration_ms":7000,"action":"increase","target":"heat"},{"start_ms":48000,"duration_ms":7000,"action":"decrease","target":"cool"}]
+    }
+  ]
+}
