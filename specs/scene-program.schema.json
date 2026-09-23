@@ -2,20 +2,21 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "StoryWeaver Scene Program",
   "type": "object",
-  "required": ["version", "fps", "scenes"],
+  "required": ["version", "fps", "duration_ms", "scenes"],
   "properties": {
     "version": {"type": "string"},
     "fps": {"type": "integer", "minimum": 1},
     "duration_ms": {"type": "integer", "minimum": 1},
     "scenes": {
       "type": "array",
+      "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["id", "purpose", "semantic_refs", "elements", "timeline"],
+        "required": ["id", "purpose", "semantic_refs", "visual_rule", "elements", "timeline"],
         "properties": {
           "id": {"type": "string"},
           "purpose": {"type": "string"},
-          "semantic_refs": {"type": "array", "items": {"type": "string"}},
+          "semantic_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}},
           "visual_rule": {"type": "string"},
           "elements": {
             "type": "array",
@@ -33,6 +34,7 @@
           },
           "timeline": {
             "type": "array",
+            "minItems": 1,
             "items": {
               "type": "object",
               "required": ["start_ms", "duration_ms", "action"],
