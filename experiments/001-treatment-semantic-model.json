@@ -1,0 +1,30 @@
+{
+  "version": "0.1",
+  "topic": "为什么热气球能升起来？",
+  "claims": [
+    {"id":"c1","text":"热气球升空依赖空气浮力产生的向上作用。","type":"definition","importance":"primary","entity_refs":["e1","e2"]},
+    {"id":"c2","text":"周围空气对被其包围的物体产生浮力，浮力大小与物体排开的空气重量有关。","type":"fact","importance":"primary","entity_refs":["e2","e3"]},
+    {"id":"c3","text":"加热气囊内空气会使其膨胀并降低密度。","type":"cause","importance":"primary","entity_refs":["e4","e5"]},
+    {"id":"c4","text":"在气囊体积基本不变时，内部空气密度降低意味着气囊内空气质量更小。","type":"effect","importance":"primary","entity_refs":["e4","e5"]},
+    {"id":"c5","text":"当气囊、吊篮和乘员总重量小于浮力时，热气球获得向上的净力并上升。","type":"cause","importance":"primary","entity_refs":["e1","e6","e7"]},
+    {"id":"c6","text":"增强加热通常会增大净升力，停止加热后冷却会使净升力减弱。","type":"state_change","importance":"primary","entity_refs":["e4","e8"]}
+  ],
+  "entities": [
+    {"id":"e1","label":"热气球","kind":"object"},
+    {"id":"e2","label":"周围空气","kind":"environment"},
+    {"id":"e3","label":"浮力","kind":"force"},
+    {"id":"e4","label":"气囊内空气","kind":"material"},
+    {"id":"e5","label":"空气密度","kind":"quantity"},
+    {"id":"e6","label":"总重量","kind":"quantity"},
+    {"id":"e7","label":"净力","kind":"force"},
+    {"id":"e8","label":"加热程度","kind":"control"}
+  ],
+  "relations": [
+    {"type":"causes","from":"e4","to":"e5","strength":"primary"},
+    {"type":"changes","from":"e5","to":"e4","strength":"supporting"},
+    {"type":"quantifies","from":"e2","to":"e3","strength":"primary"},
+    {"type":"contrasts","from":"e3","to":"e6","strength":"primary"},
+    {"type":"causes","from":"e3","to":"e7","strength":"primary"},
+    {"type":"changes","from":"e8","to":"e7","strength":"primary"}
+  ]
+}
