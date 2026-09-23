@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "StoryWeaver Semantic Model",
+  "type": "object",
+  "required": ["version", "topic", "claims", "entities", "relations"],
+  "properties": {
+    "version": {"type": "string"},
+    "topic": {"type": "string"},
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "text", "type"],
+        "properties": {
+          "id": {"type": "string"},
+          "text": {"type": "string"},
+          "type": {"enum": ["fact", "cause", "effect", "process", "state_change", "comparison", "quantity", "definition", "example"]},
+          "importance": {"enum": ["primary", "supporting"]},
+          "entity_refs": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": false
+      }
+    },
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label"],
+        "properties": {
+          "id": {"type": "string"},
+          "label": {"type": "string"},
+          "kind": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "from", "to"],
+        "properties": {
+          "type": {"enum": ["causes", "enables", "precedes", "contains", "contrasts", "quantifies", "changes"]},
+          "from": {"type": "string"},
+          "to": {"type": "string"},
+          "strength": {"enum": ["primary", "supporting"]}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
