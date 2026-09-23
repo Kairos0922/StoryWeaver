@@ -1,4 +1,4 @@
-# Agents.md
+# AGENTS.md
 
 ## Purpose
 
@@ -20,7 +20,7 @@ This repository documents and validates StoryWeaver: a programmatic visual story
 ## Repository Structure
 
 - README.md — project definition, status, scope, and navigation.
-- Agents.md — contribution and documentation rules.
+- AGENTS.md — contribution and documentation rules.
 - docs/00-overview.md — project charter and current state.
 - docs/01-problem-definition.md — problem, users, constraints, and non-goals.
 - docs/02-competitive-landscape.md — competitor and ecosystem analysis.
