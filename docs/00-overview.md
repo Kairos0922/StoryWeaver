@@ -2,8 +2,8 @@
 
 ## Status
 
-**Phase:** Research and MVP definition  
-**Current decision:** Proceed to controlled MVP validation.
+**Phase:** Experiment 001 — controlled validation
+**Current decision:** Execute Experiment 001 before adding product implementation.
 
 ## Problem Space
 
