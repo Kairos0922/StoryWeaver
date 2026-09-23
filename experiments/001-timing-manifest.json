@@ -1,0 +1,13 @@
+{
+  "version":"0.1",
+  "duration_ms":55000,
+  "segments":[
+    {"id":"t1","start_ms":0,"end_ms":7000},
+    {"id":"t2","start_ms":7000,"end_ms":16000},
+    {"id":"t3","start_ms":16000,"end_ms":29000},
+    {"id":"t4","start_ms":29000,"end_ms":41000},
+    {"id":"t5","start_ms":41000,"end_ms":55000}
+  ],
+  "source":"experiments/001-source.md",
+  "policy":"The same timing manifest must be used by baseline and treatment. If final TTS duration differs, regenerate one shared timing manifest before either output is accepted."
+}
