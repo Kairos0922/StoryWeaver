@@ -1,0 +1,10 @@
+{
+  "name":"storyweaver",
+  "version":"0.2.0",
+  "private":true,
+  "type":"module",
+  "description":"Content-to-video compiler for deterministic programmatic visual storytelling.",
+  "engines":{"node":">=20"},
+  "scripts":{"test":"node --test","validate":"node src/cli.js validate examples/hot-air-balloon.json","render":"node src/cli.js render examples/hot-air-balloon.json --out out/hot-air-balloon.mp4","quality":"node scripts/quality-gate.js","lint":"node src/cli.js lint"},
+  "dependencies":{"ajv":"^8.17.1","ffmpeg-static":"^5.2.0","sharp":"^0.34.3"}
+}
