@@ -1,71 +1,62 @@
 # StoryWeaver
 
-**Programmatic visual storytelling from structured content.**
+**Content → Visual Program → Deterministic Video**
 
-StoryWeaver explores a content-to-video production model in which semantic structure and visual expression are explicitly represented before deterministic rendering.
+StoryWeaver is a production-oriented compiler for programmatic visual storytelling. It is designed for publishing real short-form media, not for generating technical demos.
 
-## Core Idea
+## Core pipeline
 
-StoryWeaver is not intended to compete with generative video models on unrestricted visual realism.
+```
+Content
+  ↓
+Semantic Model
+  ↓
+Visual Strategy / Grammar
+  ↓
+Renderer-neutral VideoSpec
+  ↓
+Deterministic JS renderer
+  ↓
+MP4
+```
 
-Its working hypothesis is that many knowledge-oriented videos benefit more from:
-- deterministic visual structure;
-- reproducible timing and composition;
-- low rendering cost;
-- precise audio and caption synchronization;
-- reusable visual patterns;
-- parameterized and batch generation;
-- targeted human control.
+A strong model can create or revise the semantic and visual plan. Lower-cost models can perform constrained edits. The renderer does not depend on an LLM.
 
-The proposed pipeline is:
+## Principles
 
-    Content
-      ↓
-    Semantic Model
-      ↓
-    Visual Grammar
-      ↓
-    Scene Program
-      ↓
-    Deterministic Renderer
-      ↓
-    Video
+1. Content value precedes implementation convenience.
+2. Motion must clarify, emphasize, compare, transform, reveal, or create a deliberate narrative beat.
+3. Models emit a stable schema, not renderer-specific prose.
+4. Identical specs/assets must render deterministically.
+5. Expensive reasoning is reserved for planning and difficult repair.
+6. Validation and media inspection are release gates.
 
-AI may assist with research, semantic analysis, asset generation, and scene planning. Rendering is treated as a separate, controllable layer.
+## Repository
 
-## Initial Scope
+- `src/` — compiler, validator, deterministic renderer and CLI
+- `specs/` — machine-readable contracts and visual grammar
+- `research/` — sourced case research and scenario evidence
+- `docs/` — architecture, quality standards and model contract
+- `tasks/` — production tasks for external models
+- `examples/` — canonical renderable examples
+- `tests/` — automated contract tests
+- `.github/workflows/ci.yml` — CI quality gate
 
-The first validation target is **knowledge/explainer video**.
+## Quick start
 
-Potential future domains include educational content, children's language learning, data and information visualization, structured storytelling, and product/process explanation.
+```bash
+npm install
+npm test
+npm run validate
+npm run render
+```
 
-These are future hypotheses, not current MVP commitments.
+Rendering is programmatic JavaScript/SVG. Sharp performs rasterization and FFmpeg performs final MP4 encoding; no video-generation model is required.
 
-## Non-Goals
+## Model allocation
 
-The project does not initially aim to:
-- build a general-purpose AI video model;
-- reproduce cinematic or photorealistic generation;
-- replace mature rendering engines;
-- support every video genre;
-- build a full online video editor;
-- establish a production platform before the core hypothesis is validated.
+- **Frontier model:** semantic analysis, visual strategy, difficult scene design, quality review.
+- **Mid/low-cost model:** constrained edits, parameter changes, caption changes, scene substitutions.
+- **No model:** validation, rendering, media inspection and deterministic transforms.
 
-## Validation Question
-
-> Can a semantic-to-visual layer produce materially better knowledge-explainer videos than a general coding agent + existing programmatic renderer, while reducing manual correction and preserving reproducibility?
-
-The project should continue only if experiments provide evidence for a durable advantage.
-
-## Current Status
-
-**Phase:** Experiment 001 — controlled baseline/treatment validation.
-
-Experiment 001 fixes the source narration, output constraints, renderer, and evaluation protocol before implementation. See:
-- `experiments/001-source.md`
-- `experiments/001-baseline-prompt.md`
-- `experiments/001-storyweaver-prompt.md`
-- `experiments/001-evaluation-rubric.md`
-- `experiments/001-record.md`
-
-See `docs/00-overview.md` for the project state.
+See `docs/agent-contract.md` and `tasks/production-task-list.md`.
