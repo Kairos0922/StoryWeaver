@@ -1,25 +1,53 @@
 # Quality Standard
 
-## P0 release blockers
+## P0 — release blockers
 
 - schema failure
 - invalid MP4
 - wrong dimensions/fps
 - timeline gap/overlap
-- missing or corrupted text
+- missing/corrupted text
 - unsupported factual claim
 - render crash
-- blank/garbled frame caused by renderer
+- blank/garbled frame
+- broken transition that exposes an unintended intermediate state
 
-## P1 fix before publishing
+## P1 — must fix before publishing
 
-- visual does not explain narration
-- important information unreadable on phone-sized viewport
-- distracting motion unrelated to meaning
-- inconsistent visual grammar
-- material audio/caption drift
-- transition obscures information
+### Semantic
+- visual does not explain the narration
+- visual metaphor is ambiguous or decorative
+- important information is missing from the frame
+- hook does not establish the subject quickly enough
 
-## Automated gate
+### Visual
+- inconsistent recurring character/object
+- scene composition changes without narrative reason
+- motion competes with the focal information
+- typography hierarchy is unstable
+- transitions hide or destroy information
+- mobile-sized viewing makes key information unreadable
 
-`npm test` validates contracts. `npm run validate` validates the canonical example. CI runs both. Production tasks additionally require representative-frame inspection and a defect log.
+### Temporal
+- material caption/audio drift
+- beat changes do not align with intended reveal
+- long dead-air intervals
+- motion starts/stops without a semantic reason
+
+## P2 — polish
+
+- micro-spacing
+- easing refinement
+- minor visual balance
+- decorative detail
+
+## Automated gates
+
+1. npm test
+2. npm run validate
+3. render canonical examples
+4. media inspection
+5. representative-frame inspection at first / 25% / 50% / 75% / final
+6. defect log
+
+A task is not complete merely because schema validation passes.
