@@ -7,17 +7,7 @@ StoryWeaver is a production-oriented compiler for programmatic visual storytelli
 ## Core pipeline
 
 ```
-Content
-  ↓
-Semantic Model
-  ↓
-Visual Strategy / Grammar
-  ↓
-Renderer-neutral VideoSpec
-  ↓
-Deterministic JS renderer
-  ↓
-MP4
+Content → Semantic Model → Visual Strategy → VideoSpec → Deterministic JS Renderer → MP4
 ```
 
 A strong model can create or revise the semantic and visual plan. Lower-cost models can perform constrained edits. The renderer does not depend on an LLM.
@@ -40,7 +30,6 @@ A strong model can create or revise the semantic and visual plan. Lower-cost mod
 - `tasks/` — production tasks for external models
 - `examples/` — canonical renderable examples
 - `tests/` — automated contract tests
-- `.github/workflows/ci.yml` — CI quality gate
 
 ## Quick start
 
