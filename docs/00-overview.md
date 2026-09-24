@@ -1,55 +1,33 @@
 # Project Overview
 
-## Status
+## Product
 
-**Phase:** Experiment 001 — controlled validation
-**Current decision:** Execute Experiment 001 before adding product implementation.
+StoryWeaver is a **content-to-programmatic-video compiler** for repeatable self-media production.
 
-## Problem Space
+## Problem
 
-Programmatic video rendering is already well served by mature systems. The unresolved question is whether a higher-level semantic-to-visual layer can systematically improve production of structured knowledge videos.
+Many useful videos need exact text, diagrams, relationships, numbers, timing, repeatability and cheap revision. Unconstrained pixel-generation models are not optimized for these requirements.
 
-## Proposed System Boundary
+## Thesis
 
-    Knowledge / Article / Structured Data
-                    ↓
-            Semantic Representation
-                    ↓
-              Visual Grammar
-                    ↓
-              Scene Program
-                    ↓
-           Existing Renderers
-                    ↓
-                   Video
+The product differentiation is **content-to-visual reasoning**. JavaScript is the deterministic rendering substrate.
 
-Rendering engines are implementation dependencies, not the primary product hypothesis.
+## Success definition
 
-## Current Hypothesis
+An external model should be able to produce publishable videos with stable quality, low manual correction, deterministic rendering, exact text/caption fidelity, reusable scene patterns and predictable cost.
 
-For knowledge-oriented videos, explicit semantic relationships such as cause/effect, process, comparison, sequence, hierarchy, state change, and quantitative change can be mapped to reusable visual patterns. This representation may improve consistency, editability, reproducibility, and production efficiency.
+## Scope
 
-This is a hypothesis and requires experimental validation.
+V1 covers structured 2D/2.5D visual storytelling:
 
-## Success Condition
+- music/lyric motion;
+- product/process explanation;
+- knowledge/explainer;
+- data visualization;
+- history/story timelines.
 
-The MVP must demonstrate a measurable advantage over a strong baseline: general coding agent + mature programmatic renderer.
+Photorealistic generative video is out of scope.
 
-Primary measures:
-- visual explanation quality;
-- factual and structural fidelity;
-- manual correction effort;
-- reproducibility;
-- production time;
-- rendering cost;
-- batch scalability.
+## Delivery state
 
-## Current Risks
-
-1. A general-purpose agent may already generate adequate scene programs.
-2. Visual grammar may provide insufficient quality improvement to justify a dedicated system.
-3. The abstraction may become too broad and reproduce existing agent workflows.
-4. Renderer differences may dominate perceived quality.
-5. Asset generation may become the actual bottleneck.
-
-These risks are addressed by docs/06-experiment-plan.md.
+The repository is now a production-ready V1 foundation. Real content tasks live under `tasks/`; feedback from those runs is used to evolve the visual grammar, schemas and renderer.
