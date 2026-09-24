@@ -1,0 +1,17 @@
+{
+  "schemaVersion":"0.2","width":1280,"height":720,"fps":30,"duration":12,"background":"paper",
+  "palette":{"ink":"#17221E","accent":"#D97745","secondary":"#5A8F8A","paper":"#F7F2E8","captionBg":"#17221E","white":"#FFFFFF"},
+  "captionStyle":{"fontSize":26},
+  "captions":[
+    {"start":0,"end":3,"text":"为什么热气球能升起来？"},
+    {"start":3,"end":6,"text":"加热空气 → 空气密度降低"},
+    {"start":6,"end":9,"text":"浮力 > 总重量 → 上升"},
+    {"start":9,"end":12,"text":"加热增强 → 净升力增大"}
+  ],
+  "scenes":[
+    {"id":"s1","start":0,"end":3,"purpose":"建立问题与对象","semanticRefs":["question"],"visualRule":"title-focus","elements":[{"type":"text","x":640,"y":220,"anchor":"middle","fontSize":54,"fill":"ink","text":"为什么热气球能升起来？"},{"type":"circle","cx":640,"cy":420,"r":95,"fill":"accent"},{"type":"rect","x":590,"y":515,"width":100,"height":45,"radius":8,"fill":"ink"}]},
+    {"id":"s2","start":3,"end":6,"purpose":"解释密度变化","semanticRefs":["heating","density-decrease"],"visualRule":"process-flow","elements":[{"type":"circle","cx":640,"cy":310,"r":105,"fill":"accent"},{"type":"arrow","x1":640,"y1":610,"x2":640,"y2":450,"stroke":"accent","strokeWidth":7},{"type":"text","x":640,"y":170,"anchor":"middle","fontSize":38,"fill":"ink","text":"加热空气"},{"type":"text","x":640,"y":690,"anchor":"middle","fontSize":32,"fill":"ink","text":"空气密度降低"}]},
+    {"id":"s3","start":6,"end":9,"purpose":"解释浮力与总重量关系","semanticRefs":["buoyancy","weight","net-force"],"visualRule":"force-comparison","elements":[{"type":"circle","cx":640,"cy":300,"r":100,"fill":"accent"},{"type":"arrow","x1":640,"y1":620,"x2":640,"y2":430,"stroke":"secondary","strokeWidth":9},{"type":"arrow","x1":640,"y1":170,"x2":640,"y2":255,"stroke":"ink","strokeWidth":7},{"type":"text","x":690,"y":250,"fontSize":30,"fill":"secondary","text":"浮力"},{"type":"text","x":690,"y":600,"fontSize":30,"fill":"ink","text":"总重量"}]},
+    {"id":"s4","start":9,"end":12,"purpose":"解释控制变量","semanticRefs":["heating-control","net-lift"],"visualRule":"state-change","elements":[{"type":"circle","cx":640,"cy":320,"r":105,"fill":"accent"},{"type":"arrow","x1":640,"y1":610,"x2":640,"y2":430,"stroke":"accent","strokeWidth":11},{"type":"text","x":640,"y":170,"anchor":"middle","fontSize":38,"fill":"ink","text":"加热增强"},{"type":"text","x":640,"y":680,"anchor":"middle","fontSize":34,"fill":"secondary","text":"净升力增大"}]}
+  ]
+}
