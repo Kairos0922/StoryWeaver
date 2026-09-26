@@ -1,11 +1,11 @@
-import Ajv from 'ajv';
+import Ajv2020 from 'ajv/dist/2020.js';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {validateVideoSpec} from './validate.js';
 
 const root=path.resolve(import.meta.dirname,'..');
 const planSchema=JSON.parse(await fs.readFile(path.join(root,'specs/content-plan.schema.json'),'utf8'));
-const ajv=new Ajv({allErrors:true,strict:true});
+const ajv=new Ajv2020({allErrors:true,strict:true});
 const validatePlan=ajv.compile(planSchema);
 
 export function compileContentPlan(plan){
