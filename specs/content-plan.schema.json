@@ -212,7 +212,12 @@
               "required": [
                 "type"
               ],
-              "additionalProperties": true
+              "additionalProperties": true,
+              "properties": {
+                "type": {
+                  "type": "string"
+                }
+              }
             }
           }
         },
