@@ -1,9 +1,9 @@
-import Ajv from 'ajv';
+import Ajv2020 from 'ajv/dist/2020.js';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 const root=path.resolve(import.meta.dirname,'..');
 const schema=JSON.parse(await fs.readFile(path.join(root,'specs/video.schema.json'),'utf8'));
-const ajv=new Ajv({allErrors:true,strict:true});
+const ajv=new Ajv2020({allErrors:true,strict:true});
 const validate=ajv.compile(schema);
 
 export function validateVideoSpec(spec){
