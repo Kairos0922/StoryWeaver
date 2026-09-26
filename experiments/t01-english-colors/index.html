@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Milo's Color Hunt — StoryWeaver T01</title>
+<style>
+:root{--paper:#fff9ef;--ink:#26352f;--coral:#ef8067;--blue:#65a8d6;--yellow:#f3c95b;--green:#77b87b}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:ui-rounded,"Trebuchet MS",system-ui,sans-serif;display:grid;place-items:center;min-height:100vh}
+.app{width:min(960px,94vw);padding:22px}.stage{position:relative;aspect-ratio:16/9;border-radius:28px;overflow:hidden;background:#fffdf8;box-shadow:0 18px 60px #26352f22;border:4px solid #26352f}
+.scene{position:absolute;inset:0;display:grid;place-items:center;opacity:0;transform:scale(.98);transition:opacity .45s,transform .45s}.scene.active{opacity:1;transform:scale(1)}
+.title{font-size:clamp(32px,6vw,68px);font-weight:900;text-align:center;line-height:1.02}.sub{font-size:clamp(20px,3vw,34px);font-weight:800;text-align:center;margin-top:12px}
+.character{position:absolute;left:8%;bottom:13%;width:17%;aspect-ratio:1;transition:transform .7s}.head{width:70%;aspect-ratio:1;border-radius:50%;background:#f4c6a5;margin:auto;position:relative}.hair{position:absolute;inset:-7% 0 48%;background:#26352f;border-radius:50% 50% 40% 40%}.body{width:65%;height:65%;margin:-3% auto 0;background:var(--coral);border-radius:28% 28% 12% 12%}.eye{position:absolute;top:48%;width:9%;height:12%;background:#26352f;border-radius:50%}.eye.l{left:29%}.eye.r{right:29%}
+.ball{width:120px;height:120px;border-radius:50%;position:absolute;right:17%;bottom:25%;box-shadow:inset -12px -15px #0002;transition:all .7s}.red{background:var(--coral)}.blue{background:var(--blue)}.yellow{background:var(--yellow)}.green{background:var(--green)}
+.word{font-size:clamp(42px,8vw,92px);font-weight:1000;letter-spacing:.02em}.question{position:absolute;top:9%;left:0;right:0;text-align:center;font-size:clamp(22px,4vw,42px);font-weight:900}
+.controls{display:flex;gap:10px;justify-content:center;margin-top:16px}.controls button{border:0;border-radius:999px;padding:12px 22px;font:800 16px inherit;background:var(--ink);color:white;cursor:pointer}.controls button.secondary{background:#26352f14;color:var(--ink)}
+.progress{height:8px;border-radius:99px;background:#26352f12;margin:14px 2px 0;overflow:hidden}.bar{height:100%;width:0;background:var(--coral);transition:width .1s linear}
+.note{font-size:13px;text-align:center;opacity:.65;margin-top:10px}
+</style></head>
+<body><main class="app">
+<section class="stage" id="stage">
+<div class="scene active" data-start="0" data-end="7"><div><div class="title">Milo's<br>Color Hunt!</div><div class="sub">Let's find colors. 🎨</div></div><div class="character"><div class="head"><i class="hair"></i><i class="eye l"></i><i class="eye r"></i></div><div class="body"></div></div></div>
+<div class="scene" data-start="7" data-end="17"><div class="question">What color is the ball?</div><div class="word" style="color:var(--red)">RED</div><div class="ball red"></div></div>
+<div class="scene" data-start="17" data-end="27"><div class="question">Say it with Milo!</div><div><div class="word" style="color:var(--red)">RED</div><div class="sub">It's red!</div></div><div class="ball red"></div></div>
+<div class="scene" data-start="27" data-end="37"><div class="question">What color is the ball?</div><div class="word" style="color:var(--blue)">BLUE</div><div class="ball blue"></div></div>
+<div class="scene" data-start="37" data-end="47"><div class="question">Say it with Milo!</div><div><div class="word" style="color:var(--blue)">BLUE</div><div class="sub">It's blue!</div></div><div class="ball blue"></div></div>
+<div class="scene" data-start="47" data-end="57"><div class="question">What color is the ball?</div><div class="word" style="color:#c49300">YELLOW</div><div class="ball yellow"></div></div>
+<div class="scene" data-start="57" data-end="67"><div class="question">Say it with Milo!</div><div><div class="word" style="color:#c49300">YELLOW</div><div class="sub">It's yellow!</div></div><div class="ball yellow"></div></div>
+<div class="scene" data-start="67" data-end="77"><div class="question">Can you remember?</div><div class="title">RED • BLUE • YELLOW</div></div>
+<div class="scene" data-start="77" data-end="90"><div><div class="title">You did it!</div><div class="sub">Red. Blue. Yellow. 🌟</div><div class="sub">See you next time!</div></div><div class="character" style="transform:translateY(-10px) rotate(-4deg)"><div class="head"><i class="hair"></i><i class="eye l"></i><i class="eye r"></i></div><div class="body"></div></div></div>
+</section>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div class="controls"><button id="play">▶ Play</button><button class="secondary" id="replay">↻ Replay</button></div>
+<div class="note">T01 · 4–6 English initiation · target words: red / blue / yellow · repetition + visual context + sentence frame</div>
+</main>
+<script>
+const scenes=[...document.querySelectorAll('.scene')],bar=document.querySelector('#bar'),play=document.querySelector('#play'),replay=document.querySelector('#replay');let t=0,running=false,last=0;
+function render(){const s=scenes.find(x=>t>=+x.dataset.start&&t<+x.dataset.end)||scenes.at(-1);scenes.forEach(x=>x.classList.toggle('active',x===s));bar.style.width=Math.min(100,t/90*100)+'%'}
+function loop(now){if(!running)return;if(!last)last=now; t+=(now-last)/1000;last=now;if(t>=90){t=90;running=false;play.textContent='▶ Play';}render();if(running)requestAnimationFrame(loop)}
+play.onclick=()=>{if(t>=90)t=0;running=!running;last=0;play.textContent=running?'Ⅱ Pause':'▶ Play';if(running)requestAnimationFrame(loop)}
+replay.onclick=()=>{t=0;running=true;last=0;play.textContent='Ⅱ Pause';render();requestAnimationFrame(loop)}
+render();
+</script></body></html>
