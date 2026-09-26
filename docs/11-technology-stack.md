@@ -10,7 +10,7 @@
 | Video IR | renderer-neutral VideoSpec | Use |
 | Primary 2D scene format | SVG | Use |
 | SVG rasterization | resvg-js / Rust resvg | Use |
-| Image utilities | Sharp | Use when needed |
+| Image utilities | FFmpeg / future dedicated asset tool | Add only when needed |
 | Video/audio | FFmpeg | Use |
 | Expressive 2D | Motion Canvas | Future adapter |
 | Generative art | p5.js | Future adapter |
@@ -25,7 +25,7 @@ Node 24 is the current LTS line. Production applications should use an LTS relea
 ### SVG + resvg
 SVG remains the default because exact typography, diagrams, charts, geometry and inspectable structure are central to our target content. The raster boundary is SVG -> resvg -> PNG. resvg is a Rust SVG renderer with extensive regression tests and an explicit reproducibility goal.
 
-Sharp remains available for asset/image processing, not as the primary SVG renderer.
+Sharp is intentionally not a V1 dependency. Add it only if a measured asset-processing requirement appears.
 
 ### FFmpeg
 FFmpeg remains the final media boundary for video encoding, audio muxing and later filtergraph-based post-processing.
