@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {spawn} from 'node:child_process';
 import ffmpegPath from 'ffmpeg-static';
-import {rasterizeSvg} from './renderers/rasterize.js';
+import {Resvg} from '@resvg/resvg-js';
 import {frameSvg} from './renderers/svg.js';
 
 export async function renderVideo(spec,output,{audio=null}={}){
@@ -17,7 +17,7 @@ export async function renderVideo(spec,output,{audio=null}={}){
  p.stderr.on('data',d=>err+=d);
  const done=new Promise((resolve,reject)=>{p.on('error',reject);p.on('close',c=>c===0?resolve():reject(new Error('ffmpeg exited '+c+'\n'+err)))});
  for(let i=0;i<Math.round(spec.duration*spec.fps);i++){
-  const png=rasterizeSvg(frameSvg(spec,i/spec.fps),spec.width);
+  const png=new Resvg(frameSvg(spec,i/spec.fps),{fitTo:{mode:'width',value:spec.width},font:{loadSystemFonts:true}}).render().asPng();
   if(!p.stdin.write(png))await new Promise(r=>p.stdin.once('drain',r));
  }
  p.stdin.end();
