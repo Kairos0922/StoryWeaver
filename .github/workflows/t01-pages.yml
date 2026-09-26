@@ -60,10 +60,10 @@ jobs:
           test "$(find _frames -name '*.png' | wc -l)" = "5"
       - name: Prepare Pages artifact
         run: |
-          mkdir -p _site
-          cp experiments/t01-english-colors/index.html _site/
-          cp experiments/t01-english-colors/milos-color-hunt.mp4 _site/
-          cp experiments/t01-english-colors/README.md _site/
+          mkdir -p _site/experiments/t01-english-colors
+          cp experiments/t01-english-colors/index.html _site/experiments/t01-english-colors/
+          cp experiments/t01-english-colors/milos-color-hunt.mp4 _site/experiments/t01-english-colors/
+          cp experiments/t01-english-colors/README.md _site/experiments/t01-english-colors/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:
