@@ -181,9 +181,7 @@
       "start": 0,
       "end": 8,
       "purpose": "Hook the child with a simple color-finding invitation.",
-      "semanticRefs": [
-        "frame"
-      ],
+      "semanticRefs": [],
       "beat": "hook",
       "visualRule": "Milo anchors the left; three colored balls appear as a simple invitation.",
       "transition": {
@@ -337,11 +335,11 @@
           "fontWeight": 1000,
           "fontFamily": "Arial,sans-serif",
           "motion": {
-            "type": "emphasis",
-            "duration": 0.5,
-            "from": 0.94,
-            "to": 1.04
-          }
+            "type": "fade",
+            "duration": 0.35
+          },
+          "start": 12,
+          "end": 18
         }
       ]
     },
@@ -411,8 +409,10 @@
           "fontFamily": "Arial,sans-serif",
           "motion": {
             "type": "fade",
-            "duration": 0.4
-          }
+            "duration": 0.35
+          },
+          "start": 22,
+          "end": 28
         }
       ]
     },
@@ -479,11 +479,11 @@
           "fontWeight": 1000,
           "fontFamily": "Arial,sans-serif",
           "motion": {
-            "type": "emphasis",
-            "duration": 0.5,
-            "from": 0.94,
-            "to": 1.04
-          }
+            "type": "fade",
+            "duration": 0.35
+          },
+          "start": 32,
+          "end": 38
         }
       ]
     },
@@ -553,8 +553,10 @@
           "fontFamily": "Arial,sans-serif",
           "motion": {
             "type": "fade",
-            "duration": 0.4
-          }
+            "duration": 0.35
+          },
+          "start": 42,
+          "end": 48
         }
       ]
     },
@@ -621,11 +623,11 @@
           "fontWeight": 1000,
           "fontFamily": "Arial,sans-serif",
           "motion": {
-            "type": "emphasis",
-            "duration": 0.5,
-            "from": 0.94,
-            "to": 1.04
-          }
+            "type": "fade",
+            "duration": 0.35
+          },
+          "start": 52,
+          "end": 58
         }
       ]
     },
@@ -695,8 +697,10 @@
           "fontFamily": "Arial,sans-serif",
           "motion": {
             "type": "fade",
-            "duration": 0.4
-          }
+            "duration": 0.35
+          },
+          "start": 62,
+          "end": 68
         }
       ]
     },
