@@ -1,10 +1,11 @@
-name: Deploy T01 Experiment
+name: Deploy T01 English Colors
 
 on:
   push:
     branches: [main]
     paths:
       - "experiments/t01-english-colors/**"
+      - "tests/t01-english-colors.test.js"
       - ".github/workflows/t01-pages.yml"
   workflow_dispatch:
 
@@ -18,16 +19,54 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install dependencies
+        run: npm install
+      - name: Run tests
+        run: npm test
+      - name: Compile T01 VideoSpec
+        run: node experiments/t01-english-colors/build.mjs
+      - name: Validate T01 VideoSpec
+        run: node src/cli.js validate experiments/t01-english-colors/video-spec.json
+      - name: Render T01 MP4
+        run: node src/cli.js render experiments/t01-english-colors/video-spec.json --out experiments/t01-english-colors/milos-color-hunt-video.mp4
+      - name: Install TTS
+        run: sudo apt-get update && sudo apt-get install -y espeak-ng
+      - name: Generate and mux voice
+        run: bash experiments/t01-english-colors/build-audio.sh experiments/t01-english-colors/audio
+      - name: Mux final video
+        run: ffmpeg -hide_banner -loglevel error -i experiments/t01-english-colors/milos-color-hunt-video.mp4 -i experiments/t01-english-colors/audio/voice.m4a -map 0:v:0 -map 1:a:0 -c:v copy -c:a aac -b:a 128k -shortest -movflags +faststart experiments/t01-english-colors/milos-color-hunt.mp4
+      - name: Inspect final media
+        run: |
+          ffprobe -v error -show_entries format=duration -show_entries stream=codec_name,width,height,r_frame_rate -of json experiments/t01-english-colors/milos-color-hunt.mp4
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width -of csv=p=0 experiments/t01-english-colors/milos-color-hunt.mp4)" = "1280"
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=p=0 experiments/t01-english-colors/milos-color-hunt.mp4)" = "720"
+          test "$(ffprobe -v error -select_streams a:0 -show_entries stream=codec_name -of csv=p=0 experiments/t01-english-colors/milos-color-hunt.mp4)" = "aac"
+      - name: Prepare Pages artifact
+        run: |
+          mkdir -p _site
+          cp experiments/t01-english-colors/index.html _site/
+          cp experiments/t01-english-colors/milos-color-hunt.mp4 _site/
+          cp experiments/t01-english-colors/README.md _site/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./_site
+    outputs:
+      artifact: pages
+
   deploy:
+    needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./experiments/t01-english-colors
       - id: deployment
         uses: actions/deploy-pages@v4
