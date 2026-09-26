@@ -39,3 +39,20 @@ test('T01 has continuous beats and explicit learning progression', () => {
   assert.ok(plan.scenes.filter(scene => scene.beat === 'explanation').length === 3);
   assert.equal(plan.scenes.at(-2).beat, 'proof');
 });
+
+test('T01 hides each model answer until after the response pause', () => {
+  for (const [word, answerStart, sentenceStart] of [['red',12,22],['blue',32,42],['yellow',52,62]]) {
+    const reveal = plan.scenes.find(scene => scene.id === word);
+    const answer = reveal.elements.find(element => element.text === word.toUpperCase());
+    assert.equal(answer.start, answerStart);
+    assert.equal(answer.end, reveal.end);
+    assert.equal(answer.motion.type, 'fade');
+
+    const practice = plan.scenes.find(scene => scene.id === word + '-say');
+    const sentence = practice.elements.find(element => element.text?.startsWith("It's"));
+    assert.equal(sentence.start, sentenceStart);
+    assert.equal(sentence.end, practice.end);
+    assert.equal(sentence.motion.type, 'fade');
+  }
+});
+});
