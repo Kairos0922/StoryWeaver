@@ -14,7 +14,9 @@ Source Content → Semantic Model → Story / Beat Plan → Visual Strategy → 
 | Story | hook, beats, reveal order, pacing, ending | model useful |
 | Visual strategy | visual metaphor, recurring motifs, composition, motion semantics | model useful |
 | VideoSpec | typed, renderer-neutral implementation contract | model output |
-| Renderer | geometry, timing, animation, transitions, rasterization, encoding | none |
+| Renderer | geometry, timing, animation, transitions | none
+| Rasterizer | SVG → PNG via resvg | none
+| Media | encoding, audio mux, filters via FFmpeg | none |
 | QA | schema, timeline, media inspection, representative frames | none |
 
 The model must decide what the viewer should understand and see. The renderer must decide how that plan becomes pixels deterministically.
