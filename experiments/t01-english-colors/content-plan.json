@@ -1,0 +1,154 @@
+{
+  "source": {
+    "title": "Milo's Color Hunt",
+    "text": "A short English initiation lesson for ages 4–6. Children meet three color words—red, blue, yellow—and practice the sentence frame: It's ___."
+  },
+  "claims": [
+    {"id":"v_red","text":"The target word is red.","type":"definition"},
+    {"id":"v_blue","text":"The target word is blue.","type":"definition"},
+    {"id":"v_yellow","text":"The target word is yellow.","type":"definition"},
+    {"id":"frame","text":"The practice sentence is: It's ___.","type":"definition"},
+    {"id":"recall","text":"The lesson reviews red, blue, and yellow.","type":"sequence"}
+  ],
+  "duration": 90,
+  "output": {"width":1280,"height":720,"fps":30},
+  "style": {
+    "background":"#FFF8EC",
+    "palette":{"ink":"#26352F","accent":"#EF8067","blue":"#65A8D6","yellow":"#F3C95B","green":"#77B87B","paper":"#FFF8EC","white":"#FFFFFF","captionBg":"#26352F"}
+  },
+  "captionStyle":{"fontSize":30},
+  "beats":[
+    {"id":"hook","time":0,"label":"Find a color"},
+    {"id":"red","time":8,"label":"Red"},
+    {"id":"red_say","time":18,"label":"Say it"},
+    {"id":"blue","time":28,"label":"Blue"},
+    {"id":"blue_say","time":38,"label":"Say it"},
+    {"id":"yellow","time":48,"label":"Yellow"},
+    {"id":"yellow_say","time":58,"label":"Say it"},
+    {"id":"recall","time":68,"label":"Recall"},
+    {"id":"payoff","time":80,"label":"Payoff"}
+  ],
+  "captions":[
+    {"start":0,"end":6,"text":"Let's find colors!"},
+    {"start":8,"end":12,"text":"What color is the ball?"},
+    {"start":12,"end":18,"text":"RED"},
+    {"start":18,"end":22,"text":"Say it with Milo!"},
+    {"start":22,"end":28,"text":"It's red!"},
+    {"start":28,"end":32,"text":"What color is the ball?"},
+    {"start":32,"end":38,"text":"BLUE"},
+    {"start":38,"end":42,"text":"Say it with Milo!"},
+    {"start":42,"end":48,"text":"It's blue!"},
+    {"start":48,"end":52,"text":"What color is the ball?"},
+    {"start":52,"end":58,"text":"YELLOW"},
+    {"start":58,"end":62,"text":"Say it with Milo!"},
+    {"start":62,"end":68,"text":"It's yellow!"},
+    {"start":68,"end":80,"text":"Can you remember?"},
+    {"start":80,"end":90,"text":"You did it!"}
+  ],
+  "scenes": [
+    {
+      "id":"hook","start":0,"end":8,"purpose":"Hook the child with a simple color-finding invitation.","semanticRefs":["frame"],"beat":"hook",
+      "visualRule":"Milo anchors the left; three colored balls appear as a simple invitation.",
+      "transition":{"type":"fade","duration":0.25},
+      "elements":[
+        {"type":"character","role":"guide","characterId":"milo","x":210,"y":540,"scale":1,"clothes":"accent"},
+        {"type":"text","role":"primary","x":700,"y":250,"anchor":"middle","text":"Milo's Color Hunt!","fill":"ink","fontSize":64,"fontWeight":900,"fontFamily":"Arial,sans-serif"},
+        {"type":"text","role":"primary","x":700,"y":330,"anchor":"middle","text":"Let's find colors!","fill":"accent","fontSize":42,"fontWeight":900,"fontFamily":"Arial,sans-serif"},
+        {"type":"circle","role":"target-object","cx":880,"cy":470,"r":55,"fill":"accent","stroke":"ink","strokeWidth":5,"motion":{"type":"scale","duration":0.5,"from":0.7,"to":1}},
+        {"type":"circle","role":"target-object","cx":1010,"cy":470,"r":55,"fill":"blue","stroke":"ink","strokeWidth":5,"motion":{"type":"scale","duration":0.5,"from":0.7,"to":1}},
+        {"type":"circle","role":"target-object","cx":1140,"cy":470,"r":55,"fill":"yellow","stroke":"ink","strokeWidth":5,"motion":{"type":"scale","duration":0.5,"from":0.7,"to":1}}
+      ]
+    },
+    {
+      "id":"red","start":8,"end":18,"purpose":"Reveal and name the target color red.","semanticRefs":["v_red"],"beat":"reveal",
+      "visualRule":"One large red ball is the focal object; the word is exact and prominent.",
+      "transition":{"type":"fade","duration":0.2},
+      "elements":[
+        {"type":"character","role":"guide","characterId":"milo","x":210,"y":540,"scale":0.9,"clothes":"accent"},
+        {"type":"text","role":"primary","x":640,"y":260,"anchor":"middle","text":"What color is the ball?","fill":"ink","fontSize":42,"fontWeight":900,"fontFamily":"Arial,sans-serif"},
+        {"type":"circle","role":"target-object","cx":880,"cy":410,"r":105,"fill":"accent","stroke":"ink","strokeWidth":5,"motion":{"type":"slide","duration":0.7,"dx":180}},
+        {"type":"text","role":"primary","x":880,"y":600,"anchor":"middle","text":"RED","fill":"accent","fontSize":92,"fontWeight":1000,"fontFamily":"Arial,sans-serif","motion":{"type":"emphasis","duration":0.5,"from":0.94,"to":1.04}}
+      ]
+    },
+    {
+      "id":"red-say","start":18,"end":28,"purpose":"Practice the sentence frame with red after a short response pause.","semanticRefs":["frame","v_red"],"beat":"explanation",
+      "visualRule":"Keep the red ball and word fixed; reveal the sentence frame after a response pause.",
+      "transition":{"type":"fade","duration":0.2},
+      "elements":[
+        {"type":"character","role":"guide","characterId":"milo","x":210,"y":540,"scale":0.9,"clothes":"accent","motion":{"type":"emphasis","duration":0.6,"from":0.98,"to":1.02}},
+        {"type":"text","role":"primary","x":880,"y":270,"anchor":"middle","text":"RED","fill":"accent","fontSize":80,"fontWeight":1000,"fontFamily":"Arial,sans-serif"},
+        {"type":"circle","role":"target-object","cx":880,"cy":410,"r":95,"fill":"accent","stroke":"ink","strokeWidth":5},
+        {"type":"text","role":"primary","x":880,"y":570,"anchor":"middle","text":"It's red!","fill":"ink","fontSize":62,"fontWeight":900,"fontFamily":"Arial,sans-serif","motion":{"type":"fade","duration":0.4}}
+      ]
+    },
+    {
+      "id":"blue","start":28,"end":38,"purpose":"Reveal and name the target color blue.","semanticRefs":["v_blue"],"beat":"reveal",
+      "visualRule":"One large blue ball is the focal object; the word is exact and prominent.",
+      "transition":{"type":"fade","duration":0.2},
+      "elements":[
+        {"type":"character","role":"guide","characterId":"milo","x":210,"y":540,"scale":0.9,"clothes":"accent"},
+        {"type":"text","role":"primary","x":640,"y":260,"anchor":"middle","text":"What color is the ball?","fill":"ink","fontSize":42,"fontWeight":900,"fontFamily":"Arial,sans-serif"},
+        {"type":"circle","role":"target-object","cx":880,"cy":410,"r":105,"fill":"blue","stroke":"ink","strokeWidth":5,"motion":{"type":"slide","duration":0.7,"dx":180}},
+        {"type":"text","role":"primary","x":880,"y":600,"anchor":"middle","text":"BLUE","fill":"blue","fontSize":92,"fontWeight":1000,"fontFamily":"Arial,sans-serif","motion":{"type":"emphasis","duration":0.5,"from":0.94,"to":1.04}}
+      ]
+    },
+    {
+      "id":"blue-say","start":38,"end":48,"purpose":"Practice the sentence frame with blue after a short response pause.","semanticRefs":["frame","v_blue"],"beat":"explanation",
+      "visualRule":"Keep the blue ball and word fixed; reveal the sentence frame after a response pause.",
+      "transition":{"type":"fade","duration":0.2},
+      "elements":[
+        {"type":"character","role":"guide","characterId":"milo","x":210,"y":540,"scale":0.9,"clothes":"accent","motion":{"type":"emphasis","duration":0.6,"from":0.98,"to":1.02}},
+        {"type":"text","role":"primary","x":880,"y":270,"anchor":"middle","text":"BLUE","fill":"blue","fontSize":80,"fontWeight":1000,"fontFamily":"Arial,sans-serif"},
+        {"type":"circle","role":"target-object","cx":880,"cy":410,"r":95,"fill":"blue","stroke":"ink","strokeWidth":5},
+        {"type":"text","role":"primary","x":880,"y":570,"anchor":"middle","text":"It's blue!","fill":"ink","fontSize":62,"fontWeight":900,"fontFamily":"Arial,sans-serif","motion":{"type":"fade","duration":0.4}}
+      ]
+    },
+    {
+      "id":"yellow","start":48,"end":58,"purpose":"Reveal and name the target color yellow.","semanticRefs":["v_yellow"],"beat":"reveal",
+      "visualRule":"One large yellow ball is the focal object; the word is exact and prominent.",
+      "transition":{"type":"fade","duration":0.2},
+      "elements":[
+        {"type":"character","role":"guide","characterId":"milo","x":210,"y":540,"scale":0.9,"clothes":"accent"},
+        {"type":"text","role":"primary","x":640,"y":260,"anchor":"middle","text":"What color is the ball?","fill":"ink","fontSize":42,"fontWeight":900,"fontFamily":"Arial,sans-serif"},
+        {"type":"circle","role":"target-object","cx":880,"cy":410,"r":105,"fill":"yellow","stroke":"ink","strokeWidth":5,"motion":{"type":"slide","duration":0.7,"dx":180}},
+        {"type":"text","role":"primary","x":880,"y":600,"anchor":"middle","text":"YELLOW","fill":"yellow","fontSize":92,"fontWeight":1000,"fontFamily":"Arial,sans-serif","motion":{"type":"emphasis","duration":0.5,"from":0.94,"to":1.04}}
+      ]
+    },
+    {
+      "id":"yellow-say","start":58,"end":68,"purpose":"Practice the sentence frame with yellow after a short response pause.","semanticRefs":["frame","v_yellow"],"beat":"explanation",
+      "visualRule":"Keep the yellow ball and word fixed; reveal the sentence frame after a response pause.",
+      "transition":{"type":"fade","duration":0.2},
+      "elements":[
+        {"type":"character","role":"guide","characterId":"milo","x":210,"y":540,"scale":0.9,"clothes":"accent","motion":{"type":"emphasis","duration":0.6,"from":0.98,"to":1.02}},
+        {"type":"text","role":"primary","x":880,"y":270,"anchor":"middle","text":"YELLOW","fill":"yellow","fontSize":80,"fontWeight":1000,"fontFamily":"Arial,sans-serif"},
+        {"type":"circle","role":"target-object","cx":880,"cy":410,"r":95,"fill":"yellow","stroke":"ink","strokeWidth":5},
+        {"type":"text","role":"primary","x":880,"y":570,"anchor":"middle","text":"It's yellow!","fill":"ink","fontSize":62,"fontWeight":900,"fontFamily":"Arial,sans-serif","motion":{"type":"fade","duration":0.4}}
+      ]
+    },
+    {
+      "id":"recall","start":68,"end":80,"purpose":"Recall all three target words after spaced practice.","semanticRefs":["recall"],"beat":"proof",
+      "visualRule":"Three balls share equal scale; one prompt asks for recall without adding new vocabulary.",
+      "transition":{"type":"fade","duration":0.2},
+      "elements":[
+        {"type":"character","role":"guide","characterId":"milo","x":210,"y":540,"scale":0.9,"clothes":"accent"},
+        {"type":"text","role":"primary","x":640,"y":230,"anchor":"middle","text":"Can you remember?","fill":"ink","fontSize":52,"fontWeight":900,"fontFamily":"Arial,sans-serif"},
+        {"type":"circle","role":"target-object","cx":700,"cy":430,"r":75,"fill":"accent","stroke":"ink","strokeWidth":5,"motion":{"type":"emphasis","duration":0.7,"from":0.95,"to":1.05}},
+        {"type":"circle","role":"target-object","cx":900,"cy":430,"r":75,"fill":"blue","stroke":"ink","strokeWidth":5,"motion":{"type":"emphasis","duration":0.7,"from":0.95,"to":1.05}},
+        {"type":"circle","role":"target-object","cx":1100,"cy":430,"r":75,"fill":"yellow","stroke":"ink","strokeWidth":5,"motion":{"type":"emphasis","duration":0.7,"from":0.95,"to":1.05}}
+      ]
+    },
+    {
+      "id":"payoff","start":80,"end":90,"purpose":"Give a clear positive payoff and final repetition.","semanticRefs":["recall"],"beat":"payoff",
+      "visualRule":"Milo and the three target balls remain visible while the final three-word review appears.",
+      "transition":{"type":"fade","duration":0.2},
+      "elements":[
+        {"type":"character","role":"guide","characterId":"milo","x":210,"y":540,"scale":0.95,"clothes":"accent","motion":{"type":"emphasis","duration":0.6,"from":0.98,"to":1.03}},
+        {"type":"text","role":"primary","x":640,"y":250,"anchor":"middle","text":"You did it!","fill":"accent","fontSize":72,"fontWeight":1000,"fontFamily":"Arial,sans-serif"},
+        {"type":"text","role":"primary","x":640,"y":360,"anchor":"middle","text":"RED  •  BLUE  •  YELLOW","fill":"ink","fontSize":46,"fontWeight":900,"fontFamily":"Arial,sans-serif"},
+        {"type":"circle","role":"target-object","cx":720,"cy":520,"r":45,"fill":"accent","stroke":"ink","strokeWidth":5},
+        {"type":"circle","role":"target-object","cx":900,"cy":520,"r":45,"fill":"blue","stroke":"ink","strokeWidth":5},
+        {"type":"circle","role":"target-object","cx":1080,"cy":520,"r":45,"fill":"yellow","stroke":"ink","strokeWidth":5}
+      ]
+    }
+  ]
+}
