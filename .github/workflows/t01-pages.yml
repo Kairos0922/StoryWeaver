@@ -48,6 +48,16 @@ jobs:
           test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width -of csv=p=0 experiments/t01-english-colors/milos-color-hunt.mp4)" = "1280"
           test "$(ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=p=0 experiments/t01-english-colors/milos-color-hunt.mp4)" = "720"
           test "$(ffprobe -v error -select_streams a:0 -show_entries stream=codec_name -of csv=p=0 experiments/t01-english-colors/milos-color-hunt.mp4)" = "aac"
+          test "$(ffprobe -v error -show_entries format=duration -of csv=p=0 experiments/t01-english-colors/milos-color-hunt.mp4 | cut -d. -f1)" = "90"
+      - name: Extract representative frames
+        run: |
+          mkdir -p _frames
+          ffmpeg -hide_banner -loglevel error -ss 0.1 -i experiments/t01-english-colors/milos-color-hunt.mp4 -frames:v 1 _frames/00.png
+          ffmpeg -hide_banner -loglevel error -ss 22.5 -i experiments/t01-english-colors/milos-color-hunt.mp4 -frames:v 1 _frames/25.png
+          ffmpeg -hide_banner -loglevel error -ss 45 -i experiments/t01-english-colors/milos-color-hunt.mp4 -frames:v 1 _frames/50.png
+          ffmpeg -hide_banner -loglevel error -ss 67.5 -i experiments/t01-english-colors/milos-color-hunt.mp4 -frames:v 1 _frames/75.png
+          ffmpeg -hide_banner -loglevel error -ss 89.5 -i experiments/t01-english-colors/milos-color-hunt.mp4 -frames:v 1 _frames/100.png
+          test "$(find _frames -name '*.png' | wc -l)" = "5"
       - name: Prepare Pages artifact
         run: |
           mkdir -p _site
@@ -58,9 +68,6 @@ jobs:
       - uses: actions/upload-pages-artifact@v4
         with:
           path: ./_site
-    outputs:
-      artifact: pages
-
   deploy:
     needs: build
     runs-on: ubuntu-latest
