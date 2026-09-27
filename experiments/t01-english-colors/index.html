@@ -1,58 +1,52 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Milo's Color Hunt — a 90-second English initiation animation for ages 4–6.">
 <title>Milo's Color Hunt — StoryWeaver T01</title>
 <style>
-:root{--paper:#fff8ec;--ink:#26352f;--accent:#ef8067;--blue:#65a8d6;--yellow:#f3c95b}
-*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:ui-rounded,"Trebuchet MS",system-ui,sans-serif;min-height:100vh}
-main{width:min(1000px,94vw);margin:0 auto;padding:28px 0 40px}
-header{text-align:center;margin-bottom:18px}.eyebrow{font-size:14px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.65}
-h1{font-size:clamp(30px,6vw,58px);line-height:1;margin:8px 0}.intro{font-size:18px;margin:0 auto;max-width:680px;opacity:.8}
+:root{--paper:#fff8ec;--ink:#26352f;--red:#ef8067;--blue:#65a8d6;--yellow:#f3c95b}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:ui-rounded,"Trebuchet MS",system-ui,sans-serif}
+main{width:min(1000px,94vw);margin:auto;padding:28px 0 40px}header{text-align:center;margin-bottom:18px}
+.eyebrow{font-size:14px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.65}
+h1{font-size:clamp(30px,6vw,58px);line-height:1;margin:8px 0}.intro{font-size:18px;margin:auto;max-width:680px;opacity:.8}
 .card{background:#fffdf8;border:3px solid var(--ink);border-radius:24px;padding:14px;box-shadow:0 14px 40px #26352f1c}
-video{display:block;width:100%;aspect-ratio:16/9;background:#26352f;border-radius:16px}
-.controls{display:flex;justify-content:center;gap:10px;margin-top:14px;flex-wrap:wrap}.controls button{border:0;border-radius:999px;padding:11px 18px;font:800 15px inherit;cursor:pointer;background:var(--ink);color:#fff}.controls button.secondary{background:#26352f14;color:var(--ink)}
+.stage{aspect-ratio:16/9;background:var(--paper);border-radius:16px;overflow:hidden;border:2px solid #26352f22}
+canvas{display:block;width:100%;height:100%}.controls{display:flex;justify-content:center;gap:10px;margin-top:14px}
+button{border:0;border-radius:999px;padding:11px 18px;font:800 15px inherit;cursor:pointer;background:var(--ink);color:#fff}
+button.secondary{background:#26352f14;color:var(--ink)}progress{display:block;width:100%;height:8px;margin-top:12px;accent-color:var(--red)}
 details{margin-top:16px;padding:14px 16px;border-radius:16px;background:#26352f08}summary{cursor:pointer;font-weight:900}
 ul{margin:10px 0 0;padding-left:22px;line-height:1.7}.note{font-size:13px;opacity:.65;margin-top:16px;text-align:center}
 </style>
 </head>
-<body>
-<main>
-<header>
-<div class="eyebrow">StoryWeaver · T01 · Ages 4–6</div>
+<body><main>
+<header><div class="eyebrow">StoryWeaver · T01 · Ages 4–6</div>
 <h1>Milo's Color Hunt</h1>
-<p class="intro">A 90-second English initiation lesson: <b>red</b>, <b>blue</b>, <b>yellow</b> — with a simple sentence frame: “It's ___.”</p>
-</header>
-<section class="card">
-<video id="video" controls playsinline preload="metadata">
-<source src="milos-color-hunt.mp4" type="video/mp4">
-Your browser does not support HTML video.
-</video>
-<div class="controls">
-<button id="restart">↻ Replay</button>
-<button id="mute" class="secondary">🔊 Sound on</button>
-</div>
-<details>
-<summary>Parent / teacher note</summary>
-<ul>
-<li>Target age: 4–6.</li>
-<li>Target vocabulary: red, blue, yellow.</li>
-<li>Practice frame: “It's red / blue / yellow.”</li>
-<li>Each question is followed by a response pause before the model answer.</li>
-</ul>
-</details>
-</section>
-<p class="note">Generated from StoryWeaver Content Plan → VideoSpec → SVG renderer → resvg → FFmpeg. T01 experiment.</p>
+<p class="intro">A 90-second English initiation lesson: <b>red</b>, <b>blue</b>, <b>yellow</b> — with the sentence frame “It's ___.”</p></header>
+<section class="card"><div class="stage"><canvas id="stage" width="1280" height="720"></canvas></div>
+<progress id="progress" min="0" max="90" value="0"></progress>
+<div class="controls"><button id="play">▶ Play</button><button id="restart" class="secondary">↻ Replay</button></div>
+<details><summary>Parent / teacher note</summary><ul>
+<li>Target age: 4–6.</li><li>Target vocabulary: red, blue, yellow.</li>
+<li>Practice frame: “It's red / blue / yellow.”</li><li>Each question is followed by a response pause before the model answer.</li>
+</ul></details></section>
+<p class="note">Interactive web preview of the T01 experiment. Production path: Content Plan → VideoSpec → SVG renderer → resvg → FFmpeg.</p>
 </main>
 <script>
-const video=document.querySelector('#video');
-document.querySelector('#restart').onclick=()=>{video.currentTime=0;video.play()};
-document.querySelector('#mute').onclick=()=>{
-  video.muted=!video.muted;
-  document.querySelector('#mute').textContent=video.muted?'🔇 Sound off':'🔊 Sound on';
-};
-</script>
-</body>
-</html>
+const c=document.querySelector("#stage"),x=c.getContext("2d"),p=document.querySelector("#progress"),play=document.querySelector("#play");
+let t=0,running=false,last=0;
+const colors={red:"#ef8067",blue:"#65a8d6",yellow:"#f3c95b"};
+const scenes=[[0,8,"hook","Let's find colors!"],[8,18,"red","What color is the ball?"],[18,28,"redsay","Say it with Milo!"],[28,38,"blue","What color is the ball?"],[38,48,"bluesay","Say it with Milo!"],[48,58,"yellow","What color is the ball?"],[58,68,"yellowsay","Say it with Milo!"],[68,80,"recall","Can you remember?"],[80,90,"payoff","You did it!"]];
+function wrap(s,n){const a=s.split(" ");let q="",r=[];for(const w of a){if((q+" "+w).trim().length>n){r.push(q);q=w}else q=(q+" "+w).trim()}if(q)r.push(q);return r}
+function ball(px,py,w,r){x.fillStyle=colors[w];x.beginPath();x.arc(px,py,r,0,Math.PI*2);x.fill();x.strokeStyle="#26352f";x.lineWidth=5;x.stroke()}
+function milo(px,py){x.save();x.translate(px,py);x.fillStyle="#26352f";x.beginPath();x.arc(0,-125,72,0,7);x.fill();x.fillStyle="#f4c8a8";x.beginPath();x.arc(0,-108,52,0,7);x.fill();x.fillStyle="#26352f";x.beginPath();x.arc(-18,-115,7,0,7);x.arc(18,-115,7,0,7);x.fill();x.fillStyle="#ef8067";x.beginPath();x.roundRect(-48,-38,96,125,22);x.fill();x.restore()}
+function text(s,y,size){x.fillStyle="#26352f";x.textAlign="center";x.font="800 "+size+"px ui-rounded, Trebuchet MS, sans-serif";wrap(s,34).forEach((q,i)=>x.fillText(q,800,y+i*(size+10)))}
+function draw(){x.fillStyle="#fff8ec";x.fillRect(0,0,1280,720);x.fillStyle="#26352f";x.textAlign="left";x.font="800 26px ui-rounded, Trebuchet MS, sans-serif";x.fillText("MILO'S COLOR HUNT",54,58);
+const s=scenes.find((a,i)=>t>=a[0]&&t<(scenes[i+1]?.[0]??90))||scenes[0],k=s[2],local=t-s[0],w=k.startsWith("red")?"red":k.startsWith("blue")?"blue":k.startsWith("yellow")?"yellow":null;
+if(k==="hook"){milo(250,390);ball(690,390,"red",70);ball(870,390,"blue",70);ball(1050,390,"yellow",70);text("Let's find colors!",150,42)}
+else if(k==="recall"||k==="payoff"){milo(230,410);ball(650,400,"red",78);ball(860,400,"blue",78);ball(1070,400,"yellow",78);text(s[3],145,42)}
+else {milo(210,420);ball(780,390,w,120);if(k.endsWith("say")){text(w.toUpperCase(),550,64);text("It's "+w+"!",625,34)}else{text(s[3],145,36);if(local<4){x.globalAlpha=1-local/4;text("Your turn…",640,28);x.globalAlpha=1}}}p.value=t}
+function tick(ms){if(!last)last=ms;const d=(ms-last)/1000;last=ms;if(running){t=Math.min(90,t+d);if(t===90){running=false;play.textContent="▶ Play"}draw()}requestAnimationFrame(tick)}
+play.onclick=()=>{if(t>=90)t=0;running=!running;play.textContent=running?"❚❚ Pause":"▶ Play"};
+document.querySelector("#restart").onclick=()=>{t=0;running=true;play.textContent="❚❚ Pause"};draw();requestAnimationFrame(tick);
+</script></body></html>
