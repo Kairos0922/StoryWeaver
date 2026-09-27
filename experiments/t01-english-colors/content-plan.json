@@ -165,8 +165,13 @@
     },
     {
       "start": 68,
-      "end": 80,
+      "end": 74,
       "text": "Can you remember?"
+    },
+    {
+      "start": 74,
+      "end": 80,
+      "text": "RED  •  BLUE  •  YELLOW"
     },
     {
       "start": 80,
