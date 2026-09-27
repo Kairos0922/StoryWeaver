@@ -55,4 +55,11 @@ test('T01 hides each model answer until after the response pause', () => {
     assert.equal(sentence.motion.type, 'fade');
   }
 });
+ 
+test('T01 gives Recall a real response pause before the model answer', () => {
+  const recallCaptions = plan.captions.filter(c => c.start >= 68 && c.end <= 80);
+  assert.deepEqual(recallCaptions, [
+    {start:68,end:74,text:'Can you remember?'},
+    {start:74,end:80,text:'RED  •  BLUE  •  YELLOW'}
+  ]);
 });
