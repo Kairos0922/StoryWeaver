@@ -36,17 +36,54 @@ ul{margin:10px 0 0;padding-left:22px;line-height:1.7}.note{font-size:13px;opacit
 const c=document.querySelector("#stage"),x=c.getContext("2d"),p=document.querySelector("#progress"),play=document.querySelector("#play");
 let t=0,running=false,last=0;
 const colors={red:"#ef8067",blue:"#65a8d6",yellow:"#f3c95b"};
-const scenes=[[0,8,"hook","Let's find colors!"],[8,18,"red","What color is the ball?"],[18,28,"redsay","Say it with Milo!"],[28,38,"blue","What color is the ball?"],[38,48,"bluesay","Say it with Milo!"],[48,58,"yellow","What color is the ball?"],[58,68,"yellowsay","Say it with Milo!"],[68,80,"recall","Can you remember?"],[80,90,"payoff","You did it!"]];
+const scenes=[
+  [0,8,"hook","Let's find colors!"],
+  [8,18,"red","What color is the ball?"],
+  [18,28,"redsay","Say it with Milo!"],
+  [28,38,"blue","What color is the ball?"],
+  [38,48,"bluesay","Say it with Milo!"],
+  [48,58,"yellow","What color is the ball?"],
+  [58,68,"yellowsay","Say it with Milo!"],
+  [68,80,"recall","Can you remember?"],
+  [80,90,"payoff","You did it!"]
+];
 function wrap(s,n){const a=s.split(" ");let q="",r=[];for(const w of a){if((q+" "+w).trim().length>n){r.push(q);q=w}else q=(q+" "+w).trim()}if(q)r.push(q);return r}
 function ball(px,py,w,r){x.fillStyle=colors[w];x.beginPath();x.arc(px,py,r,0,Math.PI*2);x.fill();x.strokeStyle="#26352f";x.lineWidth=5;x.stroke()}
-function milo(px,py){x.save();x.translate(px,py);x.fillStyle="#26352f";x.beginPath();x.arc(0,-125,72,0,7);x.fill();x.fillStyle="#f4c8a8";x.beginPath();x.arc(0,-108,52,0,7);x.fill();x.fillStyle="#26352f";x.beginPath();x.arc(-18,-115,7,0,7);x.arc(18,-115,7,0,7);x.fill();x.fillStyle="#ef8067";x.beginPath();x.roundRect(-48,-38,96,125,22);x.fill();x.restore()}
+function milo(px,py,scale=1){x.save();x.translate(px,py);x.scale(scale,scale);x.fillStyle="#26352f";x.beginPath();x.arc(0,-125,72,0,Math.PI*2);x.fill();x.fillStyle="#f4c8a8";x.beginPath();x.arc(0,-108,52,0,Math.PI*2);x.fill();x.fillStyle="#26352f";x.beginPath();x.arc(-18,-115,7,0,Math.PI*2);x.arc(18,-115,7,0,Math.PI*2);x.fill();x.fillStyle="#ef8067";x.beginPath();x.roundRect(-48,-38,96,125,22);x.fill();x.restore()}
 function text(s,y,size){x.fillStyle="#26352f";x.textAlign="center";x.font="800 "+size+"px ui-rounded, Trebuchet MS, sans-serif";wrap(s,34).forEach((q,i)=>x.fillText(q,800,y+i*(size+10)))}
-function draw(){x.fillStyle="#fff8ec";x.fillRect(0,0,1280,720);x.fillStyle="#26352f";x.textAlign="left";x.font="800 26px ui-rounded, Trebuchet MS, sans-serif";x.fillText("MILO'S COLOR HUNT",54,58);
-const s=scenes.find((a,i)=>t>=a[0]&&t<(scenes[i+1]?.[0]??90))||scenes[0],k=s[2],local=t-s[0],w=k.startsWith("red")?"red":k.startsWith("blue")?"blue":k.startsWith("yellow")?"yellow":null;
-if(k==="hook"){milo(250,390);ball(690,390,"red",70);ball(870,390,"blue",70);ball(1050,390,"yellow",70);text("Let's find colors!",150,42)}
-else if(k==="recall"||k==="payoff"){milo(230,410);ball(650,400,"red",78);ball(860,400,"blue",78);ball(1070,400,"yellow",78);text(s[3],145,42)}
-else {milo(210,420);ball(780,390,w,120);if(k.endsWith("say")){text(w.toUpperCase(),550,64);text("It's "+w+"!",625,34)}else{text(s[3],145,36);if(local<4){x.globalAlpha=1-local/4;text("Your turn…",640,28);x.globalAlpha=1}}}p.value=t}
+function lessonTarget(w,question,local){
+  milo(210,420); ball(780,390,w,120);
+  if(local<4){text(question,145,36);text("Your turn…",640,28)}
+  else {text(w.toUpperCase(),170,68)}
+}
+function lessonSay(w,local){
+  milo(210,420); ball(780,390,w,120); text(w.toUpperCase(),170,64);
+  if(local<4) text("Say it with Milo!",620,34);
+  else text("It's "+w+"!",620,42);
+}
+function draw(){
+  x.fillStyle="#fff8ec";x.fillRect(0,0,1280,720);
+  x.fillStyle="#26352f";x.textAlign="left";x.font="800 26px ui-rounded, Trebuchet MS, sans-serif";x.fillText("MILO'S COLOR HUNT",54,58);
+  const s=scenes.find((a,i)=>t>=a[0]&&t<(scenes[i+1]?.[0]??90))||scenes[0],k=s[2],local=t-s[0];
+  if(k==="hook"){milo(250,390);ball(690,390,"red",70);ball(870,390,"blue",70);ball(1050,390,"yellow",70);text("Milo's Color Hunt!",150,42);text("Let's find colors!",215,32)}
+  else if(k==="recall"){
+    milo(230,410);ball(650,400,"red",78);ball(860,400,"blue",78);ball(1070,400,"yellow",78);
+    if(local<6) text("Can you remember?",145,42); else text("RED  •  BLUE  •  YELLOW",145,42);
+  }
+  else if(k==="payoff"){
+    milo(230,410);ball(720,520,"red",45);ball(900,520,"blue",45);ball(1080,520,"yellow",45);
+    text("You did it!",150,56);text("RED  •  BLUE  •  YELLOW",235,38);
+  }
+  else if(k==="red") lessonTarget("red",s[3],local);
+  else if(k==="blue") lessonTarget("blue",s[3],local);
+  else if(k==="yellow") lessonTarget("yellow",s[3],local);
+  else if(k==="redsay") lessonSay("red",local);
+  else if(k==="bluesay") lessonSay("blue",local);
+  else if(k==="yellowsay") lessonSay("yellow",local);
+  p.value=t;
+}
 function tick(ms){if(!last)last=ms;const d=(ms-last)/1000;last=ms;if(running){t=Math.min(90,t+d);if(t===90){running=false;play.textContent="▶ Play"}draw()}requestAnimationFrame(tick)}
 play.onclick=()=>{if(t>=90)t=0;running=!running;play.textContent=running?"❚❚ Pause":"▶ Play"};
-document.querySelector("#restart").onclick=()=>{t=0;running=true;play.textContent="❚❚ Pause"};draw();requestAnimationFrame(tick);
+document.querySelector("#restart").onclick=()=>{t=0;running=true;play.textContent="❚❚ Pause"};
+draw();requestAnimationFrame(tick);
 </script></body></html>
