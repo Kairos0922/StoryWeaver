@@ -21,21 +21,17 @@ await renderVideo(spec,base);
 
 const lines=[
   [0,"Oh! My little car is gone."],
-  [10,"Milo looks under the red cushion."],
-  [14,"Is it here? No. A red ball."],
-  [22,"Look! A blue box."],
-  [26,"It's blue. Open, open..."],
-  [30,"No car."],
-  [34,"What's that? A yellow umbrella."],
-  [40,"It's yellow. Hmm..."],
-  [46,"Wait! Look! Little tracks."],
-  [50,"Let's follow them."],
-  [58,"A red ball! It's red."],
-  [63,"But where is my car?"],
-  [70,"There it is!"],
-  [73,"My red car! I found it!"],
-  [82,"Let's go!"],
-  [86,"Zoom!"]
+  [10,"Is it here?"],
+  [15,"It's red... but it's a ball."],
+  [21,"Look! A blue box."],
+  [26,"It's blue. Open it!"],
+  [32,"A yellow umbrella!"],
+  [43,"Look! Little tracks."],
+  [54,"Let's follow them!"],
+  [60,"A red ball!"],
+  [66,"There it is! My red car!"],
+  [78,"I found it! Let's go!"],
+  [85,"Zoom!"]
 ];
 
 async function run(args){
