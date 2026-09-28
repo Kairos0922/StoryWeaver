@@ -1,32 +1,37 @@
 {
   "source": {
     "title": "Milo's Color Hunt",
-    "text": "A short English initiation lesson for ages 4–6. Children meet three color words—red, blue, yellow—and practice the sentence frame: It's ___."
+    "text": "A story-driven English immersion animation for Chinese children ages 4–6. Milo looks for his missing little car; red, blue and yellow appear naturally inside the search."
   },
   "claims": [
     {
+      "id": "story_goal",
+      "text": "Milo wants to find his missing little car.",
+      "type": "state"
+    },
+    {
       "id": "v_red",
-      "text": "The target word is red.",
+      "text": "The story naturally repeats the color word red.",
       "type": "definition"
     },
     {
       "id": "v_blue",
-      "text": "The target word is blue.",
+      "text": "The story naturally repeats the color word blue.",
       "type": "definition"
     },
     {
       "id": "v_yellow",
-      "text": "The target word is yellow.",
+      "text": "The story naturally repeats the color word yellow.",
       "type": "definition"
     },
     {
       "id": "frame",
-      "text": "The practice sentence is: It's ___.",
+      "text": "The phrase It's ___ appears naturally while Milo identifies objects.",
       "type": "definition"
     },
     {
-      "id": "recall",
-      "text": "The lesson reviews red, blue, and yellow.",
+      "id": "payoff",
+      "text": "Milo finds his red car and goes to play.",
       "type": "sequence"
     }
   ],
@@ -41,842 +46,1315 @@
     "palette": {
       "ink": "#26352F",
       "accent": "#EF8067",
+      "red": "#EF8067",
       "blue": "#65A8D6",
       "yellow": "#F3C95B",
       "paper": "#FFF8EC",
+      "green": "#8DBF8A",
+      "sky": "#DDF1F4",
+      "wood": "#B9825B",
+      "cream": "#F8E8C8",
+      "white": "#FFFFFF",
       "captionBg": "#26352F"
     }
   },
   "captionStyle": {
-    "fontSize": 30
+    "fontSize": 28
   },
   "beats": [
     {
       "id": "hook",
       "time": 0,
-      "label": "Find a color"
+      "label": "A missing car"
+    },
+    {
+      "id": "setup",
+      "time": 10,
+      "label": "Look around"
     },
     {
       "id": "red",
-      "time": 8,
-      "label": "Red"
-    },
-    {
-      "id": "red_say",
-      "time": 18,
-      "label": "Say it"
+      "time": 22,
+      "label": "A red clue"
     },
     {
       "id": "blue",
-      "time": 28,
-      "label": "Blue"
-    },
-    {
-      "id": "blue_say",
-      "time": 38,
-      "label": "Say it"
+      "time": 34,
+      "label": "A blue clue"
     },
     {
       "id": "yellow",
-      "time": 48,
-      "label": "Yellow"
+      "time": 46,
+      "label": "A yellow clue"
     },
     {
-      "id": "yellow_say",
+      "id": "trail",
       "time": 58,
-      "label": "Say it"
+      "label": "Follow the trail"
     },
     {
-      "id": "recall",
-      "time": 68,
-      "label": "Recall"
+      "id": "reveal",
+      "time": 70,
+      "label": "Find the car"
     },
     {
       "id": "payoff",
-      "time": 80,
-      "label": "Payoff"
+      "time": 82,
+      "label": "Let's play"
     }
   ],
   "captions": [
     {
       "start": 0,
-      "end": 6,
-      "text": "Let's find colors!"
+      "end": 5,
+      "text": "Oh! My car is gone."
     },
     {
-      "start": 8,
-      "end": 12,
-      "text": "What color is the ball?"
-    },
-    {
-      "start": 12,
-      "end": 18,
-      "text": "RED"
-    },
-    {
-      "start": 18,
-      "end": 22,
-      "text": "Say it with Milo!"
+      "start": 10,
+      "end": 16,
+      "text": "Is it here?"
     },
     {
       "start": 22,
       "end": 28,
-      "text": "It's red!"
+      "text": "It's red."
     },
     {
-      "start": 28,
-      "end": 32,
-      "text": "What color is the ball?"
+      "start": 34,
+      "end": 40,
+      "text": "It's blue."
     },
     {
-      "start": 32,
-      "end": 38,
-      "text": "BLUE"
-    },
-    {
-      "start": 38,
-      "end": 42,
-      "text": "Say it with Milo!"
-    },
-    {
-      "start": 42,
-      "end": 48,
-      "text": "It's blue!"
-    },
-    {
-      "start": 48,
+      "start": 46,
       "end": 52,
-      "text": "What color is the ball?"
-    },
-    {
-      "start": 52,
-      "end": 58,
-      "text": "YELLOW"
+      "text": "It's yellow."
     },
     {
       "start": 58,
-      "end": 62,
-      "text": "Say it with Milo!"
+      "end": 64,
+      "text": "Look! Little tracks."
     },
     {
-      "start": 62,
-      "end": 68,
-      "text": "It's yellow!"
+      "start": 70,
+      "end": 78,
+      "text": "My red car!"
     },
     {
-      "start": 68,
-      "end": 74,
-      "text": "Can you remember?"
-    },
-    {
-      "start": 74,
-      "end": 80,
-      "text": "RED  •  BLUE  •  YELLOW"
-    },
-    {
-      "start": 80,
-      "end": 90,
-      "text": "You did it!"
+      "start": 82,
+      "end": 89,
+      "text": "Let's go!"
     }
   ],
   "scenes": [
     {
       "id": "hook",
       "start": 0,
-      "end": 8,
-      "purpose": "Hook the child with a simple color-finding invitation.",
-      "semanticRefs": [],
+      "end": 10,
+      "purpose": "Establish Milo's goal: his little car is missing.",
+      "semanticRefs": [
+        "story_goal"
+      ],
       "beat": "hook",
-      "visualRule": "Milo anchors the left; three colored balls appear as a simple invitation.",
+      "visualRule": "Start in a recognizable playroom. Milo searches, checks the empty car mat, and reacts emotionally; the story is understandable without English.",
       "transition": {
         "type": "fade",
         "duration": 0.25
       },
       "elements": [
         {
-          "type": "character",
-          "role": "guide",
-          "characterId": "milo",
-          "x": 210,
-          "y": 540,
-          "scale": 1,
-          "clothes": "accent"
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 500,
+          "fill": "paper",
+          "stroke": "#26352F",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 500,
+          "width": 1280,
+          "height": 220,
+          "fill": "#F8E8C8",
+          "stroke": "#26352F",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        {
+          "type": "rect",
+          "x": 60,
+          "y": 110,
+          "width": 1160,
+          "height": 360,
+          "fill": "#FFFDF8",
+          "stroke": "#26352F",
+          "strokeWidth": 4,
+          "radius": 28
+        },
+        {
+          "type": "rect",
+          "x": 100,
+          "y": 420,
+          "width": 330,
+          "height": 40,
+          "fill": "#B9825B",
+          "stroke": "#26352F",
+          "strokeWidth": 3,
+          "radius": 12
+        },
+        {
+          "type": "rect",
+          "x": 700,
+          "y": 380,
+          "width": 390,
+          "height": 110,
+          "fill": "#65A8D6",
+          "stroke": "#26352F",
+          "strokeWidth": 3,
+          "radius": 18
         },
         {
           "type": "text",
-          "role": "primary",
-          "x": 700,
-          "y": 250,
-          "anchor": "middle",
-          "text": "Milo's Color Hunt!",
+          "x": 730,
+          "y": 445,
+          "text": "TOY BOX",
+          "fontSize": 28,
           "fill": "ink",
-          "fontSize": 64,
           "fontWeight": 900,
-          "fontFamily": "Arial,sans-serif"
+          "fontFamily": "Arial,sans-serif",
+          "anchor": "start"
+        },
+        {
+          "type": "character",
+          "characterId": "milo",
+          "x": 330,
+          "y": 430,
+          "scale": 1.25,
+          "clothes": "accent",
+          "skin": "#F2C7A5",
+          "hair": "ink",
+          "expression": "worried",
+          "pose": "search",
+          "direction": 1
+        },
+        {
+          "type": "circle",
+          "cx": 950,
+          "cy": 550,
+          "r": 48,
+          "fill": "#EF8067",
+          "stroke": "#26352F",
+          "strokeWidth": 3
+        },
+        {
+          "type": "rect",
+          "x": 890,
+          "y": 585,
+          "width": 120,
+          "height": 35,
+          "fill": "#B9825B",
+          "stroke": "#26352F",
+          "strokeWidth": 3,
+          "radius": 10
         },
         {
           "type": "text",
-          "role": "primary",
-          "x": 700,
+          "x": 610,
+          "y": 175,
+          "text": "Where is my little car?",
+          "fontSize": 48,
+          "fill": "ink",
+          "fontWeight": 900,
+          "fontFamily": "Arial,sans-serif",
+          "anchor": "start"
+        },
+        {
+          "type": "text",
+          "x": 610,
+          "y": 225,
+          "text": "Oh!",
+          "fontSize": 62,
+          "fill": "accent",
+          "fontWeight": 1000,
+          "fontFamily": "Arial,sans-serif",
+          "anchor": "start"
+        }
+      ]
+    },
+    {
+      "id": "red-clue",
+      "start": 10,
+      "end": 22,
+      "purpose": "Milo checks the red cushion and finds a red ball instead.",
+      "semanticRefs": [
+        "story_goal",
+        "v_red"
+      ],
+      "beat": "setup",
+      "visualRule": "Keep the same playroom. Milo physically lifts a red cushion; a red ball is revealed as a false lead.",
+      "transition": {
+        "type": "fade",
+        "duration": 0.25
+      },
+      "elements": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 500,
+          "fill": "paper",
+          "stroke": "#26352F",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 500,
+          "width": 1280,
+          "height": 220,
+          "fill": "#F8E8C8",
+          "stroke": "#26352F",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        {
+          "type": "rect",
+          "x": 160,
           "y": 330,
-          "anchor": "middle",
-          "text": "Let's find colors!",
-          "fill": "accent",
-          "fontSize": 42,
-          "fontWeight": 900,
-          "fontFamily": "Arial,sans-serif"
+          "width": 330,
+          "height": 150,
+          "fill": "#EF8067",
+          "stroke": "#26352F",
+          "strokeWidth": 3,
+          "radius": 28
         },
         {
-          "type": "circle",
-          "role": "target-object",
-          "cx": 880,
-          "cy": 470,
-          "r": 55,
-          "fill": "accent",
-          "stroke": "ink",
-          "strokeWidth": 5,
-          "motion": {
-            "type": "scale",
-            "duration": 0.5,
-            "from": 0.7,
-            "to": 1
-          }
+          "type": "rect",
+          "x": 170,
+          "y": 290,
+          "width": 310,
+          "height": 90,
+          "fill": "#F8E8C8",
+          "stroke": "#26352F",
+          "strokeWidth": 3,
+          "radius": 28
         },
-        {
-          "type": "circle",
-          "role": "target-object",
-          "cx": 1010,
-          "cy": 470,
-          "r": 55,
-          "fill": "blue",
-          "stroke": "ink",
-          "strokeWidth": 5,
-          "motion": {
-            "type": "scale",
-            "duration": 0.5,
-            "from": 0.7,
-            "to": 1
-          }
-        },
-        {
-          "type": "circle",
-          "role": "target-object",
-          "cx": 1140,
-          "cy": 470,
-          "r": 55,
-          "fill": "yellow",
-          "stroke": "ink",
-          "strokeWidth": 5,
-          "motion": {
-            "type": "scale",
-            "duration": 0.5,
-            "from": 0.7,
-            "to": 1
-          }
-        }
-      ]
-    },
-    {
-      "id": "red",
-      "start": 8,
-      "end": 18,
-      "purpose": "Reveal and name the target color red.",
-      "semanticRefs": [
-        "v_red"
-      ],
-      "beat": "reveal",
-      "visualRule": "One large red ball is the focal object; the word is exact and prominent.",
-      "transition": {
-        "type": "fade",
-        "duration": 0.2
-      },
-      "elements": [
         {
           "type": "character",
-          "role": "guide",
           "characterId": "milo",
-          "x": 210,
-          "y": 540,
-          "scale": 0.9,
-          "clothes": "accent"
-        },
-        {
-          "type": "text",
-          "role": "primary",
-          "x": 640,
-          "y": 260,
-          "anchor": "middle",
-          "text": "What color is the ball?",
-          "fill": "ink",
-          "fontSize": 42,
-          "fontWeight": 900,
-          "fontFamily": "Arial,sans-serif"
-        },
-        {
-          "type": "circle",
-          "role": "target-object",
-          "cx": 880,
-          "cy": 410,
-          "r": 105,
-          "fill": "accent",
-          "stroke": "ink",
-          "strokeWidth": 5,
-          "motion": {
-            "type": "slide",
-            "duration": 0.7,
-            "dx": 180
-          }
-        },
-        {
-          "type": "text",
-          "role": "primary",
-          "x": 880,
-          "y": 600,
-          "anchor": "middle",
-          "text": "RED",
-          "fill": "accent",
-          "fontSize": 92,
-          "fontWeight": 1000,
-          "fontFamily": "Arial,sans-serif",
-          "motion": {
-            "type": "fade",
-            "duration": 0.35
-          },
-          "start": 12,
-          "end": 18
-        }
-      ]
-    },
-    {
-      "id": "red-say",
-      "start": 18,
-      "end": 28,
-      "purpose": "Practice the sentence frame with red after a short response pause.",
-      "semanticRefs": [
-        "frame",
-        "v_red"
-      ],
-      "beat": "explanation",
-      "visualRule": "Keep the red ball and word fixed; reveal the sentence frame after a response pause.",
-      "transition": {
-        "type": "fade",
-        "duration": 0.2
-      },
-      "elements": [
-        {
-          "type": "character",
-          "role": "guide",
-          "characterId": "milo",
-          "x": 210,
-          "y": 540,
-          "scale": 0.9,
+          "x": 300,
+          "y": 500,
+          "scale": 1.12,
           "clothes": "accent",
-          "motion": {
-            "type": "emphasis",
-            "duration": 0.6,
-            "from": 0.98,
-            "to": 1.02
-          }
-        },
-        {
-          "type": "text",
-          "role": "primary",
-          "x": 880,
-          "y": 270,
-          "anchor": "middle",
-          "text": "RED",
-          "fill": "accent",
-          "fontSize": 80,
-          "fontWeight": 1000,
-          "fontFamily": "Arial,sans-serif"
+          "skin": "#F2C7A5",
+          "hair": "ink",
+          "expression": "curious",
+          "pose": "search",
+          "direction": 1
         },
         {
           "type": "circle",
-          "role": "target-object",
-          "cx": 880,
-          "cy": 410,
-          "r": 95,
-          "fill": "accent",
-          "stroke": "ink",
-          "strokeWidth": 5
+          "cx": 325,
+          "cy": 420,
+          "r": 48,
+          "fill": "#EF8067",
+          "stroke": "#26352F",
+          "strokeWidth": 3
         },
         {
           "type": "text",
-          "role": "primary",
-          "x": 880,
-          "y": 570,
-          "anchor": "middle",
-          "text": "It's red!",
-          "fill": "ink",
-          "fontSize": 62,
-          "fontWeight": 900,
-          "fontFamily": "Arial,sans-serif",
-          "motion": {
-            "type": "fade",
-            "duration": 0.35
-          },
-          "start": 22,
-          "end": 28
-        }
-      ]
-    },
-    {
-      "id": "blue",
-      "start": 28,
-      "end": 38,
-      "purpose": "Reveal and name the target color blue.",
-      "semanticRefs": [
-        "v_blue"
-      ],
-      "beat": "reveal",
-      "visualRule": "One large blue ball is the focal object; the word is exact and prominent.",
-      "transition": {
-        "type": "fade",
-        "duration": 0.2
-      },
-      "elements": [
-        {
-          "type": "character",
-          "role": "guide",
-          "characterId": "milo",
-          "x": 210,
-          "y": 540,
-          "scale": 0.9,
-          "clothes": "accent"
-        },
-        {
-          "type": "text",
-          "role": "primary",
-          "x": 640,
-          "y": 260,
-          "anchor": "middle",
-          "text": "What color is the ball?",
-          "fill": "ink",
-          "fontSize": 42,
-          "fontWeight": 900,
-          "fontFamily": "Arial,sans-serif"
-        },
-        {
-          "type": "circle",
-          "role": "target-object",
-          "cx": 880,
-          "cy": 410,
-          "r": 105,
-          "fill": "blue",
-          "stroke": "ink",
-          "strokeWidth": 5,
-          "motion": {
-            "type": "slide",
-            "duration": 0.7,
-            "dx": 180
-          }
-        },
-        {
-          "type": "text",
-          "role": "primary",
-          "x": 880,
-          "y": 600,
-          "anchor": "middle",
-          "text": "BLUE",
-          "fill": "blue",
-          "fontSize": 92,
-          "fontWeight": 1000,
-          "fontFamily": "Arial,sans-serif",
-          "motion": {
-            "type": "fade",
-            "duration": 0.35
-          },
-          "start": 32,
-          "end": 38
-        }
-      ]
-    },
-    {
-      "id": "blue-say",
-      "start": 38,
-      "end": 48,
-      "purpose": "Practice the sentence frame with blue after a short response pause.",
-      "semanticRefs": [
-        "frame",
-        "v_blue"
-      ],
-      "beat": "explanation",
-      "visualRule": "Keep the blue ball and word fixed; reveal the sentence frame after a response pause.",
-      "transition": {
-        "type": "fade",
-        "duration": 0.2
-      },
-      "elements": [
-        {
-          "type": "character",
-          "role": "guide",
-          "characterId": "milo",
-          "x": 210,
-          "y": 540,
-          "scale": 0.9,
-          "clothes": "accent",
-          "motion": {
-            "type": "emphasis",
-            "duration": 0.6,
-            "from": 0.98,
-            "to": 1.02
-          }
-        },
-        {
-          "type": "text",
-          "role": "primary",
-          "x": 880,
-          "y": 270,
-          "anchor": "middle",
-          "text": "BLUE",
-          "fill": "blue",
-          "fontSize": 80,
-          "fontWeight": 1000,
-          "fontFamily": "Arial,sans-serif"
-        },
-        {
-          "type": "circle",
-          "role": "target-object",
-          "cx": 880,
-          "cy": 410,
-          "r": 95,
-          "fill": "blue",
-          "stroke": "ink",
-          "strokeWidth": 5
-        },
-        {
-          "type": "text",
-          "role": "primary",
-          "x": 880,
-          "y": 570,
-          "anchor": "middle",
-          "text": "It's blue!",
-          "fill": "ink",
-          "fontSize": 62,
-          "fontWeight": 900,
-          "fontFamily": "Arial,sans-serif",
-          "motion": {
-            "type": "fade",
-            "duration": 0.35
-          },
-          "start": 42,
-          "end": 48
-        }
-      ]
-    },
-    {
-      "id": "yellow",
-      "start": 48,
-      "end": 58,
-      "purpose": "Reveal and name the target color yellow.",
-      "semanticRefs": [
-        "v_yellow"
-      ],
-      "beat": "reveal",
-      "visualRule": "One large yellow ball is the focal object; the word is exact and prominent.",
-      "transition": {
-        "type": "fade",
-        "duration": 0.2
-      },
-      "elements": [
-        {
-          "type": "character",
-          "role": "guide",
-          "characterId": "milo",
-          "x": 210,
-          "y": 540,
-          "scale": 0.9,
-          "clothes": "accent"
-        },
-        {
-          "type": "text",
-          "role": "primary",
-          "x": 640,
-          "y": 260,
-          "anchor": "middle",
-          "text": "What color is the ball?",
-          "fill": "ink",
-          "fontSize": 42,
-          "fontWeight": 900,
-          "fontFamily": "Arial,sans-serif"
-        },
-        {
-          "type": "circle",
-          "role": "target-object",
-          "cx": 880,
-          "cy": 410,
-          "r": 105,
-          "fill": "yellow",
-          "stroke": "ink",
-          "strokeWidth": 5,
-          "motion": {
-            "type": "slide",
-            "duration": 0.7,
-            "dx": 180
-          }
-        },
-        {
-          "type": "text",
-          "role": "primary",
-          "x": 880,
-          "y": 600,
-          "anchor": "middle",
-          "text": "YELLOW",
-          "fill": "yellow",
-          "fontSize": 92,
-          "fontWeight": 1000,
-          "fontFamily": "Arial,sans-serif",
-          "motion": {
-            "type": "fade",
-            "duration": 0.35
-          },
-          "start": 52,
-          "end": 58
-        }
-      ]
-    },
-    {
-      "id": "yellow-say",
-      "start": 58,
-      "end": 68,
-      "purpose": "Practice the sentence frame with yellow after a short response pause.",
-      "semanticRefs": [
-        "frame",
-        "v_yellow"
-      ],
-      "beat": "explanation",
-      "visualRule": "Keep the yellow ball and word fixed; reveal the sentence frame after a response pause.",
-      "transition": {
-        "type": "fade",
-        "duration": 0.2
-      },
-      "elements": [
-        {
-          "type": "character",
-          "role": "guide",
-          "characterId": "milo",
-          "x": 210,
-          "y": 540,
-          "scale": 0.9,
-          "clothes": "accent",
-          "motion": {
-            "type": "emphasis",
-            "duration": 0.6,
-            "from": 0.98,
-            "to": 1.02
-          }
-        },
-        {
-          "type": "text",
-          "role": "primary",
-          "x": 880,
-          "y": 270,
-          "anchor": "middle",
-          "text": "YELLOW",
-          "fill": "yellow",
-          "fontSize": 80,
-          "fontWeight": 1000,
-          "fontFamily": "Arial,sans-serif"
-        },
-        {
-          "type": "circle",
-          "role": "target-object",
-          "cx": 880,
-          "cy": 410,
-          "r": 95,
-          "fill": "yellow",
-          "stroke": "ink",
-          "strokeWidth": 5
-        },
-        {
-          "type": "text",
-          "role": "primary",
-          "x": 880,
-          "y": 570,
-          "anchor": "middle",
-          "text": "It's yellow!",
-          "fill": "ink",
-          "fontSize": 62,
-          "fontWeight": 900,
-          "fontFamily": "Arial,sans-serif",
-          "motion": {
-            "type": "fade",
-            "duration": 0.35
-          },
-          "start": 62,
-          "end": 68
-        }
-      ]
-    },
-    {
-      "id": "recall",
-      "start": 68,
-      "end": 80,
-      "purpose": "Recall all three target words after spaced practice.",
-      "semanticRefs": [
-        "recall"
-      ],
-      "beat": "proof",
-      "visualRule": "Three balls share equal scale; one prompt asks for recall without adding new vocabulary.",
-      "transition": {
-        "type": "fade",
-        "duration": 0.2
-      },
-      "elements": [
-        {
-          "type": "character",
-          "role": "guide",
-          "characterId": "milo",
-          "x": 210,
-          "y": 540,
-          "scale": 0.9,
-          "clothes": "accent"
-        },
-        {
-          "type": "text",
-          "role": "primary",
-          "x": 640,
-          "y": 230,
-          "anchor": "middle",
-          "text": "Can you remember?",
-          "fill": "ink",
+          "x": 600,
+          "y": 180,
+          "text": "Is it here?",
           "fontSize": 52,
+          "fill": "ink",
           "fontWeight": 900,
-          "fontFamily": "Arial,sans-serif"
+          "fontFamily": "Arial,sans-serif",
+          "anchor": "start"
         },
         {
-          "type": "circle",
-          "role": "target-object",
-          "cx": 700,
-          "cy": 430,
-          "r": 75,
+          "type": "text",
+          "x": 600,
+          "y": 245,
+          "text": "No...",
+          "fontSize": 46,
+          "fill": "ink",
+          "fontWeight": 700,
+          "fontFamily": "Arial,sans-serif",
+          "anchor": "start"
+        },
+        {
+          "type": "text",
+          "x": 600,
+          "y": 610,
+          "text": "A red ball.",
+          "fontSize": 34,
           "fill": "accent",
-          "stroke": "ink",
-          "strokeWidth": 5,
-          "motion": {
-            "type": "emphasis",
-            "duration": 0.7,
-            "from": 0.95,
-            "to": 1.05
-          }
-        },
-        {
-          "type": "circle",
-          "role": "target-object",
-          "cx": 900,
-          "cy": 430,
-          "r": 75,
-          "fill": "blue",
-          "stroke": "ink",
-          "strokeWidth": 5,
-          "motion": {
-            "type": "emphasis",
-            "duration": 0.7,
-            "from": 0.95,
-            "to": 1.05
-          }
-        },
-        {
-          "type": "circle",
-          "role": "target-object",
-          "cx": 1100,
-          "cy": 430,
-          "r": 75,
-          "fill": "yellow",
-          "stroke": "ink",
-          "strokeWidth": 5,
-          "motion": {
-            "type": "emphasis",
-            "duration": 0.7,
-            "from": 0.95,
-            "to": 1.05
-          }
+          "fontWeight": 900,
+          "fontFamily": "Arial,sans-serif",
+          "anchor": "start"
         }
       ]
     },
     {
-      "id": "payoff",
-      "start": 80,
-      "end": 90,
-      "purpose": "Give a clear positive payoff and final repetition.",
+      "id": "blue-box",
+      "start": 22,
+      "end": 34,
+      "purpose": "Milo opens a blue toy box, naturally naming its color, but the car is not inside.",
       "semanticRefs": [
-        "recall"
+        "story_goal",
+        "v_blue",
+        "frame"
+      ],
+      "beat": "escalation",
+      "visualRule": "Move the story forward with a new location in the room. The blue box opens and empty space creates anticipation.",
+      "transition": {
+        "type": "fade",
+        "duration": 0.25
+      },
+      "elements": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 500,
+          "fill": "paper",
+          "stroke": "#26352F",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 500,
+          "width": 1280,
+          "height": 220,
+          "fill": "#F8E8C8",
+          "stroke": "#26352F",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        {
+          "type": "rect",
+          "x": 690,
+          "y": 270,
+          "width": 390,
+          "height": 230,
+          "fill": "#65A8D6",
+          "stroke": "#26352F",
+          "strokeWidth": 3,
+          "radius": 26
+        },
+        {
+          "type": "rect",
+          "x": 735,
+          "y": 220,
+          "width": 300,
+          "height": 75,
+          "fill": "#65A8D6",
+          "stroke": "#26352F",
+          "strokeWidth": 3,
+          "radius": 20
+        },
+        {
+          "type": "rect",
+          "x": 760,
+          "y": 330,
+          "width": 250,
+          "height": 135,
+          "fill": "#FFF8EC",
+          "stroke": "#26352F",
+          "strokeWidth": 4,
+          "radius": 8
+        },
+        {
+          "type": "circle",
+          "cx": 885,
+          "cy": 395,
+          "r": 22,
+          "fill": "#B9825B",
+          "stroke": "#26352F",
+          "strokeWidth": 3
+        },
+        {
+          "type": "character",
+          "characterId": "milo",
+          "x": 500,
+          "y": 505,
+          "scale": 1.18,
+          "clothes": "accent",
+          "skin": "#F2C7A5",
+          "hair": "ink",
+          "expression": "excited",
+          "pose": "open",
+          "direction": 1
+        },
+        {
+          "type": "text",
+          "x": 120,
+          "y": 170,
+          "text": "Look!",
+          "fontSize": 58,
+          "fill": "accent",
+          "fontWeight": 1000,
+          "fontFamily": "Arial,sans-serif",
+          "anchor": "start"
+        },
+        {
+          "type": "text",
+          "x": 120,
+          "y": 230,
+          "text": "A blue box.",
+          "fontSize": 44,
+          "fill": "ink",
+          "fontWeight": 900,
+          "fontFamily": "Arial,sans-serif",
+          "anchor": "start"
+        },
+        {
+          "type": "text",
+          "x": 120,
+          "y": 300,
+          "text": "It's blue.",
+          "fontSize": 44,
+          "fill": "blue",
+          "fontWeight": 900,
+          "fontFamily": "Arial,sans-serif",
+          "anchor": "start"
+        },
+        {
+          "type": "text",
+          "x": 120,
+          "y": 370,
+          "text": "No car.",
+          "fontSize": 42,
+          "fill": "ink",
+          "fontWeight": 700,
+          "fontFamily": "Arial,sans-serif",
+          "anchor": "start"
+        }
+      ]
+    },
+    {
+      "id": "yellow-umbrella",
+      "start": 34,
+      "end": 46,
+      "purpose": "Milo notices a yellow umbrella by the door and follows the visual clue.",
+      "semanticRefs": [
+        "story_goal",
+        "v_yellow",
+        "frame"
+      ],
+      "beat": "escalation",
+      "visualRule": "Change the setting from playroom to doorway. A yellow umbrella creates a strong silhouette and a reason to look outside.",
+      "transition": {
+        "type": "fade",
+        "duration": 0.25
+      },
+      "elements": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 720,
+          "fill": "#DDF1F4",
+          "stroke": "#26352F",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 520,
+          "width": 1280,
+          "height": 200,
+          "fill": "#8DBF8A",
+          "stroke": "#26352F",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        {
+          "type": "rect",
+          "x": 900,
+          "y": 120,
+          "width": 260,
+          "height": 400,
+          "fill": "#FFFDF8",
+          "stroke": "#26352F",
+          "strokeWidth": 3,
+          "radius": 20
+        },
+        {
+          "type": "rect",
+          "x": 1010,
+          "y": 250,
+          "width": 120,
+          "height": 270,
+          "fill": "#B9825B",
+          "stroke": "#26352F",
+          "strokeWidth": 3,
+          "radius": 8
+        },
+        {
+          "type": "path",
+          "d": "M760 300 Q900 170 1040 300 L900 300 Z",
+          "fill": "#F3C95B",
+          "stroke": "#26352F",
+          "strokeWidth": 3
+        },
+        {
+          "type": "circle",
+          "cx": 900,
+          "cy": 315,
+          "r": 12,
+          "fill": "#26352F",
+          "stroke": "#26352F",
+          "strokeWidth": 3
+        },
+        {
+          "type": "rect",
+          "x": 895,
+          "y": 315,
+          "width": 10,
+          "height": 180,
+          "fill": "#B9825B",
+          "stroke": "#26352F",
+          "strokeWidth": 3,
+          "radius": 5
+        },
+        {
+          "type": "character",
+          "characterId": "milo",
+          "x": 590,
+          "y": 530,
+          "scale": 1.2,
+          "clothes": "accent",
+          "skin": "#F2C7A5",
+          "hair": "ink",
+          "expression": "surprised",
+          "pose": "point",
+          "direction": 1
+        },
+        {
+          "type": "text",
+          "x": 90,
+          "y": 170,
+          "text": "What's that?",
+          "fontSize": 50,
+          "fill": "ink",
+          "fontWeight": 900,
+          "fontFamily": "Arial,sans-serif",
+          "anchor": "start"
+        },
+        {
+          "type": "text",
+          "x": 90,
+          "y": 235,
+          "text": "A yellow umbrella.",
+          "fontSize": 42,
+          "fill": "ink",
+          "fontWeight": 900,
+          "fontFamily": "Arial,sans-serif",
+          "anchor": "start"
+        },
+        {
+          "type": "text",
+          "x": 90,
+          "y": 300,
+          "text": "It's yellow.",
+          "fontSize": 44,
+          "fill": "yellow",
+          "fontWeight": 900,
+          "fontFamily": "Arial,sans-serif",
+          "anchor": "start"
+        },
+        {
+          "type": "text",
+          "x": 90,
+          "y": 380,
+          "text": "Hmm...",
+          "fontSize": 46,
+          "fill": "ink",
+          "fontWeight": 700,
+          "fontFamily": "Arial,sans-serif",
+          "anchor": "start"
+        }
+      ]
+    },
+    {
+      "id": "tracks",
+      "start": 46,
+      "end": 58,
+      "purpose": "Milo notices tiny wheel tracks leading outside.",
+      "semanticRefs": [
+        "story_goal"
+      ],
+      "beat": "reveal",
+      "visualRule": "Use a visual transition: the plot clue is the tracks, not another color lesson. Milo follows them.",
+      "transition": {
+        "type": "fade",
+        "duration": 0.25
+      },
+      "elements": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 520,
+          "fill": "#DDF1F4",
+          "stroke": "#26352F",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 520,
+          "width": 1280,
+          "height": 200,
+          "fill": "#8DBF8A",
+          "stroke": "#26352F",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        {
+          "type": "path",
+          "d": "M260 610 C420 560 540 640 680 575 S940 570 1120 610",
+          "fill": "none",
+          "stroke": "#26352F",
+          "strokeWidth": 10
+        },
+        [
+          {
+            "type": "circle",
+            "cx": 320,
+            "cy": 590,
+            "r": 12,
+            "fill": "#26352F",
+            "stroke": "#26352F",
+            "strokeWidth": 0
+          },
+          {
+            "type": "circle",
+            "cx": 320,
+            "cy": 630,
+            "r": 12,
+            "fill": "#26352F",
+            "stroke": "#26352F",
+            "strokeWidth": 0
+          },
+          {
+            "type": "circle",
+            "cx": 390,
+            "cy": 618,
+            "r": 12,
+            "fill": "#26352F",
+            "stroke": "#26352F",
+            "strokeWidth": 0
+          },
+          {
+            "type": "circle",
+            "cx": 390,
+            "cy": 602,
+            "r": 12,
+            "fill": "#26352F",
+            "stroke": "#26352F",
+            "strokeWidth": 0
+          },
+          {
+            "type": "circle",
+            "cx": 520,
+            "cy": 590,
+            "r": 12,
+            "fill": "#26352F",
+            "stroke": "#26352F",
+            "strokeWidth": 0
+          },
+          {
+            "type": "circle",
+            "cx": 520,
+            "cy": 630,
+            "r": 12,
+            "fill": "#26352F",
+            "stroke": "#26352F",
+            "strokeWidth": 0
+          },
+          {
+            "type": "circle",
+            "cx": 600,
+            "cy": 618,
+            "r": 12,
+            "fill": "#26352F",
+            "stroke": "#26352F",
+            "strokeWidth": 0
+          },
+          {
+            "type": "circle",
+            "cx": 600,
+            "cy": 602,
+            "r": 12,
+            "fill": "#26352F",
+            "stroke": "#26352F",
+            "strokeWidth": 0
+          },
+          {
+            "type": "circle",
+            "cx": 735,
+            "cy": 590,
+            "r": 12,
+            "fill": "#26352F",
+            "stroke": "#26352F",
+            "strokeWidth": 0
+          },
+          {
+            "type": "circle",
+            "cx": 735,
+            "cy": 630,
+            "r": 12,
+            "fill": "#26352F",
+            "stroke": "#26352F",
+            "strokeWidth": 0
+          },
+          {
+            "type": "circle",
+            "cx": 850,
+            "cy": 618,
+            "r": 12,
+            "fill": "#26352F",
+            "stroke": "#26352F",
+            "strokeWidth": 0
+          },
+          {
+            "type": "circle",
+            "cx": 850,
+            "cy": 602,
+            "r": 12,
+            "fill": "#26352F",
+            "stroke": "#26352F",
+            "strokeWidth": 0
+          },
+          {
+            "type": "circle",
+            "cx": 980,
+            "cy": 590,
+            "r": 12,
+            "fill": "#26352F",
+            "stroke": "#26352F",
+            "strokeWidth": 0
+          },
+          {
+            "type": "circle",
+            "cx": 980,
+            "cy": 630,
+            "r": 12,
+            "fill": "#26352F",
+            "stroke": "#26352F",
+            "strokeWidth": 0
+          },
+          {
+            "type": "circle",
+            "cx": 1080,
+            "cy": 618,
+            "r": 12,
+            "fill": "#26352F",
+            "stroke": "#26352F",
+            "strokeWidth": 0
+          },
+          {
+            "type": "circle",
+            "cx": 1080,
+            "cy": 602,
+            "r": 12,
+            "fill": "#26352F",
+            "stroke": "#26352F",
+            "strokeWidth": 0
+          }
+        ],
+        {
+          "type": "character",
+          "characterId": "milo",
+          "x": 250,
+          "y": 535,
+          "scale": 1.15,
+          "clothes": "accent",
+          "skin": "#F2C7A5",
+          "hair": "ink",
+          "expression": "excited",
+          "pose": "walk",
+          "direction": 1
+        },
+        {
+          "type": "text",
+          "x": 70,
+          "y": 150,
+          "text": "Wait!",
+          "fontSize": 58,
+          "fill": "accent",
+          "fontWeight": 1000,
+          "fontFamily": "Arial,sans-serif",
+          "anchor": "start"
+        },
+        {
+          "type": "text",
+          "x": 70,
+          "y": 215,
+          "text": "Look! Little tracks.",
+          "fontSize": 44,
+          "fill": "ink",
+          "fontWeight": 900,
+          "fontFamily": "Arial,sans-serif",
+          "anchor": "start"
+        },
+        {
+          "type": "text",
+          "x": 70,
+          "y": 280,
+          "text": "Let's follow them!",
+          "fontSize": 40,
+          "fill": "ink",
+          "fontWeight": 800,
+          "fontFamily": "Arial,sans-serif",
+          "anchor": "start"
+        }
+      ]
+    },
+    {
+      "id": "red-ball",
+      "start": 58,
+      "end": 70,
+      "purpose": "The tracks lead to a red ball, but Milo realizes it is another clue.",
+      "semanticRefs": [
+        "story_goal",
+        "v_red",
+        "frame"
+      ],
+      "beat": "comparison",
+      "visualRule": "A brief false lead keeps the story playful. The red object is contextual, not a flashcard.",
+      "transition": {
+        "type": "fade",
+        "duration": 0.25
+      },
+      "elements": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 500,
+          "fill": "#DDF1F4",
+          "stroke": "#26352F",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 500,
+          "width": 1280,
+          "height": 220,
+          "fill": "#8DBF8A",
+          "stroke": "#26352F",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        {
+          "type": "rect",
+          "x": 700,
+          "y": 440,
+          "width": 360,
+          "height": 40,
+          "fill": "#B9825B",
+          "stroke": "#26352F",
+          "strokeWidth": 3,
+          "radius": 8
+        },
+        {
+          "type": "rect",
+          "x": 735,
+          "y": 480,
+          "width": 30,
+          "height": 160,
+          "fill": "#B9825B",
+          "stroke": "#26352F",
+          "strokeWidth": 3,
+          "radius": 5
+        },
+        {
+          "type": "rect",
+          "x": 1010,
+          "y": 480,
+          "width": 30,
+          "height": 160,
+          "fill": "#B9825B",
+          "stroke": "#26352F",
+          "strokeWidth": 3,
+          "radius": 5
+        },
+        {
+          "type": "circle",
+          "cx": 875,
+          "cy": 420,
+          "r": 62,
+          "fill": "#EF8067",
+          "stroke": "#26352F",
+          "strokeWidth": 3
+        },
+        {
+          "type": "character",
+          "characterId": "milo",
+          "x": 480,
+          "y": 525,
+          "scale": 1.18,
+          "clothes": "accent",
+          "skin": "#F2C7A5",
+          "hair": "ink",
+          "expression": "surprised",
+          "pose": "point",
+          "direction": 1
+        },
+        {
+          "type": "text",
+          "x": 90,
+          "y": 165,
+          "text": "A red ball!",
+          "fontSize": 52,
+          "fill": "accent",
+          "fontWeight": 1000,
+          "fontFamily": "Arial,sans-serif",
+          "anchor": "start"
+        },
+        {
+          "type": "text",
+          "x": 90,
+          "y": 235,
+          "text": "It's red.",
+          "fontSize": 44,
+          "fill": "red",
+          "fontWeight": 900,
+          "fontFamily": "Arial,sans-serif",
+          "anchor": "start"
+        },
+        {
+          "type": "text",
+          "x": 90,
+          "y": 315,
+          "text": "But where is my car?",
+          "fontSize": 40,
+          "fill": "ink",
+          "fontWeight": 800,
+          "fontFamily": "Arial,sans-serif",
+          "anchor": "start"
+        }
+      ]
+    },
+    {
+      "id": "car-reveal",
+      "start": 70,
+      "end": 82,
+      "purpose": "Milo finds his red car under the yellow umbrella.",
+      "semanticRefs": [
+        "story_goal",
+        "v_red",
+        "payoff"
       ],
       "beat": "payoff",
-      "visualRule": "Milo and the three target balls remain visible while the final three-word review appears.",
+      "visualRule": "Resolve the search in one clear visual. The red car is partially hidden at first, then fully revealed.",
       "transition": {
         "type": "fade",
-        "duration": 0.2
+        "duration": 0.25
       },
       "elements": [
         {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 500,
+          "fill": "#DDF1F4",
+          "stroke": "#26352F",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 500,
+          "width": 1280,
+          "height": 220,
+          "fill": "#8DBF8A",
+          "stroke": "#26352F",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        {
+          "type": "path",
+          "d": "M650 290 Q800 150 950 290 L800 290 Z",
+          "fill": "#F3C95B",
+          "stroke": "#26352F",
+          "strokeWidth": 3
+        },
+        {
+          "type": "circle",
+          "cx": 800,
+          "cy": 305,
+          "r": 10,
+          "fill": "#26352F",
+          "stroke": "#26352F",
+          "strokeWidth": 3
+        },
+        {
+          "type": "rect",
+          "x": 795,
+          "y": 305,
+          "width": 10,
+          "height": 150,
+          "fill": "#B9825B",
+          "stroke": "#26352F",
+          "strokeWidth": 3,
+          "radius": 5
+        },
+        {
+          "type": "rect",
+          "x": 650,
+          "y": 445,
+          "width": 300,
+          "height": 95,
+          "fill": "#EF8067",
+          "stroke": "#26352F",
+          "strokeWidth": 3,
+          "radius": 24
+        },
+        {
+          "type": "circle",
+          "cx": 710,
+          "cy": 545,
+          "r": 34,
+          "fill": "#26352F",
+          "stroke": "#26352F",
+          "strokeWidth": 3
+        },
+        {
+          "type": "circle",
+          "cx": 890,
+          "cy": 545,
+          "r": 34,
+          "fill": "#26352F",
+          "stroke": "#26352F",
+          "strokeWidth": 3
+        },
+        {
+          "type": "circle",
+          "cx": 710,
+          "cy": 545,
+          "r": 15,
+          "fill": "#F8E8C8",
+          "stroke": "#26352F",
+          "strokeWidth": 2
+        },
+        {
+          "type": "circle",
+          "cx": 890,
+          "cy": 545,
+          "r": 15,
+          "fill": "#F8E8C8",
+          "stroke": "#26352F",
+          "strokeWidth": 2
+        },
+        {
           "type": "character",
-          "role": "guide",
           "characterId": "milo",
-          "x": 210,
-          "y": 540,
-          "scale": 0.95,
+          "x": 420,
+          "y": 530,
+          "scale": 1.25,
           "clothes": "accent",
-          "motion": {
-            "type": "emphasis",
-            "duration": 0.6,
-            "from": 0.98,
-            "to": 1.03
-          }
+          "skin": "#F2C7A5",
+          "hair": "ink",
+          "expression": "happy",
+          "pose": "celebrate",
+          "direction": 1
         },
         {
           "type": "text",
-          "role": "primary",
-          "x": 640,
-          "y": 250,
-          "anchor": "middle",
-          "text": "You did it!",
+          "x": 90,
+          "y": 150,
+          "text": "There it is!",
+          "fontSize": 58,
           "fill": "accent",
-          "fontSize": 72,
           "fontWeight": 1000,
-          "fontFamily": "Arial,sans-serif"
+          "fontFamily": "Arial,sans-serif",
+          "anchor": "start"
         },
         {
           "type": "text",
-          "role": "primary",
-          "x": 640,
-          "y": 360,
-          "anchor": "middle",
-          "text": "RED  •  BLUE  •  YELLOW",
+          "x": 90,
+          "y": 220,
+          "text": "My red car!",
+          "fontSize": 50,
           "fill": "ink",
-          "fontSize": 46,
           "fontWeight": 900,
-          "fontFamily": "Arial,sans-serif"
+          "fontFamily": "Arial,sans-serif",
+          "anchor": "start"
+        },
+        {
+          "type": "text",
+          "x": 90,
+          "y": 290,
+          "text": "I found it!",
+          "fontSize": 44,
+          "fill": "ink",
+          "fontWeight": 800,
+          "fontFamily": "Arial,sans-serif",
+          "anchor": "start"
+        }
+      ]
+    },
+    {
+      "id": "play",
+      "start": 82,
+      "end": 90,
+      "purpose": "Milo drives away happily with the red car.",
+      "semanticRefs": [
+        "payoff",
+        "v_red"
+      ],
+      "beat": "payoff",
+      "visualRule": "End on action and joy rather than a review card. The final target word is heard in context as Milo plays.",
+      "transition": {
+        "type": "fade",
+        "duration": 0.25
+      },
+      "elements": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 500,
+          "fill": "#DDF1F4",
+          "stroke": "#26352F",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 500,
+          "width": 1280,
+          "height": 220,
+          "fill": "#8DBF8A",
+          "stroke": "#26352F",
+          "strokeWidth": 0,
+          "radius": 0
         },
         {
           "type": "circle",
-          "role": "target-object",
-          "cx": 720,
-          "cy": 520,
-          "r": 45,
+          "cx": 180,
+          "cy": 110,
+          "r": 48,
+          "fill": "#F3C95B",
+          "stroke": "#26352F",
+          "strokeWidth": 0
+        },
+        {
+          "type": "circle",
+          "cx": 1060,
+          "cy": 150,
+          "r": 36,
+          "fill": "white",
+          "stroke": "#26352F",
+          "strokeWidth": 0
+        },
+        {
+          "type": "circle",
+          "cx": 1120,
+          "cy": 120,
+          "r": 30,
+          "fill": "white",
+          "stroke": "#26352F",
+          "strokeWidth": 0
+        },
+        {
+          "type": "rect",
+          "x": 520,
+          "y": 465,
+          "width": 320,
+          "height": 90,
+          "fill": "#EF8067",
+          "stroke": "#26352F",
+          "strokeWidth": 3,
+          "radius": 22
+        },
+        {
+          "type": "circle",
+          "cx": 590,
+          "cy": 560,
+          "r": 34,
+          "fill": "#26352F",
+          "stroke": "#26352F",
+          "strokeWidth": 3
+        },
+        {
+          "type": "circle",
+          "cx": 770,
+          "cy": 560,
+          "r": 34,
+          "fill": "#26352F",
+          "stroke": "#26352F",
+          "strokeWidth": 3
+        },
+        {
+          "type": "character",
+          "characterId": "milo",
+          "x": 680,
+          "y": 430,
+          "scale": 1.05,
+          "clothes": "accent",
+          "skin": "#F2C7A5",
+          "hair": "ink",
+          "expression": "happy",
+          "pose": "drive",
+          "direction": 1
+        },
+        {
+          "type": "text",
+          "x": 470,
+          "y": 170,
+          "text": "My red car!",
+          "fontSize": 58,
           "fill": "accent",
-          "stroke": "ink",
-          "strokeWidth": 5
+          "fontWeight": 1000,
+          "fontFamily": "Arial,sans-serif",
+          "anchor": "start"
         },
         {
-          "type": "circle",
-          "role": "target-object",
-          "cx": 900,
-          "cy": 520,
-          "r": 45,
-          "fill": "blue",
-          "stroke": "ink",
-          "strokeWidth": 5
+          "type": "text",
+          "x": 470,
+          "y": 240,
+          "text": "Let's go!",
+          "fontSize": 52,
+          "fill": "ink",
+          "fontWeight": 900,
+          "fontFamily": "Arial,sans-serif",
+          "anchor": "start"
         },
         {
-          "type": "circle",
-          "role": "target-object",
-          "cx": 1080,
-          "cy": 520,
-          "r": 45,
-          "fill": "yellow",
-          "stroke": "ink",
-          "strokeWidth": 5
+          "type": "text",
+          "x": 470,
+          "y": 315,
+          "text": "Zoom!",
+          "fontSize": 44,
+          "fill": "ink",
+          "fontWeight": 900,
+          "fontFamily": "Arial,sans-serif",
+          "anchor": "start"
         }
       ]
     }
