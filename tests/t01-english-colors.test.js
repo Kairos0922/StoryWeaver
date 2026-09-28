@@ -4,6 +4,8 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {compileContentPlan} from '../src/compiler.js';
 import {validateVideoSpec} from '../src/validate.js';
+import {frameSvg} from '../src/renderers/svg.js';
+import {Resvg} from '@resvg/resvg-js';
 
 const root = path.resolve(import.meta.dirname, '..');
 const plan = JSON.parse(await fs.readFile(path.join(root, 'experiments/t01-english-colors/content-plan.json'), 'utf8'));
@@ -80,4 +82,14 @@ test('T01 uses a storyboard/event-driven animation model', () => {
   for (const action of ['lookAt','walk','run','crouch','reach','react','open','celebrate','drive']) assert.ok(actions.has(action));
   const phases = new Set(plan.scenes.flatMap(s => s.events.map(e => e.phase)));
   for (const phase of ['action','reaction','continuous']) assert.ok(phases.has(phase));
+});
+
+test('T01 representative frames render to valid PNGs', () => {
+  const spec = compileContentPlan(plan);
+  for (const time of [0, 4, 12, 24, 35, 48, 60, 70, 82, 89.5]) {
+    const svg = frameSvg(spec, time);
+    assert.match(svg, /^<svg /);
+    const png = new Resvg(svg, {fitTo:{mode:'width',value:spec.width}, font:{loadSystemFonts:true}}).render().asPng();
+    assert.ok(png.length > 1000, 'frame at '+time+'s rendered');
+  }
 });
