@@ -732,152 +732,150 @@
           "stroke": "#26352F",
           "strokeWidth": 10
         },
-        [
-          {
-            "type": "circle",
-            "cx": 320,
-            "cy": 590,
-            "r": 12,
-            "fill": "#26352F",
-            "stroke": "#26352F",
-            "strokeWidth": 0
-          },
-          {
-            "type": "circle",
-            "cx": 320,
-            "cy": 630,
-            "r": 12,
-            "fill": "#26352F",
-            "stroke": "#26352F",
-            "strokeWidth": 0
-          },
-          {
-            "type": "circle",
-            "cx": 390,
-            "cy": 618,
-            "r": 12,
-            "fill": "#26352F",
-            "stroke": "#26352F",
-            "strokeWidth": 0
-          },
-          {
-            "type": "circle",
-            "cx": 390,
-            "cy": 602,
-            "r": 12,
-            "fill": "#26352F",
-            "stroke": "#26352F",
-            "strokeWidth": 0
-          },
-          {
-            "type": "circle",
-            "cx": 520,
-            "cy": 590,
-            "r": 12,
-            "fill": "#26352F",
-            "stroke": "#26352F",
-            "strokeWidth": 0
-          },
-          {
-            "type": "circle",
-            "cx": 520,
-            "cy": 630,
-            "r": 12,
-            "fill": "#26352F",
-            "stroke": "#26352F",
-            "strokeWidth": 0
-          },
-          {
-            "type": "circle",
-            "cx": 600,
-            "cy": 618,
-            "r": 12,
-            "fill": "#26352F",
-            "stroke": "#26352F",
-            "strokeWidth": 0
-          },
-          {
-            "type": "circle",
-            "cx": 600,
-            "cy": 602,
-            "r": 12,
-            "fill": "#26352F",
-            "stroke": "#26352F",
-            "strokeWidth": 0
-          },
-          {
-            "type": "circle",
-            "cx": 735,
-            "cy": 590,
-            "r": 12,
-            "fill": "#26352F",
-            "stroke": "#26352F",
-            "strokeWidth": 0
-          },
-          {
-            "type": "circle",
-            "cx": 735,
-            "cy": 630,
-            "r": 12,
-            "fill": "#26352F",
-            "stroke": "#26352F",
-            "strokeWidth": 0
-          },
-          {
-            "type": "circle",
-            "cx": 850,
-            "cy": 618,
-            "r": 12,
-            "fill": "#26352F",
-            "stroke": "#26352F",
-            "strokeWidth": 0
-          },
-          {
-            "type": "circle",
-            "cx": 850,
-            "cy": 602,
-            "r": 12,
-            "fill": "#26352F",
-            "stroke": "#26352F",
-            "strokeWidth": 0
-          },
-          {
-            "type": "circle",
-            "cx": 980,
-            "cy": 590,
-            "r": 12,
-            "fill": "#26352F",
-            "stroke": "#26352F",
-            "strokeWidth": 0
-          },
-          {
-            "type": "circle",
-            "cx": 980,
-            "cy": 630,
-            "r": 12,
-            "fill": "#26352F",
-            "stroke": "#26352F",
-            "strokeWidth": 0
-          },
-          {
-            "type": "circle",
-            "cx": 1080,
-            "cy": 618,
-            "r": 12,
-            "fill": "#26352F",
-            "stroke": "#26352F",
-            "strokeWidth": 0
-          },
-          {
-            "type": "circle",
-            "cx": 1080,
-            "cy": 602,
-            "r": 12,
-            "fill": "#26352F",
-            "stroke": "#26352F",
-            "strokeWidth": 0
-          }
-        ],
+        {
+          "type": "circle",
+          "cx": 320,
+          "cy": 590,
+          "r": 12,
+          "fill": "#26352F",
+          "stroke": "#26352F",
+          "strokeWidth": 0
+        },
+        {
+          "type": "circle",
+          "cx": 320,
+          "cy": 630,
+          "r": 12,
+          "fill": "#26352F",
+          "stroke": "#26352F",
+          "strokeWidth": 0
+        },
+        {
+          "type": "circle",
+          "cx": 390,
+          "cy": 618,
+          "r": 12,
+          "fill": "#26352F",
+          "stroke": "#26352F",
+          "strokeWidth": 0
+        },
+        {
+          "type": "circle",
+          "cx": 390,
+          "cy": 602,
+          "r": 12,
+          "fill": "#26352F",
+          "stroke": "#26352F",
+          "strokeWidth": 0
+        },
+        {
+          "type": "circle",
+          "cx": 520,
+          "cy": 590,
+          "r": 12,
+          "fill": "#26352F",
+          "stroke": "#26352F",
+          "strokeWidth": 0
+        },
+        {
+          "type": "circle",
+          "cx": 520,
+          "cy": 630,
+          "r": 12,
+          "fill": "#26352F",
+          "stroke": "#26352F",
+          "strokeWidth": 0
+        },
+        {
+          "type": "circle",
+          "cx": 600,
+          "cy": 618,
+          "r": 12,
+          "fill": "#26352F",
+          "stroke": "#26352F",
+          "strokeWidth": 0
+        },
+        {
+          "type": "circle",
+          "cx": 600,
+          "cy": 602,
+          "r": 12,
+          "fill": "#26352F",
+          "stroke": "#26352F",
+          "strokeWidth": 0
+        },
+        {
+          "type": "circle",
+          "cx": 735,
+          "cy": 590,
+          "r": 12,
+          "fill": "#26352F",
+          "stroke": "#26352F",
+          "strokeWidth": 0
+        },
+        {
+          "type": "circle",
+          "cx": 735,
+          "cy": 630,
+          "r": 12,
+          "fill": "#26352F",
+          "stroke": "#26352F",
+          "strokeWidth": 0
+        },
+        {
+          "type": "circle",
+          "cx": 850,
+          "cy": 618,
+          "r": 12,
+          "fill": "#26352F",
+          "stroke": "#26352F",
+          "strokeWidth": 0
+        },
+        {
+          "type": "circle",
+          "cx": 850,
+          "cy": 602,
+          "r": 12,
+          "fill": "#26352F",
+          "stroke": "#26352F",
+          "strokeWidth": 0
+        },
+        {
+          "type": "circle",
+          "cx": 980,
+          "cy": 590,
+          "r": 12,
+          "fill": "#26352F",
+          "stroke": "#26352F",
+          "strokeWidth": 0
+        },
+        {
+          "type": "circle",
+          "cx": 980,
+          "cy": 630,
+          "r": 12,
+          "fill": "#26352F",
+          "stroke": "#26352F",
+          "strokeWidth": 0
+        },
+        {
+          "type": "circle",
+          "cx": 1080,
+          "cy": 618,
+          "r": 12,
+          "fill": "#26352F",
+          "stroke": "#26352F",
+          "strokeWidth": 0
+        },
+        {
+          "type": "circle",
+          "cx": 1080,
+          "cy": 602,
+          "r": 12,
+          "fill": "#26352F",
+          "stroke": "#26352F",
+          "strokeWidth": 0
+        },
         {
           "type": "character",
           "characterId": "milo",
