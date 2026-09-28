@@ -9,25 +9,41 @@ function progress(t,e,scene){
  return clamp((t-start)/Math.max(0.001,end-start),0,1);
 }
 
-function motionState(e,p){
+function motionState(e,t,scene){
  const m=e.motion||{type:'none'};
- const d=m.duration??0.35;
- const local=d===0?1:clamp(p/(d/Math.max(0.001,(e.end??1)-(e.start??0))),0,1);
+ const start=e.start??scene.start,end=e.end??scene.end;
+ const span=Math.max(.001,end-start),p=clamp((t-start)/span,0,1);
+ const d=m.duration??Math.min(.45,span),local=d===0?1:clamp(p/(d/span),0,1);
  const q=m.easing==='linear'?local:m.easing==='easeInOut'?(local<.5?2*local*local:1-Math.pow(-2*local+2,2)/2):1-Math.pow(1-local,3);
- let opacity=e.opacity??1, dx=0, dy=0, scale=1;
+ let opacity=e.opacity??1,dx=0,dy=0,scale=1,rotate=0;
  if(m.type==='fade') opacity*=q;
  if(m.type==='slide'){dx=(m.dx??0)*(1-q);dy=(m.dy??0)*(1-q);}
  if(m.type==='scale'){scale=lerp(m.from??0.9,m.to??1,q);}
- if(m.type==='emphasis'){scale=lerp(m.from??0.96,m.to??1.04,Math.sin(q*Math.PI));}
- return {opacity,dx,dy,scale};
+ if(m.type==='emphasis'){scale=lerp(m.from??.96,m.to??1.04,Math.sin(q*Math.PI));}
+ if(m.type==='bob'){dy=Math.sin(p*Math.PI*2*(m.cycles??1))*(m.amount??8);}
+ if(m.type==='shake'){dx=Math.sin(p*Math.PI*2*(m.cycles??3))*(m.amount??7);}
+ if(m.type==='travel'){dx=lerp(m.fromX??0,m.toX??0,p);dy=lerp(m.fromY??0,m.toY??0,p);}
+ if(m.type==='rotate'){rotate=lerp(m.from??0,m.to??360,p);}
+ return {opacity,dx,dy,scale,rotate,p};
+}
+
+function renderProp(e,state,palette){
+ const x=num(e.x),y=num(e.y),s=num(e.scale,1),fill=col(palette,e.fill,'#EF8067'),ink=col(palette,e.stroke,'#26352F');
+ const tr='translate('+(x+state.dx)+' '+(y+state.dy)+') rotate('+state.rotate+') scale('+(s*state.scale)+')';
+ if(e.kind==='ball') return '<g opacity="'+state.opacity+'" transform="'+tr+'"><circle r="42" fill="'+esc(fill)+'" stroke="'+esc(ink)+'" stroke-width="4"/><path d="M-28-28 Q0-8 28-28" fill="none" stroke="#fff" stroke-width="5" opacity=".65"/><circle cx="-13" cy="-14" r="7" fill="#fff" opacity=".7"/></g>';
+ if(e.kind==='box') return '<g opacity="'+state.opacity+'" transform="'+tr+'"><rect x="-120" y="-75" width="240" height="150" rx="20" fill="'+esc(fill)+'" stroke="'+esc(ink)+'" stroke-width="5"/><path d="M-120-45 L0-5 L120-45" fill="none" stroke="'+esc(ink)+'" stroke-width="4"/><path d="M0-75 L0 75" stroke="'+esc(ink)+'" stroke-width="4" opacity=".5"/></g>';
+ if(e.kind==='umbrella') return '<g opacity="'+state.opacity+'" transform="'+tr+'"><path d="M-115 0 Q0-115 115 0 Z" fill="'+esc(fill)+'" stroke="'+esc(ink)+'" stroke-width="5"/><path d="M-80 0 Q-70 24 -52 0 M-26 0 Q-15 24 0 0 M26 0 Q40 24 52 0 M80 0 Q92 24 115 0" fill="none" stroke="'+esc(ink)+'" stroke-width="4"/><path d="M0 0 L0 145 Q0 170 25 170" fill="none" stroke="'+esc(ink)+'" stroke-width="6" stroke-linecap="round"/></g>';
+ if(e.kind==='car') return '<g opacity="'+state.opacity+'" transform="'+tr+'"><rect x="-120" y="-35" width="240" height="75" rx="24" fill="'+esc(fill)+'" stroke="'+esc(ink)+'" stroke-width="5"/><path d="M-70-35 L-35-82 L55-82 L88-35" fill="'+esc(fill)+'" stroke="'+esc(ink)+'" stroke-width="5"/><path d="M-25-72 L-5-43 M15-72 L50-43" stroke="#fff" stroke-width="5" opacity=".7"/><circle cx="-70" cy="45" r="25" fill="#26352F"/><circle cx="70" cy="45" r="25" fill="#26352F"/><circle cx="-70" cy="45" r="11" fill="#F8E8C8"/><circle cx="70" cy="45" r="11" fill="#F8E8C8"/><circle cx="108" cy="-5" r="7" fill="#FFE8A8"/></g>';
+ if(e.kind==='track') return '<g opacity="'+state.opacity+'" transform="'+tr+'"><ellipse cx="-25" cy="0" rx="18" ry="34" fill="'+esc(fill)+'" transform="rotate(-20)"/><ellipse cx="25" cy="0" rx="18" ry="34" fill="'+esc(fill)+'" transform="rotate(20)"/></g>';
+ return '';
 }
 
 function renderElement(e,t,scene,palette,mult=1){
  const p=progress(t,e,scene);
- const state=motionState(e,p);
+ const state=motionState(e,t,scene);
  state.opacity*=mult;
  const fill=col(palette,e.fill),stroke=col(palette,e.stroke);
- const a=' opacity="'+state.opacity+'" transform="translate('+state.dx+' '+state.dy+') scale('+state.scale+')"';
+ const a=' opacity="'+state.opacity+'" transform="translate('+state.dx+' '+state.dy+') rotate('+state.rotate+') scale('+state.scale+')"';
  if(e.type==='rect') return '<rect x="'+num(e.x)+'" y="'+num(e.y)+'" width="'+num(e.width)+'" height="'+num(e.height)+'" rx="'+num(e.radius)+'" fill="'+esc(fill)+'" stroke="'+esc(stroke)+'" stroke-width="'+num(e.strokeWidth)+'"'+a+'/>';
  if(e.type==='circle') return '<circle cx="'+num(e.cx)+'" cy="'+num(e.cy)+'" r="'+num(e.r)+'" fill="'+esc(fill)+'" stroke="'+esc(stroke)+'" stroke-width="'+num(e.strokeWidth)+'"'+a+'/>';
  if(e.type==='line'){
@@ -41,24 +57,30 @@ function renderElement(e,t,scene,palette,mult=1){
  if(e.type==='path') return '<path d="'+esc(e.d||'')+'" fill="'+esc(fill)+'" stroke="'+esc(stroke)+'" stroke-width="'+num(e.strokeWidth,2)+'"'+a+'/>';
  if(e.type==='text'||e.type==='caption') return '<text x="'+num(e.x)+'" y="'+num(e.y)+'" text-anchor="'+esc(e.anchor||'start')+'" font-family="'+esc(e.fontFamily||'Arial,sans-serif')+'" font-size="'+num(e.fontSize,32)+'px" font-weight="'+esc(e.fontWeight||600)+'" fill="'+esc(fill)+'"'+a+'>'+esc(e.text||'')+'</text>';
  if(e.type==='group') return '<g'+a+'>'+((e.children||[]).map(c=>renderElement(c,t,scene,palette,mult)).join(''))+'</g>';
+ if(e.type==='prop') return renderProp(e,state,palette);
  if(e.type==='character'){
   const x=num(e.x),y=num(e.y),s=num(e.scale,1),skin=col(palette,e.skin||'skin','#F2C7A5'),hair=col(palette,e.hair||'ink','#17221E'),clothes=col(palette,e.clothes||'accent','#D97745');
   const pose=e.pose||'idle',expression=e.expression||'happy',dir=num(e.direction,1);
-  const armY=pose==='point'?-10:pose==='open'?-18:pose==='search'?4:pose==='celebrate'?-48:pose==='drive'?0:-8;
-  const armDX=pose==='point'?58:pose==='open'?48:pose==='search'?42:pose==='celebrate'?42:pose==='drive'?38:34;
-  const legDX=pose==='walk'?22:pose==='drive'?18:16;
-  const mouth=expression==='worried'?'M-12 6 Q0-2 12 6':expression==='surprised'?'M-7 2 A7 9 0 1 0 7 2':expression==='excited'?'M-13 0 Q0 14 13 0':'M-13 0 Q0 12 13 0';
-  return '<g opacity="'+state.opacity+'" transform="translate('+x+' '+y+') scale('+(s*state.scale*dir)+' '+(s*state.scale)+')">'+
-    '<circle cx="0" cy="-72" r="34" fill="'+esc(skin)+'"/>'+
-    '<path d="M-34-73 Q-28-112 0-112 Q28-112 34-73 Q19-91 0-95 Q-19-91-34-73Z" fill="'+esc(hair)+'"/>'+
-    '<circle cx="-13" cy="-72" r="4.5" fill="'+esc(hair)+'"/><circle cx="13" cy="-72" r="4.5" fill="'+esc(hair)+'"/>'+
-    '<path d="'+mouth+'" fill="none" stroke="'+esc(hair)+'" stroke-width="3.5" stroke-linecap="round"/>'+
-    '<rect x="-29" y="-35" width="58" height="82" rx="18" fill="'+esc(clothes)+'"/>'+
-    '<line x1="-28" y1="-15" x2="'+(-28-armDX)+'" y2="'+armY+'" stroke="'+esc(hair)+'" stroke-width="11" stroke-linecap="round"/>'+
-    '<line x1="28" y1="-15" x2="'+(28+armDX)+'" y2="'+armY+'" stroke="'+esc(hair)+'" stroke-width="11" stroke-linecap="round"/>'+
-    '<circle cx="'+(-28-armDX)+'" cy="'+armY+'" r="7" fill="'+esc(skin)+'"/><circle cx="'+(28+armDX)+'" cy="'+armY+'" r="7" fill="'+esc(skin)+'"/>'+
-    '<line x1="-13" y1="47" x2="'+(-13-legDX)+'" y2="96" stroke="'+esc(hair)+'" stroke-width="11" stroke-linecap="round"/>'+
-    '<line x1="13" y1="47" x2="'+(13+legDX)+'" y2="96" stroke="'+esc(hair)+'" stroke-width="11" stroke-linecap="round"/>'+
+  const walk=e.motion?.type==='travel'||pose==='walk';
+  const cycle=walk?Math.sin(state.p*Math.PI*2):0;
+  const armY=pose==='point'?-18:pose==='open'?-28:pose==='search'?8:pose==='celebrate'?-55:pose==='drive'?5:-8;
+  const armDX=pose==='point'?62:pose==='open'?52:pose==='search'?45:pose==='celebrate'?48:pose==='drive'?38:35;
+  const legA=walk?24*cycle:pose==='drive'?18:16,legB=-legA;
+  const mouth=expression==='worried'?'M-12 7 Q0-1 12 7':expression==='surprised'?'M-8 0 A8 10 0 1 0 8 0':expression==='excited'?'M-13 0 Q0 15 13 0':'M-13 0 Q0 11 13 0';
+  const eyeScale=expression==='surprised'?1.35:1;
+  return '<g opacity="'+state.opacity+'" transform="translate('+(x+state.dx)+' '+(y+state.dy)+') scale('+(s*state.scale*dir)+' '+(s*state.scale)+')">'+
+    '<ellipse cx="0" cy="55" rx="42" ry="10" fill="#26352F" opacity=".12"/>'+
+    '<circle cx="0" cy="-72" r="38" fill="'+esc(skin)+'"/>'+
+    '<path d="M-38-72 Q-34-120 0-120 Q34-120 38-72 Q20-96 0-101 Q-20-96-38-72Z" fill="'+esc(hair)+'"/>'+
+    '<path d="M-39-72 Q-48-58-37-48" fill="none" stroke="'+esc(skin)+'" stroke-width="12" stroke-linecap="round"/><path d="M39-72 Q48-58 37-48" fill="none" stroke="'+esc(skin)+'" stroke-width="12" stroke-linecap="round"/>'+
+    '<circle cx="-14" cy="-72" r="'+(5*eyeScale)+'" fill="'+esc(hair)+'"/><circle cx="14" cy="-72" r="'+(5*eyeScale)+'" fill="'+esc(hair)+'"/>'+
+    '<path d="'+mouth+'" fill="none" stroke="'+esc(hair)+'" stroke-width="4" stroke-linecap="round"/>'+
+    '<rect x="-34" y="-34" width="68" height="86" rx="20" fill="'+esc(clothes)+'" stroke="'+esc(hair)+'" stroke-width="3"/>'+
+    '<line x1="-31" y1="-10" x2="'+(-31-armDX)+'" y2="'+armY+'" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
+    '<line x1="31" y1="-10" x2="'+(31+armDX)+'" y2="'+armY+'" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
+    '<circle cx="'+(-31-armDX)+'" cy="'+armY+'" r="8" fill="'+esc(skin)+'"/><circle cx="'+(31+armDX)+'" cy="'+armY+'" r="8" fill="'+esc(skin)+'"/>'+
+    '<line x1="-15" y1="52" x2="'+(-15-legA)+'" y2="108" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
+    '<line x1="15" y1="52" x2="'+(15+legB)+'" y2="108" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
     '</g>';
  }
  return '';
