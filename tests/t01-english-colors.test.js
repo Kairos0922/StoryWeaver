@@ -25,7 +25,7 @@ test('T01 is story-first, not lesson-card-first', () => {
   assert.ok(plan.scenes.some(s => s.beat === 'escalation'));
   assert.ok(plan.scenes.some(s => s.beat === 'reveal'));
   assert.equal(plan.scenes.at(-1).beat, 'payoff');
-  assert.equal(plan.scenes.at(-1).id, 'play');
+  assert.equal(plan.scenes.at(-1).id, 'payoff');
 });
 
 test('T01 uses only three target colors and embeds them in the story', () => {
