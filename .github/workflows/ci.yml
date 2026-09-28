@@ -12,3 +12,7 @@ jobs:
       - run: npm test
       - run: npm run validate
       - run: node scripts/build-vercel-t01.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: t01-english-colors-final
+          path: public/experiments/t01-english-colors
