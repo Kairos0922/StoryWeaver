@@ -281,7 +281,76 @@
         "fromScale": 1,
         "toScale": 1.08,
         "easing": "easeOut"
-      }
+      },
+      "reads": [
+        "Milo notices the missing car",
+        "The empty parking spot is the problem"
+      ],
+      "keyPoses": [
+        {
+          "id": "p1",
+          "time": 0,
+          "pose": "idle",
+          "note": "Milo plays normally"
+        },
+        {
+          "id": "p2",
+          "time": 2.2,
+          "pose": "react",
+          "note": "He realizes the car is gone"
+        },
+        {
+          "id": "p3",
+          "time": 5,
+          "pose": "point",
+          "note": "He searches the room"
+        }
+      ],
+      "events": [
+        {
+          "id": "notice",
+          "start": 1.8,
+          "end": 2.8,
+          "action": "react",
+          "actor": "milo",
+          "target": "",
+          "phase": "reaction",
+          "expression": "surprised"
+        },
+        {
+          "id": "search",
+          "start": 3,
+          "end": 5.5,
+          "action": "lookAt",
+          "actor": "milo",
+          "target": "",
+          "phase": "action",
+          "gaze": "right"
+        },
+        {
+          "id": "point",
+          "start": 5.5,
+          "end": 8,
+          "action": "point",
+          "actor": "milo",
+          "target": "",
+          "phase": "action",
+          "pose": "point",
+          "gaze": "right"
+        },
+        {
+          "id": "decide",
+          "start": 8,
+          "end": 9.5,
+          "action": "run",
+          "actor": "milo",
+          "target": "",
+          "phase": "continuous",
+          "pose": "run",
+          "expression": "excited",
+          "gaze": "right"
+        }
+      ]
     },
     {
       "id": "cushion",
@@ -378,7 +447,96 @@
         "toScale": 1.18,
         "toX": -70,
         "easing": "easeInOut"
-      }
+      },
+      "reads": [
+        "Milo follows the clue to the couch",
+        "The red object is hidden under the cushion",
+        "It is a ball, not the missing car"
+      ],
+      "keyPoses": [
+        {
+          "id": "p1",
+          "time": 0,
+          "pose": "walk",
+          "note": "Milo approaches the couch"
+        },
+        {
+          "id": "p2",
+          "time": 3,
+          "pose": "crouch",
+          "note": "He lowers his body"
+        },
+        {
+          "id": "p3",
+          "time": 6,
+          "pose": "reach",
+          "note": "He lifts the cushion"
+        },
+        {
+          "id": "p4",
+          "time": 8,
+          "pose": "react",
+          "note": "He sees the red ball"
+        }
+      ],
+      "events": [
+        {
+          "id": "approach",
+          "start": 0,
+          "end": 3,
+          "action": "walk",
+          "actor": "milo",
+          "target": "",
+          "phase": "continuous",
+          "pose": "walk",
+          "gaze": "right"
+        },
+        {
+          "id": "crouch",
+          "start": 3,
+          "end": 5,
+          "action": "crouch",
+          "actor": "milo",
+          "target": "",
+          "phase": "action",
+          "pose": "crouch",
+          "gaze": "down"
+        },
+        {
+          "id": "reach",
+          "start": 5,
+          "end": 7,
+          "action": "reach",
+          "actor": "milo",
+          "target": "ball",
+          "phase": "action",
+          "pose": "reach",
+          "gaze": "down"
+        },
+        {
+          "id": "reveal",
+          "start": 7,
+          "end": 8.8,
+          "action": "react",
+          "actor": "milo",
+          "target": "ball",
+          "phase": "reaction",
+          "expression": "surprised",
+          "gaze": "down"
+        },
+        {
+          "id": "reject",
+          "start": 8.8,
+          "end": 10,
+          "action": "point",
+          "actor": "milo",
+          "target": "ball",
+          "phase": "settle",
+          "pose": "point",
+          "expression": "happy",
+          "gaze": "down"
+        }
+      ]
     },
     {
       "id": "box",
@@ -472,7 +630,98 @@
         "fromScale": 1,
         "toScale": 1.06,
         "easing": "easeInOut"
-      }
+      },
+      "reads": [
+        "Milo notices a blue box",
+        "The box opens",
+        "It is empty"
+      ],
+      "keyPoses": [
+        {
+          "id": "p1",
+          "time": 0,
+          "pose": "point",
+          "note": "Milo spots the box"
+        },
+        {
+          "id": "p2",
+          "time": 3,
+          "pose": "reach",
+          "note": "He reaches for it"
+        },
+        {
+          "id": "p3",
+          "time": 5,
+          "pose": "open",
+          "note": "He opens it"
+        },
+        {
+          "id": "p4",
+          "time": 8,
+          "pose": "react",
+          "note": "It is empty"
+        }
+      ],
+      "events": [
+        {
+          "id": "spot",
+          "start": 0,
+          "end": 2.2,
+          "action": "lookAt",
+          "actor": "milo",
+          "target": "box",
+          "phase": "action",
+          "pose": "idle",
+          "expression": "surprised",
+          "gaze": "right"
+        },
+        {
+          "id": "approach",
+          "start": 2.2,
+          "end": 4.5,
+          "action": "walk",
+          "actor": "milo",
+          "target": "box",
+          "phase": "continuous",
+          "pose": "walk",
+          "expression": "excited",
+          "gaze": "right"
+        },
+        {
+          "id": "reach",
+          "start": 4.5,
+          "end": 6,
+          "action": "reach",
+          "actor": "milo",
+          "target": "box",
+          "phase": "action",
+          "pose": "reach",
+          "gaze": "right"
+        },
+        {
+          "id": "open",
+          "start": 6,
+          "end": 8,
+          "action": "open",
+          "actor": "milo",
+          "target": "box",
+          "phase": "action",
+          "pose": "open",
+          "expression": "excited",
+          "gaze": "right"
+        },
+        {
+          "id": "empty",
+          "start": 8,
+          "end": 10,
+          "action": "react",
+          "actor": "milo",
+          "target": "box",
+          "phase": "reaction",
+          "expression": "surprised",
+          "gaze": "right"
+        }
+      ]
     },
     {
       "id": "door",
@@ -577,7 +826,93 @@
         "fromScale": 1,
         "toScale": 1.08,
         "easing": "easeInOut"
-      }
+      },
+      "reads": [
+        "A yellow umbrella is another false lead",
+        "Milo checks it quickly",
+        "The car is still missing"
+      ],
+      "keyPoses": [
+        {
+          "id": "p1",
+          "time": 0,
+          "pose": "run",
+          "note": "Milo enters"
+        },
+        {
+          "id": "p2",
+          "time": 3,
+          "pose": "stop",
+          "note": "He stops at the umbrella"
+        },
+        {
+          "id": "p3",
+          "time": 6,
+          "pose": "react",
+          "note": "He realizes it is not the car"
+        }
+      ],
+      "events": [
+        {
+          "id": "run",
+          "start": 0,
+          "end": 3,
+          "action": "run",
+          "actor": "milo",
+          "target": "umbrella",
+          "phase": "continuous",
+          "pose": "run",
+          "expression": "excited",
+          "gaze": "right"
+        },
+        {
+          "id": "stop",
+          "start": 3,
+          "end": 4.5,
+          "action": "stop",
+          "actor": "milo",
+          "target": "umbrella",
+          "phase": "action",
+          "pose": "idle",
+          "expression": "surprised",
+          "gaze": "right"
+        },
+        {
+          "id": "look",
+          "start": 4.5,
+          "end": 7,
+          "action": "lookAt",
+          "actor": "milo",
+          "target": "umbrella",
+          "phase": "action",
+          "pose": "idle",
+          "expression": "curious",
+          "gaze": "right"
+        },
+        {
+          "id": "reject",
+          "start": 7,
+          "end": 9,
+          "action": "react",
+          "actor": "milo",
+          "target": "umbrella",
+          "phase": "reaction",
+          "expression": "worried",
+          "gaze": "right"
+        },
+        {
+          "id": "leave",
+          "start": 9,
+          "end": 11,
+          "action": "run",
+          "actor": "milo",
+          "target": "",
+          "phase": "continuous",
+          "pose": "run",
+          "expression": "excited",
+          "gaze": "right"
+        }
+      ]
     },
     {
       "id": "tracks",
@@ -752,7 +1087,100 @@
         "toScale": 1.18,
         "toX": 100,
         "easing": "easeOut"
-      }
+      },
+      "reads": [
+        "Milo finds little tracks",
+        "The tracks point somewhere",
+        "He decides to follow them"
+      ],
+      "keyPoses": [
+        {
+          "id": "p1",
+          "time": 0,
+          "pose": "idle",
+          "note": "Milo notices tracks"
+        },
+        {
+          "id": "p2",
+          "time": 3,
+          "pose": "crouch",
+          "note": "He studies them"
+        },
+        {
+          "id": "p3",
+          "time": 6,
+          "pose": "point",
+          "note": "He points along the trail"
+        },
+        {
+          "id": "p4",
+          "time": 9,
+          "pose": "run",
+          "note": "He follows"
+        }
+      ],
+      "events": [
+        {
+          "id": "notice",
+          "start": 0,
+          "end": 2.5,
+          "action": "lookAt",
+          "actor": "milo",
+          "target": "track",
+          "phase": "action",
+          "pose": "idle",
+          "expression": "surprised",
+          "gaze": "down"
+        },
+        {
+          "id": "inspect",
+          "start": 2.5,
+          "end": 5,
+          "action": "crouch",
+          "actor": "milo",
+          "target": "track",
+          "phase": "action",
+          "pose": "crouch",
+          "expression": "curious",
+          "gaze": "down"
+        },
+        {
+          "id": "point",
+          "start": 5,
+          "end": 7.5,
+          "action": "point",
+          "actor": "milo",
+          "target": "track",
+          "phase": "action",
+          "pose": "point",
+          "expression": "excited",
+          "gaze": "right"
+        },
+        {
+          "id": "follow",
+          "start": 7.5,
+          "end": 10,
+          "action": "run",
+          "actor": "milo",
+          "target": "track",
+          "phase": "continuous",
+          "pose": "run",
+          "expression": "excited",
+          "gaze": "right"
+        },
+        {
+          "id": "go",
+          "start": 10,
+          "end": 11,
+          "action": "run",
+          "actor": "milo",
+          "target": "",
+          "phase": "continuous",
+          "pose": "run",
+          "expression": "excited",
+          "gaze": "right"
+        }
+      ]
     },
     {
       "id": "follow",
@@ -841,7 +1269,80 @@
         "fromScale": 1.05,
         "toScale": 1.12,
         "easing": "easeInOut"
-      }
+      },
+      "reads": [
+        "Milo follows the trail through the landscape",
+        "The trail leads to another red clue"
+      ],
+      "keyPoses": [
+        {
+          "id": "p1",
+          "time": 0,
+          "pose": "walk",
+          "note": "Milo follows"
+        },
+        {
+          "id": "p2",
+          "time": 5,
+          "pose": "run",
+          "note": "He speeds up"
+        },
+        {
+          "id": "p3",
+          "time": 9,
+          "pose": "react",
+          "note": "A red ball appears"
+        }
+      ],
+      "events": [
+        {
+          "id": "follow",
+          "start": 0,
+          "end": 5,
+          "action": "walk",
+          "actor": "milo",
+          "target": "track",
+          "phase": "continuous",
+          "pose": "walk",
+          "expression": "excited",
+          "gaze": "right"
+        },
+        {
+          "id": "speed",
+          "start": 5,
+          "end": 9,
+          "action": "run",
+          "actor": "milo",
+          "target": "ball",
+          "phase": "continuous",
+          "pose": "run",
+          "expression": "excited",
+          "gaze": "right"
+        },
+        {
+          "id": "see",
+          "start": 9,
+          "end": 11,
+          "action": "react",
+          "actor": "milo",
+          "target": "ball",
+          "phase": "reaction",
+          "expression": "surprised",
+          "gaze": "right"
+        },
+        {
+          "id": "approach",
+          "start": 11,
+          "end": 12,
+          "action": "run",
+          "actor": "milo",
+          "target": "ball",
+          "phase": "continuous",
+          "pose": "run",
+          "expression": "excited",
+          "gaze": "right"
+        }
+      ]
     },
     {
       "id": "reveal",
@@ -954,7 +1455,118 @@
         "toScale": 1.28,
         "toX": 90,
         "easing": "easeOut"
-      }
+      },
+      "reads": [
+        "Milo reaches the final clue",
+        "The yellow umbrella lifts",
+        "The missing red car is revealed",
+        "Milo reacts with joy"
+      ],
+      "keyPoses": [
+        {
+          "id": "p1",
+          "time": 0,
+          "pose": "run",
+          "note": "Milo approaches"
+        },
+        {
+          "id": "p2",
+          "time": 4,
+          "pose": "reach",
+          "note": "He grabs the umbrella"
+        },
+        {
+          "id": "p3",
+          "time": 6,
+          "pose": "open",
+          "note": "The umbrella lifts"
+        },
+        {
+          "id": "p4",
+          "time": 8,
+          "pose": "react",
+          "note": "The red car is revealed"
+        },
+        {
+          "id": "p5",
+          "time": 10,
+          "pose": "celebrate",
+          "note": "Milo celebrates"
+        }
+      ],
+      "events": [
+        {
+          "id": "approach",
+          "start": 0,
+          "end": 4,
+          "action": "run",
+          "actor": "milo",
+          "target": "umbrella",
+          "phase": "continuous",
+          "pose": "run",
+          "expression": "excited",
+          "gaze": "right"
+        },
+        {
+          "id": "grab",
+          "start": 4,
+          "end": 5.5,
+          "action": "reach",
+          "actor": "milo",
+          "target": "umbrella",
+          "phase": "action",
+          "pose": "reach",
+          "expression": "excited",
+          "gaze": "right"
+        },
+        {
+          "id": "lift",
+          "start": 5.5,
+          "end": 7,
+          "action": "lift",
+          "actor": "milo",
+          "target": "umbrella",
+          "phase": "action",
+          "pose": "reach",
+          "expression": "excited",
+          "gaze": "right"
+        },
+        {
+          "id": "reveal",
+          "start": 7,
+          "end": 8.5,
+          "action": "react",
+          "actor": "milo",
+          "target": "car",
+          "phase": "reaction",
+          "expression": "surprised",
+          "gaze": "right"
+        },
+        {
+          "id": "celebrate",
+          "start": 8.5,
+          "end": 11,
+          "action": "celebrate",
+          "actor": "milo",
+          "target": "car",
+          "phase": "reaction",
+          "pose": "celebrate",
+          "expression": "excited",
+          "gaze": "right"
+        },
+        {
+          "id": "go",
+          "start": 11,
+          "end": 12,
+          "action": "drive",
+          "actor": "milo",
+          "target": "car",
+          "phase": "settle",
+          "pose": "drive",
+          "expression": "excited",
+          "gaze": "right"
+        }
+      ]
     },
     {
       "id": "payoff",
@@ -1049,7 +1661,87 @@
         "fromScale": 1,
         "toScale": 1.05,
         "easing": "easeInOut"
-      }
+      },
+      "reads": [
+        "Milo gets his red car back",
+        "He drives away happily"
+      ],
+      "keyPoses": [
+        {
+          "id": "p1",
+          "time": 0,
+          "pose": "celebrate",
+          "note": "Milo celebrates"
+        },
+        {
+          "id": "p2",
+          "time": 3,
+          "pose": "drive",
+          "note": "He gets moving"
+        },
+        {
+          "id": "p3",
+          "time": 8,
+          "pose": "drive",
+          "note": "He drives into the distance"
+        },
+        {
+          "id": "p4",
+          "time": 11,
+          "pose": "drive",
+          "note": "Final energetic exit"
+        }
+      ],
+      "events": [
+        {
+          "id": "celebrate",
+          "start": 0,
+          "end": 2.5,
+          "action": "celebrate",
+          "actor": "milo",
+          "target": "car",
+          "phase": "reaction",
+          "pose": "celebrate",
+          "expression": "excited",
+          "gaze": "right"
+        },
+        {
+          "id": "start",
+          "start": 2.5,
+          "end": 4,
+          "action": "drive",
+          "actor": "milo",
+          "target": "car",
+          "phase": "action",
+          "pose": "drive",
+          "expression": "excited",
+          "gaze": "right"
+        },
+        {
+          "id": "drive",
+          "start": 4,
+          "end": 10,
+          "action": "drive",
+          "actor": "milo",
+          "target": "car",
+          "phase": "continuous",
+          "pose": "drive",
+          "expression": "excited",
+          "gaze": "right"
+        },
+        {
+          "id": "exit",
+          "start": 10,
+          "end": 12,
+          "action": "drive",
+          "actor": "milo",
+          "target": "car",
+          "phase": "settle",
+          "pose": "drive",
+          "expression": "excited",
+          "gaze": "right"
+        }
+      ]
     }
   ]
 }
