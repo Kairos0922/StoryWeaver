@@ -28,13 +28,31 @@ function motionState(e,t,scene){
  return {opacity,dx,dy,scale,rotate,p};
 }
 
+function cameraState(scene,t,spec){
+ const c=scene.camera||{type:'static'};
+ const start=scene.start,end=scene.end,p=clamp((t-start)/Math.max(.001,end-start),0,1);
+ const ease=v=>c.easing==='linear'?v:(1-Math.pow(1-v,3));
+ const q=ease(p);
+ const panX=lerp(c.fromX??0,c.toX??0,q),panY=lerp(c.fromY??0,c.toY??0,q);
+ const scale=lerp(c.fromScale??1,c.toScale??1,q);
+ return {panX,panY,scale};
+}
+
 function renderProp(e,state,palette){
+
  const x=num(e.x),y=num(e.y),s=num(e.scale,1),fill=col(palette,e.fill,'#EF8067'),ink=col(palette,e.stroke,'#26352F');
  const tr='translate('+(x+state.dx)+' '+(y+state.dy)+') rotate('+state.rotate+') scale('+(s*state.scale)+')';
  if(e.kind==='ball') return '<g opacity="'+state.opacity+'" transform="'+tr+'"><circle r="42" fill="'+esc(fill)+'" stroke="'+esc(ink)+'" stroke-width="4"/><path d="M-28-28 Q0-8 28-28" fill="none" stroke="#fff" stroke-width="5" opacity=".65"/><circle cx="-13" cy="-14" r="7" fill="#fff" opacity=".7"/></g>';
- if(e.kind==='box') return '<g opacity="'+state.opacity+'" transform="'+tr+'"><rect x="-120" y="-75" width="240" height="150" rx="20" fill="'+esc(fill)+'" stroke="'+esc(ink)+'" stroke-width="5"/><path d="M-120-45 L0-5 L120-45" fill="none" stroke="'+esc(ink)+'" stroke-width="4"/><path d="M0-75 L0 75" stroke="'+esc(ink)+'" stroke-width="4" opacity=".5"/></g>';
+ if(e.kind==='box'){
+  const open=clamp(e.openAt==null?0:((state.p-e.openAt)/Math.max(.001,1-e.openAt)),0,1);
+  const lidY=-75-open*48, lidR=-12*open;
+  return '<g opacity="'+state.opacity+'" transform="'+tr+'"><rect x="-120" y="-75" width="240" height="150" rx="20" fill="'+esc(fill)+'" stroke="'+esc(ink)+'" stroke-width="5"/><path d="M-120-45 L0-5 L120-45" fill="none" stroke="'+esc(ink)+'" stroke-width="4"/><g transform="rotate('+lidR+' 0 -75)"><rect x="-120" y="'+lidY+'" width="240" height="30" rx="12" fill="'+esc(fill)+'" stroke="'+esc(ink)+'" stroke-width="5"/></g><path d="M0-75 L0 75" stroke="'+esc(ink)+'" stroke-width="4" opacity=".35"/><ellipse cx="0" cy="-58" rx="55" ry="18" fill="#fff" opacity="'+(.10+open*.25)+'"/></g>';
+}
  if(e.kind==='umbrella') return '<g opacity="'+state.opacity+'" transform="'+tr+'"><path d="M-115 0 Q0-115 115 0 Z" fill="'+esc(fill)+'" stroke="'+esc(ink)+'" stroke-width="5"/><path d="M-80 0 Q-70 24 -52 0 M-26 0 Q-15 24 0 0 M26 0 Q40 24 52 0 M80 0 Q92 24 115 0" fill="none" stroke="'+esc(ink)+'" stroke-width="4"/><path d="M0 0 L0 145 Q0 170 25 170" fill="none" stroke="'+esc(ink)+'" stroke-width="6" stroke-linecap="round"/></g>';
- if(e.kind==='car') return '<g opacity="'+state.opacity+'" transform="'+tr+'"><rect x="-120" y="-35" width="240" height="75" rx="24" fill="'+esc(fill)+'" stroke="'+esc(ink)+'" stroke-width="5"/><path d="M-70-35 L-35-82 L55-82 L88-35" fill="'+esc(fill)+'" stroke="'+esc(ink)+'" stroke-width="5"/><path d="M-25-72 L-5-43 M15-72 L50-43" stroke="#fff" stroke-width="5" opacity=".7"/><circle cx="-70" cy="45" r="25" fill="#26352F"/><circle cx="70" cy="45" r="25" fill="#26352F"/><circle cx="-70" cy="45" r="11" fill="#F8E8C8"/><circle cx="70" cy="45" r="11" fill="#F8E8C8"/><circle cx="108" cy="-5" r="7" fill="#FFE8A8"/></g>';
+ if(e.kind==='car'){
+  const spin=(state.p*(e.motion?.wheelTurns??3)*360)%360;
+  return '<g opacity="'+state.opacity+'" transform="'+tr+'"><rect x="-120" y="-35" width="240" height="75" rx="24" fill="'+esc(fill)+'" stroke="'+esc(ink)+'" stroke-width="5"/><path d="M-70-35 L-35-82 L55-82 L88-35" fill="'+esc(fill)+'" stroke="'+esc(ink)+'" stroke-width="5"/><path d="M-25-72 L-5-43 M15-72 L50-43" stroke="#fff" stroke-width="5" opacity=".7"/><g transform="rotate('+spin+' -70 45)"><circle cx="-70" cy="45" r="25" fill="#26352F"/><path d="M-70 25V65 M-90 45H-50" stroke="#F8E8C8" stroke-width="5"/></g><g transform="rotate('+spin+' 70 45)"><circle cx="70" cy="45" r="25" fill="#26352F"/><path d="M70 25V65 M50 45H90" stroke="#F8E8C8" stroke-width="5"/></g><circle cx="108" cy="-5" r="7" fill="#FFE8A8"/></g>';
+}
  if(e.kind==='track') return '<g opacity="'+state.opacity+'" transform="'+tr+'"><ellipse cx="-25" cy="0" rx="18" ry="34" fill="'+esc(fill)+'" transform="rotate(-20)"/><ellipse cx="25" cy="0" rx="18" ry="34" fill="'+esc(fill)+'" transform="rotate(20)"/></g>';
  return '';
 }
@@ -62,33 +80,39 @@ function renderElement(e,t,scene,palette,mult=1){
  if(e.type==='character'){
   const x=num(e.x),y=num(e.y),s=num(e.scale,1),skin=col(palette,e.skin||'skin','#F2C7A5'),hair=col(palette,e.hair||'ink','#17221E'),clothes=col(palette,e.clothes||'accent','#D97745');
   const pose=e.pose||'idle',expression=e.expression||'happy',dir=num(e.direction,1);
-  const walk=e.motion?.type==='travel'||pose==='walk';
-  const cycle=walk?Math.sin(state.p*Math.PI*2):0;
-  const armY=pose==='point'?-18:pose==='open'?-28:pose==='search'?8:pose==='celebrate'?-55:pose==='drive'?5:-8;
-  const armDX=pose==='point'?62:pose==='open'?52:pose==='search'?45:pose==='celebrate'?48:pose==='drive'?38:35;
-  const legA=walk?24*cycle:pose==='drive'?18:16,legB=-legA;
+  const walk=e.motion?.type==='travel'||pose==='walk'||pose==='run';
+  const cycle=walk?Math.sin(state.p*Math.PI*(pose==='run'?4:2)):0;
+  const crouch=pose==='crouch'||pose==='search';
+  const bodyY=crouch?8:0, headY=crouch?4:0;
+  const armY=pose==='point'?-18:pose==='open'?-28:pose==='search'?12:pose==='reach'?-5:pose==='celebrate'?-58:pose==='drive'?5:pose==='crouch'?18:-8;
+  const armDX=pose==='point'?62:pose==='open'?52:pose==='search'?45:pose==='reach'?62:pose==='celebrate'?48:pose==='drive'?38:pose==='crouch'?42:35;
+  const legA=walk?30*cycle:pose==='drive'?18:pose==='crouch'?4:16,legB=-legA;
+  const blink=((state.p*3.7)%1)>.94?0.35:1;
   const mouth=expression==='worried'?'M-12 7 Q0-1 12 7':expression==='surprised'?'M-8 0 A8 10 0 1 0 8 0':expression==='excited'?'M-13 0 Q0 15 13 0':'M-13 0 Q0 11 13 0';
   const eyeScale=expression==='surprised'?1.35:1;
   return '<g opacity="'+state.opacity+'" transform="translate('+(x+state.dx)+' '+(y+state.dy)+') scale('+(s*state.scale*dir)+' '+(s*state.scale)+')">'+
     '<ellipse cx="0" cy="55" rx="42" ry="10" fill="#26352F" opacity=".12"/>'+
-    '<circle cx="0" cy="-72" r="38" fill="'+esc(skin)+'"/>'+
-    '<path d="M-38-72 Q-34-120 0-120 Q34-120 38-72 Q20-96 0-101 Q-20-96-38-72Z" fill="'+esc(hair)+'"/>'+
+    '<circle cx="0" cy="'+(-72+headY)+'" r="38" fill="'+esc(skin)+'"/>'+
+    '<path d="M-38-72 Q-34-120 0-120 Q34-120 38-72 Q20-96 0-101 Q-20-96-38-72Z" fill="'+esc(hair)+'" transform="translate(0 '+headY+')"/>'+
     '<path d="M-39-72 Q-48-58-37-48" fill="none" stroke="'+esc(skin)+'" stroke-width="12" stroke-linecap="round"/><path d="M39-72 Q48-58 37-48" fill="none" stroke="'+esc(skin)+'" stroke-width="12" stroke-linecap="round"/>'+
-    '<circle cx="-14" cy="-72" r="'+(5*eyeScale)+'" fill="'+esc(hair)+'"/><circle cx="14" cy="-72" r="'+(5*eyeScale)+'" fill="'+esc(hair)+'"/>'+
-    '<path d="'+mouth+'" fill="none" stroke="'+esc(hair)+'" stroke-width="4" stroke-linecap="round"/>'+
-    '<rect x="-34" y="-34" width="68" height="86" rx="20" fill="'+esc(clothes)+'" stroke="'+esc(hair)+'" stroke-width="3"/>'+
-    '<line x1="-31" y1="-10" x2="'+(-31-armDX)+'" y2="'+armY+'" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
-    '<line x1="31" y1="-10" x2="'+(31+armDX)+'" y2="'+armY+'" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
+    '<ellipse cx="-14" cy="'+(-72+headY)+'" rx="'+(5*eyeScale)+'" ry="'+(5*eyeScale*blink)+'" fill="'+esc(hair)+'"/><ellipse cx="14" cy="'+(-72+headY)+'" rx="'+(5*eyeScale)+'" ry="'+(5*eyeScale*blink)+'" fill="'+esc(hair)+'"/>'+
+    '<path d="'+mouth+'" fill="none" stroke="'+esc(hair)+'" stroke-width="4" stroke-linecap="round" transform="translate(0 '+headY+')"/>'+
+    '<rect x="-34" y="'+(-34+bodyY)+'" width="68" height="86" rx="20" fill="'+esc(clothes)+'" stroke="'+esc(hair)+'" stroke-width="3"/>'+
+    '<line x1="-31" y1="'+(-10+bodyY)+'" x2="'+(-31-armDX)+'" y2="'+armY+'" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
+    '<line x1="31" y1="'+(-10+bodyY)+'" x2="'+(31+armDX)+'" y2="'+armY+'" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
     '<circle cx="'+(-31-armDX)+'" cy="'+armY+'" r="8" fill="'+esc(skin)+'"/><circle cx="'+(31+armDX)+'" cy="'+armY+'" r="8" fill="'+esc(skin)+'"/>'+
-    '<line x1="-15" y1="52" x2="'+(-15-legA)+'" y2="108" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
-    '<line x1="15" y1="52" x2="'+(15+legB)+'" y2="108" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
+    '<line x1="-15" y1="'+(52+bodyY)+'" x2="'+(-15-legA)+'" y2="'+(108+bodyY)+'" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
+    '<line x1="15" y1="'+(52+bodyY)+'" x2="'+(15+legB)+'" y2="'+(108+bodyY)+'" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
     '</g>';
  }
  return '';
 }
 
 function renderScene(scene,t,spec,opacity=1){
- return scene.elements.map(e=>renderElement(e,t,scene,spec.palette,opacity)).join('');
+ const cam=cameraState(scene,t,spec);
+ const cx=spec.width/2,cy=spec.height/2;
+ const camera='<g transform="translate('+cx+' '+cy+') scale('+cam.scale+') translate('+(-cx+cam.panX)+' '+(-cy+cam.panY)+')">';
+ return camera+scene.elements.map(e=>renderElement(e,t,scene,spec.palette,opacity)).join('')+'</g>';
 }
 
 export function frameSvg(spec,t){
