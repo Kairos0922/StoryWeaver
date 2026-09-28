@@ -28,6 +28,13 @@ test('T01 is story-first, not lesson-card-first', () => {
   assert.equal(plan.scenes.at(-1).id, 'payoff');
 });
 
+test('T01 uses shot cameras and physical action beats', () => {
+  assert.ok(plan.scenes.every(s => s.camera && s.camera.fromScale >= 1));
+  assert.equal(plan.scenes.find(s => s.id === 'box').elements.find(e => e.type === 'prop' && e.kind === 'box').openAt, 0.34);
+  assert.equal(plan.scenes.find(s => s.id === 'cushion').elements.find(e => e.type === 'character').pose, 'crouch');
+  assert.equal(plan.scenes.find(s => s.id === 'reveal').elements.find(e => e.type === 'prop' && e.kind === 'umbrella').motion.type, 'slide');
+});
+
 test('T01 uses only three target colors and embeds them in the story', () => {
   const text = JSON.stringify(plan).toLowerCase();
   for (const word of ['red', 'blue', 'yellow']) assert.ok(text.includes(word));
