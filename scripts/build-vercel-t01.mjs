@@ -17,7 +17,7 @@ await fs.mkdir(out,{recursive:true});
 const plan=JSON.parse(await fs.readFile(path.join(root,'experiments/t01-english-colors/content-plan.json'),'utf8'));
 const spec=compileContentPlan(plan);
 const base=path.join(tmp,'video.mp4');
-await renderVideo(spec,base);
+await renderVideo(spec,base,{renderWidth:640});
 
 const lines=[
   [0,"Oh! My little car is gone."],
