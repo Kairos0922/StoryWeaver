@@ -81,7 +81,6 @@ await run([
   '-c:v','copy','-c:a','aac','-b:a','160k','-movflags','+faststart',final
 ]);
 
-await import('./verify-t01-media.mjs').then(async () => { const {spawn}=await import('node:child_process'); });
 const verifyPath=final;
 const verifyArgs=['scripts/verify-t01-media.mjs',verifyPath];
 await new Promise((resolve,reject)=>{const p=spawn(process.execPath,verifyArgs,{cwd:root,stdio:'inherit'});p.on('error',reject);p.on('close',code=>code===0?resolve():reject(new Error('Vercel T01 media verification failed')))});
