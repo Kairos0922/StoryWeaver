@@ -16,14 +16,9 @@ export async function renderVideo(spec,output,{audio=null}={}){
  let err='';
  p.stderr.on('data',d=>err+=d);
  const done=new Promise((resolve,reject)=>{p.on('error',reject);p.on('close',c=>c===0?resolve():reject(new Error('ffmpeg exited '+c+'\n'+err)))});
- const pngCache=new Map();
  for(let i=0;i<Math.round(spec.duration*spec.fps);i++){
   const svg=frameSvg(spec,i/spec.fps);
-  let png=pngCache.get(svg);
-  if(!png){
-   png=new Resvg(svg,{fitTo:{mode:'width',value:spec.width},font:{loadSystemFonts:true}}).render().asPng();
-   pngCache.set(svg,png);
-  }
+  const png=new Resvg(svg,{fitTo:{mode:'width',value:spec.width},font:{loadSystemFonts:true}}).render().asPng();
   if(!p.stdin.write(png))await new Promise(r=>p.stdin.once('drain',r));
  }
  p.stdin.end();
