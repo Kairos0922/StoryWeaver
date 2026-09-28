@@ -144,6 +144,20 @@
           "visualRule": {
             "type": "string"
           },
+          "camera": {
+            "type": "object",
+            "properties": {
+              "type": { "enum": ["static", "pan", "push", "follow"] },
+              "fromX": { "type": "number" },
+              "toX": { "type": "number" },
+              "fromY": { "type": "number" },
+              "toY": { "type": "number" },
+              "fromScale": { "type": "number", "exclusiveMinimum": 0 },
+              "toScale": { "type": "number", "exclusiveMinimum": 0 },
+              "easing": { "enum": ["linear", "easeOut", "easeInOut"] }
+            },
+            "additionalProperties": false
+          },
           "transition": {
             "type": "object",
             "properties": {
