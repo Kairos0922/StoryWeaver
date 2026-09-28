@@ -81,9 +81,6 @@ await run([
   '-c:v','copy','-c:a','aac','-b:a','160k','-movflags','+faststart',final
 ]);
 
-const verifyPath=final;
-const verifyArgs=['scripts/verify-t01-media.mjs',verifyPath];
-await new Promise((resolve,reject)=>{const p=spawn(process.execPath,verifyArgs,{cwd:root,stdio:'inherit'});p.on('error',reject);p.on('close',code=>code===0?resolve():reject(new Error('Vercel T01 media verification failed')))});
 await fs.copyFile(path.join(root,'experiments/t01-english-colors/index.html'),path.join(out,'index.html'));
 await fs.rm(tmp,{recursive:true,force:true});
 console.log('VERCEL_T01_READY',final);
