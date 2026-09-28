@@ -28,6 +28,18 @@ function motionState(e,t,scene){
  return {opacity,dx,dy,scale,rotate,p};
 }
 
+
+function activeEvent(scene,t,actor){
+ const events=scene.events||[];
+ const matches=events.filter(e=>t>=scene.start+e.start&&t<=scene.start+e.end&&(!actor||!e.actor||e.actor===actor));
+ return matches.at(-1)||null;
+}
+function eventProgress(scene,t,e){ return e?clamp((t-(scene.start+e.start))/Math.max(.001,e.end-e.start),0,1):0; }
+function actionState(scene,t,actor){
+ const e=activeEvent(scene,t,actor); if(!e)return null;
+ const p=eventProgress(scene,t,e); const eased=e.easing==='linear'?p:e.easing==='easeInOut'?(p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2):1-Math.pow(1-p,3);
+ return {...e,p,eased};
+}
 function cameraState(scene,t,spec){
  const c=scene.camera||{type:'static'};
  const start=scene.start,end=scene.end,p=clamp((t-start)/Math.max(.001,end-start),0,1);
@@ -79,11 +91,16 @@ function renderElement(e,t,scene,palette,mult=1){
  if(e.type==='prop') return renderProp(e,state,palette);
  if(e.type==='character'){
   const x=num(e.x),y=num(e.y),s=num(e.scale,1),skin=col(palette,e.skin||'skin','#F2C7A5'),hair=col(palette,e.hair||'ink','#17221E'),clothes=col(palette,e.clothes||'accent','#D97745');
-  const pose=e.pose||'idle',expression=e.expression||'happy',dir=num(e.direction,1);
+  const acting=actionState(scene,t,e.characterId);
+  const actionPose={lookAt:'idle',turn:'idle',walk:'walk',run:'run',stop:'idle',crouch:'crouch',reach:'reach',grab:'reach',lift:'reach',open:'open',close:'open',point:'point',react:'idle',celebrate:'celebrate',drive:'drive'};
+  const pose=acting?.pose||actionPose[acting?.action]||e.pose||'idle';
+  const expression=acting?.expression||((acting?.action==='react'||acting?.action==='celebrate')?'excited':e.expression||'happy');
+  const dir=num(e.direction,1);
   const walk=e.motion?.type==='travel'||pose==='walk'||pose==='run';
   const cycle=walk?Math.sin(state.p*Math.PI*(pose==='run'?4:2)):0;
   const crouch=pose==='crouch'||pose==='search';
   const bodyY=crouch?8:0, headY=crouch?4:0;
+  const anticipation=acting?.phase==='anticipation' ? Math.sin((acting?.p||0)*Math.PI)*10 : 0;
   const armY=pose==='point'?-18:pose==='open'?-28:pose==='search'?12:pose==='reach'?-5:pose==='celebrate'?-58:pose==='drive'?5:pose==='crouch'?18:-8;
   const armDX=pose==='point'?62:pose==='open'?52:pose==='search'?45:pose==='reach'?62:pose==='celebrate'?48:pose==='drive'?38:pose==='crouch'?42:35;
   const legA=walk?30*cycle:pose==='drive'?18:pose==='crouch'?4:16,legB=-legA;
@@ -98,8 +115,8 @@ function renderElement(e,t,scene,palette,mult=1){
     '<ellipse cx="-14" cy="'+(-72+headY)+'" rx="'+(5*eyeScale)+'" ry="'+(5*eyeScale*blink)+'" fill="'+esc(hair)+'"/><ellipse cx="14" cy="'+(-72+headY)+'" rx="'+(5*eyeScale)+'" ry="'+(5*eyeScale*blink)+'" fill="'+esc(hair)+'"/>'+
     '<path d="'+mouth+'" fill="none" stroke="'+esc(hair)+'" stroke-width="4" stroke-linecap="round" transform="translate(0 '+headY+')"/>'+
     '<rect x="-34" y="'+(-34+bodyY)+'" width="68" height="86" rx="20" fill="'+esc(clothes)+'" stroke="'+esc(hair)+'" stroke-width="3"/>'+
-    '<line x1="-31" y1="'+(-10+bodyY)+'" x2="'+(-31-armDX)+'" y2="'+armY+'" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
-    '<line x1="31" y1="'+(-10+bodyY)+'" x2="'+(31+armDX)+'" y2="'+armY+'" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
+    '<line x1="-31" y1="'+(-10+bodyY+anticipation)+'" x2="'+(-31-armDX)+'" y2="'+armY+'" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
+    '<line x1="31" y1="'+(-10+bodyY+anticipation)+'" x2="'+(31+armDX)+'" y2="'+armY+'" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
     '<circle cx="'+(-31-armDX)+'" cy="'+armY+'" r="8" fill="'+esc(skin)+'"/><circle cx="'+(31+armDX)+'" cy="'+armY+'" r="8" fill="'+esc(skin)+'"/>'+
     '<line x1="-15" y1="'+(52+bodyY)+'" x2="'+(-15-legA)+'" y2="'+(108+bodyY)+'" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
     '<line x1="15" y1="'+(52+bodyY)+'" x2="'+(15+legB)+'" y2="'+(108+bodyY)+'" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
