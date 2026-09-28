@@ -55,8 +55,6 @@ ffmpeg -hide_banner -loglevel error \
   -filter_complex "[0:a]adelay=22000|22000[p1];[1:a]adelay=34000|34000[d1];[1:a]adelay=70000|70000[d2];[2:a]adelay=85000|85000[z1];[p1][d1][d2][z1]amix=inputs=4:duration=longest:normalize=0[sfx]" \
   -map "[sfx]" -ar 44100 -ac 2 -c:a pcm_s16le "$OUT/sfx.wav"
 
-ffmpeg -hide_banner -loglevel error \
-  -i "$OUT/voice.m4a" 2>/dev/null || true
 
 ffmpeg -hide_banner -loglevel error \
   -i "$OUT/music.wav" -i "$OUT/sfx.wav" \
