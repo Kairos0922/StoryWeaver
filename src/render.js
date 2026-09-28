@@ -5,7 +5,7 @@ import ffmpegPath from 'ffmpeg-static';
 import {Resvg} from '@resvg/resvg-js';
 import {frameSvg} from './renderers/svg.js';
 
-export async function renderVideo(spec,output,{audio=null,renderWidth=spec.width}={){
+export async function renderVideo(spec,output,{audio=null,renderWidth=spec.width}={}){
  await fs.mkdir(path.dirname(output),{recursive:true});
  const args=['-y','-f','image2pipe','-vcodec','png','-r',String(spec.fps),'-i','pipe:0'];
  if(audio)args.push('-i',audio);
