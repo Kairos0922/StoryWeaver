@@ -192,14 +192,41 @@
           "camera": {
             "type": "object",
             "properties": {
-              "type": { "enum": ["static", "pan", "push", "follow"] },
-              "fromX": { "type": "number" },
-              "toX": { "type": "number" },
-              "fromY": { "type": "number" },
-              "toY": { "type": "number" },
-              "fromScale": { "type": "number", "exclusiveMinimum": 0 },
-              "toScale": { "type": "number", "exclusiveMinimum": 0 },
-              "easing": { "enum": ["linear", "easeOut", "easeInOut"] }
+              "type": {
+                "enum": [
+                  "static",
+                  "pan",
+                  "push",
+                  "follow"
+                ]
+              },
+              "fromX": {
+                "type": "number"
+              },
+              "toX": {
+                "type": "number"
+              },
+              "fromY": {
+                "type": "number"
+              },
+              "toY": {
+                "type": "number"
+              },
+              "fromScale": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "toScale": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "easing": {
+                "enum": [
+                  "linear",
+                  "easeOut",
+                  "easeInOut"
+                ]
+              }
             },
             "additionalProperties": false
           },
@@ -230,6 +257,104 @@
               "properties": {
                 "type": {
                   "type": "string"
+                }
+              }
+            }
+          },
+          "reads": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "keyPoses": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "time"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "time": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "pose": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "start",
+                "end",
+                "action"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "end": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "action": {
+                  "type": "string"
+                },
+                "actor": {
+                  "type": "string"
+                },
+                "target": {
+                  "type": "string"
+                },
+                "phase": {
+                  "enum": [
+                    "anticipation",
+                    "action",
+                    "reaction",
+                    "settle",
+                    "continuous"
+                  ]
+                },
+                "pose": {
+                  "type": "string"
+                },
+                "expression": {
+                  "type": "string"
+                },
+                "gaze": {
+                  "enum": [
+                    "left",
+                    "center",
+                    "right",
+                    "up",
+                    "down"
+                  ]
+                },
+                "easing": {
+                  "enum": [
+                    "linear",
+                    "easeOut",
+                    "easeInOut"
+                  ]
                 }
               }
             }
