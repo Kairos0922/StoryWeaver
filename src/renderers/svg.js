@@ -43,14 +43,22 @@ function renderElement(e,t,scene,palette,mult=1){
  if(e.type==='group') return '<g'+a+'>'+((e.children||[]).map(c=>renderElement(c,t,scene,palette,mult)).join(''))+'</g>';
  if(e.type==='character'){
   const x=num(e.x),y=num(e.y),s=num(e.scale,1),skin=col(palette,e.skin||'skin','#F2C7A5'),hair=col(palette,e.hair||'ink','#17221E'),clothes=col(palette,e.clothes||'accent','#D97745');
-  return '<g opacity="'+state.opacity+'" transform="translate('+x+' '+y+') scale('+(s*state.scale)+')">'+
-    '<circle cx="0" cy="-70" r="28" fill="'+esc(skin)+'"/>'+
-    '<path d="M-27-74 Q0-108 27-74 Q18-98 0-102 Q-18-98-27-74Z" fill="'+esc(hair)+'"/>'+
-    '<rect x="-24" y="-40" width="48" height="72" rx="14" fill="'+esc(clothes)+'"/>'+
-    '<line x1="-24" y1="-20" x2="-52" y2="8" stroke="'+esc(hair)+'" stroke-width="10" stroke-linecap="round"/>'+
-    '<line x1="24" y1="-20" x2="52" y2="8" stroke="'+esc(hair)+'" stroke-width="10" stroke-linecap="round"/>'+
-    '<line x1="-12" y1="32" x2="-18" y2="82" stroke="'+esc(hair)+'" stroke-width="10" stroke-linecap="round"/>'+
-    '<line x1="12" y1="32" x2="18" y2="82" stroke="'+esc(hair)+'" stroke-width="10" stroke-linecap="round"/>'+
+  const pose=e.pose||'idle',expression=e.expression||'happy',dir=num(e.direction,1);
+  const armY=pose==='point'?-10:pose==='open'?-18:pose==='search'?4:pose==='celebrate'?-48:pose==='drive'?0:-8;
+  const armDX=pose==='point'?58:pose==='open'?48:pose==='search'?42:pose==='celebrate'?42:pose==='drive'?38:34;
+  const legDX=pose==='walk'?22:pose==='drive'?18:16;
+  const mouth=expression==='worried'?'M-12 6 Q0-2 12 6':expression==='surprised'?'M-7 2 A7 9 0 1 0 7 2':expression==='excited'?'M-13 0 Q0 14 13 0':'M-13 0 Q0 12 13 0';
+  return '<g opacity="'+state.opacity+'" transform="translate('+x+' '+y+') scale('+(s*state.scale*dir)+' '+(s*state.scale)+')">'+
+    '<circle cx="0" cy="-72" r="34" fill="'+esc(skin)+'"/>'+
+    '<path d="M-34-73 Q-28-112 0-112 Q28-112 34-73 Q19-91 0-95 Q-19-91-34-73Z" fill="'+esc(hair)+'"/>'+
+    '<circle cx="-13" cy="-72" r="4.5" fill="'+esc(hair)+'"/><circle cx="13" cy="-72" r="4.5" fill="'+esc(hair)+'"/>'+
+    '<path d="'+mouth+'" fill="none" stroke="'+esc(hair)+'" stroke-width="3.5" stroke-linecap="round"/>'+
+    '<rect x="-29" y="-35" width="58" height="82" rx="18" fill="'+esc(clothes)+'"/>'+
+    '<line x1="-28" y1="-15" x2="'+(-28-armDX)+'" y2="'+armY+'" stroke="'+esc(hair)+'" stroke-width="11" stroke-linecap="round"/>'+
+    '<line x1="28" y1="-15" x2="'+(28+armDX)+'" y2="'+armY+'" stroke="'+esc(hair)+'" stroke-width="11" stroke-linecap="round"/>'+
+    '<circle cx="'+(-28-armDX)+'" cy="'+armY+'" r="7" fill="'+esc(skin)+'"/><circle cx="'+(28+armDX)+'" cy="'+armY+'" r="7" fill="'+esc(skin)+'"/>'+
+    '<line x1="-13" y1="47" x2="'+(-13-legDX)+'" y2="96" stroke="'+esc(hair)+'" stroke-width="11" stroke-linecap="round"/>'+
+    '<line x1="13" y1="47" x2="'+(13+legDX)+'" y2="96" stroke="'+esc(hair)+'" stroke-width="11" stroke-linecap="round"/>'+
     '</g>';
  }
  return '';
