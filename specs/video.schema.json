@@ -178,7 +178,8 @@
                     "text",
                     "caption",
                     "group",
-                    "character"
+                    "character",
+                    "prop"
                   ]
                 },
                 "role": {
@@ -295,7 +296,12 @@
                         "slide",
                         "scale",
                         "draw",
-                        "emphasis"
+                        "emphasis",
+                        "bob",
+                        "shake",
+                        "travel",
+                        "rotate",
+                        "pop"
                       ]
                     },
                     "duration": {
@@ -319,6 +325,24 @@
                       "type": "number"
                     },
                     "to": {
+                      "type": "number"
+                    },
+                    "fromX": {
+                      "type": "number"
+                    },
+                    "toX": {
+                      "type": "number"
+                    },
+                    "fromY": {
+                      "type": "number"
+                    },
+                    "toY": {
+                      "type": "number"
+                    },
+                    "amount": {
+                      "type": "number"
+                    },
+                    "cycles": {
                       "type": "number"
                     }
                   },
