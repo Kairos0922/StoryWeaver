@@ -13,7 +13,7 @@ export function validateVideoSpec(spec){
   if(ids.has(s.id))throw new Error('Duplicate scene id: '+s.id);
   ids.add(s.id);
   if(s.end<=s.start)throw new Error('Scene '+s.id+' must have positive duration');
-  if(!Array.isArray(s.reads)||s.reads.length===0)throw new Error('Scene '+s.id+' must declare viewer reads');
+  if(s.reads!=null&&!Array.isArray(s.reads))throw new Error('Scene '+s.id+' reads must be an array');
   const keyPoseIds=new Set();
   for(const p of s.keyPoses??[]){if(keyPoseIds.has(p.id))throw new Error('Duplicate key pose '+p.id+' in '+s.id);keyPoseIds.add(p.id);if(p.time<0||p.time>s.end-s.start)throw new Error('Key pose '+p.id+' is outside scene '+s.id);}
   const eventIds=new Set();
