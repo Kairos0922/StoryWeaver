@@ -43,6 +43,8 @@ Audio is part of the production artifact:
 6. Final MP4 is 1280×720, 30 fps, 90 seconds.
 7. Final MP4 contains an AAC audio stream with non-silent dialogue.
 8. The published experiment page contains **only the video player**; Canvas interaction is not the deliverable.
+
+GitHub Pages is enabled by the T01 deployment workflow.
 9. Final media is decoded by FFmpeg before the experiment is accepted.
 
 ## Important limitation
