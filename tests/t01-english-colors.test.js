@@ -71,3 +71,13 @@ test('T01 ends with story payoff, not a vocabulary review screen', () => {
   assert.match(last.purpose, /drives away happily/i);
   assert.equal(plan.captions.at(-1).text, 'I found it! Let\'s go!');
 });
+
+test('T01 uses a storyboard/event-driven animation model', () => {
+  assert.ok(plan.scenes.every(s => s.reads?.length >= 2));
+  assert.ok(plan.scenes.every(s => s.keyPoses?.length >= 3));
+  assert.ok(plan.scenes.every(s => s.events?.length >= 3));
+  const actions = new Set(plan.scenes.flatMap(s => s.events.map(e => e.action)));
+  for (const action of ['lookAt','walk','run','crouch','reach','react','open','celebrate','drive']) assert.ok(actions.has(action));
+  const phases = new Set(plan.scenes.flatMap(s => s.events.map(e => e.phase)));
+  for (const phase of ['action','reaction','continuous']) assert.ok(phases.has(phase));
+});
