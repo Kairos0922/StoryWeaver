@@ -19,6 +19,7 @@ function motionState(e,t,scene){
  if(m.type==='fade') opacity*=q;
  if(m.type==='slide'){dx=(m.dx??0)*(1-q);dy=(m.dy??0)*(1-q);}
  if(m.type==='scale'){scale=lerp(m.from??0.9,m.to??1,q);}
+ if(m.type==='pop'){scale=lerp(m.from??0.5,m.to??1,q);}
  if(m.type==='emphasis'){scale=lerp(m.from??.96,m.to??1.04,Math.sin(q*Math.PI));}
  if(m.type==='bob'){dy=Math.sin(p*Math.PI*2*(m.cycles??1))*(m.amount??8);}
  if(m.type==='shake'){dx=Math.sin(p*Math.PI*2*(m.cycles??3))*(m.amount??7);}
