@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-OUT="$1"
+FFMPEG="$(node -e "process.stdout.write(require('ffmpeg-static'))")"
 FFMPEG="$(node -e "process.stdout.write(require('"$FFMPEG"-static'))")"
 rm -rf "$OUT" && mkdir -p "$OUT"
 
