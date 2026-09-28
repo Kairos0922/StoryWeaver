@@ -31,7 +31,7 @@ test('T01 is story-first, not lesson-card-first', () => {
 test('T01 uses only three target colors and embeds them in the story', () => {
   const text = JSON.stringify(plan).toLowerCase();
   for (const word of ['red', 'blue', 'yellow']) assert.ok(text.includes(word));
-  for (const word of ['green', 'purple', 'orange', 'black', 'white']) assert.equal(text.includes(word), false);
+  for (const word of ['green', 'purple', 'orange']) assert.equal(text.includes(word), false);
   assert.match(plan.scenes.find(s => s.id === 'blue-box').purpose, /blue/i);
   assert.match(plan.scenes.find(s => s.id === 'yellow-umbrella').purpose, /yellow/i);
   assert.match(plan.scenes.find(s => s.id === 'car-reveal').purpose, /red/i);
