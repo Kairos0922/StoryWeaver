@@ -275,6 +275,12 @@
       "transition": {
         "type": "cut",
         "duration": 0
+      },
+      "camera": {
+        "type": "push",
+        "fromScale": 1,
+        "toScale": 1.08,
+        "easing": "easeOut"
       }
     },
     {
@@ -352,7 +358,7 @@
           "clothes": "#5A8FCA",
           "skin": "#F2C7A5",
           "hair": "#5B3A2E",
-          "pose": "search",
+          "pose": "crouch",
           "expression": "surprised",
           "direction": 1,
           "motion": {
@@ -365,6 +371,13 @@
       "transition": {
         "type": "cut",
         "duration": 0
+      },
+      "camera": {
+        "type": "push",
+        "fromScale": 1.05,
+        "toScale": 1.18,
+        "toX": -70,
+        "easing": "easeInOut"
       }
     },
     {
@@ -412,7 +425,8 @@
           "fill": "blue",
           "scale": 1.25,
           "stroke": "#26352F",
-          "motion": {}
+          "motion": {},
+          "openAt": 0.34
         },
         {
           "type": "character",
@@ -423,7 +437,7 @@
           "clothes": "#5A8FCA",
           "skin": "#F2C7A5",
           "hair": "#5B3A2E",
-          "pose": "walk",
+          "pose": "run",
           "expression": "excited",
           "direction": 1,
           "motion": {
@@ -450,6 +464,14 @@
       "transition": {
         "type": "cut",
         "duration": 0
+      },
+      "camera": {
+        "type": "pan",
+        "fromX": -40,
+        "toX": 70,
+        "fromScale": 1,
+        "toScale": 1.06,
+        "easing": "easeInOut"
       }
     },
     {
@@ -534,7 +556,7 @@
           "clothes": "#5A8FCA",
           "skin": "#F2C7A5",
           "hair": "#5B3A2E",
-          "pose": "walk",
+          "pose": "run",
           "expression": "excited",
           "direction": 1,
           "motion": {
@@ -547,6 +569,14 @@
       "transition": {
         "type": "cut",
         "duration": 0
+      },
+      "camera": {
+        "type": "pan",
+        "fromX": -80,
+        "toX": 80,
+        "fromScale": 1,
+        "toScale": 1.08,
+        "easing": "easeInOut"
       }
     },
     {
@@ -715,6 +745,13 @@
       "transition": {
         "type": "cut",
         "duration": 0
+      },
+      "camera": {
+        "type": "push",
+        "fromScale": 1.08,
+        "toScale": 1.18,
+        "toX": 100,
+        "easing": "easeOut"
       }
     },
     {
@@ -796,6 +833,14 @@
       "transition": {
         "type": "cut",
         "duration": 0
+      },
+      "camera": {
+        "type": "follow",
+        "fromX": -80,
+        "toX": 110,
+        "fromScale": 1.05,
+        "toScale": 1.12,
+        "easing": "easeInOut"
       }
     },
     {
@@ -845,9 +890,10 @@
           "scale": 1,
           "stroke": "#26352F",
           "motion": {
-            "type": "bob",
-            "amount": 3,
-            "cycles": 1
+            "type": "slide",
+            "dy": -105,
+            "duration": 1,
+            "easing": "easeOut"
           }
         },
         {
@@ -859,10 +905,12 @@
           "scale": 1,
           "stroke": "#26352F",
           "motion": {
-            "type": "scale",
-            "from": 0.2,
+            "type": "pop",
+            "from": 0.18,
             "to": 1,
-            "duration": 1
+            "duration": 1,
+            "easing": "easeOut",
+            "wheelTurns": 0
           }
         },
         {
@@ -874,7 +922,7 @@
           "clothes": "#5A8FCA",
           "skin": "#F2C7A5",
           "hair": "#5B3A2E",
-          "pose": "walk",
+          "pose": "run",
           "expression": "excited",
           "direction": 1,
           "motion": {
@@ -899,6 +947,13 @@
       "transition": {
         "type": "cut",
         "duration": 0
+      },
+      "camera": {
+        "type": "push",
+        "fromScale": 1,
+        "toScale": 1.28,
+        "toX": 90,
+        "easing": "easeOut"
       }
     },
     {
@@ -947,7 +1002,8 @@
           "motion": {
             "type": "travel",
             "fromX": 0,
-            "toX": 720
+            "toX": 720,
+            "wheelTurns": 5
           }
         },
         {
@@ -985,6 +1041,14 @@
       "transition": {
         "type": "cut",
         "duration": 0
+      },
+      "camera": {
+        "type": "pan",
+        "fromX": -80,
+        "toX": 120,
+        "fromScale": 1,
+        "toScale": 1.05,
+        "easing": "easeInOut"
       }
     }
   ]
