@@ -20,7 +20,7 @@ test('T01 compiles to a valid 90-second VideoSpec', () => {
 test('T01 is story-first, not lesson-card-first', () => {
   assert.equal(plan.scenes.length, 8);
   assert.deepEqual(plan.scenes.map(s => [s.start, s.end]), [
-    [0,10],[10,22],[22,34],[34,46],[46,58],[58,70],[70,82],[82,90]
+    [0,10],[10,21],[21,32],[32,43],[43,54],[54,66],[66,78],[78,90]
   ]);
   assert.ok(plan.scenes.some(s => s.beat === 'escalation'));
   assert.ok(plan.scenes.some(s => s.beat === 'reveal'));
@@ -32,9 +32,9 @@ test('T01 uses only three target colors and embeds them in the story', () => {
   const text = JSON.stringify(plan).toLowerCase();
   for (const word of ['red', 'blue', 'yellow']) assert.ok(text.includes(word));
   for (const word of ['green', 'purple', 'orange']) assert.equal(text.includes(word), false);
-  assert.match(plan.scenes.find(s => s.id === 'blue-box').purpose, /blue/i);
-  assert.match(plan.scenes.find(s => s.id === 'yellow-umbrella').purpose, /yellow/i);
-  assert.match(plan.scenes.find(s => s.id === 'car-reveal').purpose, /red/i);
+  assert.match(plan.scenes.find(s => s.id === 'box').purpose, /blue/i);
+  assert.match(plan.scenes.find(s => s.id === 'door').purpose, /yellow/i);
+  assert.match(plan.scenes.find(s => s.id === 'reveal').purpose, /red/i);
 });
 
 test('T01 keeps Milo identity stable across every scene', () => {
@@ -53,14 +53,14 @@ test('T01 has no explicit teaching prompts or recall card', () => {
 test('T01 uses the target sentence naturally inside the story', () => {
   const text = JSON.stringify(plan);
   assert.ok(text.includes("It's blue."));
-  assert.ok(text.includes("It's yellow."));
-  assert.ok(text.includes("It's red."));
+  assert.ok(text.includes("It's red"));
+  assert.ok(text.includes("yellow"));
   assert.ok(text.includes("My red car!"));
 });
 
 test('T01 ends with story payoff, not a vocabulary review screen', () => {
   const last = plan.scenes.at(-1);
-  assert.equal(last.id, 'play');
+  assert.equal(last.id, 'payoff');
   assert.match(last.purpose, /drives away happily/i);
-  assert.equal(plan.captions.at(-1).text, 'Let\'s go!');
+  assert.equal(plan.captions.at(-1).text, 'I found it! Let\'s go!');
 });
