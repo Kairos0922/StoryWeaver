@@ -99,21 +99,26 @@ function renderElement(e,t,scene,palette,mult=1){
   const walk=e.motion?.type==='travel'||pose==='walk'||pose==='run';
   const cycle=walk?Math.sin(state.p*Math.PI*(pose==='run'?4:2)):0;
   const crouch=pose==='crouch'||pose==='search';
-  const bodyY=crouch?8:0, headY=crouch?4:0;
+  const actionT=acting?.eased??1;
+  const bodyY=crouch?8*actionT:0, headY=crouch?4*actionT:0;
+  const gaze=acting?.gaze||'center';
+  const headTurn=gaze==='left'?-5:gaze==='right'?5:0;
+  const reactionLift=(acting?.action==='react'||acting?.action==='celebrate')?Math.sin((acting?.p||0)*Math.PI)*8:0;
   const anticipation=acting?.phase==='anticipation' ? Math.sin((acting?.p||0)*Math.PI)*10 : 0;
-  const armY=pose==='point'?-18:pose==='open'?-28:pose==='search'?12:pose==='reach'?-5:pose==='celebrate'?-58:pose==='drive'?5:pose==='crouch'?18:-8;
-  const armDX=pose==='point'?62:pose==='open'?52:pose==='search'?45:pose==='reach'?62:pose==='celebrate'?48:pose==='drive'?38:pose==='crouch'?42:35;
+  const armY=pose==='point'?-18:pose==='open'?-28:pose==='search'?12:pose==='reach'||pose==='grab'||pose==='lift'?-5:pose==='celebrate'?-58:pose==='drive'?5:pose==='crouch'?18:-8;
+  const reachT=(pose==='reach'||pose==='grab'||pose==='lift')?actionT:1;
+  const armDX=pose==='point'?62:pose==='open'?52:pose==='search'?45:pose==='reach'||pose==='grab'||pose==='lift'?(28+34*reachT):pose==='celebrate'?48:pose==='drive'?38:pose==='crouch'?42:35;
   const legA=walk?30*cycle:pose==='drive'?18:pose==='crouch'?4:16,legB=-legA;
   const blink=((state.p*3.7)%1)>.94?0.35:1;
   const mouth=expression==='worried'?'M-12 7 Q0-1 12 7':expression==='surprised'?'M-8 0 A8 10 0 1 0 8 0':expression==='excited'?'M-13 0 Q0 15 13 0':'M-13 0 Q0 11 13 0';
   const eyeScale=expression==='surprised'?1.35:1;
   return '<g opacity="'+state.opacity+'" transform="translate('+(x+state.dx)+' '+(y+state.dy)+') scale('+(s*state.scale*dir)+' '+(s*state.scale)+')">'+
     '<ellipse cx="0" cy="55" rx="42" ry="10" fill="#26352F" opacity=".12"/>'+
-    '<circle cx="0" cy="'+(-72+headY)+'" r="38" fill="'+esc(skin)+'"/>'+
-    '<path d="M-38-72 Q-34-120 0-120 Q34-120 38-72 Q20-96 0-101 Q-20-96-38-72Z" fill="'+esc(hair)+'" transform="translate(0 '+headY+')"/>'+
+    '<circle cx="'+headTurn+'" cy="'+(-72+headY-reactionLift)+'" r="38" fill="'+esc(skin)+'"/>'+
+    '<path d="M-38-72 Q-34-120 0-120 Q34-120 38-72 Q20-96 0-101 Q-20-96-38-72Z" fill="'+esc(hair)+'" transform="translate('+headTurn+' '+(headY-reactionLift)+')"/>'+
     '<path d="M-39-72 Q-48-58-37-48" fill="none" stroke="'+esc(skin)+'" stroke-width="12" stroke-linecap="round"/><path d="M39-72 Q48-58 37-48" fill="none" stroke="'+esc(skin)+'" stroke-width="12" stroke-linecap="round"/>'+
-    '<ellipse cx="-14" cy="'+(-72+headY)+'" rx="'+(5*eyeScale)+'" ry="'+(5*eyeScale*blink)+'" fill="'+esc(hair)+'"/><ellipse cx="14" cy="'+(-72+headY)+'" rx="'+(5*eyeScale)+'" ry="'+(5*eyeScale*blink)+'" fill="'+esc(hair)+'"/>'+
-    '<path d="'+mouth+'" fill="none" stroke="'+esc(hair)+'" stroke-width="4" stroke-linecap="round" transform="translate(0 '+headY+')"/>'+
+    '<ellipse cx="'+(-14+headTurn)+'" cy="'+(-72+headY-reactionLift)+'" rx="'+(5*eyeScale)+'" ry="'+(5*eyeScale*blink)+'" fill="'+esc(hair)+'"/><ellipse cx="14" cy="'+(-72+headY)+'" rx="'+(5*eyeScale)+'" ry="'+(5*eyeScale*blink)+'" fill="'+esc(hair)+'"/>'+
+    '<path d="'+mouth+'" fill="none" stroke="'+esc(hair)+'" stroke-width="4" stroke-linecap="round" transform="translate('+headTurn+' '+(headY-reactionLift)+')"/>'+
     '<rect x="-34" y="'+(-34+bodyY)+'" width="68" height="86" rx="20" fill="'+esc(clothes)+'" stroke="'+esc(hair)+'" stroke-width="3"/>'+
     '<line x1="-31" y1="'+(-10+bodyY+anticipation)+'" x2="'+(-31-armDX)+'" y2="'+armY+'" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
     '<line x1="31" y1="'+(-10+bodyY+anticipation)+'" x2="'+(31+armDX)+'" y2="'+armY+'" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
