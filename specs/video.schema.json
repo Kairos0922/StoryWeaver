@@ -385,6 +385,14 @@
                     },
                     "cycles": {
                       "type": "number"
+                    },
+                    "openAt": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "wheelTurns": {
+                      "type": "number"
                     }
                   },
                   "additionalProperties": false
