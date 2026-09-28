@@ -23,6 +23,8 @@ Target language is intentionally limited to **red / blue / yellow** and the natu
 
 ## Production
 
+The renderer caches identical raster frames, so static story beats do not require one Resvg rasterization per 30fps frame.
+
 `content-plan.json` → `VideoSpec` → validation → deterministic SVG renderer → FFmpeg → MP4
 
 Audio is part of the production artifact:
