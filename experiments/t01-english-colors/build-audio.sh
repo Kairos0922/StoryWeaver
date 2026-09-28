@@ -11,27 +11,23 @@ make(){ espeak-ng -v "$voice" -s "$speed" -p "$pitch" -w "$OUT/$1.wav" "$2"; }
 
 # Story dialogue. No teaching prompts, no flashcard answers.
 make 01 "Oh! My little car is gone."
-make 02 "Milo looks under the red cushion."
-make 03 "Is it here? No. A red ball."
+make 02 "Is it here?"
+make 03 "It's red... but it's a ball."
 make 04 "Look! A blue box."
-make 05 "It's blue. Open, open..."
-make 06 "No car."
-make 07 "What's that? A yellow umbrella."
-make 08 "It's yellow. Hmm..."
-make 09 "Wait! Look! Little tracks."
-make 10 "Let's follow them."
-make 11 "A red ball! It's red."
-make 12 "But where is my car?"
-make 13 "There it is!"
-make 14 "My red car! I found it!"
-make 15 "Let's go!"
-make 16 "Zoom!"
+make 05 "It's blue. Open it!"
+make 06 "A yellow umbrella!"
+make 07 "Look! Little tracks."
+make 08 "Let's follow them!"
+make 09 "A red ball!"
+make 10 "There it is! My red car!"
+make 11 "I found it! Let's go!"
+make 12 "Zoom!"
 
 inputs=()
 filters=()
 labels=()
 i=0
-for spec in '01:0' '02:10' '03:14' '04:22' '05:26' '06:30' '07:34' '08:40' '09:46' '10:50' '11:58' '12:63' '13:70' '14:73' '15:82' '16:86'; do
+for spec in '01:0' '02:10' '03:15' '04:21' '05:26' '06:32' '07:43' '08:54' '09:60' '10:66' '11:78' '12:85'; do
   file="${spec%%:*}"; start="${spec##*:}000"
   inputs+=("-i" "$OUT/$file.wav")
   filters+=("[${i}:a]adelay=${start}:all=1[a${i}]")
@@ -39,7 +35,7 @@ for spec in '01:0' '02:10' '03:14' '04:22' '05:26' '06:30' '07:34' '08:40' '09:4
   i=$((i+1))
 done
 filter="$(IFS=';'; echo "${filters[*]}")"
-filter+=";$(IFS=''; echo "${labels[*]}")amix=inputs=16:duration=longest:dropout_transition=0:normalize=0[voice]"
+filter+=";$(IFS=''; echo "${labels[*]}")amix=inputs=12:duration=longest:dropout_transition=0:normalize=0[voice]"
 
 # Deterministic, low-volume musical bed: keeps the video alive between lines.
 "$FFMPEG" -hide_banner -loglevel error -f lavfi -i "sine=frequency=261.63:sample_rate=44100:duration=90" -f lavfi -i "sine=frequency=329.63:sample_rate=44100:duration=90" -f lavfi -i "sine=frequency=392:sample_rate=44100:duration=90" \
@@ -53,7 +49,7 @@ filter+=";$(IFS=''; echo "${labels[*]}")amix=inputs=16:duration=longest:dropout_
 
 "$FFMPEG" -hide_banner -loglevel error \
   -i "$OUT/pop.wav" -i "$OUT/ding.wav" -i "$OUT/zoom.wav" \
-  -filter_complex "[0:a]adelay=22000|22000[p1];[1:a]adelay=34000|34000[d1];[1:a]adelay=70000|70000[d2];[2:a]adelay=85000|85000[z1];[p1][d1][d2][z1]amix=inputs=4:duration=longest:normalize=0[sfx]" \
+  -filter_complex "[0:a]adelay=21000|21000[p1];[1:a]adelay=32000|32000[d1];[1:a]adelay=66000|66000[d2];[2:a]adelay=85000|85000[z1];[p1][d1][d2][z1]amix=inputs=4:duration=longest:normalize=0[sfx]" \
   -map "[sfx]" -ar 44100 -ac 2 -c:a pcm_s16le "$OUT/sfx.wav"
 
 
