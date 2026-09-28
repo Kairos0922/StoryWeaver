@@ -1,0 +1,5 @@
+{
+  "buildCommand": "node scripts/build-vercel-t01.mjs",
+  "outputDirectory": "public",
+  "cleanUrls": true
+}
