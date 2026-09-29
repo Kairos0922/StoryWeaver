@@ -1,0 +1,1425 @@
+{
+  "source": {
+    "title": "为什么很多 AI 视频看起来像 PPT？",
+    "text": "解释页面运动与真正动画的区别，用连续动作展示状态变化、因果链、镜头和节奏。"
+  },
+  "claims": [
+    {
+      "id": "problem",
+      "text": "很多自动视频停留在页面切换、文字运动和装饰性转场。",
+      "type": "state"
+    },
+    {
+      "id": "motion",
+      "text": "真正的动画需要可感知的状态变化。",
+      "type": "definition"
+    },
+    {
+      "id": "causal",
+      "text": "动作应形成看见、接近、触碰、反应的因果链。",
+      "type": "sequence"
+    },
+    {
+      "id": "system",
+      "text": "镜头、节奏和声音共同组织时间。",
+      "type": "definition"
+    },
+    {
+      "id": "thesis",
+      "text": "视频不是会动的PPT，而是被时间组织的故事。",
+      "type": "state"
+    }
+  ],
+  "duration": 40,
+  "output": {
+    "width": 1280,
+    "height": 720,
+    "fps": 30
+  },
+  "style": {
+    "background": "#F7F1E3",
+    "palette": {
+      "ink": "#17332E",
+      "paper": "#F7F1E3",
+      "cream": "#F3E5C8",
+      "coral": "#E66D5A",
+      "blue": "#5C93B8",
+      "yellow": "#E9BE4B",
+      "green": "#719A78",
+      "white": "#FFFFFF",
+      "muted": "#9EAAA2",
+      "captionBg": "#17332E"
+    }
+  },
+  "captionStyle": {
+    "fontSize": 30,
+    "fontFamily": "Noto Sans CJK SC, Noto Sans, Arial, sans-serif"
+  },
+  "beats": [
+    {
+      "id": "hook",
+      "time": 0,
+      "label": "hook"
+    },
+    {
+      "id": "problem",
+      "time": 5,
+      "label": "problem"
+    },
+    {
+      "id": "motion",
+      "time": 11,
+      "label": "motion"
+    },
+    {
+      "id": "causal",
+      "time": 18,
+      "label": "causal"
+    },
+    {
+      "id": "system",
+      "time": 25,
+      "label": "system"
+    },
+    {
+      "id": "payoff",
+      "time": 32,
+      "label": "payoff"
+    }
+  ],
+  "captions": [
+    {
+      "start": 0,
+      "end": 4.8,
+      "text": "为什么很多 AI 视频，看起来像 PPT？"
+    },
+    {
+      "start": 5,
+      "end": 10.8,
+      "text": "因为它做了画面，却没有真正做“动作”。"
+    },
+    {
+      "start": 11,
+      "end": 17.8,
+      "text": "动画的最小单位，不是画面，而是变化。"
+    },
+    {
+      "start": 18,
+      "end": 24.8,
+      "text": "看见 → 接近 → 触碰 → 反应。动作必须有因果。"
+    },
+    {
+      "start": 25,
+      "end": 31.8,
+      "text": "镜头、节奏、声音，一起组织观众感受到的时间。"
+    },
+    {
+      "start": 32,
+      "end": 39.5,
+      "text": "视频不是会动的 PPT，而是被时间组织的故事。"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "hook",
+      "start": 0,
+      "end": 5,
+      "beat": "hook",
+      "purpose": "用角色被困在一张页面里的反差提出问题.",
+      "semanticRefs": [
+        "problem"
+      ],
+      "visualRule": "每个镜头都必须产生可感知的状态变化；角色、道具和空间保持连续。",
+      "elements": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 720,
+          "fill": "paper"
+        },
+        {
+          "type": "rect",
+          "x": 90,
+          "y": 80,
+          "width": 1100,
+          "height": 540,
+          "fill": "white",
+          "stroke": "ink",
+          "strokeWidth": 6,
+          "radius": 32
+        },
+        {
+          "type": "rect",
+          "x": 145,
+          "y": 145,
+          "width": 990,
+          "height": 72,
+          "fill": "cream",
+          "radius": 18
+        },
+        {
+          "type": "text",
+          "x": 195,
+          "y": 195,
+          "text": "AI VIDEO",
+          "fontSize": 42,
+          "fontWeight": 800,
+          "fill": "ink",
+          "fontFamily": "Noto Sans CJK SC, Noto Sans, Arial, sans-serif",
+          "anchor": "start"
+        },
+        {
+          "type": "rect",
+          "x": 150,
+          "y": 265,
+          "width": 410,
+          "height": 245,
+          "fill": "blue",
+          "radius": 28,
+          "opacity": 0.22
+        },
+        {
+          "type": "rect",
+          "x": 660,
+          "y": 265,
+          "width": 410,
+          "height": 245,
+          "fill": "coral",
+          "radius": 28,
+          "opacity": 0.22
+        },
+        {
+          "type": "character",
+          "characterId": "host",
+          "x": 430,
+          "y": 500,
+          "scale": 1.3,
+          "clothes": "coral",
+          "skin": "#F0C5A5",
+          "hair": "ink",
+          "pose": "run",
+          "expression": "worried",
+          "direction": 1,
+          "motion": {
+            "type": "bob",
+            "amount": 6,
+            "cycles": 2
+          }
+        },
+        {
+          "type": "line",
+          "x1": 535,
+          "y1": 375,
+          "x2": 625,
+          "y2": 375,
+          "stroke": "ink",
+          "strokeWidth": 7,
+          "motion": {
+            "type": "slide",
+            "dx": -100,
+            "duration": 0.45
+          }
+        },
+        {
+          "type": "text",
+          "x": 645,
+          "y": 425,
+          "text": "WHY?",
+          "fontSize": 76,
+          "fontWeight": 800,
+          "fill": "ink",
+          "fontFamily": "Noto Sans CJK SC, Noto Sans, Arial, sans-serif",
+          "anchor": "start",
+          "motion": {
+            "type": "pop",
+            "from": 0.7,
+            "to": 1,
+            "duration": 0.5
+          }
+        }
+      ],
+      "keyPoses": [
+        {
+          "id": "p1",
+          "time": 0,
+          "pose": "idle",
+          "note": "inside page"
+        },
+        {
+          "id": "p2",
+          "time": 2,
+          "pose": "run",
+          "note": "tries to move"
+        },
+        {
+          "id": "p3",
+          "time": 4,
+          "pose": "react",
+          "note": "hits the boundary"
+        }
+      ],
+      "events": [
+        {
+          "id": "notice",
+          "start": 0.5,
+          "end": 1.5,
+          "action": "lookAt",
+          "actor": "host",
+          "phase": "reaction",
+          "expression": "surprised",
+          "gaze": "right"
+        },
+        {
+          "id": "run",
+          "start": 1.5,
+          "end": 3.2,
+          "action": "run",
+          "actor": "host",
+          "phase": "continuous",
+          "pose": "run",
+          "expression": "worried",
+          "gaze": "right"
+        },
+        {
+          "id": "hit",
+          "start": 3.2,
+          "end": 4.3,
+          "action": "react",
+          "actor": "host",
+          "phase": "reaction",
+          "expression": "worried",
+          "gaze": "right"
+        },
+        {
+          "id": "why",
+          "start": 4.3,
+          "end": 5,
+          "action": "point",
+          "actor": "host",
+          "phase": "settle",
+          "pose": "point",
+          "expression": "surprised",
+          "gaze": "right"
+        }
+      ],
+      "camera": {
+        "type": "push",
+        "fromScale": 1,
+        "toScale": 1.1,
+        "easing": "easeOut"
+      },
+      "transition": {
+        "type": "cut",
+        "duration": 0
+      },
+      "reads": [
+        "用角色被困在一张页面里的反差提出问题."
+      ]
+    },
+    {
+      "id": "problem",
+      "start": 5,
+      "end": 11,
+      "beat": "setup",
+      "purpose": "把页面移动和真实动作并置比较.",
+      "semanticRefs": [
+        "problem"
+      ],
+      "visualRule": "每个镜头都必须产生可感知的状态变化；角色、道具和空间保持连续。",
+      "elements": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 720,
+          "fill": "paper"
+        },
+        {
+          "type": "rect",
+          "x": 65,
+          "y": 85,
+          "width": 510,
+          "height": 510,
+          "fill": "white",
+          "stroke": "ink",
+          "strokeWidth": 5,
+          "radius": 28
+        },
+        {
+          "type": "text",
+          "x": 320,
+          "y": 155,
+          "text": "PAGE",
+          "fontSize": 34,
+          "fontWeight": 800,
+          "fill": "muted",
+          "fontFamily": "Noto Sans CJK SC, Noto Sans, Arial, sans-serif",
+          "anchor": "middle"
+        },
+        {
+          "type": "rect",
+          "x": 135,
+          "y": 225,
+          "width": 370,
+          "height": 78,
+          "fill": "blue",
+          "radius": 18,
+          "motion": {
+            "type": "travel",
+            "fromX": -80,
+            "toX": 80,
+            "duration": 1
+          }
+        },
+        {
+          "type": "rect",
+          "x": 135,
+          "y": 345,
+          "width": 370,
+          "height": 78,
+          "fill": "coral",
+          "radius": 18,
+          "motion": {
+            "type": "travel",
+            "fromX": 80,
+            "toX": -80,
+            "duration": 1
+          }
+        },
+        {
+          "type": "text",
+          "x": 320,
+          "y": 505,
+          "text": "换位置 ≠ 动作",
+          "fontSize": 36,
+          "fontWeight": 800,
+          "fill": "ink",
+          "fontFamily": "Noto Sans CJK SC, Noto Sans, Arial, sans-serif",
+          "anchor": "middle"
+        },
+        {
+          "type": "rect",
+          "x": 625,
+          "y": 85,
+          "width": 590,
+          "height": 510,
+          "fill": "cream",
+          "stroke": "ink",
+          "strokeWidth": 5,
+          "radius": 28
+        },
+        {
+          "type": "text",
+          "x": 920,
+          "y": 155,
+          "text": "ACTION",
+          "fontSize": 34,
+          "fontWeight": 800,
+          "fill": "ink",
+          "fontFamily": "Noto Sans CJK SC, Noto Sans, Arial, sans-serif",
+          "anchor": "middle"
+        },
+        {
+          "type": "prop",
+          "kind": "ball",
+          "x": 830,
+          "y": 430,
+          "fill": "coral",
+          "scale": 0.72,
+          "stroke": "ink",
+          "motion": {
+            "type": "travel",
+            "fromX": -170,
+            "toX": 100
+          }
+        },
+        {
+          "type": "character",
+          "characterId": "host",
+          "x": 840,
+          "y": 505,
+          "scale": 1.22,
+          "clothes": "blue",
+          "skin": "#F0C5A5",
+          "hair": "ink",
+          "pose": "reach",
+          "expression": "excited",
+          "direction": 1,
+          "motion": {
+            "type": "bob",
+            "amount": 4,
+            "cycles": 1
+          }
+        },
+        {
+          "type": "line",
+          "x1": 700,
+          "y1": 430,
+          "x2": 770,
+          "y2": 430,
+          "stroke": "ink",
+          "strokeWidth": 5,
+          "motion": {
+            "type": "draw",
+            "duration": 0.5
+          }
+        }
+      ],
+      "keyPoses": [
+        {
+          "id": "p1",
+          "time": 0,
+          "pose": "idle",
+          "note": "before action"
+        },
+        {
+          "id": "p2",
+          "time": 2,
+          "pose": "reach",
+          "note": "moves toward ball"
+        },
+        {
+          "id": "p3",
+          "time": 4,
+          "pose": "grab",
+          "note": "contact"
+        },
+        {
+          "id": "p4",
+          "time": 5.5,
+          "pose": "react",
+          "note": "reaction"
+        }
+      ],
+      "events": [
+        {
+          "id": "track",
+          "start": 0.2,
+          "end": 2,
+          "action": "lookAt",
+          "actor": "host",
+          "target": "ball",
+          "phase": "action",
+          "gaze": "right"
+        },
+        {
+          "id": "reach",
+          "start": 2,
+          "end": 3.5,
+          "action": "reach",
+          "actor": "host",
+          "target": "ball",
+          "phase": "anticipation",
+          "pose": "reach",
+          "expression": "curious",
+          "gaze": "right"
+        },
+        {
+          "id": "grab",
+          "start": 3.5,
+          "end": 4.6,
+          "action": "grab",
+          "actor": "host",
+          "target": "ball",
+          "phase": "action",
+          "pose": "grab",
+          "expression": "excited",
+          "gaze": "right"
+        },
+        {
+          "id": "react",
+          "start": 4.6,
+          "end": 5.8,
+          "action": "react",
+          "actor": "host",
+          "target": "ball",
+          "phase": "reaction",
+          "expression": "excited",
+          "gaze": "right"
+        }
+      ],
+      "camera": {
+        "type": "pan",
+        "fromX": -50,
+        "toX": 60,
+        "fromScale": 1,
+        "toScale": 1.05,
+        "easing": "easeInOut"
+      },
+      "transition": {
+        "type": "cut",
+        "duration": 0
+      },
+      "reads": [
+        "把页面移动和真实动作并置比较."
+      ]
+    },
+    {
+      "id": "motion",
+      "start": 11,
+      "end": 18,
+      "beat": "explanation",
+      "purpose": "用连续追踪动作证明变化才是动画单位.",
+      "semanticRefs": [
+        "motion"
+      ],
+      "visualRule": "每个镜头都必须产生可感知的状态变化；角色、道具和空间保持连续。",
+      "elements": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 720,
+          "fill": "paper"
+        },
+        {
+          "type": "circle",
+          "cx": 1060,
+          "cy": 120,
+          "r": 55,
+          "fill": "yellow",
+          "opacity": 0.8
+        },
+        {
+          "type": "path",
+          "d": "M60 540 Q380 390 720 510 T1220 420",
+          "fill": "none",
+          "stroke": "green",
+          "strokeWidth": 11
+        },
+        {
+          "type": "prop",
+          "kind": "ball",
+          "x": 720,
+          "y": 425,
+          "fill": "coral",
+          "scale": 0.78,
+          "stroke": "ink",
+          "motion": {
+            "type": "travel",
+            "fromX": -390,
+            "toX": 160
+          }
+        },
+        {
+          "type": "character",
+          "characterId": "host",
+          "x": 410,
+          "y": 500,
+          "scale": 1.35,
+          "clothes": "blue",
+          "skin": "#F0C5A5",
+          "hair": "ink",
+          "pose": "walk",
+          "expression": "excited",
+          "direction": 1,
+          "motion": {
+            "type": "travel",
+            "fromX": 0,
+            "toX": 260
+          }
+        },
+        {
+          "type": "circle",
+          "cx": 410,
+          "cy": 430,
+          "r": 105,
+          "fill": "white",
+          "opacity": 0.65,
+          "stroke": "blue",
+          "strokeWidth": 5,
+          "motion": {
+            "type": "scale",
+            "from": 0.82,
+            "to": 1.05,
+            "duration": 1.5
+          }
+        },
+        {
+          "type": "text",
+          "x": 640,
+          "y": 165,
+          "text": "CHANGE",
+          "fontSize": 62,
+          "fontWeight": 800,
+          "fill": "ink",
+          "fontFamily": "Noto Sans CJK SC, Noto Sans, Arial, sans-serif",
+          "anchor": "middle",
+          "motion": {
+            "type": "pop",
+            "from": 0.8,
+            "to": 1,
+            "duration": 0.6
+          }
+        }
+      ],
+      "keyPoses": [
+        {
+          "id": "p1",
+          "time": 0,
+          "pose": "idle",
+          "note": "tracks ball"
+        },
+        {
+          "id": "p2",
+          "time": 2.2,
+          "pose": "walk",
+          "note": "follows"
+        },
+        {
+          "id": "p3",
+          "time": 4.5,
+          "pose": "reach",
+          "note": "catches up"
+        },
+        {
+          "id": "p4",
+          "time": 6,
+          "pose": "react",
+          "note": "responds"
+        }
+      ],
+      "events": [
+        {
+          "id": "notice",
+          "start": 0,
+          "end": 1.3,
+          "action": "lookAt",
+          "actor": "host",
+          "target": "ball",
+          "phase": "action",
+          "gaze": "right"
+        },
+        {
+          "id": "follow",
+          "start": 1.3,
+          "end": 4.2,
+          "action": "walk",
+          "actor": "host",
+          "target": "ball",
+          "phase": "continuous",
+          "pose": "walk",
+          "expression": "excited",
+          "gaze": "right"
+        },
+        {
+          "id": "reach",
+          "start": 4.2,
+          "end": 5.5,
+          "action": "reach",
+          "actor": "host",
+          "target": "ball",
+          "phase": "action",
+          "pose": "reach",
+          "expression": "excited",
+          "gaze": "right"
+        },
+        {
+          "id": "react",
+          "start": 5.5,
+          "end": 6.8,
+          "action": "react",
+          "actor": "host",
+          "target": "ball",
+          "phase": "reaction",
+          "expression": "excited",
+          "gaze": "right"
+        }
+      ],
+      "camera": {
+        "type": "follow",
+        "fromX": -30,
+        "toX": 110,
+        "fromScale": 1.02,
+        "toScale": 1.1,
+        "easing": "easeInOut"
+      },
+      "transition": {
+        "type": "cut",
+        "duration": 0
+      },
+      "reads": [
+        "用连续追踪动作证明变化才是动画单位."
+      ]
+    },
+    {
+      "id": "causal",
+      "start": 18,
+      "end": 25,
+      "beat": "explanation",
+      "purpose": "把看见、接近、触碰、反应变成一条连续因果链.",
+      "semanticRefs": [
+        "causal"
+      ],
+      "visualRule": "每个镜头都必须产生可感知的状态变化；角色、道具和空间保持连续。",
+      "elements": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 720,
+          "fill": "paper"
+        },
+        {
+          "type": "path",
+          "d": "M110 520 Q360 350 620 470 T1160 360",
+          "fill": "none",
+          "stroke": "green",
+          "strokeWidth": 12
+        },
+        {
+          "type": "prop",
+          "kind": "ball",
+          "x": 330,
+          "y": 405,
+          "fill": "coral",
+          "scale": 0.7,
+          "stroke": "ink",
+          "motion": {
+            "type": "travel",
+            "fromX": -70,
+            "toX": 720
+          }
+        },
+        {
+          "type": "character",
+          "characterId": "host",
+          "x": 300,
+          "y": 500,
+          "scale": 1.2,
+          "clothes": "coral",
+          "skin": "#F0C5A5",
+          "hair": "ink",
+          "pose": "walk",
+          "expression": "curious",
+          "direction": 1,
+          "motion": {
+            "type": "travel",
+            "fromX": 0,
+            "toX": 620
+          }
+        },
+        {
+          "type": "circle",
+          "cx": 200,
+          "cy": 175,
+          "r": 13,
+          "fill": "blue",
+          "motion": {
+            "type": "pop",
+            "from": 0.2,
+            "to": 1,
+            "duration": 0.35
+          }
+        },
+        {
+          "type": "text",
+          "x": 200,
+          "y": 230,
+          "text": "看见",
+          "fontSize": 34,
+          "fontWeight": 800,
+          "fill": "ink",
+          "fontFamily": "Noto Sans CJK SC, Noto Sans, Arial, sans-serif",
+          "anchor": "middle"
+        },
+        {
+          "type": "circle",
+          "cx": 460,
+          "cy": 175,
+          "r": 13,
+          "fill": "blue",
+          "motion": {
+            "type": "pop",
+            "from": 0.2,
+            "to": 1,
+            "duration": 0.35
+          }
+        },
+        {
+          "type": "text",
+          "x": 460,
+          "y": 230,
+          "text": "接近",
+          "fontSize": 34,
+          "fontWeight": 800,
+          "fill": "ink",
+          "fontFamily": "Noto Sans CJK SC, Noto Sans, Arial, sans-serif",
+          "anchor": "middle"
+        },
+        {
+          "type": "circle",
+          "cx": 720,
+          "cy": 175,
+          "r": 13,
+          "fill": "blue",
+          "motion": {
+            "type": "pop",
+            "from": 0.2,
+            "to": 1,
+            "duration": 0.35
+          }
+        },
+        {
+          "type": "text",
+          "x": 720,
+          "y": 230,
+          "text": "触碰",
+          "fontSize": 34,
+          "fontWeight": 800,
+          "fill": "ink",
+          "fontFamily": "Noto Sans CJK SC, Noto Sans, Arial, sans-serif",
+          "anchor": "middle"
+        },
+        {
+          "type": "circle",
+          "cx": 980,
+          "cy": 175,
+          "r": 13,
+          "fill": "blue",
+          "motion": {
+            "type": "pop",
+            "from": 0.2,
+            "to": 1,
+            "duration": 0.35
+          }
+        },
+        {
+          "type": "text",
+          "x": 980,
+          "y": 230,
+          "text": "反应",
+          "fontSize": 34,
+          "fontWeight": 800,
+          "fill": "ink",
+          "fontFamily": "Noto Sans CJK SC, Noto Sans, Arial, sans-serif",
+          "anchor": "middle"
+        }
+      ],
+      "keyPoses": [
+        {
+          "id": "p1",
+          "time": 0,
+          "pose": "idle",
+          "note": "sees object"
+        },
+        {
+          "id": "p2",
+          "time": 1.8,
+          "pose": "walk",
+          "note": "approaches"
+        },
+        {
+          "id": "p3",
+          "time": 4,
+          "pose": "reach",
+          "note": "touches"
+        },
+        {
+          "id": "p4",
+          "time": 5.8,
+          "pose": "celebrate",
+          "note": "reacts"
+        }
+      ],
+      "events": [
+        {
+          "id": "see",
+          "start": 0,
+          "end": 1.3,
+          "action": "lookAt",
+          "actor": "host",
+          "target": "ball",
+          "phase": "anticipation",
+          "pose": "idle",
+          "gaze": "right"
+        },
+        {
+          "id": "approach",
+          "start": 1.3,
+          "end": 3.5,
+          "action": "walk",
+          "actor": "host",
+          "target": "ball",
+          "phase": "continuous",
+          "pose": "walk",
+          "gaze": "right"
+        },
+        {
+          "id": "touch",
+          "start": 3.5,
+          "end": 5.2,
+          "action": "reach",
+          "actor": "host",
+          "target": "ball",
+          "phase": "action",
+          "pose": "reach",
+          "gaze": "right"
+        },
+        {
+          "id": "response",
+          "start": 5.2,
+          "end": 6.6,
+          "action": "celebrate",
+          "actor": "host",
+          "target": "ball",
+          "phase": "reaction",
+          "pose": "celebrate",
+          "expression": "excited",
+          "gaze": "right"
+        }
+      ],
+      "camera": {
+        "type": "push",
+        "fromScale": 1,
+        "toScale": 1.1,
+        "toX": 40,
+        "easing": "easeOut"
+      },
+      "transition": {
+        "type": "cut",
+        "duration": 0
+      },
+      "reads": [
+        "把看见、接近、触碰、反应变成一条连续因果链."
+      ]
+    },
+    {
+      "id": "system",
+      "start": 25,
+      "end": 32,
+      "beat": "explanation",
+      "purpose": "让镜头、节奏和声音成为时间结构.",
+      "semanticRefs": [
+        "system"
+      ],
+      "visualRule": "每个镜头都必须产生可感知的状态变化；角色、道具和空间保持连续。",
+      "elements": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 720,
+          "fill": "ink"
+        },
+        {
+          "type": "circle",
+          "cx": 640,
+          "cy": 350,
+          "r": 180,
+          "fill": "blue",
+          "opacity": 0.18
+        },
+        {
+          "type": "circle",
+          "cx": 640,
+          "cy": 350,
+          "r": 120,
+          "fill": "yellow",
+          "opacity": 0.25,
+          "motion": {
+            "type": "emphasis",
+            "from": 0.95,
+            "to": 1.08,
+            "duration": 0.9
+          }
+        },
+        {
+          "type": "character",
+          "characterId": "host",
+          "x": 640,
+          "y": 500,
+          "scale": 1.5,
+          "clothes": "coral",
+          "skin": "#F0C5A5",
+          "hair": "white",
+          "pose": "celebrate",
+          "expression": "excited",
+          "direction": 1,
+          "motion": {
+            "type": "bob",
+            "amount": 7,
+            "cycles": 2
+          }
+        },
+        {
+          "type": "line",
+          "x1": 250,
+          "y1": 610,
+          "x2": 1030,
+          "y2": 610,
+          "stroke": "white",
+          "strokeWidth": 4
+        },
+        {
+          "type": "line",
+          "x1": 300,
+          "y1": 610,
+          "x2": 300,
+          "y2": 570,
+          "stroke": "yellow",
+          "strokeWidth": 8,
+          "motion": {
+            "type": "bob",
+            "amount": 18,
+            "cycles": 3
+          }
+        },
+        {
+          "type": "line",
+          "x1": 420,
+          "y1": 610,
+          "x2": 420,
+          "y2": 555,
+          "stroke": "yellow",
+          "strokeWidth": 8,
+          "motion": {
+            "type": "bob",
+            "amount": 18,
+            "cycles": 3
+          }
+        },
+        {
+          "type": "line",
+          "x1": 540,
+          "y1": 610,
+          "x2": 540,
+          "y2": 578,
+          "stroke": "yellow",
+          "strokeWidth": 8,
+          "motion": {
+            "type": "bob",
+            "amount": 18,
+            "cycles": 3
+          }
+        },
+        {
+          "type": "line",
+          "x1": 660,
+          "y1": 610,
+          "x2": 660,
+          "y2": 545,
+          "stroke": "yellow",
+          "strokeWidth": 8,
+          "motion": {
+            "type": "bob",
+            "amount": 18,
+            "cycles": 3
+          }
+        },
+        {
+          "type": "line",
+          "x1": 780,
+          "y1": 610,
+          "x2": 780,
+          "y2": 562,
+          "stroke": "yellow",
+          "strokeWidth": 8,
+          "motion": {
+            "type": "bob",
+            "amount": 18,
+            "cycles": 3
+          }
+        },
+        {
+          "type": "line",
+          "x1": 900,
+          "y1": 610,
+          "x2": 900,
+          "y2": 574,
+          "stroke": "yellow",
+          "strokeWidth": 8,
+          "motion": {
+            "type": "bob",
+            "amount": 18,
+            "cycles": 3
+          }
+        },
+        {
+          "type": "text",
+          "x": 640,
+          "y": 130,
+          "text": "CAMERA  •  RHYTHM  •  SOUND",
+          "fontSize": 38,
+          "fontWeight": 800,
+          "fill": "white",
+          "fontFamily": "Noto Sans, Arial, sans-serif",
+          "anchor": "middle"
+        }
+      ],
+      "keyPoses": [
+        {
+          "id": "p1",
+          "time": 0,
+          "pose": "idle",
+          "note": "before beat"
+        },
+        {
+          "id": "p2",
+          "time": 2,
+          "pose": "celebrate",
+          "note": "beat lands"
+        },
+        {
+          "id": "p3",
+          "time": 5,
+          "pose": "celebrate",
+          "note": "camera closes in"
+        }
+      ],
+      "events": [
+        {
+          "id": "build",
+          "start": 0,
+          "end": 1.8,
+          "action": "lookAt",
+          "actor": "host",
+          "target": "beat",
+          "phase": "anticipation",
+          "expression": "curious"
+        },
+        {
+          "id": "hit",
+          "start": 1.8,
+          "end": 3.8,
+          "action": "celebrate",
+          "actor": "host",
+          "target": "beat",
+          "phase": "action",
+          "pose": "celebrate",
+          "expression": "excited"
+        },
+        {
+          "id": "hold",
+          "start": 3.8,
+          "end": 5.8,
+          "action": "celebrate",
+          "actor": "host",
+          "target": "beat",
+          "phase": "continuous",
+          "pose": "celebrate",
+          "expression": "excited"
+        },
+        {
+          "id": "settle",
+          "start": 5.8,
+          "end": 6.8,
+          "action": "react",
+          "actor": "host",
+          "target": "beat",
+          "phase": "settle",
+          "expression": "happy"
+        }
+      ],
+      "camera": {
+        "type": "push",
+        "fromScale": 1,
+        "toScale": 1.22,
+        "toX": 90,
+        "easing": "easeInOut"
+      },
+      "transition": {
+        "type": "cut",
+        "duration": 0
+      },
+      "reads": [
+        "让镜头、节奏和声音成为时间结构."
+      ]
+    },
+    {
+      "id": "payoff",
+      "start": 32,
+      "end": 40,
+      "beat": "payoff",
+      "purpose": "用完整连续动作收束观点，让结论成为视觉结果.",
+      "semanticRefs": [
+        "thesis"
+      ],
+      "visualRule": "每个镜头都必须产生可感知的状态变化；角色、道具和空间保持连续。",
+      "elements": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 720,
+          "fill": "paper"
+        },
+        {
+          "type": "circle",
+          "cx": 1060,
+          "cy": 110,
+          "r": 55,
+          "fill": "yellow",
+          "opacity": 0.75
+        },
+        {
+          "type": "path",
+          "d": "M40 560 Q320 470 620 550 T1240 450",
+          "fill": "none",
+          "stroke": "green",
+          "strokeWidth": 12
+        },
+        {
+          "type": "prop",
+          "kind": "ball",
+          "x": 520,
+          "y": 440,
+          "fill": "coral",
+          "scale": 0.8,
+          "stroke": "ink",
+          "motion": {
+            "type": "travel",
+            "fromX": -260,
+            "toX": 400
+          }
+        },
+        {
+          "type": "character",
+          "characterId": "host",
+          "x": 340,
+          "y": 500,
+          "scale": 1.45,
+          "clothes": "blue",
+          "skin": "#F0C5A5",
+          "hair": "ink",
+          "pose": "run",
+          "expression": "excited",
+          "direction": 1,
+          "motion": {
+            "type": "travel",
+            "fromX": 0,
+            "toX": 720
+          }
+        },
+        {
+          "type": "circle",
+          "cx": 340,
+          "cy": 610,
+          "r": 12,
+          "fill": "white",
+          "opacity": 0.55,
+          "motion": {
+            "type": "travel",
+            "fromX": 0,
+            "toX": 1000
+          }
+        },
+        {
+          "type": "text",
+          "x": 640,
+          "y": 150,
+          "text": "STORY > SLIDES",
+          "fontSize": 54,
+          "fontWeight": 800,
+          "fill": "ink",
+          "fontFamily": "Noto Sans CJK SC, Noto Sans, Arial, sans-serif",
+          "anchor": "middle",
+          "motion": {
+            "type": "pop",
+            "from": 0.86,
+            "to": 1,
+            "duration": 0.7
+          }
+        }
+      ],
+      "keyPoses": [
+        {
+          "id": "p1",
+          "time": 0,
+          "pose": "run",
+          "note": "starts moving"
+        },
+        {
+          "id": "p2",
+          "time": 2.5,
+          "pose": "run",
+          "note": "carries action"
+        },
+        {
+          "id": "p3",
+          "time": 5.5,
+          "pose": "run",
+          "note": "approaches payoff"
+        },
+        {
+          "id": "p4",
+          "time": 7.2,
+          "pose": "celebrate",
+          "note": "final exit"
+        }
+      ],
+      "events": [
+        {
+          "id": "go",
+          "start": 0,
+          "end": 2,
+          "action": "run",
+          "actor": "host",
+          "target": "ball",
+          "phase": "continuous",
+          "pose": "run",
+          "expression": "excited",
+          "gaze": "right"
+        },
+        {
+          "id": "carry",
+          "start": 2,
+          "end": 5,
+          "action": "run",
+          "actor": "host",
+          "target": "ball",
+          "phase": "continuous",
+          "pose": "run",
+          "expression": "excited",
+          "gaze": "right"
+        },
+        {
+          "id": "finish",
+          "start": 5,
+          "end": 6.8,
+          "action": "run",
+          "actor": "host",
+          "target": "ball",
+          "phase": "settle",
+          "pose": "run",
+          "expression": "excited",
+          "gaze": "right"
+        },
+        {
+          "id": "celebrate",
+          "start": 6.8,
+          "end": 7.8,
+          "action": "celebrate",
+          "actor": "host",
+          "target": "ball",
+          "phase": "reaction",
+          "pose": "celebrate",
+          "expression": "excited",
+          "gaze": "right"
+        }
+      ],
+      "camera": {
+        "type": "follow",
+        "fromX": -80,
+        "toX": 140,
+        "fromScale": 1.02,
+        "toScale": 1.12,
+        "easing": "easeInOut"
+      },
+      "transition": {
+        "type": "cut",
+        "duration": 0
+      },
+      "reads": [
+        "用完整连续动作收束观点，让结论成为视觉结果."
+      ]
+    }
+  ]
+}
