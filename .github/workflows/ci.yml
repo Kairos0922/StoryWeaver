@@ -12,6 +12,7 @@ jobs:
       - run: npm test
       - run: npm run validate
       - run: npm run method-proof
+      - run: npm run production-01
       - run: node scripts/build-vercel-t01.mjs
       - uses: actions/upload-artifact@v4
         with:
