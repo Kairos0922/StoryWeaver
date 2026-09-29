@@ -11,7 +11,12 @@ jobs:
       - run: npm install
       - run: npm test
       - run: npm run validate
+      - run: npm run method-proof
       - run: node scripts/build-vercel-t01.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: method-proof
+          path: out/method-proof
       - uses: actions/upload-artifact@v4
         with:
           name: t01-english-colors-final
