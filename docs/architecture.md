@@ -1,57 +1,68 @@
-# StoryWeaver Animation Architecture
+# StoryWeaver Production Architecture
 
 ## 1. Purpose
 
-StoryWeaver is a deterministic code-video compiler. Its core unit is not a drawable Scene but a narrative Shot whose visual change is described by an explicit action timeline.
+StoryWeaver is a model-agnostic code-video production system. Its job is to make an Agent's creative work repeatable, inspectable and renderable; it is not a renderer disguised as a creative system.
 
 The production pipeline is:
 
-Content → Story → Storyboard → VideoSpec → Animation Grammar → Renderer → FFmpeg → Review
+Reference → Style Guide → Story → Beat Sheet → Shot List → Animation Program / VideoSpec → Deterministic Render → Review → Critique → Structured Revision → Render
+
+A model provider may change. The production contract remains stable.
 
 ## 2. Layer boundaries
 
-### Content
-Defines source material and semantic claims. It does not define animation.
+### Reference
+Optional source material that establishes visual or product truth. The system extracts reusable style and identity constraints instead of copying a provider-specific prompt.
 
 ### Story
-Defines narrative intent: goal, obstacle, escalation, reveal, payoff.
+Defines the viewer promise, goal, obstacle, escalation, reveal and payoff.
 
 ### Storyboard
-Defines the viewer experience: Shot purpose, viewer reads, key poses, events and timing, camera intent, transition, and audio timing.
+Defines beat timing, shot purpose, viewer reads, key poses, causal actions, camera intent, transition and audio timing.
 
-### VideoSpec
-The executable, renderer-independent representation of the storyboard.
+### Animation Program / VideoSpec
+The executable representation of the storyboard. It must expose state changes and timing explicitly enough for deterministic rendering and targeted repair.
 
-A Shot contains: start/end, purpose/semanticRefs, reads, keyPoses, events, camera, transition, elements, captions/audio references.
+VideoSpec is an execution contract, not the place where creative intent is invented.
 
 ### Animation Grammar
-Converts semantic actions into deterministic motion.
-
-Core character actions: lookAt, turn, walk, run, stop, crouch, reach, grab, lift, open, close, point, react, celebrate, drive.
-
-Actions should normally expose the timing grammar:
-
-anticipation → action → reaction → settle
-
-Continuous actions such as walking/running may use a continuous phase.
-
-### Character / Prop
-Actors are stateful visual entities, not static SVG pictures.
-
-Character state includes identity, pose, expression, gaze, gesture, and secondary motion.
+Provides reusable semantic motion primitives such as lookAt, turn, walk, run, reach, grab, lift, open, close, point, react, celebrate and drive.
 
 ### Renderer
-Only translates VideoSpec + Animation Grammar into deterministic frames. The renderer must not invent narrative intent.
-
-### FFmpeg
-Only handles encoding and media composition.
+Only translates the executable plan into deterministic frames. It must not invent narrative intent.
 
 ### Review
-Visual correctness is a first-class quality gate. Code/schema validity is necessary but not sufficient.
+Review is part of production, not a postscript.
 
-Review artifacts: key-pose sheet, contact sheet, motion strip, selected close-ups, audio timing report.
+Required loop:
 
-## 3. Shot design rule
+Generate → Render → Inspect → Diagnose → Modify → Render again
+
+Review artifacts include key-pose sheets, contact sheets, motion strips, selected close-ups and media metadata.
+
+## 3. Model portability
+
+StoryWeaver does not require Claude Opus 5.5 or any other specific model.
+
+The model is responsible for:
+- source understanding;
+- story and visual decisions;
+- storyboard creation;
+- animation-program generation;
+- diagnosis and revision.
+
+StoryWeaver is responsible for:
+- stable contracts;
+- validation;
+- deterministic rendering;
+- media inspection;
+- review artifacts;
+- reproducible revision.
+
+A provider-specific workflow may be used as an experiment, but provider-specific assumptions must not leak into the core architecture.
+
+## 4. Shot design rule
 
 Every shot must answer:
 
@@ -59,19 +70,27 @@ What changes between the beginning and the end of this shot?
 
 A shot that only presents a static composition without a meaningful state change is not an animation shot.
 
-## 4. Animation quality rules
+## 5. Animation quality rules
 
 1. Prefer causal action chains over independent motions.
 2. Use anticipation before significant actions.
 3. Use reaction after discoveries or impacts.
-4. Use follow-through/settle instead of abruptly stopping motion.
+4. Use follow-through/settle instead of abrupt stops.
 5. Use camera movement to support attention, not to substitute for acting.
-6. Keep character identity stable while allowing pose/expression changes.
+6. Keep character/object identity stable while state changes.
 7. Use secondary motion to keep the world alive.
-8. Prefer fewer meaningful actions over many decorative effects.
+8. Prefer fewer meaningful actions over decorative effects.
 
-## 5. Review loop
+## 6. Production quality gate
 
-Generate → Render → Inspect → Diagnose → Modify → Render again.
+A source file passing schema validation is not sufficient.
 
-The system is considered production-ready only when the rendered video, not merely its source JSON, passes review.
+A production candidate must also:
+1. render successfully;
+2. pass media inspection;
+3. produce review artifacts;
+4. record diagnosed defects;
+5. apply structured repairs;
+6. rerender successfully.
+
+The Method Proof under experiments/method-proof is the canonical small-scale demonstration of this loop.
