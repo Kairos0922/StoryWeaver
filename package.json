@@ -1,6 +1,6 @@
 {
   "name": "storyweaver",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "description": "Content-to-video compiler for deterministic programmatic visual storytelling.",
@@ -15,7 +15,8 @@
     "lint": "node src/cli.js lint",
     "inspect": "node src/cli.js inspect",
     "contact-sheet": "node scripts/contact-sheet.mjs",
-    "method-proof": "node scripts/method-proof.js"
+    "method-proof": "node scripts/method-proof.js",
+    "production-01": "node scripts/production-01.js"
   },
   "dependencies": {
     "@resvg/resvg-js": "^2.6.2",
