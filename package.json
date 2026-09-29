@@ -14,7 +14,8 @@
     "quality": "node scripts/quality-gate.js",
     "lint": "node src/cli.js lint",
     "inspect": "node src/cli.js inspect",
-    "contact-sheet": "node scripts/contact-sheet.mjs"
+    "contact-sheet": "node scripts/contact-sheet.mjs",
+    "method-proof": "node scripts/method-proof.js"
   },
   "dependencies": {
     "@resvg/resvg-js": "^2.6.2",
