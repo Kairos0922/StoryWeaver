@@ -2,13 +2,13 @@
 
 **Content → Story → Visual Program → Deterministic Video**
 
-StoryWeaver is a production-oriented compiler for publishable short-form programmatic video. It is not a technical demo generator.
+StoryWeaver is a model-agnostic production system for publishable short-form programmatic video. It is not a technical demo generator and is not tied to Claude Opus 5.5 or any other model provider.
 
-## Core pipeline
+## Core production loop
 
-Content → Semantic Model → Story / Beat Plan → Visual Strategy → VideoSpec → Deterministic JS Renderer → MP4
+Reference → Style Guide → Story → Beat Sheet → Shot List → Animation Program / VideoSpec → Deterministic Render → Review → Critique → Structured Revision → Render
 
-A strong model can create or revise the semantic and visual plan. Lower-cost models can perform constrained edits. The renderer does not depend on an LLM.
+A strong model can perform creative planning and revision. Lower-cost models can perform constrained edits. StoryWeaver owns the stable contracts, validation, deterministic rendering and review artifacts.
 
 ## What the system is optimized for
 
@@ -26,20 +26,22 @@ These formats share the properties that make programmatic rendering valuable: ex
 
 1. Content value precedes implementation convenience.
 2. Hook → progression → payoff is part of the production contract.
-3. Motion must clarify, emphasize, compare, transform, reveal or create a deliberate narrative beat.
-4. Reuse visual identities instead of redrawing recurring subjects.
-5. Models emit a stable VideoSpec, not renderer-specific prose.
-6. Identical specs/assets render deterministically.
-7. Expensive reasoning is reserved for story/visual strategy and difficult repair.
-8. Validation and media inspection are release gates.
+3. Every shot must contain a meaningful state change.
+4. Motion must clarify, emphasize, compare, transform, reveal or create a deliberate narrative beat.
+5. Reuse stable visual identities instead of redrawing recurring subjects.
+6. The executable plan is a production contract, not a place for the renderer to invent intent.
+7. Identical specs/assets render deterministically.
+8. Validation, media inspection and structured critique are release gates.
+9. Provider-specific assumptions must not leak into the core architecture.
 
 ## Repository
 
 - src/ — compiler, validator, deterministic renderer and CLI
 - specs/ — machine-readable contracts and visual grammar
 - research/ — sourced case research and scenario evidence
-- docs/ — architecture, quality standards, model contract and case-derived decisions
+- docs/ — architecture, agent contract and production decisions
 - tasks/ — production tasks for external models
+- experiments/ — reproducible production experiments
 - examples/ — canonical renderable examples
 - tests/ — automated contract tests
 
@@ -48,14 +50,23 @@ These formats share the properties that make programmatic rendering valuable: ex
     npm install
     npm test
     npm run validate
+    npm run method-proof
     npm run render
 
-Rendering uses programmatic JavaScript/SVG. Sharp performs rasterization and FFmpeg performs final MP4 encoding; no video-generation model is required.
+Rendering uses programmatic JavaScript/SVG. resvg performs SVG rasterization and FFmpeg performs final MP4 encoding; no video-generation model is required.
 
-## Model allocation
+## Method Proof
 
-- Frontier model: semantic analysis, story/visual strategy, difficult scene design, quality review.
-- Mid/low-cost model: constrained edits, parameter changes, caption changes, scene substitutions.
-- No model: validation, rendering, media inspection and deterministic transforms.
+The canonical small-scale proof lives in experiments/method-proof.
 
-See docs/agent-contract.md, docs/10-opus55-case-derived-design.md and tasks/production-task-list.md.
+It demonstrates:
+
+Reference → planning → executable spec → render → inspect → critique → structured repair → rerender
+
+The CI pipeline runs this proof as a release gate and stores both revision renders and the review manifest as artifacts.
+
+## Model portability
+
+Claude, GPT, Gemini and other coding agents are interchangeable production inputs. Opus 5.5 is treated as a source of case-derived methodology, not as a product dependency.
+
+See docs/agent-contract.md, docs/architecture.md, docs/10-opus55-case-derived-design.md and tasks/production-task-list.md.
