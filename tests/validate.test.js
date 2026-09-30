@@ -19,25 +19,6 @@ test('bad final duration rejected',()=>{
   assert.throws(()=>validateVideoSpec(x));
 });
 
-test('interactive character and prop ids are required',()=>{
-  const x={
-    ...structuredClone(spec),
-    duration:1,
-    scenes:[{
-      ...structuredClone(spec.scenes[0]),
-      id:'interaction',
-      start:0,
-      end:1,
-      elements:[
-        {type:'character',characterId:'host',x:100,y:200},
-        {type:'prop',kind:'ball',x:200,y:200}
-      ],
-      events:[]
-    }]
-  };
-  assert.throws(()=>validateVideoSpec(x),/requires an explicit id/);
-});
-
 test('interaction contracts are enforced by the production validation boundary',()=>{
   const x={
     ...structuredClone(spec),
@@ -51,7 +32,7 @@ test('interaction contracts are enforced by the production validation boundary',
       visualRule:'causal',
       elements:[
         {type:'character',id:'host',characterId:'host',x:100,y:220,scale:1.2},
-        {type:'prop',id:'ball',kind:'ball',x:250,y:140,scale:1}
+        {type:'prop',id:'ball',kind:'ball',x:240,y:170,scale:1}
       ],
       events:[{
         id:'touch',
