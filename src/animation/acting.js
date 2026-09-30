@@ -30,7 +30,7 @@ export function actingState(event,t,scene,interaction=null){
   };
 }
 
-export function poseState(state,{targetPoint=null,originX=0,originY=0,actorScale=1}={}){
+export function poseState(state,{targetPoint=null,originX=0,originY=0,actorScale=1,direction=1}={}){
   const run=state.action==='run',walk=state.action==='walk';
   const cycle=(run?4:walk?2:0)*Math.PI*state.p;
   const stride=(run||walk)?Math.sin(cycle):0;
@@ -54,7 +54,7 @@ export function poseState(state,{targetPoint=null,originX=0,originY=0,actorScale
   };
   if(targetPoint&&['reach','grab','touch'].includes(state.action)&&state.reach>0){
     const targetLocal={
-      x:(targetPoint.x-originX)/Math.max(.001,actorScale),
+      x:(targetPoint.x-originX)/Math.max(.001,actorScale*direction),
       y:(targetPoint.y-(originY+bodyY))/Math.max(.001,actorScale)
     };
     const key=state.hand==='left'?'left':'right';
