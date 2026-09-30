@@ -1,5 +1,7 @@
 import {esc,lerp,clamp} from '../utils.js';
 import {actingState,poseState} from '../animation/acting.js';
+import {motionState,progressAt} from '../animation/motion.js';
+import {elementId,interactionForActor,interactionForTarget,contactFeedback} from '../animation/interaction.js';
 
 const col=(p,n,f='#111')=>p?.[n]??n??f;
 const num=(v,d=0)=>Number.isFinite(v)?v:d;
@@ -51,27 +53,30 @@ function cameraState(scene,t,spec){
  return {panX,panY,scale};
 }
 
-function renderProp(e,state,palette){
-
+function renderProp(e,state,palette,interaction=null){
  const x=num(e.x),y=num(e.y),s=num(e.scale,1),fill=col(palette,e.fill,'#EF8067'),ink=col(palette,e.stroke,'#26352F');
- const tr='translate('+(x+state.dx)+' '+(y+state.dy)+') rotate('+state.rotate+') scale('+(s*state.scale)+')';
+ const response=interaction?.response||{dx:0,dy:0,rotate:0,scale:1};
+ const feedback=interaction?.feedback??0;
+ const squash=e.kind==='ball'?1+feedback*.08:1;
+ const stretch=e.kind==='ball'?1-feedback*.06:1;
+ const tr='translate('+(x+state.dx+response.dx)+' '+(y+state.dy+response.dy)+') rotate('+(state.rotate+response.rotate)+') scale('+(s*state.scale*response.scale*squash)+' '+(s*state.scale*response.scale*stretch)+')';
  if(e.kind==='ball') return '<g opacity="'+state.opacity+'" transform="'+tr+'"><circle r="42" fill="'+esc(fill)+'" stroke="'+esc(ink)+'" stroke-width="4"/><path d="M-28-28 Q0-8 28-28" fill="none" stroke="#fff" stroke-width="5" opacity=".65"/><circle cx="-13" cy="-14" r="7" fill="#fff" opacity=".7"/></g>';
  if(e.kind==='box'){
   const open=clamp(e.openAt==null?0:((state.p-e.openAt)/Math.max(.001,1-e.openAt)),0,1);
   const lidY=-75-open*48, lidR=-12*open;
   return '<g opacity="'+state.opacity+'" transform="'+tr+'"><rect x="-120" y="-75" width="240" height="150" rx="20" fill="'+esc(fill)+'" stroke="'+esc(ink)+'" stroke-width="5"/><path d="M-120-45 L0-5 L120-45" fill="none" stroke="'+esc(ink)+'" stroke-width="4"/><g transform="rotate('+lidR+' 0 -75)"><rect x="-120" y="'+lidY+'" width="240" height="30" rx="12" fill="'+esc(fill)+'" stroke="'+esc(ink)+'" stroke-width="5"/></g><path d="M0-75 L0 75" stroke="'+esc(ink)+'" stroke-width="4" opacity=".35"/><ellipse cx="0" cy="-58" rx="55" ry="18" fill="#fff" opacity="'+(.10+open*.25)+'"/></g>';
-}
+ }
  if(e.kind==='umbrella') return '<g opacity="'+state.opacity+'" transform="'+tr+'"><path d="M-115 0 Q0-115 115 0 Z" fill="'+esc(fill)+'" stroke="'+esc(ink)+'" stroke-width="5"/><path d="M-80 0 Q-70 24 -52 0 M-26 0 Q-15 24 0 0 M26 0 Q40 24 52 0 M80 0 Q92 24 115 0" fill="none" stroke="'+esc(ink)+'" stroke-width="4"/><path d="M0 0 L0 145 Q0 170 25 170" fill="none" stroke="'+esc(ink)+'" stroke-width="6" stroke-linecap="round"/></g>';
  if(e.kind==='car'){
   const spin=(state.p*(e.motion?.wheelTurns??3)*360)%360;
   return '<g opacity="'+state.opacity+'" transform="'+tr+'"><rect x="-120" y="-35" width="240" height="75" rx="24" fill="'+esc(fill)+'" stroke="'+esc(ink)+'" stroke-width="5"/><path d="M-70-35 L-35-82 L55-82 L88-35" fill="'+esc(fill)+'" stroke="'+esc(ink)+'" stroke-width="5"/><path d="M-25-72 L-5-43 M15-72 L50-43" stroke="#fff" stroke-width="5" opacity=".7"/><g transform="rotate('+spin+' -70 45)"><circle cx="-70" cy="45" r="25" fill="#26352F"/><path d="M-70 25V65 M-90 45H-50" stroke="#F8E8C8" stroke-width="5"/></g><g transform="rotate('+spin+' 70 45)"><circle cx="70" cy="45" r="25" fill="#26352F"/><path d="M70 25V65 M50 45H90" stroke="#F8E8C8" stroke-width="5"/></g><circle cx="108" cy="-5" r="7" fill="#FFE8A8"/></g>';
-}
+ }
  if(e.kind==='track') return '<g opacity="'+state.opacity+'" transform="'+tr+'"><ellipse cx="-25" cy="0" rx="18" ry="34" fill="'+esc(fill)+'" transform="rotate(-20)"/><ellipse cx="25" cy="0" rx="18" ry="34" fill="'+esc(fill)+'" transform="rotate(20)"/></g>';
  return '';
 }
 
 function renderElement(e,t,scene,palette,mult=1){
- const p=progress(t,e,scene);
+ const p=progressAt(t,e,scene);
  const state=motionState(e,t,scene);
  state.opacity*=mult;
  const fill=col(palette,e.fill),stroke=col(palette,e.stroke);
@@ -89,11 +94,12 @@ function renderElement(e,t,scene,palette,mult=1){
  if(e.type==='path') return '<path d="'+esc(e.d||'')+'" fill="'+esc(fill)+'" stroke="'+esc(stroke)+'" stroke-width="'+num(e.strokeWidth,2)+'"'+a+'/>';
  if(e.type==='text'||e.type==='caption') return '<text x="'+num(e.x)+'" y="'+num(e.y)+'" text-anchor="'+esc(e.anchor||'start')+'" font-family="'+esc(e.fontFamily||'Arial,sans-serif')+'" font-size="'+num(e.fontSize,32)+'px" font-weight="'+esc(e.fontWeight||600)+'" fill="'+esc(fill)+'"'+a+'>'+esc(e.text||'')+'</text>';
  if(e.type==='group') return '<g'+a+'>'+((e.children||[]).map(c=>renderElement(c,t,scene,palette,mult)).join(''))+'</g>';
- if(e.type==='prop') return renderProp(e,state,palette);
+ if(e.type==='prop') return renderProp(e,state,palette,interactionForTarget(scene,t,elementId(e)));
  if(e.type==='character'){
   const actingEvent=activeEvent(scene,t,e.characterId);
-  const acting=actingState(actingEvent,t,scene);
-  const pose=poseState(acting);
+  const interaction=interactionForActor(scene,t,e.characterId);
+  const acting=actingState(actingEvent,t,scene,interaction);
+  const pose=poseState(acting,{targetPoint:acting.targetPoint,originX:num(e.x)+state.dx,originY:num(e.y)+state.dy,actorScale:num(e.scale,1)*state.scale});
   const expression=acting.expression==='neutral'?(e.expression||'happy'):acting.expression;
   const gaze=acting.gaze||'center';
   const headTurn=gaze==='left'?-7:gaze==='right'?7:0;
@@ -108,7 +114,7 @@ function renderElement(e,t,scene,palette,mult=1){
   const leftLeg=pose.leftLeg,rightLeg=pose.rightLeg;
   const handReach=acting.reach*10;
   const reactionScale=1+acting.recoil*.035;
-  const tr='translate('+(x+state.dx)+' '+(y+state.dy+pose.bodyY)+') scale('+(s*state.scale*dir*reactionScale)+' '+(s*state.scale/reactionScale)+') rotate('+pose.torsoRotate+')';
+  const tr='translate('+(x+state.dx)+' '+(y+state.dy+pose.bodyY)+') scale('+(s*state.scale*dir*reactionScale)+' '+(s*state.scale/reactionScale)+') rotate('+(state.rotate+pose.torsoRotate)+')'';
   return '<g opacity="'+state.opacity+'" transform="'+tr+'">'+
     '<ellipse cx="0" cy="55" rx="42" ry="10" fill="#26352F" opacity=".12"/>'+
     '<circle cx="'+headTurn+'" cy="'+(-72+pose.headY)+'" r="38" fill="'+esc(skin)+'"/>'+
@@ -133,7 +139,7 @@ function renderScene(scene,t,spec,opacity=1){
  const cam=cameraState(scene,t,spec);
  const cx=spec.width/2,cy=spec.height/2;
  const camera='<g transform="translate('+cx+' '+cy+') scale('+cam.scale+') translate('+(-cx+cam.panX)+' '+(-cy+cam.panY)+')">';
- return camera+scene.elements.map(e=>renderElement(e,t,scene,spec.palette,opacity)).join('')+'</g>';
+ return camera+scene.elements.map(e=>renderElement(e,t,scene,spec.palette,opacity)).join('')+contactFeedback(scene,t,spec.palette)+'</g>';
 }
 
 export function frameSvg(spec,t){
