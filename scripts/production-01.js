@@ -60,6 +60,8 @@ await fs.writeFile(path.join(reviewDir,'interaction-review.json'),JSON.stringify
   handPoint:{x:handX,y:handY},contactDistance,feedbackAtContact:actorStateAtContact.feedback,
   targetResponseAfter250ms:targetAfter.response,causedBy:'touch'
 },null,2)+'\\n');
+for(const file of ['pre-contact.svg','pre-contact.png','pre-contact-phone.png','contact.svg','contact.png','contact-phone.png','post-contact.svg','post-contact.png','post-contact-phone.png']) await fs.access(path.join(reviewDir,file));
+
 
 async function run(args){await new Promise((resolve,reject)=>{const p=spawn(ffmpegPath,args,{stdio:['ignore','ignore','pipe']});let err='';p.stderr.on('data',d=>err+=d);p.on('error',reject);p.on('close',c=>c===0?resolve():reject(new Error(err||('ffmpeg exited '+c))))})}
 
@@ -100,5 +102,5 @@ await fs.writeFile(path.join(publicDir,'review.html'),reviewHtml);
 await fs.writeFile(path.join(publicDir,'index.html'),index);
 await fs.copyFile(final,path.join(publicDir,'ai-video-is-not-ppt.mp4'));
 await new Promise((resolve,reject)=>{const p=spawn(ffmpegPath,['-y','-i',final,'-vf','fps=1,scale=320:-1,tile=5x8','-frames:v','1',path.join(reviewDir,'contact-sheet.png')],{stdio:['ignore','ignore','pipe']});let err='';p.stderr.on('data',d=>err+=d);p.on('error',reject);p.on('close',code=>code===0?resolve():reject(new Error(err||('contact sheet ffmpeg exited '+code))))});
-await fs.writeFile(path.join(out,'production-manifest.json'),JSON.stringify({project:'production-01-ai-video-is-not-ppt',duration:meta.duration,width:meta.width,height:meta.height,fps:meta.fps,audio:'zh-TTS + synthesized music + contact SFX',status:'PASS',interaction:{event:'touch',contactTime,contactDistance,targetDxAfter250ms:targetAfter.response.dx}},null,2)+'\n');
+await fs.writeFile(path.join(out,'production-manifest.json'),JSON.stringify({project:'production-01-ai-video-is-not-ppt',duration:meta.duration,width:meta.width,height:meta.height,fps:meta.fps,audio:'zh-TTS + synthesized music + contact SFX',status:'PASS',interaction:{event:'touch',contactTime,contactDistance,targetDxAfter250ms:targetAfter.response.dx},review:{interactionFrames:true,contactSheet:true,frameStepper:true}},null,2)+'\n');
 console.log('PRODUCTION 01: PASS',JSON.stringify(meta));
