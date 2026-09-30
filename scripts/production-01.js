@@ -80,8 +80,11 @@ await run([...inputs,'-filter_complex',filters.join(';'),'-map','[voice]','-t','
 const music=path.join(tmp,'music.m4a');
 await run(['-f','lavfi','-i','sine=frequency=130.81:sample_rate=44100:duration=40','-f','lavfi','-i','sine=frequency=164.81:sample_rate=44100:duration=40','-f','lavfi','-i','sine=frequency=196:sample_rate=44100:duration=40','-f','lavfi','-i','sine=frequency=261.63:sample_rate=44100:duration=40','-filter_complex','[0:a]volume=0.020,afade=t=in:st=0:d=2,afade=t=out:st=36:d=4[a0];[1:a]volume=0.014,afade=t=in:st=0:d=2,afade=t=out:st=36:d=4[a1];[2:a]volume=0.010,afade=t=in:st=0:d=2,afade=t=out:st=36:d=4[a2];[3:a]volume=0.007,afade=t=in:st=0:d=2,afade=t=out:st=36:d=4[a3];[a0][a1][a2][a3]amix=inputs=4:duration=longest:normalize=0,lowpass=f=1800[music]','-map','[music]','-ar','44100','-ac','2','-c:a','aac','-b:a','64k',music]);
 
+const sfx=path.join(tmp,'impact.m4a');
+await run(['-f','lavfi','-i','anoisesrc=color=white:amplitude=0.22:sample_rate=44100:duration=0.36','-f','lavfi','-i','sine=frequency=95:sample_rate=44100:duration=0.36','-filter_complex','[0:a]highpass=f=500,volume=0.55,afade=t=out:st=0.02:d=0.34[n];[1:a]volume=0.55,afade=t=out:st=0.01:d=0.35[s];[n][s]amix=inputs=2:duration=longest:normalize=0,alimiter=limit=0.8[a]','-map','[a]','-ar','44100','-ac','2','-c:a','aac','-b:a','96k',sfx]);
+const sfxStartMs=Math.max(0,(contactTime+(touch.interaction.audio?.offset??0))*1000);
 const final=path.join(out,'ai-video-is-not-ppt.mp4');
-await run(['-i',base,'-i',voice,'-i',music,'-filter_complex','[1:a]volume=1.0[v];[2:a]volume=0.32[m];[v][m]amix=inputs=2:duration=longest:dropout_transition=0:normalize=0[aout]','-map','0:v:0','-map','[aout]','-t','40','-c:v','copy','-c:a','aac','-b:a','160k','-movflags','+faststart',final]);
+await run(['-i',base,'-i',voice,'-i',music,'-i',sfx,'-filter_complex','[1:a]volume=1.0[v];[2:a]volume=0.32[m];[3:a]adelay='+sfxStartMs.toFixed(0)+':all=1,volume=0.9[s];[v][m][s]amix=inputs=3:duration=longest:dropout_transition=0:normalize=0[aout]','-map','0:v:0','-map','[aout]','-t','40','-c:v','copy','-c:a','aac','-b:a','160k','-movflags','+faststart',final]);
 const meta=await inspectVideo(final);
 if(meta.ffmpegExit!==0||Math.abs(meta.duration-40)>0.1||meta.width!==1280||meta.height!==720||meta.fps<29)throw new Error('Production media contract failed: '+JSON.stringify(meta));
 
@@ -96,5 +99,5 @@ await fs.writeFile(path.join(publicDir,'review.html'),reviewHtml);
 await fs.writeFile(path.join(publicDir,'index.html'),index);
 await fs.copyFile(final,path.join(publicDir,'ai-video-is-not-ppt.mp4'));
 await new Promise((resolve,reject)=>{const p=spawn(ffmpegPath,['-y','-i',final,'-vf','fps=1,scale=320:-1,tile=5x8','-frames:v','1',path.join(reviewDir,'contact-sheet.png')],{stdio:['ignore','ignore','pipe']});let err='';p.stderr.on('data',d=>err+=d);p.on('error',reject);p.on('close',code=>code===0?resolve():reject(new Error(err||('contact sheet ffmpeg exited '+code))))});
-await fs.writeFile(path.join(out,'production-manifest.json'),JSON.stringify({project:'production-01-ai-video-is-not-ppt',duration:meta.duration,width:meta.width,height:meta.height,fps:meta.fps,audio:'zh-TTS + synthesized music',status:'PASS',interaction:{event:'touch',contactTime,contactDistance,targetDxAfter250ms:targetAfter.response.dx}},null,2)+'\n');
+await fs.writeFile(path.join(out,'production-manifest.json'),JSON.stringify({project:'production-01-ai-video-is-not-ppt',duration:meta.duration,width:meta.width,height:meta.height,fps:meta.fps,audio:'zh-TTS + synthesized music + contact SFX',status:'PASS',interaction:{event:'touch',contactTime,contactDistance,targetDxAfter250ms:targetAfter.response.dx}},null,2)+'\n');
 console.log('PRODUCTION 01: PASS',JSON.stringify(meta));
