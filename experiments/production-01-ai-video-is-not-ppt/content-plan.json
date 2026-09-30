@@ -790,7 +790,8 @@
             "fromX": -70,
             "toX": 720
           },
-          "id": "ball"
+          "id": "ball",
+          "layer": 1
         },
         {
           "type": "character",
@@ -809,7 +810,8 @@
             "fromX": 0,
             "toX": 620
           },
-          "id": "host"
+          "id": "host",
+          "layer": 2
         },
         {
           "type": "circle",
@@ -960,7 +962,7 @@
         {
           "id": "touch",
           "start": 3.5,
-          "end": 5.2,
+          "end": 4.214,
           "action": "reach",
           "actor": "host",
           "target": "ball",
@@ -969,7 +971,7 @@
           "gaze": "right",
           "interaction": {
             "type": "touch",
-            "contactAt": 0.42,
+            "contactAt": 1,
             "hand": "right",
             "causes": [
               "response"
@@ -992,9 +994,9 @@
         },
         {
           "id": "response",
-          "start": 5.2,
+          "start": 4.214,
           "end": 6.6,
-          "action": "celebrate",
+          "action": "react",
           "actor": "host",
           "target": "ball",
           "phase": "reaction",
