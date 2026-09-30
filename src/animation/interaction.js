@@ -62,7 +62,6 @@ export function validateSceneInteractions(scene){
     if(stack.includes(id))throw new Error('Causal interaction cycle: '+[...stack,id].join(' -> '));
     const event=eventMap.get(id); if(!event)return;
     for(const child of event.interaction?.causes||[])visit(child,[...stack,id]);
-    visit(event.causedBy,[...stack,id]);
   };
   for(const event of events){
     visit(event.id);
