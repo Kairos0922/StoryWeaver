@@ -340,7 +340,7 @@
       },
       {
         "id": "v2",
-        "time": 22.2,
+        "time": 22.214,
         "kind": "visual",
         "ref": "contact"
       },
@@ -352,7 +352,7 @@
       },
       {
         "id": "a2",
-        "time": 22.2,
+        "time": 22.214,
         "kind": "audio",
         "ref": "contact-accent"
       }
