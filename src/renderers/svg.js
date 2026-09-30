@@ -123,3 +123,29 @@ function renderElement(e,t,scene,palette,mult=1){
     (walk?'<path d="M-8 116 Q0 124 8 116" fill="none" stroke="'+esc(hair)+'" stroke-width="6" stroke-linecap="round"/>':'')+
   '</g>';
 
+ 
+ }
+ return '';
+}
+
+function renderScene(scene,t,spec,opacity=1){
+ const cam=cameraState(scene,t,spec);
+ const cx=spec.width/2,cy=spec.height/2;
+ const camera='<g transform="translate('+cx+' '+cy+') scale('+cam.scale+') translate('+(-cx+cam.panX)+' '+(-cy+cam.panY)+')">';
+ return camera+scene.elements.map(e=>renderElement(e,t,scene,spec.palette,opacity)).join('')+'</g>';
+}
+
+export function frameSvg(spec,t){
+ const index=Math.max(0,spec.scenes.findIndex(s=>t>=s.start&&t<s.end));
+ const scene=spec.scenes[index]||spec.scenes.at(-1);
+ let out=renderScene(scene,t,spec);
+ const transition=scene.transition?.type==='fade'?Math.min(scene.transition.duration??0,scene.end-scene.start):0;
+ const next=spec.scenes[index+1];
+ if(next&&transition>0&&t>=scene.end-transition){
+   const q=clamp((t-(scene.end-transition))/transition,0,1);
+   out=renderScene(scene,t,spec,1-q)+renderScene(next,next.start+q*transition,spec,q);
+ }
+ const c=(spec.captions||[]).find(x=>t>=x.start&&t<x.end);
+ if(c)out+='<rect x="'+spec.width*.06+'" y="'+spec.height*.84+'" width="'+spec.width*.88+'" height="62" rx="10" fill="'+esc(col(spec.palette,'captionBg','#111'))+'" opacity=".78"/><text x="'+spec.width*.08+'" y="'+spec.height*.90+'" font-family="'+esc(spec.captionStyle?.fontFamily||"Arial,sans-serif")+'" font-size="'+(spec.captionStyle?.fontSize||26)+'px" font-weight="700" fill="'+esc(col(spec.palette,'white','#fff'))+'">'+esc(c.text)+'</text>';
+ return '<svg xmlns="http://www.w3.org/2000/svg" width="'+spec.width+'" height="'+spec.height+'" viewBox="0 0 '+spec.width+' '+spec.height+'"><rect width="100%" height="100%" fill="'+esc(col(spec.palette,spec.background,'#F7F2E8'))+'"/>'+out+'</svg>';
+}
