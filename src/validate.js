@@ -24,9 +24,6 @@ export function validateVideoSpec(spec){
         if(elementIds.has(e.id))throw new Error('Duplicate element id '+e.id+' in '+s.id);
         elementIds.add(e.id);
       }
-      if((e.type==='character'||e.type==='prop')&&!e.id){
-        throw new Error('Interactive element '+e.type+' in '+s.id+' requires an explicit id');
-      }
     }
 
     const keyPoseIds=new Set();
