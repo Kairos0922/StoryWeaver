@@ -26,6 +26,9 @@ The executable representation of the storyboard. It must expose state changes an
 
 VideoSpec is an execution contract, not the place where creative intent is invented.
 
+### Animation Runtime
+Provides reusable semantic motion primitives and deterministic state evaluation. Characters, props, cameras and interactions share one time axis. Interaction contracts resolve contact timing, target response, feedback, causal handoff and semantic audio cues.
+
 ### Animation Grammar
 Provides reusable semantic motion primitives such as lookAt, turn, walk, run, reach, grab, lift, open, close, point, react, celebrate and drive.
 
@@ -38,6 +41,8 @@ Review is part of production, not a postscript.
 Required loop:
 
 Generate → Render → Inspect → Diagnose → Modify → Render again
+
+Interaction review additionally checks the frame immediately before contact, the contact frame and the first response frames.
 
 Review artifacts include key-pose sheets, contact sheets, motion strips, selected close-ups and media metadata.
 
