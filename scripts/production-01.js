@@ -6,6 +6,7 @@ import text2wav from 'text2wav';
 import {compileContentPlan} from '../src/compiler.js';
 import {renderVideo} from '../src/render.js';
 import {inspectVideo} from '../src/inspect.js';
+import {validateDirectorPlan} from '../src/director.js';
 
 const root=path.resolve(import.meta.dirname,'..');
 const dir=path.join(root,'experiments','production-01-ai-video-is-not-ppt');
@@ -20,6 +21,8 @@ await fs.mkdir(out,{recursive:true});
 await fs.mkdir(publicDir,{recursive:true});
 
 const plan=JSON.parse(await fs.readFile(path.join(dir,'content-plan.json'),'utf8'));
+const director=JSON.parse(await fs.readFile(path.join(dir,'director-plan.json'),'utf8'));
+validateDirectorPlan(director,{duration:plan.duration});
 const spec=compileContentPlan(plan);
 const base=path.join(tmp,'video.mp4');
 await renderVideo(spec,base,{renderWidth:720});
