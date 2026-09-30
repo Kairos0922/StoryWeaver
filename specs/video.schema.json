@@ -396,6 +396,9 @@
                     }
                   },
                   "additionalProperties": false
+                },
+                "id": {
+                  "type": "string"
                 }
               },
               "additionalProperties": true
@@ -495,6 +498,115 @@
                     "easeOut",
                     "easeInOut"
                   ]
+                },
+                "causedBy": {
+                  "type": "string"
+                },
+                "interaction": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "type",
+                    "contactAt",
+                    "response",
+                    "feedback"
+                  ],
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "touch",
+                        "grab",
+                        "hit",
+                        "push",
+                        "tap",
+                        "kick"
+                      ]
+                    },
+                    "contactAt": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "hand": {
+                      "enum": [
+                        "left",
+                        "right"
+                      ]
+                    },
+                    "causes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "response": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "type"
+                      ],
+                      "properties": {
+                        "type": {
+                          "enum": [
+                            "none",
+                            "impulse",
+                            "nudge"
+                          ]
+                        },
+                        "duration": {
+                          "type": "number",
+                          "exclusiveMinimum": 0
+                        },
+                        "vx": {
+                          "type": "number"
+                        },
+                        "vy": {
+                          "type": "number"
+                        },
+                        "gravity": {
+                          "type": "number"
+                        },
+                        "rotateSpeed": {
+                          "type": "number"
+                        },
+                        "dx": {
+                          "type": "number"
+                        },
+                        "dy": {
+                          "type": "number"
+                        },
+                        "rotate": {
+                          "type": "number"
+                        },
+                        "scale": {
+                          "type": "number",
+                          "exclusiveMinimum": 0
+                        }
+                      }
+                    },
+                    "feedback": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "duration": {
+                          "type": "number",
+                          "exclusiveMinimum": 0
+                        },
+                        "radius": {
+                          "type": "number",
+                          "exclusiveMinimum": 0
+                        },
+                        "opacity": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        },
+                        "color": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
