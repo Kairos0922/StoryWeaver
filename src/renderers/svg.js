@@ -91,7 +91,6 @@ function renderElement(e,t,scene,palette,mult=1){
  if(e.type==='group') return '<g'+a+'>'+((e.children||[]).map(c=>renderElement(c,t,scene,palette,mult)).join(''))+'</g>';
  if(e.type==='prop') return renderProp(e,state,palette);
  if(e.type==='character'){
-  const x=num(e.x),y=num(e.y),s=num(e.scale,1),skin=col(palette,e.skin||'skin','#F2C7A5'),hair=col(palette,e.hair||'ink','#17221E'),clothes=col(palette,e.clothes||'accent','#D97745');
   const actingEvent=activeEvent(scene,t,e.characterId);
   const acting=actingState(actingEvent,t,scene);
   const pose=poseState(acting);
@@ -103,7 +102,6 @@ function renderElement(e,t,scene,palette,mult=1){
   const eyeScale=expression==='surprised'?1.35:1;
   const mouth=expression==='worried'?'M-12 7 Q0-1 12 7':expression==='surprised'?'M-8 0 A8 10 0 1 0 8 0':expression==='excited'?'M-13 0 Q0 15 13 0':'M-13 0 Q0 11 13 0';
   const skin=col(palette,e.skin||'skin','#F2C7A5'),hair=col(palette,e.hair||'ink','#17221E'),clothes=col(palette,e.clothes||'accent','#D97745');
-  const x=num(e.x),y=num(e.y),s=num(e.scale,1);
   const walk=(acting.action==='walk'||acting.action==='run');
   const leftArm=pose.leftArm,rightArm=pose.rightArm;
   const leftLeg=pose.leftLeg,rightLeg=pose.rightLeg;
