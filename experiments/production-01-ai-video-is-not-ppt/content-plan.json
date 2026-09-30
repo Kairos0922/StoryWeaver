@@ -206,7 +206,8 @@
             "type": "bob",
             "amount": 6,
             "cycles": 2
-          }
+          },
+          "id": "host"
         },
         {
           "type": "line",
@@ -434,7 +435,8 @@
             "type": "travel",
             "fromX": -170,
             "toX": 100
-          }
+          },
+          "id": "ball"
         },
         {
           "type": "character",
@@ -452,7 +454,8 @@
             "type": "bob",
             "amount": 4,
             "cycles": 1
-          }
+          },
+          "id": "host"
         },
         {
           "type": "line",
@@ -603,7 +606,8 @@
             "type": "travel",
             "fromX": -390,
             "toX": 160
-          }
+          },
+          "id": "ball"
         },
         {
           "type": "character",
@@ -621,7 +625,8 @@
             "type": "travel",
             "fromX": 0,
             "toX": 260
-          }
+          },
+          "id": "host"
         },
         {
           "type": "circle",
@@ -784,7 +789,8 @@
             "type": "travel",
             "fromX": -70,
             "toX": 720
-          }
+          },
+          "id": "ball"
         },
         {
           "type": "character",
@@ -802,7 +808,8 @@
             "type": "travel",
             "fromX": 0,
             "toX": 620
-          }
+          },
+          "id": "host"
         },
         {
           "type": "circle",
@@ -959,7 +966,29 @@
           "target": "ball",
           "phase": "action",
           "pose": "reach",
-          "gaze": "right"
+          "gaze": "right",
+          "interaction": {
+            "type": "touch",
+            "contactAt": 0.42,
+            "hand": "right",
+            "causes": [
+              "response"
+            ],
+            "response": {
+              "type": "impulse",
+              "duration": 1.25,
+              "vx": 190,
+              "vy": -150,
+              "gravity": 420,
+              "rotateSpeed": 360
+            },
+            "feedback": {
+              "duration": 0.3,
+              "radius": 26,
+              "opacity": 0.78,
+              "color": "coral"
+            }
+          }
         },
         {
           "id": "response",
@@ -971,7 +1000,8 @@
           "phase": "reaction",
           "pose": "celebrate",
           "expression": "excited",
-          "gaze": "right"
+          "gaze": "right",
+          "causedBy": "touch"
         }
       ],
       "camera": {
@@ -1046,7 +1076,8 @@
             "type": "bob",
             "amount": 7,
             "cycles": 2
-          }
+          },
+          "id": "host"
         },
         {
           "type": "line",
@@ -1278,7 +1309,8 @@
             "type": "travel",
             "fromX": -260,
             "toX": 400
-          }
+          },
+          "id": "ball"
         },
         {
           "type": "character",
@@ -1296,7 +1328,8 @@
             "type": "travel",
             "fromX": 0,
             "toX": 720
-          }
+          },
+          "id": "host"
         },
         {
           "type": "circle",
