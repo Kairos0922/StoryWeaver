@@ -76,3 +76,18 @@ test('contact feedback is present in rendered frame',()=>{
   assert.match(svg,/stroke="#E66D5A"/);
   assert.match(svg,/circle cx="[^"]+" cy="[^"]+" r="[^"]+"/);
 });
+
+
+test('causal interaction cycles are rejected',()=>{
+  const s=scene();
+  s.events[0].interaction.causes=[];
+  s.events[0].causedBy='react';
+  s.events[1].causedBy='reach';
+  assert.throws(()=>validateSceneInteractions(s),/Causal interaction cycle/);
+});
+
+test('interactions require explicit element ids',()=>{
+  const s=scene();
+  s.events[0].actor='host-character';
+  assert.throws(()=>validateSceneInteractions(s),/explicit character id/);
+});
