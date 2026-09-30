@@ -100,7 +100,8 @@ function renderElement(e,t,scene,palette,mult=1){
     '<line x1="15" y1="52" x2="'+(15+pose.rightLeg*.45)+'" y2="108" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
     (walk?'<path d="M-8 116 Q0 124 8 116" fill="none" stroke="'+esc(hair)+'" stroke-width="6" stroke-linecap="round"/>':'')+
   '</g>';
-;
+ }
+ return '';
 }
 
 function renderScene(scene,t,spec,opacity=1){
