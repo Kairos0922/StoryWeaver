@@ -58,7 +58,14 @@ export function validateSceneInteractions(scene){
   }
   const events=scene.events||[];
   const eventMap=new Map(events.map(e=>[e.id,e]));
+  const visit=(id,stack=[])=>{
+    if(stack.includes(id))throw new Error('Causal interaction cycle: '+[...stack,id].join(' -> '));
+    const event=eventMap.get(id); if(!event)return;
+    for(const child of event.interaction?.causes||[])visit(child,[...stack,id]);
+    visit(event.causedBy,[...stack,id]);
+  };
   for(const event of events){
+    visit(event.id);
     if(event.causedBy){
       const parent=eventMap.get(event.causedBy);
       if(!parent)throw new Error('Event '+event.id+' references unknown causedBy '+event.causedBy);
