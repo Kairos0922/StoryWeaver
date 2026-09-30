@@ -88,6 +88,6 @@ test('causal interaction cycles are rejected',()=>{
 
 test('interactions require explicit element ids',()=>{
   const s=scene();
-  s.events[0].actor='host-character';
+  s.elements[1].id=undefined;
   assert.throws(()=>validateSceneInteractions(s),/explicit character id/);
 });
