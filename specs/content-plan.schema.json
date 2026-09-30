@@ -260,6 +260,12 @@
                 },
                 "id": {
                   "type": "string"
+                },
+                "layer": {
+                  "type": "integer"
+                },
+                "z": {
+                  "type": "integer"
                 }
               }
             }
