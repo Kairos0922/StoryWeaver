@@ -58,7 +58,7 @@ test('target stays still before contact and responds after contact',()=>{
 test('causal child cannot start before contact',()=>{
   const s=scene();
   s.events[1].start=1.5;
-  assert.throws(()=>validateSceneInteractions(s),/starts before cause/);
+  assert.throws(()=>validateSceneInteractions(s),/starts before contact/);
 });
 
 test('contact must be physically reachable',()=>{
