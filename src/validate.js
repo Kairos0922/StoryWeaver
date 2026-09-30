@@ -1,6 +1,7 @@
 import Ajv2020 from 'ajv/dist/2020.js';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import {validateSceneInteractions} from './animation/interaction.js';
 const root=path.resolve(import.meta.dirname,'..');
 const schema=JSON.parse(await fs.readFile(path.join(root,'specs/video.schema.json'),'utf8'));
 const ajv=new Ajv2020({allErrors:true,strict:true});
