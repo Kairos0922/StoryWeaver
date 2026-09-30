@@ -5,6 +5,9 @@ import ffmpegPath from 'ffmpeg-static';
 import text2wav from 'text2wav';
 import {compileContentPlan} from '../src/compiler.js';
 import {renderVideo} from '../src/render.js';
+import {frameSvg} from '../src/renderers/svg.js';
+import {interactionForActor,interactionForTarget} from '../src/animation/interaction.js';
+import {actingState,poseState} from '../src/animation/acting.js';
 import {inspectVideo} from '../src/inspect.js';
 import {validateDirectorPlan} from '../src/director.js';
 
@@ -24,8 +27,35 @@ const plan=JSON.parse(await fs.readFile(path.join(dir,'content-plan.json'),'utf8
 const director=JSON.parse(await fs.readFile(path.join(dir,'director-plan.json'),'utf8'));
 validateDirectorPlan(director,{duration:plan.duration});
 const spec=compileContentPlan(plan);
+const causal=spec.scenes.find(s=>s.id==='causal');
+const touch=causal.events.find(e=>e.id==='touch');
+const contactTime=causal.start+touch.start+(touch.end-touch.start)*touch.interaction.contactAt;
+const actor=causal.elements.find(e=>e.id==='host');
+const actorMotion=actor ? actor.motion : null;
+const actorStateAtContact=interactionForActor(causal,contactTime,'host');
+if(!actorStateAtContact?.contactReached)throw new Error('Production interaction contract failed: contact state is not reached');
+const actorMotionState=actor?await import('../src/animation/motion.js').then(m=>m.motionState(actor,contactTime,causal)):null;
+const actingAtContact=actingState(touch,contactTime,causal,actorStateAtContact);
+const poseAtContact=poseState(actingAtContact,{targetPoint:actorStateAtContact.targetPoint,originX:actor.x+actorMotionState.dx,originY:actor.y+actorMotionState.dy,actorScale:actor.scale*actorMotionState.scale});
+const handX=actor.x+actorMotionState.dx+poseAtContact.rightHandX*actor.scale*actorMotionState.scale;
+const handY=actor.y+actorMotionState.dy+poseAtContact.bodyY+poseAtContact.rightHandY*actor.scale*actorMotionState.scale;
+const contactDistance=Math.hypot(handX-actorStateAtContact.contactPoint.x,handY-actorStateAtContact.contactPoint.y);
+if(contactDistance>0.01)throw new Error('Production interaction contact alignment failed: '+contactDistance);
+const targetBefore=interactionForTarget(causal,contactTime-1/30,'ball');
+const targetAfter=interactionForTarget(causal,contactTime+0.25,'ball');
+if(targetBefore!==null||!targetAfter||targetAfter.response.dx<=0)throw new Error('Production interaction target response failed');
 const base=path.join(tmp,'video.mp4');
 await renderVideo(spec,base,{renderWidth:720});
+const reviewDir=path.join(out,'interaction-review');
+await fs.mkdir(reviewDir,{recursive:true});
+for(const [label,time] of [['pre-contact',contactTime-1/spec.fps],['contact',contactTime],['post-contact',contactTime+0.25]]){
+  await fs.writeFile(path.join(reviewDir,label+'.svg'),frameSvg(spec,time));
+}
+await fs.writeFile(path.join(reviewDir,'interaction-review.json'),JSON.stringify({
+  scene:'causal',event:'touch',contactTime,contactPoint:actorStateAtContact.contactPoint,
+  handPoint:{x:handX,y:handY},contactDistance,feedbackAtContact:actorStateAtContact.feedback,
+  targetResponseAfter250ms:targetAfter.response,causedBy:'touch'
+},null,2)+'\\n');
 
 async function run(args){await new Promise((resolve,reject)=>{const p=spawn(ffmpegPath,args,{stdio:['ignore','ignore','pipe']});let err='';p.stderr.on('data',d=>err+=d);p.on('error',reject);p.on('close',c=>c===0?resolve():reject(new Error(err||('ffmpeg exited '+c))))})}
 
@@ -54,5 +84,5 @@ if(meta.ffmpegExit!==0||Math.abs(meta.duration-40)>0.1||meta.width!==1280||meta.
 const index='<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>为什么很多 AI 视频看起来像 PPT？</title><style>body{margin:0;background:#17332E;color:#F7F1E3;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans CJK SC",sans-serif}main{max-width:980px;margin:0 auto;padding:32px 20px 48px}h1{font-size:clamp(28px,5vw,48px);line-height:1.1;margin:0 0 12px}p{color:#C9D6CF;font-size:16px}video{width:100%;display:block;border-radius:18px;background:#000;box-shadow:0 18px 60px #0006}.meta{margin-top:18px;padding:16px 18px;border:1px solid #35534B;border-radius:14px}</style></head><body><main><h1>为什么很多 AI 视频，看起来像 PPT？</h1><p>StoryWeaver 第一条生产级成片：用连续动作、因果链、镜头、节奏和声音来组织时间。</p><video controls playsinline preload="metadata" src="./ai-video-is-not-ppt.mp4"></video><div class="meta">40s · 1280×720 · 30fps · 中文旁白 · 程序化动画渲染</div></main></body></html>';
 await fs.writeFile(path.join(publicDir,'index.html'),index);
 await fs.copyFile(final,path.join(publicDir,'ai-video-is-not-ppt.mp4'));
-await fs.writeFile(path.join(out,'production-manifest.json'),JSON.stringify({project:'production-01-ai-video-is-not-ppt',duration:meta.duration,width:meta.width,height:meta.height,fps:meta.fps,audio:'zh-TTS + synthesized music',status:'PASS'},null,2)+'\n');
+await fs.writeFile(path.join(out,'production-manifest.json'),JSON.stringify({project:'production-01-ai-video-is-not-ppt',duration:meta.duration,width:meta.width,height:meta.height,fps:meta.fps,audio:'zh-TTS + synthesized music',status:'PASS',interaction:{event:'touch',contactTime,contactDistance,targetDxAfter250ms:targetAfter.response.dx}},null,2)+'\n');
 console.log('PRODUCTION 01: PASS',JSON.stringify(meta));
