@@ -1,4 +1,4 @@
-import {clamp,lerp} from '../utils.js';
+import {clamp} from '../utils.js';
 import {motionState,worldPosition} from './motion.js';
 
 const DEFAULT_REACH=100;
@@ -52,11 +52,9 @@ export function validateSceneInteractions(scene){
   const elements=scene.elements||[];
   const ids=new Set();
   for(const e of elements){
-    const id=elementId(e);
-    if(id){
-      if(ids.has(id))throw new Error('Duplicate interactive element id '+id+' in '+scene.id);
-      ids.add(id);
-    }
+    if(!e.id)continue;
+    if(ids.has(e.id))throw new Error('Duplicate interactive element id '+e.id+' in '+scene.id);
+    ids.add(e.id);
   }
   const events=scene.events||[];
   const eventMap=new Map(events.map(e=>[e.id,e]));
