@@ -6,32 +6,6 @@ import {elementId,interactionForActor,interactionForTarget,contactFeedback} from
 const col=(p,n,f='#111')=>p?.[n]??n??f;
 const num=(v,d=0)=>Number.isFinite(v)?v:d;
 
-function progress(t,e,scene){
- const start=e.start??scene.start;
- const end=e.end??scene.end;
- return clamp((t-start)/Math.max(0.001,end-start),0,1);
-}
-
-function motionState(e,t,scene){
- const m=e.motion||{type:'none'};
- const start=e.start??scene.start,end=e.end??scene.end;
- const span=Math.max(.001,end-start),p=clamp((t-start)/span,0,1);
- const d=m.duration??Math.min(.45,span),local=d===0?1:clamp(p/(d/span),0,1);
- const q=m.easing==='linear'?local:m.easing==='easeInOut'?(local<.5?2*local*local:1-Math.pow(-2*local+2,2)/2):1-Math.pow(1-local,3);
- let opacity=e.opacity??1,dx=0,dy=0,scale=1,rotate=0;
- if(m.type==='fade') opacity*=q;
- if(m.type==='slide'){dx=(m.dx??0)*(1-q);dy=(m.dy??0)*(1-q);}
- if(m.type==='scale'){scale=lerp(m.from??0.9,m.to??1,q);}
- if(m.type==='pop'){scale=lerp(m.from??0.5,m.to??1,q);}
- if(m.type==='emphasis'){scale=lerp(m.from??.96,m.to??1.04,Math.sin(q*Math.PI));}
- if(m.type==='bob'){dy=Math.sin(p*Math.PI*2*(m.cycles??1))*(m.amount??8);}
- if(m.type==='shake'){dx=Math.sin(p*Math.PI*2*(m.cycles??3))*(m.amount??7);}
- if(m.type==='travel'){dx=lerp(m.fromX??0,m.toX??0,p);dy=lerp(m.fromY??0,m.toY??0,p);}
- if(m.type==='rotate'){rotate=lerp(m.from??0,m.to??360,p);}
- return {opacity,dx,dy,scale,rotate,p};
-}
-
-
 function activeEvent(scene,t,actor){
  const events=scene.events||[];
  const matches=events.filter(e=>t>=scene.start+e.start&&t<=scene.start+e.end&&(!actor||!e.actor||e.actor===actor));
@@ -63,7 +37,7 @@ function renderProp(e,state,palette,interaction=null){
  if(e.kind==='ball') return '<g opacity="'+state.opacity+'" transform="'+tr+'"><circle r="42" fill="'+esc(fill)+'" stroke="'+esc(ink)+'" stroke-width="4"/><path d="M-28-28 Q0-8 28-28" fill="none" stroke="#fff" stroke-width="5" opacity=".65"/><circle cx="-13" cy="-14" r="7" fill="#fff" opacity=".7"/></g>';
  if(e.kind==='box'){
   const open=clamp(e.openAt==null?0:((state.p-e.openAt)/Math.max(.001,1-e.openAt)),0,1);
-  const lidY=-75-open*48, lidR=-12*open;
+  const lidY=-75-open*48,lidR=-12*open;
   return '<g opacity="'+state.opacity+'" transform="'+tr+'"><rect x="-120" y="-75" width="240" height="150" rx="20" fill="'+esc(fill)+'" stroke="'+esc(ink)+'" stroke-width="5"/><path d="M-120-45 L0-5 L120-45" fill="none" stroke="'+esc(ink)+'" stroke-width="4"/><g transform="rotate('+lidR+' 0 -75)"><rect x="-120" y="'+lidY+'" width="240" height="30" rx="12" fill="'+esc(fill)+'" stroke="'+esc(ink)+'" stroke-width="5"/></g><path d="M0-75 L0 75" stroke="'+esc(ink)+'" stroke-width="4" opacity=".35"/><ellipse cx="0" cy="-58" rx="55" ry="18" fill="#fff" opacity="'+(.10+open*.25)+'"/></g>';
  }
  if(e.kind==='umbrella') return '<g opacity="'+state.opacity+'" transform="'+tr+'"><path d="M-115 0 Q0-115 115 0 Z" fill="'+esc(fill)+'" stroke="'+esc(ink)+'" stroke-width="5"/><path d="M-80 0 Q-70 24 -52 0 M-26 0 Q-15 24 0 0 M26 0 Q40 24 52 0 M80 0 Q92 24 115 0" fill="none" stroke="'+esc(ink)+'" stroke-width="4"/><path d="M0 0 L0 145 Q0 170 25 170" fill="none" stroke="'+esc(ink)+'" stroke-width="6" stroke-linecap="round"/></g>';
@@ -99,7 +73,8 @@ function renderElement(e,t,scene,palette,mult=1){
   const actingEvent=activeEvent(scene,t,e.characterId);
   const interaction=interactionForActor(scene,t,e.characterId);
   const acting=actingState(actingEvent,t,scene,interaction);
-  const pose=poseState(acting,{targetPoint:acting.targetPoint,originX:num(e.x)+state.dx,originY:num(e.y)+state.dy,actorScale:num(e.scale,1)*state.scale});
+  const x=num(e.x),y=num(e.y),s=num(e.scale,1);
+  const pose=poseState(acting,{targetPoint:acting.targetPoint,originX:x+state.dx,originY:y+state.dy,actorScale:s*state.scale});
   const expression=acting.expression==='neutral'?(e.expression||'happy'):acting.expression;
   const gaze=acting.gaze||'center';
   const headTurn=gaze==='left'?-7:gaze==='right'?7:0;
@@ -108,13 +83,9 @@ function renderElement(e,t,scene,palette,mult=1){
   const eyeScale=expression==='surprised'?1.35:1;
   const mouth=expression==='worried'?'M-12 7 Q0-1 12 7':expression==='surprised'?'M-8 0 A8 10 0 1 0 8 0':expression==='excited'?'M-13 0 Q0 15 13 0':'M-13 0 Q0 11 13 0';
   const skin=col(palette,e.skin||'skin','#F2C7A5'),hair=col(palette,e.hair||'ink','#17221E'),clothes=col(palette,e.clothes||'accent','#D97745');
-  const x=num(e.x),y=num(e.y),s=num(e.scale,1);
-  const walk=(acting.action==='walk'||acting.action==='run');
-  const leftArm=pose.leftArm,rightArm=pose.rightArm;
-  const leftLeg=pose.leftLeg,rightLeg=pose.rightLeg;
-  const handReach=acting.reach*10;
   const reactionScale=1+acting.recoil*.035;
-  const tr='translate('+(x+state.dx)+' '+(y+state.dy+pose.bodyY)+') scale('+(s*state.scale*dir*reactionScale)+' '+(s*state.scale/reactionScale)+') rotate('+(state.rotate+pose.torsoRotate)+')'';
+  const tr='translate('+(x+state.dx)+' '+(y+state.dy+pose.bodyY)+') scale('+(s*state.scale*dir*reactionScale)+' '+(s*state.scale/reactionScale)+') rotate('+(state.rotate+pose.torsoRotate)+')';
+  const walk=acting.action==='walk'||acting.action==='run';
   return '<g opacity="'+state.opacity+'" transform="'+tr+'">'+
     '<ellipse cx="0" cy="55" rx="42" ry="10" fill="#26352F" opacity=".12"/>'+
     '<circle cx="'+headTurn+'" cy="'+(-72+pose.headY)+'" r="38" fill="'+esc(skin)+'"/>'+
@@ -122,17 +93,14 @@ function renderElement(e,t,scene,palette,mult=1){
     '<ellipse cx="'+(-14+headTurn)+'" cy="'+(-72+pose.headY)+'" rx="'+(5*eyeScale)+'" ry="'+(5*eyeScale*blink)+'" fill="'+esc(hair)+'"/><ellipse cx="'+(14+headTurn)+'" cy="'+(-72+pose.headY)+'" rx="'+(5*eyeScale)+'" ry="'+(5*eyeScale*blink)+'" fill="'+esc(hair)+'"/>'+
     '<path d="'+mouth+'" fill="none" stroke="'+esc(hair)+'" stroke-width="4" stroke-linecap="round" transform="translate('+headTurn+' '+pose.headY+')"/>'+
     '<rect x="-34" y="-34" width="68" height="86" rx="20" fill="'+esc(clothes)+'" stroke="'+esc(hair)+'" stroke-width="3"/>'+
-    '<line x1="-31" y1="-10" x2="'+(-31-leftArm-handReach)+'" y2="'+(leftArm)+'" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
-    '<line x1="31" y1="-10" x2="'+(31+rightArm+handReach)+'" y2="'+(rightArm)+'" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
-    '<circle cx="'+(-31-leftArm-handReach)+'" cy="'+leftArm+'" r="8" fill="'+esc(skin)+'"/><circle cx="'+(31+rightArm+handReach)+'" cy="'+rightArm+'" r="8" fill="'+esc(skin)+'"/>'+
-    '<line x1="-15" y1="52" x2="'+(-15-leftLeg*.45)+'" y2="108" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
-    '<line x1="15" y1="52" x2="'+(15+rightLeg*.45)+'" y2="108" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
+    '<line x1="-31" y1="-10" x2="'+pose.leftHandX+'" y2="'+pose.leftHandY+'" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
+    '<line x1="31" y1="-10" x2="'+pose.rightHandX+'" y2="'+pose.rightHandY+'" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
+    '<circle cx="'+pose.leftHandX+'" cy="'+pose.leftHandY+'" r="8" fill="'+esc(skin)+'"/><circle cx="'+pose.rightHandX+'" cy="'+pose.rightHandY+'" r="8" fill="'+esc(skin)+'"/>'+
+    '<line x1="-15" y1="52" x2="'+(-15-pose.leftLeg*.45)+'" y2="108" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
+    '<line x1="15" y1="52" x2="'+(15+pose.rightLeg*.45)+'" y2="108" stroke="'+esc(hair)+'" stroke-width="12" stroke-linecap="round"/>'+
     (walk?'<path d="M-8 116 Q0 124 8 116" fill="none" stroke="'+esc(hair)+'" stroke-width="6" stroke-linecap="round"/>':'')+
   '</g>';
-
- 
- }
- return '';
+;
 }
 
 function renderScene(scene,t,spec,opacity=1){
