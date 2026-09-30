@@ -23,6 +23,8 @@ test('interaction contracts are enforced by the production validation boundary',
   const x={
     ...structuredClone(spec),
     duration:4,
+    captions:[],
+    beats:[],
     scenes:[{
       id:'interaction',
       start:0,
