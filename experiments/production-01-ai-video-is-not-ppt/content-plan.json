@@ -989,6 +989,10 @@
               "radius": 26,
               "opacity": 0.78,
               "color": "coral"
+            },
+            "audio": {
+              "cue": "impact",
+              "offset": 0
             }
           }
         },
