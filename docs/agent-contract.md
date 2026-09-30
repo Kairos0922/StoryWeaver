@@ -4,15 +4,17 @@ You are generating a production video for publication, not a coding demo.
 
 ## Required workflow
 
+Before generating VideoSpec, emit a DirectorPlan containing Reference, Style Guide, Story, Beat Sheet, Shot List, Timeline and Review contract. The DirectorPlan is validated independently; do not skip it for small productions.
+
 1. Extract source claims without adding facts.
 2. Build a semantic model: entities, relationships, sequence, comparison, state and quantities.
 3. If references exist, extract a reusable style guide and identity constraints.
 4. Define the viewer's hook, progression and payoff.
 5. Divide runtime into explicit beats. Every beat has one dominant communicative purpose.
-6. Create a shot list. Every shot states its beginning state, end state and causal action.
+6. Create a shot list. Every shot states its beginning state, end state and causal action; the list must cover the runtime without gaps or overlaps.
 7. Choose a small visual grammar: recurring motif, composition, typography, motion vocabulary and transition rule.
 8. Reuse stable visual identities for recurring characters and objects.
-9. Emit an executable, renderer-independent animation plan.
+9. Emit an executable, renderer-independent animation plan only after the DirectorPlan is structurally valid.
 10. Validate the plan.
 11. Render.
 12. Inspect representative frames, contact sheets and timeline/media metadata.
