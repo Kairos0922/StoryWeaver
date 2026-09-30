@@ -58,10 +58,20 @@ export function validateSceneInteractions(scene){
   }
   const events=scene.events||[];
   const eventMap=new Map(events.map(e=>[e.id,e]));
+  const graph=new Map(events.map(e=>[e.id,[]]));
+  for(const event of events){
+    for(const child of event.interaction?.causes||[]){
+      if(!graph.has(event.id)||!graph.has(child))continue;
+      graph.get(event.id).push(child);
+    }
+    if(event.causedBy&&graph.has(event.causedBy)&&graph.has(event.id)){
+      graph.get(event.causedBy).push(event.id);
+    }
+  }
   const visit=(id,stack=[])=>{
     if(stack.includes(id))throw new Error('Causal interaction cycle: '+[...stack,id].join(' -> '));
     const event=eventMap.get(id); if(!event)return;
-    for(const child of event.interaction?.causes||[])visit(child,[...stack,id]);
+    for(const child of new Set(graph.get(id)||[]))visit(child,[...stack,id]);
   };
   for(const event of events){
     visit(event.id);
