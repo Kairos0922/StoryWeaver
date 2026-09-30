@@ -32,11 +32,12 @@ These formats share the properties that make programmatic rendering valuable: ex
 6. The executable plan is a production contract, not a place for the renderer to invent intent.
 7. Identical specs/assets render deterministically.
 8. Validation, media inspection and structured critique are release gates.
-9. Provider-specific assumptions must not leak into the core architecture.
+9. Interactions are causal contracts: explicit actor/target identities, exact contact timing, target response, feedback and causal handoff.
+10. Provider-specific assumptions must not leak into the core architecture.
 
 ## Repository
 
-- src/ — compiler, validator, deterministic renderer and CLI
+- src/ — compiler, validator, deterministic renderer, animation runtime and CLI
 - specs/ — machine-readable contracts and visual grammar
 - research/ — sourced case research and scenario evidence
 - docs/ — architecture, agent contract and production decisions
@@ -50,10 +51,30 @@ These formats share the properties that make programmatic rendering valuable: ex
     npm install
     npm test
     npm run validate
+    npm run validate-production
     npm run method-proof
+    npm run production-01
     npm run render
 
 Rendering uses programmatic JavaScript/SVG. resvg performs SVG rasterization and FFmpeg performs final MP4 encoding; no video-generation model is required.
+
+## Production-01
+
+experiments/production-01-ai-video-is-not-ppt is the current end-to-end production proof. It exercises:
+
+- DirectorPlan → validated executable VideoSpec
+- stable character/prop identities
+- semantic motion with anticipation, action, reaction and settle phases
+- Character ↔ Prop contact with deterministic target response
+- causal event graph validation
+- event-synchronized contact feedback and SFX
+- pre/contact/post raster frames
+- phone-size review frames
+- contact sheet
+- frame-step HTML review
+- machine-readable interaction diagnostics
+
+The production script fails hard when required review artifacts are missing or media metadata is invalid.
 
 ## Method Proof
 
@@ -63,10 +84,10 @@ It demonstrates:
 
 Reference → planning → executable spec → render → inspect → critique → structured repair → rerender
 
-The CI pipeline runs this proof as a release gate and stores both revision renders and the review manifest as artifacts.
+The CI pipeline runs both the method proof and Production-01 as release gates and stores the resulting review/render artifacts.
 
 ## Model portability
 
 Claude, GPT, Gemini and other coding agents are interchangeable production inputs. Opus 5.5 is treated as a source of case-derived methodology, not as a product dependency.
 
-See docs/agent-contract.md, docs/architecture.md, docs/10-opus55-case-derived-design.md and tasks/production-task-list.md.
+See docs/agent-contract.md, docs/architecture.md, docs/10-opus55-case-derived-design.md, docs/12-motion-production-method.md and tasks/production-task-list.md.

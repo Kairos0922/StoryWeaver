@@ -11,11 +11,10 @@ StoryWeaver uses a director-first workflow. A renderer never invents creative in
 5. Shot List — every shot has start state, end state and dominant action.
 6. Timeline — beat/audio/visual/camera/transition events share one time axis.
 7. Animation Program / VideoSpec — executable rendering contract.
-8. Review — contact sheet, motion strip, representative frames and media metadata.
-9. Interaction — actor/target ids, exact contact timing, target response, feedback, caused events and optional audio cue.
-10. Review — pre/contact/post frames, contact sheet, phone-size frames, frame-step viewer and media metadata.
-11. Critique — three largest defects.
-12. Structured Revision — repair affected shots/states/events only, then rerender.
+8. Interaction — actor/target ids, exact contact timing, target response, feedback, caused events and optional audio cue.
+9. Review — contact sheet, motion strip, representative frames and media metadata.
+10. Critique — three largest defects.
+11. Structured Revision — repair affected shots/states/events only, then rerender.
 
 ## Hard rules
 
@@ -27,13 +26,19 @@ StoryWeaver uses a director-first workflow. A renderer never invents creative in
 - Audio events and visual events share the same timeline; semantic interaction cues are resolved from the same event timestamp.
 - Interacting actors and targets use explicit ids; ambiguous references are rejected.
 - Causal event graphs must be acyclic; a caused event cannot start before its cause contact.
+- Character and prop elements that participate in production are explicitly identified.
 - Schema validity is necessary but never sufficient for release.
+- Production review artifacts are part of the release gate.
 
 ## Gate
 
-Run `npm run validate-production`, then `npm test`, then `npm run production-01`.
+Run:
 
-`validate-production` proves the director plan is structurally complete. `production-01` consumes that plan before rendering.
+    npm run quality
+    npm run method-proof
+    npm run production-01
+
+`quality` covers the automated contract suite, canonical validation and DirectorPlan validation. `method-proof` covers the repair loop. `production-01` performs an actual render, media inspection, interaction checks and review-artifact hard gates.
 
 ## Quality boundary
 
