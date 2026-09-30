@@ -16,6 +16,7 @@
     "inspect": "node src/cli.js inspect",
     "contact-sheet": "node scripts/contact-sheet.mjs",
     "method-proof": "node scripts/method-proof.js",
+    "validate-production": "node scripts/validate-production.js",
     "production-01": "node scripts/production-01.js"
   },
   "dependencies": {
