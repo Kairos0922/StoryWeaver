@@ -87,8 +87,10 @@ export function validateSceneInteractions(scene){
     if(!Number.isFinite(interaction.contactAt)||interaction.contactAt<0||interaction.contactAt>1)throw new Error('Interaction '+event.id+' contactAt must be in [0,1]');
     const actor=resolveElement(scene,event.actor);
     const target=resolveElement(scene,event.target);
-    if(!actor||actor.type!=='character')throw new Error('Interaction '+event.id+' actor not found as character: '+event.actor);
-    if(!target||target.type!=='prop')throw new Error('Interaction '+event.id+' target not found as prop: '+event.target);
+    if(!actor)throw new Error('Interaction '+event.id+' actor must reference an explicit character id: '+event.actor);
+    if(actor.type!=='character'||actor.id!==event.actor)throw new Error('Interaction '+event.id+' actor must reference an explicit character id: '+event.actor);
+    if(!target)throw new Error('Interaction '+event.id+' target must reference an explicit prop id: '+event.target);
+    if(target.type!=='prop'||target.id!==event.target)throw new Error('Interaction '+event.id+' target must reference an explicit prop id: '+event.target);
     const contactTime=eventContactTime(scene,event);
     const a=basePoint(actor,contactTime,scene);
     const b=basePoint(target,contactTime,scene);
