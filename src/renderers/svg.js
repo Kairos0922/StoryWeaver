@@ -11,12 +11,6 @@ function activeEvent(scene,t,actor){
  const matches=events.filter(e=>t>=scene.start+e.start&&t<=scene.start+e.end&&(!actor||!e.actor||e.actor===actor));
  return matches.at(-1)||null;
 }
-function eventProgress(scene,t,e){ return e?clamp((t-(scene.start+e.start))/Math.max(.001,e.end-e.start),0,1):0; }
-function actionState(scene,t,actor){
- const e=activeEvent(scene,t,actor); if(!e)return null;
- const p=eventProgress(scene,t,e); const eased=e.easing==='linear'?p:e.easing==='easeInOut'?(p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2):1-Math.pow(1-p,3);
- return {...e,p,eased};
-}
 function cameraState(scene,t,spec){
  const c=scene.camera||{type:'static'};
  const start=scene.start,end=scene.end,p=clamp((t-start)/Math.max(.001,end-start),0,1);
@@ -108,7 +102,8 @@ function renderScene(scene,t,spec,opacity=1){
  const cam=cameraState(scene,t,spec);
  const cx=spec.width/2,cy=spec.height/2;
  const camera='<g transform="translate('+cx+' '+cy+') scale('+cam.scale+') translate('+(-cx+cam.panX)+' '+(-cy+cam.panY)+')">';
- return camera+scene.elements.map(e=>renderElement(e,t,scene,spec.palette,opacity)).join('')+contactFeedback(scene,t,spec.palette)+'</g>';
+ const ordered=scene.elements.map((e,index)=>({e,index})).sort((a,b)=>(a.e.layer??a.e.z??0)-(b.e.layer??b.e.z??0)||a.index-b.index).map(x=>x.e);
+ return camera+ordered.map(e=>renderElement(e,t,scene,spec.palette,opacity)).join('')+contactFeedback(scene,t,spec.palette)+'</g>';
 }
 
 export function frameSvg(spec,t){
