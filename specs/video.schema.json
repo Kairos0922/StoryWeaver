@@ -611,6 +611,18 @@
                           "type": "string"
                         }
                       }
+                    },
+                    "audio": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "cue": {
+                          "type": "string"
+                        },
+                        "offset": {
+                          "type": "number"
+                        }
+                      }
                     }
                   }
                 }
