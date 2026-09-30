@@ -22,3 +22,10 @@ jobs:
         with:
           name: t01-english-colors-final
           path: public/experiments/t01-english-colors
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: production-01
+          path: |
+            out/production-01
+            public/production/ai-video-is-not-ppt
