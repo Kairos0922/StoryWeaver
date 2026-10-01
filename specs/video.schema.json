@@ -175,6 +175,21 @@
                 "type": "number",
                 "exclusiveMinimum": 0
               },
+              "fromRotate": {
+                "type": "number"
+              },
+              "toRotate": {
+                "type": "number"
+              },
+              "shake": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "amount": { "type": "number", "minimum": 0 },
+                  "cycles": { "type": "number", "minimum": 0 },
+                  "axis": { "enum": ["x", "y", "both"] }
+                }
+              },
               "easing": {
                 "enum": [
                   "linear",
