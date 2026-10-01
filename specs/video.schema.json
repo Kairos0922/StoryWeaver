@@ -393,6 +393,20 @@
                     },
                     "wheelTurns": {
                       "type": "number"
+                    },
+                    "delay": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "spring": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "mass": { "type": "number", "exclusiveMinimum": 0 },
+                        "stiffness": { "type": "number", "exclusiveMinimum": 0 },
+                        "damping": { "type": "number", "exclusiveMinimum": 0 },
+                        "velocity": { "type": "number" }
+                      }
                     }
                   },
                   "additionalProperties": false
