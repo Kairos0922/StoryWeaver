@@ -1,6 +1,6 @@
 import {esc,lerp,clamp} from '../utils.js';
 import {actingState,poseState} from '../animation/acting.js';
-import {motionState,progressAt} from '../animation/motion.js';
+import {motionState,progressAt,easing} from '../animation/motion.js';
 import {elementId,interactionForActor,interactionForTarget,contactFeedback} from '../animation/interaction.js';
 
 const col=(p,n,f='#111')=>p?.[n]??n??f;
@@ -14,11 +14,14 @@ function activeEvent(scene,t,actor){
 function cameraState(scene,t,spec){
  const c=scene.camera||{type:'static'};
  const start=scene.start,end=scene.end,p=clamp((t-start)/Math.max(.001,end-start),0,1);
- const ease=v=>c.easing==='linear'?v:(1-Math.pow(1-v,3));
- const q=ease(p);
- const panX=lerp(c.fromX??0,c.toX??0,q),panY=lerp(c.fromY??0,c.toY??0,q);
+ const q=easing(c.easing,p);
+ const shake=c.shake;
+ const shakeP=shake?Math.sin(p*Math.PI*2*(shake.cycles??4))*(shake.amount??0):0;
+ const panX=lerp(c.fromX??0,c.toX??0,q)+(shake?.axis==='y'?0:shakeP);
+ const panY=lerp(c.fromY??0,c.toY??0,q)+(shake?.axis==='x'?0:shakeP);
  const scale=lerp(c.fromScale??1,c.toScale??1,q);
- return {panX,panY,scale};
+ const rotate=lerp(c.fromRotate??0,c.toRotate??0,q);
+ return {panX,panY,scale,rotate};
 }
 
 function renderProp(e,state,palette,interaction=null){
@@ -101,7 +104,7 @@ function renderElement(e,t,scene,palette,mult=1){
 function renderScene(scene,t,spec,opacity=1){
  const cam=cameraState(scene,t,spec);
  const cx=spec.width/2,cy=spec.height/2;
- const camera='<g transform="translate('+cx+' '+cy+') scale('+cam.scale+') translate('+(-cx+cam.panX)+' '+(-cy+cam.panY)+')">';
+ const camera='<g transform="translate('+cx+' '+cy+') rotate('+cam.rotate+') scale('+cam.scale+') translate('+(-cx+cam.panX)+' '+(-cy+cam.panY)+')">';
  const ordered=scene.elements.map((e,index)=>({e,index})).sort((a,b)=>(a.e.layer??a.e.z??0)-(b.e.layer??b.e.z??0)||a.index-b.index).map(x=>x.e);
  return camera+ordered.map(e=>renderElement(e,t,scene,spec.palette,opacity)).join('')+contactFeedback(scene,t,spec.palette)+'</g>';
 }
