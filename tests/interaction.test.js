@@ -91,3 +91,24 @@ test('interactions require explicit element ids',()=>{
   s.elements[1].id=undefined;
   assert.throws(()=>validateSceneInteractions(s),/explicit character id/);
 });
+
+
+test('motion supports non-linear easing without overshoot corruption',()=>{
+  const s=scene();
+  const e={type:'circle',x:0,y:0,start:0,end:1,motion:{type:'scale',from:.5,to:1,easing:'backOut',duration:1}};
+  const mid=motionState(e,.6,s);
+  assert.ok(mid.q>0.6);
+  assert.ok(mid.scale>1);
+  const linear=motionState({...e,motion:{...e.motion,easing:'linear'}},.6,s);
+  assert.equal(linear.scale,.8);
+});
+
+test('motion spring converges to target deterministically',()=>{
+  const s=scene();
+  const e={type:'circle',x:0,y:0,start:0,end:1,motion:{type:'scale',from:.2,to:1,easing:'spring',duration:1,spring:{mass:1,stiffness:180,damping:18}}};
+  const a=motionState(e,.35,s);
+  const b=motionState(e,.35,s);
+  assert.equal(a.scale,b.scale);
+  assert.ok(a.q>0);
+  assert.ok(a.q<1.2);
+});
