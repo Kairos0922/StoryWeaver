@@ -1,0 +1,548 @@
+{
+  "timing": {
+    "lines": {
+      "L01": {
+        "id": "L01",
+        "speaker": "等等",
+        "text": "哎？他比我晚来，怎么先走了？",
+        "start": 0.4,
+        "end": 3.219,
+        "source": "estimated 4.2 chars/s",
+        "sub_end": 3.429
+      },
+      "L02": {
+        "id": "L02",
+        "speaker": "嘀嗒",
+        "text": "不止他。排三条队，四成的人会被后来的人超车。",
+        "start": 3.469,
+        "end": 8.193,
+        "source": "estimated 4.2 chars/s",
+        "sub_end": 8.543
+      },
+      "L03": {
+        "id": "L03",
+        "speaker": "等等",
+        "text": "那是他运气好。我每次都挑最短的。",
+        "start": 8.893,
+        "end": 12.426,
+        "source": "estimated 4.2 chars/s",
+        "sub_end": 12.636
+      },
+      "L04": {
+        "id": "L04",
+        "speaker": "阿规",
+        "text": "这四成，就是人人都挑最短算出来的。",
+        "start": 12.676,
+        "end": 16.447,
+        "source": "estimated 4.2 chars/s",
+        "sub_end": 16.707
+      },
+      "L05": {
+        "id": "L05",
+        "speaker": "等等",
+        "text": "不可能！",
+        "start": 16.747,
+        "end": 17.661,
+        "source": "estimated 4.2 chars/s",
+        "sub_end": 17.971
+      },
+      "L06": {
+        "id": "L06",
+        "speaker": "阿规",
+        "text": "人数你看得见。前面那位要结多久，你看不准。",
+        "start": 18.011,
+        "end": 22.497,
+        "source": "estimated 4.2 chars/s",
+        "sub_end": 22.757
+      },
+      "L07": {
+        "id": "L07",
+        "speaker": "嘀嗒",
+        "text": "被超车的人，平均被四个人超过。",
+        "start": 22.797,
+        "end": 26.092,
+        "source": "estimated 4.2 chars/s",
+        "sub_end": 26.442
+      },
+      "L08": {
+        "id": "L08",
+        "speaker": "阿规",
+        "text": "换个排法。三个收银台，只排一条队。",
+        "start": 26.542,
+        "end": 30.075,
+        "source": "estimated 4.2 chars/s",
+        "sub_end": 30.285
+      },
+      "L09": {
+        "id": "L09",
+        "speaker": "阿规",
+        "text": "哪个台空了，队头就去哪个。",
+        "start": 30.325,
+        "end": 33.144,
+        "source": "estimated 4.2 chars/s",
+        "sub_end": 33.494
+      },
+      "L10": {
+        "id": "L10",
+        "speaker": "等等",
+        "text": "这么长一条？我宁可排短的。",
+        "start": 33.544,
+        "end": 36.363,
+        "source": "estimated 4.2 chars/s",
+        "sub_end": 36.573
+      },
+      "L11": {
+        "id": "L11",
+        "speaker": "阿规",
+        "text": "短队前面卡住一个人，你只能干等。",
+        "start": 36.613,
+        "end": 40.146,
+        "source": "estimated 4.2 chars/s",
+        "sub_end": 40.356
+      },
+      "L12": {
+        "id": "L12",
+        "speaker": "阿规",
+        "text": "长龙卡住一个台，另外两个照样收人。",
+        "start": 40.396,
+        "end": 44.167,
+        "source": "estimated 4.2 chars/s",
+        "sub_end": 44.427
+      },
+      "L13": {
+        "id": "L13",
+        "speaker": "嘀嗒",
+        "text": "一条队里，被后来的人超车的，零个。",
+        "start": 44.467,
+        "end": 48,
+        "source": "estimated 4.2 chars/s",
+        "sub_end": 48.35
+      },
+      "L14": {
+        "id": "L14",
+        "speaker": "等等",
+        "text": "公平我认。可网上说长龙快三倍，真的假的？",
+        "start": 49.1,
+        "end": 53.348,
+        "source": "estimated 4.2 chars/s",
+        "sub_end": 53.608
+      },
+      "L15": {
+        "id": "L15",
+        "speaker": "嘀嗒",
+        "text": "那得闭着眼随便挑队。",
+        "start": 53.648,
+        "end": 55.991,
+        "source": "estimated 4.2 chars/s",
+        "sub_end": 56.251
+      },
+      "L16": {
+        "id": "L16",
+        "speaker": "嘀嗒",
+        "text": "你会挑最短的，差距就剩半分钟。",
+        "start": 56.291,
+        "end": 59.586,
+        "source": "estimated 4.2 chars/s",
+        "sub_end": 59.936
+      },
+      "L17": {
+        "id": "L17",
+        "speaker": "等等",
+        "text": "才半分钟？那我图啥？",
+        "start": 60.686,
+        "end": 62.791,
+        "source": "estimated 4.2 chars/s",
+        "sub_end": 63.051
+      },
+      "L18": {
+        "id": "L18",
+        "speaker": "阿规",
+        "text": "图后来的人，再也走不到你前头。",
+        "start": 63.091,
+        "end": 66.386,
+        "source": "estimated 4.2 chars/s",
+        "sub_end": 66.736
+      },
+      "L19": {
+        "id": "L19",
+        "speaker": "等等",
+        "text": "……行。这条龙，我排。",
+        "start": 66.886,
+        "end": 68.515,
+        "source": "estimated 4.2 chars/s",
+        "sub_end": 68.865
+      },
+      "L20": {
+        "id": "L20",
+        "speaker": "阿规",
+        "text": "长龙别嫌长，它不会让你排错队。",
+        "start": 69.115,
+        "end": 72.41,
+        "source": "estimated 4.2 chars/s",
+        "sub_end": 72.76
+      },
+      "L21": {
+        "id": "L21",
+        "speaker": "等等",
+        "text": "换你，选哪个？",
+        "start": 75.71,
+        "end": 77.1,
+        "source": "estimated 4.2 chars/s",
+        "sub_end": 77.41
+      },
+      "L22": {
+        "id": "L22",
+        "speaker": "嘀嗒",
+        "text": "一条长龙扣 A，三条短队自己挑扣 B。",
+        "start": 77.45,
+        "end": 81.221,
+        "source": "estimated 4.2 chars/s",
+        "sub_end": 82.021
+      }
+    },
+    "order": [
+      "L01",
+      "L02",
+      "L03",
+      "L04",
+      "L05",
+      "L06",
+      "L07",
+      "L08",
+      "L09",
+      "L10",
+      "L11",
+      "L12",
+      "L13",
+      "L14",
+      "L15",
+      "L16",
+      "L17",
+      "L18",
+      "L19",
+      "L20",
+      "L21",
+      "L22"
+    ],
+    "duration": 83.821,
+    "env_fps": 30,
+    "partial": false,
+    "watermark": "预览 · 估算时长 · 无配音"
+  },
+  "scenes": [
+    {
+      "id": "s01_hook",
+      "start": 0,
+      "end": 8.893
+    },
+    {
+      "id": "s02_pick_shortest",
+      "start": 8.893,
+      "end": 18.011
+    },
+    {
+      "id": "s03_mystery_boxes",
+      "start": 18.011,
+      "end": 22.797
+    },
+    {
+      "id": "s04_overtaken",
+      "start": 22.797,
+      "end": 26.542
+    },
+    {
+      "id": "s05_one_line",
+      "start": 26.542,
+      "end": 36.613
+    },
+    {
+      "id": "s06_split_stuck",
+      "start": 36.613,
+      "end": 49.1
+    },
+    {
+      "id": "s07_three_times",
+      "start": 49.1,
+      "end": 60.686
+    },
+    {
+      "id": "s08_why_bother",
+      "start": 60.686,
+      "end": 69.115
+    },
+    {
+      "id": "s09_rule_cards",
+      "start": 69.115,
+      "end": 75.71
+    },
+    {
+      "id": "s10_vote",
+      "start": 75.71,
+      "end": 83.821
+    }
+  ],
+  "sfx": [
+    {
+      "t": 0.73828,
+      "sfx": "pop"
+    },
+    {
+      "t": 0.9638,
+      "sfx": "pop"
+    },
+    {
+      "t": 3.0189999999999997,
+      "sfx": "whoosh"
+    },
+    {
+      "t": 5.169639999999999,
+      "sfx": "click"
+    },
+    {
+      "t": 5.45308,
+      "sfx": "thump"
+    },
+    {
+      "t": 6.39788,
+      "sfx": "pop"
+    },
+    {
+      "t": 8.893,
+      "sfx": "whoosh"
+    },
+    {
+      "t": 9.246300000000002,
+      "sfx": "thump"
+    },
+    {
+      "t": 9.776250000000001,
+      "sfx": "pop"
+    },
+    {
+      "t": 10.3062,
+      "sfx": "pop"
+    },
+    {
+      "t": 10.83615,
+      "sfx": "pop"
+    },
+    {
+      "t": 13.995849999999999,
+      "sfx": "stamp"
+    },
+    {
+      "t": 18.011,
+      "sfx": "whoosh"
+    },
+    {
+      "t": 18.2353,
+      "sfx": "pop"
+    },
+    {
+      "t": 20.164279999999998,
+      "sfx": "pop"
+    },
+    {
+      "t": 20.253999999999998,
+      "sfx": "pop"
+    },
+    {
+      "t": 20.253999999999998,
+      "sfx": "click"
+    },
+    {
+      "t": 21.24092,
+      "sfx": "pop"
+    },
+    {
+      "t": 21.24092,
+      "sfx": "click"
+    },
+    {
+      "t": 21.86896,
+      "sfx": "pop"
+    },
+    {
+      "t": 21.86896,
+      "sfx": "click"
+    },
+    {
+      "t": 22.797,
+      "sfx": "whoosh"
+    },
+    {
+      "t": 23.097,
+      "sfx": "pop"
+    },
+    {
+      "t": 23.147000000000002,
+      "sfx": "tick"
+    },
+    {
+      "t": 23.997,
+      "sfx": "tick"
+    },
+    {
+      "t": 24.60925,
+      "sfx": "thump"
+    },
+    {
+      "t": 24.847,
+      "sfx": "tick"
+    },
+    {
+      "t": 25.697,
+      "sfx": "tick"
+    },
+    {
+      "t": 26.542,
+      "sfx": "whoosh"
+    },
+    {
+      "t": 26.895300000000002,
+      "sfx": "snap"
+    },
+    {
+      "at": "L08@0.35",
+      "sfx": "zip",
+      "dur": 1,
+      "t": 27.77855
+    },
+    {
+      "t": 30.74785,
+      "sfx": "ding"
+    },
+    {
+      "t": 30.8888,
+      "sfx": "pop"
+    },
+    {
+      "t": 32.0164,
+      "sfx": "ding"
+    },
+    {
+      "t": 34.1078,
+      "sfx": "ding"
+    },
+    {
+      "t": 36.613,
+      "sfx": "whoosh"
+    },
+    {
+      "t": 37.3196,
+      "sfx": "stamp"
+    },
+    {
+      "t": 37.3196,
+      "sfx": "stamp"
+    },
+    {
+      "t": 46.9401,
+      "sfx": "thump"
+    },
+    {
+      "t": 49.1,
+      "sfx": "whoosh"
+    },
+    {
+      "t": 53.748000000000005,
+      "sfx": "thump"
+    },
+    {
+      "t": 55.2881,
+      "sfx": "stamp"
+    },
+    {
+      "t": 57.2795,
+      "sfx": "pop"
+    },
+    {
+      "t": 58.5975,
+      "sfx": "thump"
+    },
+    {
+      "t": 58.663399999999996,
+      "sfx": "tick"
+    },
+    {
+      "t": 60.686,
+      "sfx": "pop"
+    },
+    {
+      "t": 63.58525,
+      "sfx": "pop"
+    },
+    {
+      "t": 64.24425,
+      "sfx": "step"
+    },
+    {
+      "t": 64.7385,
+      "sfx": "step"
+    },
+    {
+      "t": 65.23275,
+      "sfx": "step"
+    },
+    {
+      "t": 65.56224999999999,
+      "sfx": "pop"
+    },
+    {
+      "t": 68.515,
+      "sfx": "pop"
+    },
+    {
+      "t": 68.515,
+      "sfx": "ding"
+    },
+    {
+      "t": 69.115,
+      "sfx": "whoosh"
+    },
+    {
+      "t": 69.115,
+      "sfx": "pop"
+    },
+    {
+      "t": 70.76249999999999,
+      "sfx": "pop"
+    },
+    {
+      "t": 72.71,
+      "sfx": "pop"
+    },
+    {
+      "t": 73.71,
+      "sfx": "pop"
+    },
+    {
+      "t": 74.71,
+      "sfx": "pop"
+    },
+    {
+      "t": 75.71,
+      "sfx": "whoosh"
+    },
+    {
+      "t": 75.96,
+      "sfx": "pop"
+    },
+    {
+      "t": 76.16,
+      "sfx": "pop"
+    },
+    {
+      "t": 77.45,
+      "sfx": "pop"
+    }
+  ],
+  "beat_clock": {
+    "warn_s": 2.5,
+    "fail_s": 5,
+    "max_gap_s": 2.391,
+    "events": 311,
+    "gaps": [],
+    "ok": true
+  }
+}
