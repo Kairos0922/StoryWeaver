@@ -1,0 +1,27 @@
+{
+  "series": "invisible-rules",
+  "sprites": {
+    "status": "not-vendored",
+    "production_note": "Retrospective: parameterized SVG in ip/src/chars.py, build_sprites.py, 36 sprite keys. Those files are not in this repo. Do not invent expression filenames."
+  },
+  "characters": [
+    {
+      "id": "dengdeng",
+      "name": "等等",
+      "role": "嘴替犯错",
+      "does": "替观众提问、犯错、不服"
+    },
+    {
+      "id": "agui",
+      "name": "阿规",
+      "role": "讲规则",
+      "does": "讲一条规则，不念清单"
+    },
+    {
+      "id": "dida",
+      "name": "嘀嗒",
+      "role": "报数",
+      "does": "一次只报一个数字"
+    }
+  ]
+}

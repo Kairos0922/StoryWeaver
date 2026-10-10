@@ -1,5 +1,7 @@
 # System Architecture
 
+> Legacy target stack. Series episodes do not add a new renderer here. See `docs/studio/migration.md`.
+
 ## Target Architecture
 
     Content Sources

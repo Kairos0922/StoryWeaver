@@ -1,5 +1,7 @@
 # Agent Contract
 
+> Series episodes follow `.cursor/skills/produce-next-episode/SKILL.md`. Do not render a full episode from this legacy VideoSpec contract. The steps below apply to the fenced SVG compiler only.
+
 You are generating a production video for publication, not a coding demo.
 
 ## Required workflow

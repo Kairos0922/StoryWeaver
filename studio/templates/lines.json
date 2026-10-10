@@ -1,0 +1,9 @@
+{
+  "schema": "storyweaver.lines.v1",
+  "series": "{{series}}",
+  "episode": "{{episode}}",
+  "char_budget": 3000,
+  "voice_provider": "doubao-seed-tts-2.0-expressive",
+  "tts_note": "字幕数字和配音读法要分开字段。没有录音稿之前不要编读法。本工具不调用配音接口。",
+  "lines": []
+}

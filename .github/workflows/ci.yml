@@ -10,6 +10,8 @@ jobs:
           node-version: 24
       - run: npm install
       - run: npm test
+      - run: npm run lint-script
+      - run: npm run studio-layout
       - run: npm run validate
       - run: npm run validate-production
       - run: npm run method-proof

@@ -1,5 +1,7 @@
 # StoryWeaver Production Architecture
 
+> Series episodes use the studio gates in `docs/studio/pipeline.md`. The VideoSpec pipeline below is the legacy SVG compiler. See `docs/studio/migration.md`.
+
 ## 1. Purpose
 
 StoryWeaver is a model-agnostic code-video production system. Its job is to make an Agent's creative work repeatable, inspectable and renderable; it is not a renderer disguised as a creative system.
