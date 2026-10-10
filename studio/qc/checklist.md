@@ -1,19 +1,19 @@
-# QC 清单
+# QC checklist
 
-机器可读的项目在 `checklist.json`。`node studio/cli.mjs qc <episode-dir>` 会按这份目录打分。
+Machine-readable items live in `checklist.json`. `node studio/cli.mjs qc <episode-dir>` scores an episode against that list.
 
-自动项由文件内容决定。在单集的 `qc/checklist.json` 里把自动项改成 `pass` 不会生效。
+Automatic items are decided from files. Setting them to `pass` in the episode overlay does nothing.
 
-人工项默认 `pending`。要算通过，必须同时写：
+Human items start as `pending`. A pass needs all three:
 
 ```json
 "status": "pass",
-"checked_by": "人名",
-"evidence": "听了哪一段 / 看了哪张静帧"
+"checked_by": "a person’s name",
+"evidence": "which hook clip / which stills"
 ```
 
-没有 `checked_by` 的 `pass` 仍当作 `pending`。
+`pass` without `checked_by` stays `pending`. A `checked_by` value that looks like an agent (`agent`, `bot`, `Claude`, `Grok`, `Opus`, `GPT`, `Cursor`) is rejected. Agents may write `agent_precheck` (ASR, pace, glyph coverage). That field never opens a checkpoint.
 
-`pending` 和 `fail` 都会挡住清单里 `blocks` 写明的阶段。ASR 分数、响度测量、完播率都不在这个仓库里自动生成。没有成片或后台导出时，对应项保持 `pending` 或留空，不要填一个看起来像测过的值。
+`pending` and `fail` block every stage listed in `blocks`. ASR scores, LUFS readings, and completion rates are not invented by this repository. Leave those items pending until a person heard the mix or a platform export exists.
 
-响度目标 −16 LUFS 来自 EP01 复盘里的管线目标。它不是本仓库某条成片的测量结果。
+The loudness target −16 LUFS is a pipeline contract, not a measurement of any checked-in file.

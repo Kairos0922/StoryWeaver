@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {isAgentSigner} from '../brief.mjs';
 import {AUTO_CHECKS, fileExists} from './checks.mjs';
 
 const defaultTemplate = fileURLToPath(new URL('./checklist.json', import.meta.url));
@@ -41,9 +42,13 @@ export async function runQc(episodeDir, {templatePath = defaultTemplate} = {}) {
     let status = over.status || item.status || 'pending';
     if (!['pending', 'pass', 'fail'].includes(status)) status = 'pending';
     let evidence = over.evidence || '';
-    if (status === 'pass' && !String(over.checked_by || '').trim()) {
+    const checkedBy = String(over.checked_by || '').trim();
+    if (status === 'pass' && !checkedBy) {
       status = 'pending';
-      evidence = 'pass 缺少 checked_by，仍视为 pending';
+      evidence = 'pass without checked_by is still pending';
+    } else if (status === 'pass' && isAgentSigner(checkedBy)) {
+      status = 'pending';
+      evidence = 'Agents cannot sign human checks. Use agent_precheck for machine notes.';
     }
     items.push({
       id: item.id,
@@ -55,7 +60,8 @@ export async function runQc(episodeDir, {templatePath = defaultTemplate} = {}) {
       status,
       evidence,
       evidenceCode: status === 'pass' ? 'PASS' : 'GATE_BLOCKED',
-      checked_by: over.checked_by || '',
+      checked_by: checkedBy,
+      agent_precheck: over.agent_precheck || '',
     });
   }
   const blocked = items.filter(item => item.required && item.status !== 'pass');

@@ -4,8 +4,8 @@
 //   node studio/render/kit/canvas/build_episode.mjs <episode-dir> --mode preview|hook|full [options]
 //
 //   preview  no voice; line lengths estimated at --rate chars/s; watermarked; never a deliverable
-//   hook     L01–L03 from <episode>/audio/line_XX.wav; needs gate hook-sample
-//   full     every line from WAV; needs gate render (human checks in qc/checklist.json)
+//   hook     L01–L03 from <episode>/audio/line_XX.wav; needs checkpoint hook-sample
+//   full     every line from WAV; needs checkpoint render (human checks in qc/checklist.json)
 //
 // Line timing comes from WAV durations (decoded by ffmpeg), never from the script. The scene
 // document <episode>/render/scenes.json places every visual on line cues, so new WAVs move the
@@ -143,7 +143,7 @@ export function buildTiming(lines, durations, doc, opts) {
   const duration = +(lastEnd + tail).toFixed(4);
   return {
     lines: lineMap, order, duration, env_fps: opts.fps, partial: opts.mode === 'hook',
-    watermark: opts.mode === 'preview' ? (doc.preview_watermark || '预览 · 估算时长 · 无配音') : null,
+    watermark: opts.mode === 'preview' ? (doc.preview_watermark || 'PREVIEW · estimated timing · no voice') : null,
   };
 }
 
@@ -161,9 +161,9 @@ function toSrt(timing) {
 }
 
 async function gateOk(episodeDir, stage) {
-  const {evaluateGate, formatGate} = await import(path.join(repo, 'studio', 'gate.mjs'));
-  const r = await evaluateGate(episodeDir, stage);
-  return {ok: r.exitCode === 0, text: formatGate(r), code: r.code};
+  const {evaluateCheckpoint, formatCheckpoint} = await import(path.join(repo, 'studio', 'checkpoint.mjs'));
+  const r = await evaluateCheckpoint(episodeDir, stage);
+  return {ok: r.exitCode === 0, text: formatCheckpoint(r), code: r.code};
 }
 
 const BOOT = `
@@ -331,7 +331,7 @@ export async function buildEpisode(episodeDir, opts) {
   const {css, report: fontReport} = await embedFonts(chars, path.join(tmp, 'fonts'));
   log(`fonts embedded: ${fontReport.fonts.map(f => `${f.weight}=${f.glyphs} glyphs`).join(', ')}; ${fontReport.chars} chars covered`);
 
-  const data = {doc, resolved, timing, sheetTitle: `${spec.hud.series} · ${opts.mode} · ${timing.duration.toFixed(1)} s · 每 2.5 秒一帧`};
+  const data = {doc, resolved, timing, sheetTitle: `${spec.hud.series} · ${opts.mode} · ${timing.duration.toFixed(1)} s · one frame / 2.5s`};
   const html = await pageHtml({spec, css, data, boot: BOOT});
   const fps = opts.fps;
   const frames = Math.round(timing.duration * fps);

@@ -1,16 +1,17 @@
 # Studio
 
-系列成片的闸门、模板、lint、QC 和渲染合同。命令说明在仓库根目录 `README.md`。流程说明在 `docs/studio/pipeline.md`。
+Checkpoints, templates, lint, QC, and render contracts. Commands are in the root `README.md`. The workflow is in `docs/workflow.md`.
 
 ```text
 studio/
-  cli.mjs                 命令入口
-  templates/              事实卡、Phase A、口播、指标
-  lint/                   口播脚手架检查
-  qc/                     清单与自动项
-  contracts/              视觉合同、配音合同
-  render/kit/             共享元件名，不是渲染器
-  render/adapters/        Manim、Canvas、Remotion、HyperFrames、旧 SVG
+  cli.mjs                 command entry
+  templates/              fact card, creative brief, voice-over, metrics
+  lint/packs/             per-language AI-flavor and pace rules
+  qc/                     checklist and automatic items
+  contracts/              picture and voice rules
+  tts/                    provider interface (no secrets)
+  render/kit/             shared components, not a one-off page
+  render/adapters/        HTML Canvas, Manim, Remotion, HyperFrames
 ```
 
-一集的正文放在 `series/<series>/epNN/`，不放在这里。
+Episode files live in `examples/<series>/epNN/` or any series folder you create. Do not put episode copy inside `studio/`.

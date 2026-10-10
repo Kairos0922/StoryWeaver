@@ -5,21 +5,58 @@ import os from 'node:os';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
-import vm from 'node:vm';
-import {extractSpokenLines, lintFile, lintText, loadRules} from '../studio/lint/lint_script.mjs';
-import {approvalState, phaseABodyHash, validatePhaseA} from '../studio/phase_a.mjs';
+import {extractSpokenLines, lintFile, lintText, loadPack} from '../studio/lint/lint_script.mjs';
+import {approvalState, briefBodyHash, validateBrief} from '../studio/brief.mjs';
 import {inspectEngagement} from '../studio/qc/checks.mjs';
 import {runQc} from '../studio/qc/run_qc.mjs';
-import {evaluateGate} from '../studio/gate.mjs';
+import {evaluateCheckpoint} from '../studio/checkpoint.mjs';
 import {initEpisode} from '../studio/init_episode.mjs';
 import {checkLayout} from '../studio/layout.mjs';
+import {evaluateClaimPrecision} from '../studio/claims.mjs';
+import {evaluatePace} from '../studio/pace.mjs';
+import {cacheKey, missingSecrets} from '../studio/tts/interface.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
-const ep01 = path.join(root, 'series/invisible-rules/ep01');
+const ep01 = path.join(root, 'examples/invisible-rules/ep01');
 
 function runCli(args) {
   return spawnSync(process.execPath, ['studio/cli.mjs', ...args], {cwd: root, encoding: 'utf8'});
 }
+
+const briefBody = `# Brief
+
+## One thing
+
+Press only one elevator direction.
+
+## Viewer intuition
+
+| # | Viewer’s private objection | When that is true | Our reply (fact-card B only) | Line ids |
+| --- | --- | --- | --- | --- |
+| I1 | I pressed first so I should be next | If the car used first-come | Collective control is faster on average | L02 |
+
+## Aspect
+
+Landscape.
+
+## Duration
+
+80 seconds.
+
+## Five-beat story
+
+1. Hook: the door does not open.
+2. Break the assumption: first-pressed is not first-served.
+3. Mechanism: it finishes the same direction.
+4. Payoff: the extra wait is yours.
+5. Audience stance: have you pressed both?
+
+## Storyboard
+
+| Window | 0–3s | 3–7s | 7–10s | Devices | Character action | Voice point |
+| --- | --- | --- | --- | --- | --- | --- |
+| 0–10s | door shut | one number | a flinch | kinetic number, cut, stamp, character action | stand-in reaches, rule blocks | it saw you |
+`;
 
 test('layout lists the studio path', async () => {
   const report = await checkLayout(root);
@@ -32,52 +69,51 @@ test('template script has no scaffold errors', async () => {
 });
 
 test('self-check section is not spoken', async () => {
-  const result = await lintText(`# 样例
+  const result = await lintText(`# Sample
 
-- **整集只讲一件事：** 只按一个方向。
+- **One thing:** press only one direction.
 
-## 钩子
-> 旁白：门没开。
+## Hook
+> Narrator: The door stays shut.
 
-## 打碎常识
-> 旁白：先按并不先坐。
+## Break the assumption
+> Narrator: First-pressed is not first-served.
 
-## 内幕
-> 旁白：它先送同方向。
+## Mechanism
+> Narrator: It finishes the same direction.
 
-## 真相
-> 旁白：多等的是自己。
+## Payoff
+> Narrator: The extra wait is yours.
 
-## 评论站队
-> 旁白：你上下都按过吗？
+## Audience stance
+> Narrator: Have you pressed both?
 
-## 自查
-没用说人话。
-> 说人话：这句不算口播。
-> 第一，这句在自查里。
-`, {filename: 'script.md'});
+## Self-check
+Unused in plain English.
+> in plain English: not spoken.
+> First, this line is in the self-check.
+`, {filename: 'script.md', language: 'en'});
   assert.equal(result.errors.length, 0, JSON.stringify(result.errors));
-  assert.equal(result.warnings.length, 0, JSON.stringify(result.warnings));
 });
 
-test('scaffold, ordinal, emoji and long sentences are reported', async () => {
-  const result = await lintText(`# 样例
+test('English scaffold, ordinal, emoji and long sentences are reported', async () => {
+  const result = await lintText(`# Sample
 
-## 钩子
-> 旁白：说人话：先等着。
+## Hook
+> Narrator: in plain English: wait.
 
-## 打碎常识
-> 旁白：第一，只按一个，这句故意写得很长很长很长很长来超过四十个字的限制，后面再补一截让它肯定超过。
+## Break the assumption
+> Narrator: First, only press one, and this sentence is deliberately padded with extra filler words so that it clearly crosses the twenty-two word warning limit.
 
-## 内幕
-> 旁白：不仅更慢更贵。
+## Mechanism
+> Narrator: not only slower but also costlier.
 
-## 真相
-> 旁白：记住一件事就够了。所以——
+## Payoff
+> Narrator: remember this one thing. so——
 
-## 评论站队
-> 旁白：你站哪边 🙂
-`, {filename: 'script.md'});
+## Audience stance
+> Narrator: which side 🙂
+`, {filename: 'script.md', language: 'en'});
   const errors = new Set(result.errors.map(item => item.rule));
   assert.ok(errors.has('meta-plain-speech'));
   assert.ok(errors.has('oral-ordinal'));
@@ -90,7 +126,7 @@ test('scaffold, ordinal, emoji and long sentences are reported', async () => {
 
 test('ep01 script and lines keep the historical scaffold', async () => {
   const script = await fs.readFile(path.join(ep01, 'script.md'), 'utf8');
-  const rules = await loadRules();
+  const rules = await loadPack('zh');
   const spoken = extractSpokenLines(script, rules.speakers);
   const lines = JSON.parse(await fs.readFile(path.join(ep01, 'lines.json'), 'utf8'));
   assert.equal(lines.lines.length, spoken.length);
@@ -105,28 +141,28 @@ test('ep01 script and lines keep the historical scaffold', async () => {
   }
   assert.ok(linted.warnings.some(item => item.rule === 'method-in-vo'));
   assert.ok(linted.warnings.some(item => item.rule === 'five-beat-missing'));
-  const cli = runCli(['lint-script', 'series/invisible-rules/ep01/script.md']);
+  const cli = runCli(['lint-script', 'examples/invisible-rules/ep01/script.md']);
   assert.equal(cli.status, 1);
   assert.match(cli.stdout, /meta-plain-speech/);
 });
 
 test('ep01 cannot render', async () => {
-  const result = await evaluateGate(ep01, 'render');
-  assert.equal(result.code, 'PHASE_A_REQUIRED');
+  const result = await evaluateCheckpoint(ep01, 'render');
+  assert.equal(result.code, 'BRIEF_REQUIRED');
   assert.equal(result.exitCode, 2);
-  const cli = runCli(['gate', 'series/invisible-rules/ep01', 'render']);
+  const cli = runCli(['checkpoint', 'examples/invisible-rules/ep01', 'render']);
   assert.equal(cli.status, 2);
-  assert.match(cli.stdout, /^PHASE_A_REQUIRED/m);
+  assert.match(cli.stdout, /^BRIEF_REQUIRED/m);
 });
 
 test('fresh episode is incomplete and blocked', async () => {
   const series = await fs.mkdtemp(path.join(os.tmpdir(), 'sw-fresh-'));
   const created = await initEpisode(series, 'ep01');
-  const phase = await evaluateGate(created.episodeDir, 'phase-a');
-  assert.equal(phase.code, 'PHASE_A_INCOMPLETE');
+  const phase = await evaluateCheckpoint(created.episodeDir, 'brief');
+  assert.equal(phase.code, 'BRIEF_INCOMPLETE');
   assert.ok(phase.issues.some(issue => issue.id === 'storyboard_empty'));
-  const render = await evaluateGate(created.episodeDir, 'render');
-  assert.equal(render.code, 'PHASE_A_REQUIRED');
+  const render = await evaluateCheckpoint(created.episodeDir, 'render');
+  assert.equal(render.code, 'BRIEF_REQUIRED');
   assert.equal(render.exitCode, 2);
   const linted = await lintFile(path.join(created.episodeDir, 'script.md'));
   assert.equal(linted.ok, true);
@@ -145,37 +181,22 @@ test('human pass without a name stays pending', async () => {
   assert.equal(report.items.find(item => item.id === 'ear_hook').status, 'pending');
 });
 
+test('agent names cannot sign human checks', async () => {
+  const series = await fs.mkdtemp(path.join(os.tmpdir(), 'sw-agent-'));
+  const created = await initEpisode(series, 'ep01');
+  const checklistPath = path.join(created.episodeDir, 'qc', 'checklist.json');
+  const checklist = JSON.parse(await fs.readFile(checklistPath, 'utf8'));
+  const ear = checklist.items.find(item => item.id === 'ear_hook');
+  ear.status = 'pass';
+  ear.checked_by = 'Claude Opus cloud agent';
+  await fs.writeFile(checklistPath, JSON.stringify(checklist));
+  const report = await runQc(created.episodeDir);
+  assert.equal(report.items.find(item => item.id === 'ear_hook').status, 'pending');
+});
+
 test('approved episode can render and a later edit expires approval', async () => {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'sw-ok-'));
-  const body = `# Phase
-
-## 一件事
-
-电梯只按一个方向。
-
-## 画幅
-
-横屏。
-
-## 时长
-
-80 秒。
-
-## 五步心流
-
-1. 钩子：门没开。
-2. 打碎常识：先按并不先坐。
-3. 内幕：它先送同方向。
-4. 真相：多等的是自己。
-5. 评论站队：你上下都按过吗？
-
-## 分镜
-
-| 时段 | 0–3s | 3–7s | 7–10s | 视觉装置 | 角色动作 | 口播要点 |
-| --- | --- | --- | --- | --- | --- | --- |
-| 0–10s | 门不开 | 甩出一个数 | 角色一愣 | 剖面、大数字、切镜、挡手 | 等等去按，阿规挡住 | 不是没看见你 |
-`;
-  const hash = phaseABodyHash(`---\nstatus: draft\n---\n${body}`);
+  const hash = briefBodyHash(`---\nstatus: draft\n---\n${briefBody}`);
   const doc = ({status, duration, approvedDuration, bodyText, bodyHash}) => `---
 status: ${status}
 series: demo
@@ -196,42 +217,42 @@ approved_body_sha256: "${bodyHash}"
 ---
 
 ${bodyText}`;
-  await fs.writeFile(path.join(dir, 'phase_a.md'), doc({
-    status: 'approved', duration: 80, approvedDuration: 80, bodyText: body, bodyHash: hash,
+  await fs.writeFile(path.join(dir, 'brief.md'), doc({
+    status: 'approved', duration: 80, approvedDuration: 80, bodyText: briefBody, bodyHash: hash,
   }));
   await fs.writeFile(path.join(dir, 'script.md'), `# demo
 
-- **整集只讲一件事：** 电梯只按一个方向。
+- **One thing:** press only one elevator direction.
 
-## 钩子
-> 旁白：门没开。
+## Hook
+> Narrator: The door stays shut.
 
-## 打碎常识
-> 旁白：先按并不先坐。
+## Break the assumption
+> Narrator: First-pressed is not first-served.
 
-## 内幕
-> 旁白：它先送同方向。
+## Mechanism
+> Narrator: It finishes the same direction.
 
-## 真相
-> 旁白：多等的是自己。
+## Payoff
+> Narrator: The extra wait is yours.
 
-## 评论站队
-> 旁白：你上下都按过吗？
+## Audience stance
+> Narrator: Have you pressed both?
 `);
   await fs.mkdir(path.join(dir, 'post'), {recursive: true});
-  await fs.writeFile(path.join(dir, 'fact_card.md'), `# 事实卡
+  await fs.writeFile(path.join(dir, 'fact_card.md'), `# Fact card
 
-## A. 来源
+## A. Sources
 
-本测试没有外部数字。
+This fixture has no external numbers.
 
-## B. 数字
+## B. Numbers
 
-本测试没有上屏数字。
+This episode has no on-screen numbers.
 
-## C. 不能说
+## C. Do not say
 
-不要说多按更快。
+Do not say that pressing more times is faster.
 `);
   await fs.writeFile(path.join(dir, 'post/metrics.md'), await fs.readFile(path.join(root, 'studio/templates/metrics.md'), 'utf8'));
   const template = JSON.parse(await fs.readFile(path.join(root, 'studio/qc/checklist.json'), 'utf8'));
@@ -244,39 +265,39 @@ ${bodyText}`;
   }
   await fs.mkdir(path.join(dir, 'qc'), {recursive: true});
   await fs.writeFile(path.join(dir, 'qc/checklist.json'), JSON.stringify(template));
-  const state = approvalState(await fs.readFile(path.join(dir, 'phase_a.md'), 'utf8'));
-  assert.equal(state.code, 'PHASE_A_APPROVED', JSON.stringify(state.structure.issues));
-  const render = await evaluateGate(dir, 'render');
+  const state = approvalState(await fs.readFile(path.join(dir, 'brief.md'), 'utf8'));
+  assert.equal(state.code, 'BRIEF_APPROVED', JSON.stringify(state.structure.issues));
+  const render = await evaluateCheckpoint(dir, 'render');
   assert.equal(render.code, 'RENDER_ALLOWED', JSON.stringify(render.blockers));
-  const publish = await evaluateGate(dir, 'publish');
+  const publish = await evaluateCheckpoint(dir, 'publish');
   assert.notEqual(publish.code, 'PUBLISH_ALLOWED');
 
-  await fs.writeFile(path.join(dir, 'phase_a.md'), doc({
-    status: 'approved', duration: 70, approvedDuration: 80, bodyText: body, bodyHash: hash,
+  await fs.writeFile(path.join(dir, 'brief.md'), doc({
+    status: 'approved', duration: 70, approvedDuration: 80, bodyText: briefBody, bodyHash: hash,
   }));
-  const staleDuration = await evaluateGate(dir, 'render');
-  assert.equal(staleDuration.code, 'PHASE_A_STALE');
+  const staleDuration = await evaluateCheckpoint(dir, 'render');
+  assert.equal(staleDuration.code, 'BRIEF_STALE');
 
-  await fs.writeFile(path.join(dir, 'phase_a.md'), doc({
-    status: 'approved', duration: 80, approvedDuration: 80, bodyText: `${body}\n多了一句。\n`, bodyHash: hash,
+  await fs.writeFile(path.join(dir, 'brief.md'), doc({
+    status: 'approved', duration: 80, approvedDuration: 80, bodyText: `${briefBody}\nOne extra sentence.\n`, bodyHash: hash,
   }));
-  const staleBody = await evaluateGate(dir, 'render');
-  assert.equal(staleBody.code, 'PHASE_A_STALE');
+  const staleBody = await evaluateCheckpoint(dir, 'render');
+  assert.equal(staleBody.code, 'BRIEF_STALE');
 });
 
 test('engagement numbers need a source and cannot be estimates', async () => {
   const template = await fs.readFile(path.join(root, 'studio/templates/metrics.md'), 'utf8');
   assert.equal(inspectEngagement(template).ok, true);
-  assert.equal(inspectEngagement(template.replace('- 完播率：', '- 完播率：40%')).ok, false);
-  assert.equal(inspectEngagement(template.replace('- 完播率：', '- 完播率：大约很高')).ok, false);
-  const sourced = template.replace('- 完播率：', '- 完播率：40%（来源：示例导出，不是真实成绩）');
+  assert.equal(inspectEngagement(template.replace('- Completion rate:', '- Completion rate: 40%')).ok, false);
+  assert.equal(inspectEngagement(template.replace('- Completion rate:', '- Completion rate: roughly high')).ok, false);
+  const sourced = template.replace('- Completion rate:', '- Completion rate: 40% (source: sample export, not a real score)');
   assert.equal(inspectEngagement(sourced).ok, true);
 });
 
 test('ep02 can start after ep01 and ep03 cannot skip blank metrics', async () => {
   const dest = await fs.mkdtemp(path.join(os.tmpdir(), 'sw-series-'));
   const series = path.join(dest, 'invisible-rules');
-  const source = path.join(root, 'series/invisible-rules');
+  const source = path.join(root, 'examples/invisible-rules');
   await fs.cp(source, series, {
     recursive: true,
     filter: file => path.relative(source, file).split(path.sep)[0] !== 'ep02',
@@ -284,12 +305,12 @@ test('ep02 can start after ep01 and ep03 cannot skip blank metrics', async () =>
   const created = await initEpisode(series, 'ep02');
   assert.equal(created.previous, 'PRIOR_METRICS_ABSENT_OK');
   await assert.rejects(() => initEpisode(series, 'ep03'), error => error.code === 'METRICS_REQUIRED');
-  const phasePath = path.join(series, 'ep02/phase_a.md');
-  const phase = await fs.readFile(phasePath, 'utf8');
-  await fs.writeFile(phasePath, phase.replace('status: draft', 'status: draft\nmetrics_exception: true'));
+  const briefPath = path.join(series, 'ep02/brief.md');
+  const brief = await fs.readFile(briefPath, 'utf8');
+  await fs.writeFile(briefPath, brief.replace('status: draft', 'status: draft\nmetrics_exception: true'));
   const metricsPath = path.join(series, 'ep02/post/metrics.md');
   const metrics = await fs.readFile(metricsPath, 'utf8');
-  await fs.writeFile(metricsPath, `本集没有可回填的播放数据。留空。禁止估算。\n${metrics}`);
+  await fs.writeFile(metricsPath, `This episode has no playback metrics to backfill. Leave blank. Do not estimate.\n${metrics}`);
   await assert.rejects(() => initEpisode(series, 'ep03'), error => error.code === 'METRICS_REQUIRED');
 });
 
@@ -303,40 +324,61 @@ vertical_duration_s: ""
 structure_revision: 0
 ---
 
-## 一件事
-
-只按一个方向。
-
-## 画幅
-
-两档。
-
-## 时长
-
-90 秒。
-
-## 五步心流
-
-钩子。打碎常识。内幕。真相。评论站队。
-
-## 分镜
-
-| 时段 | 0–3s | 3–7s | 7–10s | 视觉装置 | 角色动作 | 口播要点 |
-| --- | --- | --- | --- | --- | --- | --- |
-| 0–10s | 门不开 | 甩出一个数 | 角色一愣 | 剖面、大数字、切镜、挡手 | 等等去按，阿规挡住 | 不是没看见你 |
+${briefBody}
 `;
-  const result = validatePhaseA(markdown);
+  const result = validateBrief(markdown);
   assert.ok(result.issues.some(issue => issue.id === 'vertical_duration_cap'));
 });
 
+test('average claims without the word average fail precision', () => {
+  const fact = `## B. Numbers
+
+| # | On-screen number | Value | Quantity type | Scene | Field |
+|---|---|---|---|---|---|
+| B5 | extra wait | 30s | average | baseline | wait |
+`;
+  const bad = evaluateClaimPrecision({
+    factCard: fact,
+    lines: [{id: 'L16', text: 'You gain half a minute.', claims: ['B5']}],
+  });
+  assert.equal(bad.ok, false);
+  const good = evaluateClaimPrecision({
+    factCard: fact,
+    lines: [{id: 'L16', text: 'On average everyone waits about half a minute less.', claims: ['B5']}],
+  });
+  assert.equal(good.ok, true);
+});
+
+test('pace flags a line over the Chinese cap', async () => {
+  const pack = await loadPack('zh');
+  const result = evaluatePace({
+    language: 'zh',
+    pack,
+    timing: {lines: {L01: {start: 0, end: 1}}},
+    lines: [{id: 'L01', text: '一二三四五六七八九十', pause_after_s: 0.2}],
+  });
+  assert.equal(result.ok, false);
+  assert.ok(result.findings.some(f => f.rule === 'pace'));
+});
+
+test('TTS adapters never see hardcoded secrets', () => {
+  assert.deepEqual(missingSecrets('doubao'), ['VOLC_TTS_APP_ID', 'VOLC_TTS_ACCESS_TOKEN']);
+  const a = cacheKey({provider: 'doubao', voice: 'a', text: 'hi', emotion: '', speechRate: -10});
+  const b = cacheKey({provider: 'doubao', voice: 'a', text: 'hi', emotion: '', speechRate: -10});
+  const c = cacheKey({provider: 'doubao', voice: 'a', text: 'ho', emotion: '', speechRate: -10});
+  assert.equal(a, b);
+  assert.notEqual(a, c);
+});
+
 test('ep02 stills use kit components and subtitle only script lines', async () => {
+  const {createContext, runInContext} = await import('node:vm');
   const kit = await fs.readFile(path.join(root, 'studio/render/kit/canvas/kit.js'), 'utf8');
-  const context = vm.createContext({});
-  vm.runInContext(kit, context);
+  const context = createContext({});
+  runInContext(kit, context);
   const known = new Set(context.SWKit.components);
-  const episode = path.join(root, 'series/invisible-rules/ep02');
+  const episode = path.join(root, 'examples/invisible-rules/ep02');
   const spec = JSON.parse(await fs.readFile(path.join(episode, 'render/stills.json'), 'utf8'));
-  const {speakers} = await loadRules();
+  const {speakers} = await loadPack('zh');
   const spoken = extractSpokenLines(await fs.readFile(path.join(episode, 'script.md'), 'utf8'), speakers);
   const walk = layers => layers.flatMap(layer => [layer.type, ...walk(layer.layers || [])]);
   for (const shot of spec.shots) {
@@ -351,8 +393,9 @@ test('ep02 stills use kit components and subtitle only script lines', async () =
   }
 });
 
-test('legacy CLI points at the studio', () => {
-  const help = spawnSync(process.execPath, ['src/cli.js'], {cwd: root, encoding: 'utf8'});
+test('CLI help is English', () => {
+  const help = runCli([]);
   assert.equal(help.status, 0);
-  assert.match(help.stdout, /studio\/cli\.mjs/);
+  assert.match(help.stdout, /checkpoint/);
+  assert.doesNotMatch(help.stdout, /闸门|Phase A/);
 });

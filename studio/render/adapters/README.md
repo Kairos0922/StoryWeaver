@@ -1,22 +1,21 @@
-# 渲染适配器
+# Render adapters
 
-StoryWeaver 的成片不从零写物理引擎，也不从零写一集一份的 Canvas。适配器只消费已经通过闸门的时间轴，把 `studio/render/kit/manifest.json` 里的元件画出来。
+StoryWeaver does not write a physics engine, and it does not write a fresh Canvas page per episode. An adapter consumes a timeline that has already passed the checkpoints and draws the components named in `studio/render/kit/manifest.json`.
 
-现在没有选定默认适配器。EP01 复盘要求评估现成工具，而不是再堆一套渲染器。本仓库也没有做一次可比较的耗时或画质测量，所以这里不宣布赢家。
+There is no declared default adapter. Choose one with four tests:
 
-选择时只看四件事：
+1. The same timeline renders the same pixels twice.
+2. Text, caption safe areas, and embedded fonts can be checked.
+3. Editing one beat does not require rewriting the episode page.
+4. The license allows production use. Review the license before adding a dependency. Remotion stays out of `package.json` unless a later decision records a license conclusion.
 
-1. 同一份时间轴，重复渲染得到同一画面。
-2. 中文文本、字幕安全区和嵌入字体可以检查。
-3. 改一拍不用重写整集页面。
-4. 许可证允许批量生产。加依赖之前先核对许可证。已有技术栈记录把 Remotion 排除在核心依赖之外，原因是许可证而不是画质。它可以留在适配器评估里，但不能进 `package.json`，除非另有决定。
+HTML Canvas is wired (see the Invisible Rules examples). Wiring is not a bake-off. Do not announce a winner without a timed comparison.
 
-HTML Canvas 已经接线（EP02 起），其余适配器还没安装，CLI 也不会调用它们。接线不等于选定：没有对比测量之前，不宣布默认适配器。
-
-| 适配器 | 说明 |
+| Adapter | Use |
 |---|---|
-| [Manim](manim.md) | 适合数字、坐标系、证明步骤 |
-| [HTML Canvas](html-canvas.md) | 适合已有的浏览器逐帧流程，但必须抽成共享 kit |
-| [Remotion](remotion.md) | React 时间轴。不是核心依赖 |
-| [HyperFrames](hyperframes.md) | 现成程序化视频框架，评估后再决定是否引入 |
-| [Legacy SVG](legacy-svg.md) | 仓库里原有的 VideoSpec → SVG 路径，只服务既有实验 |
+| [HTML Canvas](html-canvas.md) | Shared `seek(t)` kit, Playwright stills and frames |
+| [Manim](manim.md) | Numbers, axes, proof steps |
+| [Remotion](remotion.md) | React timeline; not a core dependency |
+| [HyperFrames](hyperframes.md) | Evaluate before adopting |
+
+Deleted from this tree: the legacy VideoSpec → SVG path. Git history is the archive.

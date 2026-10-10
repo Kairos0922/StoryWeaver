@@ -1,26 +1,26 @@
-# 视觉合同
+# Visual contract
 
-这是系列成片的画面规则。EP01 的调色板、字体文件和安全区像素没有随样本移植，所以这里不写一套看起来像品牌规范的色值。等精灵和成片文件进仓库，再把色值和字号补成有出处的表。
+House rules for any series that uses this toolkit. Palette, type files, and safe-area pixels belong in the series folder once they are measured. This file only states rules that do not depend on one brand.
 
-## 必须
+## Required
 
-- 同一时间轴可以出 16:9 和 9:16。竖屏不是把横屏居中裁一下就交差，安全区要单独过目。
-- 字幕不能贴边，不能和角色、大数字重叠。
-- 字体嵌入成片。缺字检查失败就不能发布。
-- 不用 emoji。
-- 角色不能被画幅裁掉关键部位（脸、手势）。
-- 标了「示意」的画面不能配上一个看起来像实测的数字。数字只来自事实卡。
-- 大数字先出现，再收成图表。不要让条形图自己慢慢长出来就算讲完了一个数。
-- 每个 2.5 秒节拍至少有一个可见变化，其中至少有一个角色动作。
-- 转场不能整集只有一种交叉溶解。可以用门、图表框或物体过镜把前后两拍接上。
-- AI 生成内容标识放在片中固定位置，发布文案再写一次。
+- One timeline can emit 16:9 and 9:16. Vertical is not a center crop of landscape. Review each safe area.
+- Captions stay off the edge and off faces and kinetic numbers.
+- Fonts are embedded. A missing-glyph check fails the release.
+- No emoji.
+- Characters are not cropped at the face or the gesture.
+- A frame marked “schematic” cannot sit next to a number that sounds measured. Numbers come from the fact card.
+- A kinetic number hits first, then shrinks into a chart. A bar that eases in is not the beat.
+- Every 2.5s visual beat has a visible change, including at least one character action.
+- Do not use one crossfade for the whole film. Match on an object, wipe, or carry an element through the cut.
+- An AI-generated-content mark sits in a fixed on-screen slot and is repeated in the publish copy.
 
-## 禁止
+## Forbidden
 
-- 一集一份从零写的渲染页面。
-- 无版权把握的外部 BGM。BGM 继续自合成，或使用已经写明授权的库。
-- 用角色站桩填充讲解。
+- A one-off HTML page written from scratch for one episode.
+- External music without a written license. Prefer synthesized beds or a named licensed library.
+- Characters standing still while a chart explains.
 
-## 人工静帧
+## Review stills
 
-全片渲染前看四张：钩子约 2.5 秒、第一个数字、最大爽点、结尾站队。看的人把名字写进 `qc/checklist.json`。
+Before a full render, look at four frames: hook (~2.5s), first number, payoff, closing stance. The reviewer writes their name in `qc/checklist.json`.

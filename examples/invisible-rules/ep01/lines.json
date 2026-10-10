@@ -1,0 +1,171 @@
+{
+  "schema": "storyweaver.lines.v1",
+  "series": "invisible-rules",
+  "episode": "ep01",
+  "language": "zh",
+  "source": "Blockquotes transcribed from script.md (published v2). Not a creative-brief line list.",
+  "char_budget": 3000,
+  "voice_provider": "doubao-seed-tts-2.0-expressive",
+  "voices": {
+    "binding": "unrecorded",
+    "approved_set": [
+      "解说小明",
+      "少年梓辛",
+      "知性灿灿"
+    ],
+    "note": "A person chose these three Doubao expressive voices. Character-to-voice binding and context_texts were not in the transplant. Do not guess."
+  },
+  "tts_note": "Production lines.py split spoken number forms from caption digits. That spoken form is not in this repo. text matches the script. Do not invent a nicer reading. Retrospective: v2 used 684 characters in 27 calls; this split may not equal those 27.",
+  "lines": [
+    {
+      "id": "L01",
+      "beat": "hook",
+      "speaker": "等等",
+      "text": "上下都按上，总有一部先来吧？"
+    },
+    {
+      "id": "L02",
+      "beat": "hook",
+      "speaker": "阿规",
+      "text": "你这么按，模拟里平均要多等七秒半。"
+    },
+    {
+      "id": "L03",
+      "beat": "hook",
+      "speaker": "等等",
+      "text": "……啊？"
+    },
+    {
+      "id": "L04",
+      "beat": "problem",
+      "speaker": "等等",
+      "text": "早上八点，我在五楼，要下楼。电梯就在三楼，往上走，路过五楼——没停！门都没开！"
+    },
+    {
+      "id": "L05",
+      "beat": "problem",
+      "speaker": "阿规",
+      "text": "它不是没看见你。它在守一条规矩。"
+    },
+    {
+      "id": "L06",
+      "beat": "rule",
+      "speaker": "阿规",
+      "text": "一般的电梯，都守一句口诀：顺向截梯，反向不停。"
+    },
+    {
+      "id": "L07",
+      "beat": "rule",
+      "speaker": "阿规",
+      "text": "说人话：电梯往上走，只捎往上的人。你要下楼？先等着。等它上到头、掉过头，再来接你。"
+    },
+    {
+      "id": "L08",
+      "beat": "rule",
+      "speaker": "等等",
+      "text": "凭什么？我先按的！"
+    },
+    {
+      "id": "L09",
+      "beat": "rule",
+      "speaker": "嘀嗒",
+      "text": "先按先接？我掐了表。"
+    },
+    {
+      "id": "L10",
+      "beat": "rule",
+      "speaker": "嘀嗒",
+      "text": "一部电梯，一小时一百二十个人。谁先按就先接谁，平均每人等 31.9 秒。按顺路的规矩，24.3 秒。"
+    },
+    {
+      "id": "L11",
+      "beat": "rule",
+      "speaker": "阿规",
+      "text": "顺路跑一趟，能捎上一串人。要是谁先按接谁，它就得上上下下来回折腾，谁都快不了。"
+    },
+    {
+      "id": "L12",
+      "beat": "rule",
+      "speaker": "等等",
+      "text": "……行吧。它路过我不停，原来是在帮大家省时间。"
+    },
+    {
+      "id": "L13",
+      "beat": "both",
+      "speaker": "等等",
+      "text": "那我上下都按。它往上走、路过我，总得停了吧？"
+    },
+    {
+      "id": "L14",
+      "beat": "both",
+      "speaker": "阿规",
+      "text": "会停。门一开，你不进。门一关，车里的人全陪你多等几秒。"
+    },
+    {
+      "id": "L15",
+      "beat": "both",
+      "speaker": "嘀嗒",
+      "text": "我又掐了表。还是这栋楼，假设每五个人里有一个上下都按，而且只坐自己方向的那趟。"
+    },
+    {
+      "id": "L16",
+      "beat": "both",
+      "speaker": "嘀嗒",
+      "text": "上下都按的人，自己平均多等 7.5 秒。老老实实按一个的人，也被拖慢了 1.2 秒。"
+    },
+    {
+      "id": "L17",
+      "beat": "both",
+      "speaker": "等等",
+      "text": "我图快，结果更慢，还连累别人？"
+    },
+    {
+      "id": "L18",
+      "beat": "both",
+      "speaker": "阿规",
+      "text": "你多按的那一下，等于叫电梯白跑一趟、白停一站。这笔账，大家一起付。"
+    },
+    {
+      "id": "L19",
+      "beat": "tips",
+      "speaker": "阿规",
+      "text": "记住一件事就够了：电梯是顺路接人的。所以——"
+    },
+    {
+      "id": "L20",
+      "beat": "tips",
+      "speaker": "阿规",
+      "text": "第一，要下楼就按下，要上楼就按上，只按一个。"
+    },
+    {
+      "id": "L21",
+      "beat": "tips",
+      "speaker": "阿规",
+      "text": "第二，电梯路过你不停，别急，它掉头就来。"
+    },
+    {
+      "id": "L22",
+      "beat": "tips",
+      "speaker": "阿规",
+      "text": "第三，有的写字楼在门口让你先输楼层，屏幕会告诉你坐哪一部。照着去就行。"
+    },
+    {
+      "id": "L23",
+      "beat": "outro",
+      "speaker": "等等",
+      "text": "行，今天开始，一个按钮都不多按。"
+    },
+    {
+      "id": "L24",
+      "beat": "outro",
+      "speaker": "嘀嗒",
+      "text": "我盯着表呢。对了，今天的数字都是简化模拟跑出来的，不是哪栋楼的实测。"
+    },
+    {
+      "id": "L25",
+      "beat": "outro",
+      "speaker": "阿规",
+      "text": "下期：排一条长队，还是好几条短队？哪个更快？"
+    }
+  ]
+}

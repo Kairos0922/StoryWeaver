@@ -2,8 +2,10 @@
   "schema": "storyweaver.lines.v1",
   "series": "{{series}}",
   "episode": "{{episode}}",
+  "language": "en",
+  "speech_rate": -12,
   "char_budget": 3000,
-  "voice_provider": "doubao-seed-tts-2.0-expressive",
-  "tts_note": "字幕数字和配音读法要分开字段。没有录音稿之前不要编读法。本工具不调用配音接口。",
+  "voice_provider": "",
+  "tts_note": "text is the caption. tts_text is what the TTS adapter receives. Do not invent a spoken form before a recording sheet exists. This tool does not call a TTS API.",
   "lines": []
 }

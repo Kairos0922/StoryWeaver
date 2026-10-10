@@ -8,7 +8,7 @@ const studioRoot = fileURLToPath(new URL('.', import.meta.url));
 const COPIES = [
   ['README.md', 'templates/episode_README.md'],
   ['fact_card.md', 'templates/fact_card.md'],
-  ['phase_a.md', 'templates/phase_a.md'],
+  ['brief.md', 'templates/brief.md'],
   ['script.md', 'templates/script.md'],
   ['lines.json', 'templates/lines.json'],
   ['post/metrics.md', 'templates/metrics.md'],
@@ -30,7 +30,7 @@ export async function initEpisode(seriesDir, episodeId) {
   const previous = await previousMetricsBlock(seriesDir, episodeId);
   if (previous.code === 'METRICS_REQUIRED') {
     throw Object.assign(new Error(
-      `${previous.previousId} 的 post/metrics.md 还没有带来源的实填指标。没有平台数据就留空，不要估算；留空时不能开下一集选题。`,
+      `${previous.previousId} post/metrics.md has no sourced playback numbers. Leave the sheet blank if the platform export is missing; do not estimate. A blank sheet blocks the next topic.`,
     ), {code: 'METRICS_REQUIRED', previous});
   }
   const dest = path.join(seriesDir, episodeId);

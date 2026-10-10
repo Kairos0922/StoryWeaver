@@ -1,11 +1,9 @@
-# 共享画面元件
+# Shared picture kit
 
-`manifest.json` 是元件合同，不是渲染器。
+`manifest.json` is the component contract, not a renderer.
 
-一集的 `render/` 只允许声明用哪个元件、在哪个节拍出现。不要把整页 `index.html` 复制到下一集。EP01 的成片页有过一份约 252 行的单集 Canvas，那是返工证据，不是模板。
+An episode `render/` folder may only name components and the beats they appear on. Do not copy a full `index.html` to the next episode.
 
-适配器负责把同一份时间轴画出来。节拍是 2.5 秒。超过 5 秒没有新的视觉元素，QC 的 `beat_clock` 不能通过。
+Adapters draw the same timeline. The visual clock is 2.5 seconds. More than 5 seconds without a new visual fails `beat_clock`. Every beat needs a character action. A character standing beside a chart fails QC.
 
-每个节拍至少有一个角色动作。角色站在图旁边听讲解，算失败。
-
-本仓库不生成 MP4。闸门放开之后，由人选一个适配器去渲染。选择标准写在 `../adapters/README.md`。目前没有默认适配器，也没有安装 Remotion、Manim 或付费接口。
+Voice pace is a separate clock. Do not “fix” a dense voice-over by adding more cuts.

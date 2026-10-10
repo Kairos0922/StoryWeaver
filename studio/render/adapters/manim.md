@@ -1,9 +1,9 @@
-# Manim 适配器
+# Manim adapter
 
-状态：未安装，未接线。
+Status: not installed, not wired.
 
-适合把一个数字或一次对比画成可重复的几何动画。输入应是一集的时间轴（节拍、元件 id、事实卡字段），不是模型当场写的场景脚本。
+Use when a number or a comparison is clearer as repeatable geometry. Input is the episode timeline (beats, component ids, fact-card fields), not a scene script invented at render time.
 
-接线前要先有：Phase A 批准、口播 lint 通过、以及一次不超过 12 秒的样片。不要为了试 Manim 去渲全片。
+Before wiring: an approved creative brief, a passing voice-over lint, and a hook sample of at most 12 seconds. Do not render a full episode to “try Manim”.
 
-不要把模拟器本身写进 Manim 场景。数字从 `fact_card.md` B 区来。
+Do not put the simulator inside a Manim scene. Numbers come from fact-card B.

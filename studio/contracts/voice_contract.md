@@ -1,32 +1,39 @@
-# 配音合同
+# Voice contract
 
-《看不见的规则》使用豆包 seed-tts-2.0-expressive（复盘里的 E3 情感版）。这是用户听过样音之后的选择，不是每集重新海选。
+This file is the studio-wide voice rule set. A series may bind specific voices in its own `voice/` folder after a person has heard samples. Do not re-audition every episode.
 
-本仓库不保存密钥，不发起配音请求，也不把付费接口配进脚本。缓存、字数和音色绑定在生产环境里完成；这里只固定规则，避免下一集换一条无法复核的声音链路。
+This repository does not store secrets, does not call a TTS API from the CLI, and does not bake a vendor into `package.json`. Cache, usage logs, and voice IDs live on the machine that holds keys. See `docs/environment.md` and `studio/tts/`.
 
-## 已选定的音色集合
+## Provider interface
 
-复盘点名三套音色：解说小明、少年梓辛、知性灿灿，并使用 `context_texts`。
+Any adapter must:
 
-角色和音色的对应关系没有写进移植样本。系列的对应以系列 `voice/README.md` 里的生产笔记为准；那里没有记录时，不要把某套音色分给角色。EP01 的 `context_texts` 原文同样没有移植，不要补写；新一集的语气说明写进该集 `lines.json` 的 `emotion`，标明是草稿。
+1. Read credentials only from environment variables.
+2. Never print a key or a token.
+3. Cache by a hash of `(provider, voice, text, emotion, speech_rate)`.
+4. Separate caption `text` from spoken `tts_text`.
+5. Refuse a full-episode batch until the hook sample has a human ear pass.
+6. Write usage to `usage.jsonl` (characters or bytes, not the secret).
 
-## 角色分工
+Adapters shipped as contracts: Doubao / Volcengine, Azure Speech, ElevenLabs. Add another vendor by implementing `studio/tts/interface.mjs`.
 
-分工来自 EP01 剧本和复盘，跨集复用：
+## Roles (when a series uses characters)
 
-| 角色 | 做什么 | 不做什么 |
+| Role | Does | Does not |
 |---|---|---|
-| 等等 | 替观众提问、犯错、不服 | 不要马上说「原来如此」 |
-| 阿规 | 讲规则 | 不要念清单序号 |
-| 嘀嗒 | 报一个数字 | 不要在同一句里报完一组对比 |
+| Audience stand-in | Ask, err, resist | Accept on the first try |
+| Rule | State one rule | Read “first, second, third” |
+| Number | Report one number | Stack a comparison in one sentence |
 
-## 预算和缓存
+A series may rename the roles. It may not invent a fourth speaking persona in one episode without updating the series notes.
 
-- 单集口播预算少于 3000 字。EP01 v2 的生产记录是 684 字、27 次请求。这是复盘里的记录，不是本仓库重新数出来的。
-- 以台词内容的哈希做缓存。重渲画面时不重复请求同一句。
-- 字幕上的阿拉伯数字和配音读法分开存储。读法没有移植到本仓库时，不要发明一种「更好听的」读法。
-- 先合成约 12 秒钩子，人耳通过后，才允许全量合成。
+## Budget and cache
 
-## 不采用
+- Stay under 3000 spoken characters (or the series budget, if lower).
+- Re-renders reuse the cache. Identical lines do not bill twice.
+- Default `speech_rate` is a modest slowdown (try −10 to −15 on providers that support it). Measure on the hook sample. Do not guess a final rate.
+- Emotion cues describe tone, not speed. “Speak fast” is a lint warning.
 
-ChatTTS 和 CosyVoice 的样音已被用户否决。不要在未做新的对照试听时把它们写回生产线。试听材料放在系列的 `voice/` 说明里，不把音频二进制塞进 git，除非文件已经是发布资产的一部分并且体积可接受。
+## Rejected defaults
+
+Do not put a vendor back on the line after a person has rejected its sample, unless you run a new A/B and record the choice. Sample notes live in the series `voice/` folder. Do not commit WAV binaries unless they are a release asset and the size is acceptable.

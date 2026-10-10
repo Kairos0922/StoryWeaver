@@ -1,7 +1,7 @@
-# 模拟
+# Simulation
 
-只有这一集要上屏数字时才在这里放模拟脚本和原始结果。
+Put a simulator and raw results here only when this episode puts numbers on screen.
 
-原始结果文件进仓库后再把用到的字段抄进 `fact_card.md` B 区。不要在口播里念模型参数。参数留在事实卡。
+After the result file is in the repo, copy used fields into `fact_card.md` section B and tag each row with a quantity type. Do not read model parameters in the main voice-over.
 
-没有模拟、也没有别的可复核数字时，口播里不要出现具体秒数或百分比。
+If there is no simulation and no other auditable number, the voice-over must not use a concrete second-count or percentage.

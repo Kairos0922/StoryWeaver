@@ -1,32 +1,32 @@
-# {{series}} {{episode}} 口播
+# {{series}} {{episode}} voice-over
 
-- **整集只讲一件事：** （待填）
-- **观众能做的一件行为：** （待填）
-- **数字来源：** 只写事实卡 A 或 B 里有的。没有就不要写数字。
-- **画幅与时长：** 与 `phase_a.md` 文首一致。横屏目标不超过 90 秒。
+- **One thing:** (TODO)
+- **One action the viewer can take:** (TODO)
+- **Number sources:** only facts that exist in fact-card A or B. If none, write no numbers.
+- **Aspect and duration:** match the `brief.md` front matter. Landscape target is at most 90 seconds.
 
-`## 自查` 必须放在全文最后。这一节里的词不会当口播检查。
+`## Self-check` must be the last section. Words in that section are not scored as speech.
 
-## 钩子
+## Hook
 
-> 旁白：（待填，先给冲突）
+> Narrator: (TODO, conflict first)
 
-## 打碎常识
+## Break the assumption
 
-> 旁白：（待填，打碎一个错误做法）
+> Narrator: (TODO, acknowledge the strongest objection, then break it)
 
-## 内幕
+## Mechanism
 
-> 旁白：（待填，一个机制）
+> Narrator: (TODO, one mechanism)
 
-## 真相
+## Payoff
 
-> 旁白：（待填，一个数字）
+> Narrator: (TODO, one number)
 
-## 评论站队
+## Audience stance
 
-> 旁白：（待填，本集可以回答的站队题）
+> Narrator: (TODO, a vote this episode can answer)
 
-## 自查
+## Self-check
 
-上屏数字必须能在事实卡 A 或 B 找到。方法、假设、种子，放事实卡或片尾小字。清单用画面卡片，不要用嘴念序号。
+Every on-screen number must exist in fact-card A or B. Method, assumptions, and seeds stay on the fact card or the end card. Lists are picture cards; the mouth does not read ordinals.

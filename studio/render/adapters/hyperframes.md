@@ -1,7 +1,5 @@
-# HyperFrames 适配器
+# HyperFrames adapter
 
-状态：未安装，未接线。
+Status: not installed, not wired.
 
-复盘把它和 Remotion、Manim 放在同一类：现成的程序化视频工具，用来接共享 kit，而不是再写一套渲染器。
-
-本仓库没有 HyperFrames 的版本锁定，也没有许可证结论。引入之前先核对许可证，并用一集的 12 秒钩子样片看中文和字幕是否稳。样片之前仍然要过 Phase A。
+Treat it as another programmatic renderer that should consume the shared kit, not as a reason to write a third engine. There is no version pin and no license conclusion in this repository. Check both before a hook-sample trial. The creative brief still has to be approved first.

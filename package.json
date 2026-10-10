@@ -1,33 +1,18 @@
 {
   "name": "storyweaver",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "type": "module",
-  "description": "闸门制知识短片工作室：事实卡 → 五步心流 → Phase A → 渲染 → QC → 发布",
+  "description": "An AI-assisted toolkit and methodology for producing fact-checked animated explainer videos, from research and scripting to voiceover, rendering, and QC.",
   "engines": {
     "node": ">=24"
   },
   "scripts": {
     "test": "node --test",
-    "validate": "node src/cli.js validate examples/hot-air-balloon.json",
-    "render": "node src/cli.js render examples/hot-air-balloon.json --out out/hot-air-balloon.mp4",
-    "quality": "node scripts/quality-gate.js",
-    "lint": "node src/cli.js lint",
-    "inspect": "node src/cli.js inspect",
-    "contact-sheet": "node scripts/contact-sheet.mjs",
-    "method-proof": "node scripts/method-proof.js",
-    "validate-production": "node scripts/validate-production.js",
-    "production-01": "node scripts/production-01.js",
-    "studio": "node studio/cli.mjs",
     "lint-script": "node studio/cli.mjs lint-script studio/templates/script.md",
+    "studio": "node studio/cli.mjs",
     "studio-layout": "node studio/cli.mjs layout",
-    "pages": "node scripts/build-pages-site.mjs"
-  },
-  "dependencies": {
-    "@resvg/resvg-js": "^2.6.2",
-    "ajv": "^8.17.1",
-    "ffmpeg-static": "^5.2.0",
-    "text2wav": "0.0.14"
+    "doctor": "node studio/cli.mjs doctor"
   },
   "devDependencies": {
     "playwright": "^1.64.0"

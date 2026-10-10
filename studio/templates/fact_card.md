@@ -1,25 +1,28 @@
-# 事实卡 · {{series}} / {{episode}}
+# Fact card · {{series}} / {{episode}}
 
-原则：画面和口播里的数字只来自本片模拟，或来自下面 A 区点名的来源。来源没读到的句子，不要写成已核对。
+Numbers on screen or in the voice come from this episode’s simulation, or from a source named in section A. A sentence you have not read is not a checked fact.
 
-模拟文件不在仓库里时，不要凭记忆重写数字。把原始 `results` 放进 `sim/`，再把用到的数字抄进 B 区。
+If the raw result file is not in the repo, do not reconstruct numbers from memory. Put `results` in `sim/`, then copy used fields into B.
 
-## A. 一般性说法（有外部来源）
+## A. General claims (external sources)
 
-| # | 片中说法 | 来源 | 可信度 / 备注 |
+| # | On-screen claim | Source | Confidence / notes |
 |---|---|---|---|
-| A1 | （待填） | （待填：题名和 URL） | （待填：读过原文的哪一页 / 没通读全文） |
+| A1 | (TODO) | (TODO: title and URL) | (TODO: which pages you read / not read in full) |
 
-## B. 模拟或可复核的数字（本片）
+## B. Simulated or auditable numbers (this episode)
 
-模型参数：（待填。没有模拟就写「本集没有上屏数字」，不要留假参数。）
+Model parameters: (TODO. If there is no simulation, write “this episode has no on-screen numbers”. Do not invent parameters.)
 
-| 片中数字 | 值 | 场景 | 文件字段 |
-|---|---|---|---|
-| （待填） | （待填） | （待填） | （待填） |
+| # | On-screen number | Value | Quantity type | Scene | Field |
+|---|---|---|---|---|---|
+| B1 | (TODO) | (TODO) | (TODO: average / individual / fairness / tail-risk / proportion) | (TODO) | (TODO) |
 
-## C. 已知局限 / 不能说的话
+Quantity type is required. An average must be spoken as an average. Do not answer “what do I get this time?” with an average-speed number.
 
-- C1 （待填：哪个说法是思想实验，不能说成真实设备的行为）
-- C2 （待填：哪个数字是简化估算，不能代表厂商或某栋楼）
-- C3 （待填：找过但没有来源、因此片中禁止说的话）
+## C. Known limits / do not say
+
+- C1 (TODO: which line is a thought experiment and must not be sold as a real device)
+- C2 (TODO: which number is a simplified estimate and cannot stand for a vendor or a building)
+- C3 (TODO: a claim you searched for and did not find, therefore forbidden)
+- C4 Do not sell fairness as speed, and do not sell a group average as this viewer’s next visit.

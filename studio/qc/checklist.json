@@ -9,7 +9,7 @@
       "required": true,
       "kind": "auto",
       "check": "fact_card_abc",
-      "title": "事实卡含 A 外部来源 / B 本片数字 / C 不能说的话"
+      "title": "Fact card has A (sources) / B (this episode’s numbers) / C (do-not-say)"
     },
     {
       "id": "one_thing",
@@ -18,16 +18,25 @@
       "required": true,
       "kind": "auto",
       "check": "one_thing",
-      "title": "整集只写一件事，且不是待填"
+      "title": "The episode states one takeaway, not a placeholder"
     },
     {
-      "id": "phase_a_ready",
+      "id": "brief_ready",
       "gate": "2",
       "blocks": ["lines", "hook-sample", "stills", "render", "publish"],
       "required": true,
       "kind": "auto",
-      "check": "phase_a_approved",
-      "title": "Phase A 已由人批准，正文哈希和画幅时长一致"
+      "check": "brief_approved",
+      "title": "Creative brief is human-approved; body hash, aspect, and duration still match"
+    },
+    {
+      "id": "intuition_addressed",
+      "gate": "2",
+      "blocks": ["lines", "hook-sample", "stills", "render", "publish"],
+      "required": true,
+      "kind": "auto",
+      "check": "intuition_addressed",
+      "title": "Viewer intuition / strongest objection is filled and answered before the first break"
     },
     {
       "id": "script_lint",
@@ -36,7 +45,25 @@
       "required": true,
       "kind": "auto",
       "check": "script_lint",
-      "title": "口播 lint 没有脚手架错误"
+      "title": "Voice-over lint has no scaffold errors"
+    },
+    {
+      "id": "claim_precision",
+      "gate": "2",
+      "blocks": ["lines", "hook-sample", "stills", "render", "publish"],
+      "required": true,
+      "kind": "auto",
+      "check": "claim_precision",
+      "title": "Numbers declare quantity type (average / individual / fairness / tail-risk / proportion)"
+    },
+    {
+      "id": "pace_ok",
+      "gate": "3",
+      "blocks": ["render", "publish"],
+      "required": true,
+      "kind": "auto",
+      "check": "pace_ok",
+      "title": "Speech rate and pauses after key numbers stay inside the language cap"
     },
     {
       "id": "metrics_not_invented",
@@ -45,7 +72,7 @@
       "required": true,
       "kind": "auto",
       "check": "metrics_not_invented",
-      "title": "播放指标要么空着，要么同一行写了来源；禁止估算词"
+      "title": "Playback metrics are blank or sourced on the same line; no estimate words"
     },
     {
       "id": "ear_hook",
@@ -53,10 +80,22 @@
       "blocks": ["stills", "render", "publish"],
       "required": true,
       "kind": "human",
-      "title": "人耳听过约前 12 秒钩子样片。ASR 分数不能代替这一项",
+      "title": "A person heard the ~12s hook sample. ASR scores do not replace this.",
       "status": "pending",
       "evidence": "",
       "checked_by": ""
+    },
+    {
+      "id": "first_watch",
+      "gate": "3",
+      "blocks": ["render", "publish"],
+      "required": true,
+      "kind": "human",
+      "title": "Someone who has not read the script watches the hook (or silent preview) once and can restate the one thing plus one objection",
+      "status": "pending",
+      "evidence": "",
+      "checked_by": "",
+      "evidence_template": "Viewer: __ (not the author or an agent) | Restate: __ | Objection: __ | Line changed: __"
     },
     {
       "id": "stills_four",
@@ -64,7 +103,7 @@
       "blocks": ["render", "publish"],
       "required": true,
       "kind": "human",
-      "title": "四张静帧人眼过目：钩子、第一个数字砸脸、最大爽点、结尾站队",
+      "title": "Four stills reviewed by eye: hook, first number, payoff, closing stance",
       "status": "pending",
       "evidence": "",
       "checked_by": ""
@@ -75,7 +114,7 @@
       "blocks": ["render", "publish"],
       "required": true,
       "kind": "human",
-      "title": "时间轴按 2.5 秒节拍，没有超过 5 秒没有新视觉元素",
+      "title": "Timeline uses a 2.5s visual beat; no stretch longer than 5s without a new visual",
       "status": "pending",
       "evidence": "",
       "checked_by": ""
@@ -86,7 +125,7 @@
       "blocks": ["render", "publish"],
       "required": true,
       "kind": "human",
-      "title": "抽帧里每个节拍至少有一个角色动作，没有站桩听讲解",
+      "title": "Every beat has at least one character action; no standing-and-listening",
       "status": "pending",
       "evidence": "",
       "checked_by": ""
@@ -97,7 +136,7 @@
       "blocks": ["publish"],
       "required": true,
       "kind": "human",
-      "title": "成片后人耳听过数字句和角色名。ASR 只作辅助",
+      "title": "After the full mix, a person heard every number line and every character name. ASR is assistive only.",
       "status": "pending",
       "evidence": "",
       "checked_by": ""
@@ -108,7 +147,7 @@
       "blocks": ["publish"],
       "required": true,
       "kind": "human",
-      "title": "混音响度对照管线目标 −16 LUFS。没有成片就不要填测量值",
+      "title": "Mix loudness matches the pipeline target −16 LUFS. Do not invent a reading without a mix.",
       "status": "pending",
       "evidence": "",
       "checked_by": ""
@@ -119,7 +158,7 @@
       "blocks": ["publish"],
       "required": true,
       "kind": "human",
-      "title": "模拟数字在画面或片尾标明简化模拟，且没有把示意动画说成实测",
+      "title": "Simulated numbers are labeled as a simplified model on screen or at the end; schematic motion is not sold as a field measurement",
       "status": "pending",
       "evidence": "",
       "checked_by": ""
@@ -130,7 +169,7 @@
       "blocks": ["publish"],
       "required": true,
       "kind": "human",
-      "title": "发布文案含 AI 生成声明，并由人点发布。代理不得代发",
+      "title": "Publish copy includes an AI-generated disclosure. A person clicks publish. Agents do not post.",
       "status": "pending",
       "evidence": "",
       "checked_by": ""

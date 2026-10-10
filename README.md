@@ -1,121 +1,87 @@
 # StoryWeaver
 
-## 关于
+An AI-assisted toolkit and methodology for producing fact-checked animated explainer videos, from research and scripting to voiceover, rendering, and QC.
 
-StoryWeaver 是闸门制知识短片工作室。它管事实、分镜、人审和 QC，不管「稿子过了就渲全片」。一集按固定工序走：
+It is not tied to one series, one language, or one model vendor. Drop the repository into Cursor, Claude Code, Codex, or any other coding agent. The agent reads `AGENTS.md` and `skills/produce-video/SKILL.md`, then stops at every human checkpoint.
 
-事实卡 → 五步心流 → Phase A 批准 → 台词 lint → 钩子样片 → 静帧 → 渲染 → QC → 发布 → 指标
+## What you get
 
-没有人批 Phase A，禁止全量配音和全片渲染。画面走共享 Canvas kit，旧 SVG 编译器只留作实验。
+- A five-beat story method (hook → break the assumption → mechanism → payoff → audience stance).
+- A fact card that separates sources, this-episode numbers, and forbidden claims.
+- A creative brief that a person must approve before full voice or a full render.
+- Per-language voice-over lint (AI-flavored phrasing, list-reading, sentence length).
+- Speech-rate caps and a required pause after a key number.
+- Tool-agnostic TTS and render adapters. No secrets in the repo.
+- A worked Chinese example series under `examples/invisible-rules/`.
 
-系列样品是《看不见的规则》：
-
-- **EP01「电梯为啥不理你」**：闸门样品。证明未批准不能渲成片，不是下一集的稿子。
-- **EP02「一条长龙还是三条短队」**：Phase A 已批（横屏 16:9）。正式角色、音频驱动时间轴、无配音预览。
-
-文档站由 `npm run pages` 生成（CI 产物 `pages-site`）。要上线 GitHub Pages，需仓库管理员在 Settings → Pages 把 Source 设为 GitHub Actions；当前 token 无法代开。启用后预期地址：<https://kairos0922.github.io/StoryWeaver/>。
-
-## 快速开始
+## Quick start
 
 ```bash
 npm install
 npm test
 node studio/cli.mjs layout
-node studio/cli.mjs gate series/invisible-rules/ep02 phase-a
+node studio/cli.mjs doctor
+node studio/cli.mjs checkpoint examples/invisible-rules/ep02 brief
 ```
 
-EP02 应看到 `PHASE_A_APPROVED`。EP01 的 `render` 闸应拒绝（`PHASE_A_REQUIRED`）。
+EP02 should print `BRIEF_APPROVED`. EP01 should refuse a render (`BRIEF_REQUIRED`): it is a historical counterexample, not a template.
 
-新开一集只填到 Phase A 可以送审，然后停：
+Start a new episode in any series folder:
 
 ```bash
-node studio/cli.mjs init-episode series/invisible-rules ep03
+node studio/cli.mjs init-episode examples/invisible-rules ep03
 ```
 
-1. 填 `fact_card.md`。数字只来自 A 区来源或 B 区模拟。
-2. 填 `phase_a.md`。一件事、五步、至少一行写满的分镜。横屏不超过 90 秒。
-3. `node studio/cli.mjs gate … phase-a` 看到 `PHASE_A_READY_FOR_REVIEW` 就停。审片人自己改 `approved` 并写入哈希。
+Fill `fact_card.md` and `brief.md`. Run `checkpoint … brief` until you see `BRIEF_READY_FOR_REVIEW`. Stop. A person approves. Agents do not write `status: approved`.
 
-批准之后：lint → 钩子样片（人耳）→ 四张静帧（人眼）→ 全片 → QC → 人点发布 → 回填 `post/metrics.md`。上一集指标没有来源之前，不要开下一集。
-
-```bash
-node studio/cli.mjs lint-script series/invisible-rules/ep02/script.md
-node studio/cli.mjs gate series/invisible-rules/ep02 lines
-node studio/cli.mjs gate series/invisible-rules/ep02 hook-sample
-node studio/cli.mjs gate series/invisible-rules/ep02 stills
-node studio/cli.mjs gate series/invisible-rules/ep02 render
-node studio/cli.mjs qc series/invisible-rules/ep02
-node studio/cli.mjs gate series/invisible-rules/ep02 publish
-```
-
-完整闸门：`docs/studio/pipeline.md`。代理步骤：`.cursor/skills/produce-next-episode/SKILL.md`。
-
-## 架构
-
-```mermaid
-flowchart TD
-  topic["闸0 选题：只讲一件事"] --> facts["闸1 事实卡 A/B/C"]
-  facts --> phaseA["Phase A：五步心流和 10 秒分镜"]
-  phaseA --> gate2{"闸2 人批准 Phase A"}
-  gate2 -->|未批准或正文已改| stopNode["停止。禁止全量 TTS 和全片渲染"]
-  gate2 -->|批准且哈希一致| lines["台词 lint"]
-  lines --> hook["闸3 约 12 秒钩子，人耳"]
-  hook --> stills["闸4 四张静帧，人眼"]
-  stills --> make["全量 TTS 缓存、2.5 秒节拍、适配器、混音"]
-  make --> qc["闸5 QC 和人耳听数字句"]
-  qc --> publish["闸6 发布文案和 AI 声明，人点发布"]
-  publish --> metrics["发布后指标。没有就空着"]
-```
-
-五步是：钩子 → 打碎常识 → 内幕 → 真相 → 评论站队。
-
-## 目录
+## Production path
 
 ```text
-series/invisible-rules/     《看不见的规则》。ep01 闸门样品，ep02 Phase A 已批
-  ip/                       等等、阿规、嘀嗒
-  voice/                    工作室配音合同，不每集重选
-studio/
-  templates/                事实卡、Phase A、口播、指标
-  lint/                     口播脚手架检查
-  qc/                       清单。自动项不能手改成通过
-  render/kit/               共享 Canvas kit 和音频时间轴
-docs/studio/                闸 0–6、Avoid、指标、迁移
-src/                        旧 VideoSpec → SVG。不要用来做新的一集
+One thing
+  → Fact card (A sources / B numbers / C do-not-say)
+  → Creative brief (viewer intuition, five-beat story, storyboard)
+  → Human approval (hash-locked)
+  → Voice-over lint
+  → Hook sample (~12s) + first-watch comprehension
+  → Four review stills
+  → Full TTS (cached) → render adapter → mix
+  → QC + human ear on number lines
+  → Human publish + AI disclosure
+  → Metrics review (blank if the export is missing)
 ```
 
-## 命令
+Topic approval is not brief approval. Changing aspect, duration, or the five-beat structure voids the brief and sends the episode back.
+
+## Commands
 
 ```bash
 node studio/cli.mjs lint-script <script.md|lines.json>
 node studio/cli.mjs qc <episode-dir>
-node studio/cli.mjs gate <episode-dir> <phase-a|lines|hook-sample|stills|render|publish>
-node studio/cli.mjs hash-phase-a <phase_a.md>
+node studio/cli.mjs checkpoint <episode-dir> <brief|lines|hook-sample|stills|render|publish>
+node studio/cli.mjs hash-brief <brief.md>
 node studio/cli.mjs init-episode <series-dir> <epNN>
+node studio/cli.mjs pace <episode-dir>
 node studio/cli.mjs layout
-npm test
-npm run pages
+node studio/cli.mjs doctor
 ```
 
-退出码：0 通过，或 Phase A 可以送审；1 稿子或清单未完成；2 Phase A 未批准或已过期。
+Exit codes: 0 pass or ready for review; 1 incomplete; 2 brief missing or stale.
 
-EP01 上预期的结果：
+## Layout
 
-```bash
-node studio/cli.mjs lint-script series/invisible-rules/ep01/script.md
-# 退出码 1。应看到 meta-plain-speech、scaffold-remember、scaffold-so-dash、oral-ordinal
-
-node studio/cli.mjs gate series/invisible-rules/ep01 render
-# 退出码 2。第一行是 PHASE_A_REQUIRED
+```text
+AGENTS.md                 house rules for any coding agent
+skills/produce-video/     step-by-step playbook
+docs/                     methodology, workflow, adapters, lessons
+studio/                   CLI, templates, lint packs, QC, TTS/render contracts
+examples/invisible-rules/ worked Chinese explainers (spoken script stays Chinese)
+tests/                    contract tests
 ```
 
-## 旧的 SVG 实验
+## Secrets
 
-`src/` 仍能验证和渲染 VideoSpec。CI 继续跑这些测试，避免改目录把旧合同弄坏。
+None in git. Copy `.env.example` on the machine that synthesizes voice. Cloud agents without keys stop at a silent preview. `doctor` reports whether a variable is set. It never prints the value.
 
-```bash
-npm run validate
-node src/cli.js render examples/hot-air-balloon.json --out out/hot-air-balloon.mp4
-```
+## Archive
 
-这条命令会在标准错误打印 `[legacy]`。系列成片不要从这里开始。
+The old SVG physics compiler, T01, the hot-air balloon fixture, method-proof, production-01, Vercel leftovers, and the parked Pages workflow were removed in this revision. Git history is the archive. See `CHANGELOG.md`.

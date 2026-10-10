@@ -1,0 +1,43 @@
+{
+  "series": "invisible-rules",
+  "sprites": {
+    "status": "vendored",
+    "source": "Character sheets supplied by Kairos, 2026-10-10",
+    "files": {
+      "lineup": "sprites/src/lineup.svg",
+      "agui": "sprites/src/agui.svg",
+      "dengdeng": "sprites/src/dengdeng.svg",
+      "dida": "sprites/src/dida.svg"
+    },
+    "rig": "sprites/rig.json",
+    "build": "python3 examples/invisible-rules/ip/build_rig.py",
+    "production_note": "EP01 used parameterized SVG in ip/src/chars.py (36 sprite keys). Those files are not in this repo; the rig is rebuilt from the 2026-10-10 sheets."
+  },
+  "characters": [
+    {
+      "id": "dengdeng",
+      "name": "等等",
+      "role": "audience stand-in",
+      "does": "Ask, err, resist. Pause before accepting.",
+      "expressions": ["daily", "anxious", "aha", "happy"],
+      "default_expression": "anxious"
+    },
+    {
+      "id": "agui",
+      "name": "阿规",
+      "role": "rule",
+      "does": "State one rule. Do not read a list.",
+      "expressions": ["neutral", "smug", "surprised", "serious", "wink"],
+      "default_expression": "neutral"
+    },
+    {
+      "id": "dida",
+      "name": "嘀嗒",
+      "aliases": ["嘟嗒"],
+      "role": "number",
+      "does": "Report one number at a time.",
+      "expressions": ["serious", "smug", "doubt", "alarm"],
+      "default_expression": "serious"
+    }
+  ]
+}

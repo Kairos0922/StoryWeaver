@@ -5,12 +5,12 @@ import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import vm from 'node:vm';
-import {extractSpokenLines, loadRules} from '../studio/lint/lint_script.mjs';
+import {extractSpokenLines, loadPack} from '../studio/lint/lint_script.mjs';
 import {TL, buildTiming, estimateDurations, parseLoudnormJson} from '../studio/render/kit/canvas/build_episode.mjs';
 import {loadStyle} from '../studio/render/kit/canvas/runtime.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
-const ep02 = path.join(root, 'series/invisible-rules/ep02');
+const ep02 = path.join(root, 'examples/invisible-rules/ep02');
 const readJson = async file => JSON.parse(await fs.readFile(file, 'utf8'));
 
 // Records nothing; only has to accept every call the kit makes, like a real 2D context.
@@ -86,7 +86,7 @@ test('beat clock flags stretches without a new visual', () => {
 test('ep02 lines carry speaker, voice, emotion and a WAV name per line', async () => {
   const doc = await readJson(path.join(ep02, 'lines.json'));
   const scenes = await readJson(path.join(ep02, 'render/scenes.json'));
-  const {speakers} = await loadRules();
+  const {speakers} = await loadPack('zh');
   const spoken = extractSpokenLines(await fs.readFile(path.join(ep02, 'script.md'), 'utf8'), speakers);
   const names = new Set(Object.values(scenes.speakers));
   assert.equal(doc.lines.length, spoken.length);
@@ -157,7 +157,7 @@ test('hook cut resolves with only the first lines', async () => {
 });
 
 test('series rig is up to date with the character sheets', () => {
-  const r = spawnSync('python3', ['series/invisible-rules/ip/build_rig.py', '--check'], {cwd: root, encoding: 'utf8'});
+  const r = spawnSync('python3', ['examples/invisible-rules/ip/build_rig.py', '--check'], {cwd: root, encoding: 'utf8'});
   assert.equal(r.status, 0, r.stdout + r.stderr);
 });
 
