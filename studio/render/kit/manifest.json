@@ -27,5 +27,16 @@
       "purpose": "Tips are on-screen cards. The voice does not read first, second, third."
     }
   ],
-  "adapters": ["manim", "html-canvas", "remotion", "hyperframes"]
+  "adapters": ["manim", "html-canvas", "remotion", "hyperframes"],
+  "implementations": [
+    {
+      "id": "html-canvas-stills",
+      "path": "studio/render/kit/canvas/kit.js",
+      "runner": "studio/render/kit/canvas/render_stills.mjs",
+      "status": "stills-only",
+      "note": "Draws review stills from <episode>/render/stills.json with headless Chrome. No video, no timeline, no audio. Characters are stand-ins until ip/ sprites are vendored.",
+      "covers": ["kinetic_number", "stamp", "character_slot"],
+      "missing": ["bar_compare", "tip_cards"]
+    }
+  ]
 }

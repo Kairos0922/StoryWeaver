@@ -1,6 +1,6 @@
 # HTML Canvas 适配器
 
-状态：未安装，未接线。
+状态：成片未接线。只有送审静帧可用，见 `studio/render/kit/canvas/README.md`。静帧的安全区内边距写在单集 `render/stills.json` 里，是该集提案，不是系列合同。
 
 EP01 用过浏览器逐帧。复盘的结论是那一集的页面不能复制到下一集。如果继续用 Canvas，场景只能调用 `studio/render/kit/` 的元件：大数字、对比条、印章、角色槽、卡片。
 
