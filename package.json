@@ -3,7 +3,7 @@
   "version": "0.5.0",
   "private": true,
   "type": "module",
-  "description": "Gated studio for series explainers: fact cards, Phase A, lint and QC. Legacy SVG compiler remains for experiments.",
+  "description": "闸门制知识短片工作室：事实卡 → 五步心流 → Phase A → 渲染 → QC → 发布",
   "engines": {
     "node": ">=24"
   },
@@ -20,7 +20,8 @@
     "production-01": "node scripts/production-01.js",
     "studio": "node studio/cli.mjs",
     "lint-script": "node studio/cli.mjs lint-script studio/templates/script.md",
-    "studio-layout": "node studio/cli.mjs layout"
+    "studio-layout": "node studio/cli.mjs layout",
+    "pages": "node scripts/build-pages-site.mjs"
   },
   "dependencies": {
     "@resvg/resvg-js": "^2.6.2",

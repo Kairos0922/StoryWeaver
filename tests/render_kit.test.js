@@ -6,7 +6,7 @@ import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import vm from 'node:vm';
 import {extractSpokenLines, loadRules} from '../studio/lint/lint_script.mjs';
-import {TL, buildTiming, estimateDurations} from '../studio/render/kit/canvas/build_episode.mjs';
+import {TL, buildTiming, estimateDurations, parseLoudnormJson} from '../studio/render/kit/canvas/build_episode.mjs';
 import {loadStyle} from '../studio/render/kit/canvas/runtime.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
@@ -159,4 +159,27 @@ test('hook cut resolves with only the first lines', async () => {
 test('series rig is up to date with the character sheets', () => {
   const r = spawnSync('python3', ['series/invisible-rules/ip/build_rig.py', '--check'], {cwd: root, encoding: 'utf8'});
   assert.equal(r.status, 0, r.stdout + r.stderr);
+});
+
+test('loudnorm parser keeps only the JSON object when ffmpeg trails text', () => {
+  const trailer = '[out#0/null @ 0x1] video:0KiB audio:123KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: unknown\n';
+  const block = [
+    '{',
+    '\t"input_i" : "-19.12",',
+    '\t"input_tp" : "-1.80",',
+    '\t"input_lra" : "7.40",',
+    '\t"input_thresh" : "-29.50",',
+    '\t"output_i" : "-16.01",',
+    '\t"output_tp" : "-1.50",',
+    '\t"output_lra" : "7.20",',
+    '\t"output_thresh" : "-26.80",',
+    '\t"normalization_type" : "dynamic",',
+    '\t"target_offset" : "3.11"',
+    '}',
+  ].join('\n');
+  const parsed = parseLoudnormJson(`Parsed_loudnorm_0 @ 0xabc\n${block}\n${trailer}`);
+  assert.equal(parsed.input_i, '-19.12');
+  assert.equal(parsed.target_offset, '3.11');
+  assert.throws(() => JSON.parse(`${block}\n${trailer}`), SyntaxError);
+  assert.throws(() => parseLoudnormJson('no json here'), /no JSON object/);
 });

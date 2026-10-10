@@ -16,18 +16,18 @@ jobs:
       - run: npm run validate-production
       - run: npm run method-proof
       - run: npm run production-01
-      - run: node scripts/build-vercel-t01.mjs
+      - run: npm run pages
       - uses: actions/upload-artifact@v4
         with:
           name: method-proof
           path: out/method-proof
       - uses: actions/upload-artifact@v4
         with:
-          name: t01-english-colors-final
-          path: public/experiments/t01-english-colors
-      - uses: actions/upload-artifact@v4
-        with:
           name: production-01
           path: |
             out/production-01
             public/production/ai-video-is-not-ppt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pages-site
+          path: _site

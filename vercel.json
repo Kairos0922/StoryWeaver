@@ -1,5 +1,0 @@
-{
-  "buildCommand": "npm run production-01 && node scripts/build-vercel-t01.mjs",
-  "outputDirectory": "public",
-  "cleanUrls": true
-}

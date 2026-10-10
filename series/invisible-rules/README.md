@@ -2,7 +2,8 @@
 
 横屏知识系列。一集只讲一件日常里看不见的规则，观众能带走一个具体做法。
 
-第一集是电梯：顺路接人，不是谁先按谁先坐。样品在 `ep01/`。它没有走过 Phase A，不能当下一集的稿子用。
+- EP01「电梯为啥不理你」：闸门样品。没有走过 Phase A，不能当下一集的稿子用。
+- EP02「一条长龙还是三条短队」：Phase A 已批。正式角色、音频驱动时间轴、无配音预览。
 
 ## 跨集资产
 
@@ -14,9 +15,9 @@
 ## 新的一集
 
 ```bash
-node studio/cli.mjs init-episode series/invisible-rules ep02
+node studio/cli.mjs init-episode series/invisible-rules ep03
 ```
 
-然后只填事实卡和 Phase A。`node studio/cli.mjs gate series/invisible-rules/ep02 phase-a` 出现 `PHASE_A_READY_FOR_REVIEW` 之后停下来，等人批准。
+然后只填事实卡和 Phase A。`node studio/cli.mjs gate series/invisible-rules/ep03 phase-a` 出现 `PHASE_A_READY_FOR_REVIEW` 之后停下来，等人批准。
 
 代理不要代发，不要把 `status` 写成 `approved`，不要编播放数据。
