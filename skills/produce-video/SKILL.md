@@ -5,7 +5,7 @@ description: Produce a fact-checked animated explainer with StoryWeaver. Works f
 
 # Produce a video
 
-You are staffing a small studio, not improvising a clip. Value lives in the fact card, the brief, and QC. Rendering uses an adapter. Do not write a physics engine. Do not write a fresh page per episode.
+You are staffing a small studio, not improvising a clip. Value lives in the fact card, the brief, and QC. Rendering uses the shared browser pipeline. Do not write a physics engine. Do not write a fresh page per episode.
 
 Read `docs/methodology.md`, `docs/workflow.md`, `docs/adapters.md`, and `docs/lessons.md`. The films under `examples/invisible-rules/` are worked examples. EP01 is a counterexample (lint must fail). Do not “fix” it into the next episode.
 
@@ -15,16 +15,16 @@ This skill is tool-agnostic. Cursor, Claude Code, Codex, and other agents follow
 
 - Set `brief.md` `status` to `approved`, or fill `approved_by` / `approved_*` / the body hash.
 - Prepare full-episode voice or a full render before `BRIEF_APPROVED`. `lint-script` may run anytime.
-- Call Doubao, Azure, ElevenLabs, or any paid API unless this machine already has the env vars **and** the user asked for synthesis. Prefer a silent preview.
+- Call Doubao, or any paid API, only when this machine already has the env vars and the user asked for synthesis. Otherwise stay on the dry-run provider and a silent draft.
 - Invent completion rate, watch time, drop-off, or comment counts.
 - Publish, comment, or post.
-- Sign a human checklist item. If your name looks like an agent, QC will reject it. Put machine notes in `agent_precheck`.
+- Sign a human checklist item or `qc/release.json`. If your name looks like an agent, QC will reject it. Put machine notes in `agent_precheck`.
 - Copy `metrics_exception` onto a new episode.
 - Extend a deleted SVG compiler. It is not in this tree.
 
 ## 0. Open a folder
 
-The series directory must already exist.
+The series directory must already exist. The video’s language is the episode’s language (`brief.md` and `lines.json`). Lint and pace use that language’s pack (`en.json` or `zh.json`).
 
 ```bash
 node studio/cli.mjs doctor
@@ -54,7 +54,9 @@ Fill `brief.md`:
 - Five-beat story
 - At least one finished 10-second storyboard row
 
-Landscape ≤ 90s. Vertical ≤ 60s. Plan speech at ≤ 4.0 Chinese characters/s or ≤ 2.8 English words/s. Do not write “speak fast”.
+Speech-rate cap is per language: at most 4.0 Chinese characters/s or 2.8 English words/s. Landscape is at most 90 seconds. Vertical is at most 60. Do not write “speak fast”.
+
+Set `model_budget_calls` in the brief. Record real call counts in `state/model_usage.json`. At 70% of the budget, stop at the current checkpoint.
 
 ```bash
 node studio/cli.mjs checkpoint <episode-dir> brief
@@ -84,26 +86,28 @@ node studio/cli.mjs checkpoint <episode-dir> lines
 
 Do not make a hook sample before `LINES_ALLOWED`.
 
-## 4. Sample, stills, cut
+## 4. Sample, stills, draft, release
 
-This CLI stops at checkpoints. It does not upload a video.
+This CLI stops at checkpoints. It does not upload a video. A cloud agent with no keys writes `handoff.json` and stops. The machine that holds keys runs `node studio/cli.mjs resume <episode-dir>` and continues from the last intact stage.
 
-1. After `HOOK_SAMPLE_ALLOWED`, render about the first 12 seconds with the chosen adapter. A person listens. Sign `ear_hook` with a **person’s** name. Run a first-watch with someone who has not read the script. Sign `first_watch`.
-2. Draw four stills. A person looks, then signs `stills_four`, `beat_clock`, `no_idle`.
-3. After `RENDER_ALLOWED`, render the full cut. Do not install a paid renderer to “try it”. Adapter criteria: `studio/render/adapters/README.md`.
-4. A person hears every number line in the mix. ASR is assistive. Loudness target is −16 LUFS; do not invent a reading without a mix.
-5. After `PUBLISH_ALLOWED`, hand publish copy and the AI disclosure to a person. They click publish.
+1. Record the first 3 hook lines. Run `predict-duration`. If the prediction exceeds the brief limit, revise the script. Do not record the rest yet.
+2. After `HOOK_SAMPLE_ALLOWED`, render about the first 12 seconds: `render --mode draft --cut hook`. A person listens. Sign `ear_hook` with a person’s name. Run a first-watch with someone who has not read the script. Sign `first_watch`.
+3. Draw four stills. A person looks, then signs `stills_four`, `beat_clock`, `no_idle`.
+4. Run `listen-pack`. It joins number lines, character names, and the vote into a phone file of at most 30 seconds, plus `qc/listen_pack.md`. ASR may add lines. An ASR score does not pass the pack.
+5. Run `doctor --episode <dir> --require-render`, then `render --mode draft --cut full`. Doctor checks font weights 400/500/900, Chromium, an ffmpeg loudnorm self-test, key presence (never the value), and scene expressions and gestures against the rig. The draft is watermarked `Not human-reviewed`. Thumbnails and a contact sheet are written first.
+6. A person hears the listen pack and signs `qc/release.json` (`signed_by`, `signed_at`). Agents cannot fill those fields. Only then: `render --mode release --cut full`.
+7. After `PUBLISH_ALLOWED`, hand publish copy and the AI disclosure to a person. They click publish. `git-sync` is a separate step for the push and the pull-request text. Retry it with `--retry` without rendering again.
 
-Picture: `studio/contracts/visual_contract.md`. Voice: `studio/contracts/voice_contract.md`.
+Picture: `studio/contracts/visual_contract.md`. Voice: `studio/contracts/voice_contract.md`. Pipeline: `studio/render/adapters/README.md`.
 
 TTS on a machine with keys:
 
 ```text
-TTS_PROVIDER=doubao|azure|elevenlabs
-# plus the matching variables in .env.example
+TTS_PROVIDER=doubao
+# or TTS_PROVIDER=dry-run
 ```
 
-Cache by content hash. Write `usage.jsonl`. Never print a key.
+Cache by content hash. Append `audio/usage.jsonl` with `chars` and `retake`. Never print a key. The render report records `cost.tts_chars` and `cost.tts_cny` at 3 CNY per 10,000 characters. `cost.model_calls` stays null until a usage API is recorded.
 
 ## 5. After publish
 
@@ -122,8 +126,10 @@ Changing the five beats, the aspect, or the duration is a new brief. Return to s
 - [ ] Viewer intuition filled; acknowledged before the first break
 - [ ] Brief approved by a person; hash matches
 - [ ] Lint clean; pace inside the language cap
+- [ ] Hook lines recorded; predicted duration inside the brief limit
 - [ ] Hook sample heard; first-watch recorded
 - [ ] Four stills signed
-- [ ] Full mix heard on number lines
+- [ ] Listen pack heard on a phone
+- [ ] Draft rendered after doctor; release signed by a person
 - [ ] AI disclosure; person published
-- [ ] Metrics blank or sourced
+- [ ] Metrics blank or sourced; cost copied from the render report or left blank

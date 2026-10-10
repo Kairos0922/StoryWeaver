@@ -7,8 +7,14 @@ import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
+const browserDir = path.resolve(here, '..', '..', 'browser');
 export const KIT_JS = path.join(here, 'kit.js');
 export const TIMELINE_JS = path.join(here, 'timeline.js');
+export const POST_JS = path.join(browserDir, 'post.js');
+export const COMPOSE_JS = path.join(browserDir, 'compositor.js');
+export const THREE_LAYER_JS = path.join(browserDir, 'three_layer.js');
+export const PRESETS_JSON = path.join(browserDir, 'presets.json');
+export const THREE_MODULE = path.resolve(here, '..', '..', '..', '..', 'node_modules', 'three', 'build', 'three.module.js');
 export const SUBSET_PY = path.join(here, '..', 'fonts', 'subset_fonts.py');
 export const FONT_FAMILY = 'SW CJK';
 export const FONT_WEIGHTS = [400, 500, 700, 900];
@@ -36,7 +42,16 @@ export async function launchBrowser() {
   }
   if (!pw) throw new Error('Playwright is missing. Run: npm install && npx playwright install chromium');
   const chromium = pw.chromium || pw.default?.chromium;
-  const args = ['--disable-gpu', '--force-color-profile=srgb', '--font-render-hinting=none', '--disable-lcd-text', '--hide-scrollbars'];
+  const args = [
+    '--force-color-profile=srgb',
+    '--font-render-hinting=none',
+    '--disable-lcd-text',
+    '--hide-scrollbars',
+    '--use-gl=angle',
+    '--use-angle=swiftshader',
+    '--enable-webgl',
+    '--ignore-gpu-blocklist',
+  ];
   if (process.env.CHROME) return chromium.launch({executablePath: process.env.CHROME, args});
   try {
     return await chromium.launch({args});
@@ -101,20 +116,38 @@ export async function loadStyle(episodeDir) {
 }
 
 // `boot` runs after fonts are loaded; it must define the window.__* entry points the caller uses.
-export async function pageHtml({spec, css, data, boot}) {
+export async function pageHtml({spec, css, data, boot, includeThree = false}) {
   const [w, h] = spec.size;
   const kit = await fs.readFile(KIT_JS, 'utf8');
   const timeline = await fs.readFile(TIMELINE_JS, 'utf8');
+  const post = await fs.readFile(POST_JS, 'utf8');
+  const compose = await fs.readFile(COMPOSE_JS, 'utf8');
+  const threeLayer = await fs.readFile(THREE_LAYER_JS, 'utf8');
+  const presets = await fs.readFile(PRESETS_JSON, 'utf8');
   const weights = FONT_WEIGHTS.map(wt => `${wt} 40px "${FONT_FAMILY}"`);
+  const threeTag = includeThree
+    ? `<script type="module">
+import * as THREE from 'http://storyweaver.local/three.module.js';
+window.THREE = THREE;
+window.__threeReady = true;
+Promise.resolve(window.__boot && window.__boot()).catch(error => { window.__error = String(error && error.stack || error); });
+</script>`
+    : '';
   return `<!doctype html><html><head><meta charset="utf-8"><style>${css}
-html,body{margin:0;padding:0;background:#000;overflow:hidden}canvas{display:block}</style></head>
+html,body{margin:0;padding:0;background:#000;overflow:hidden}canvas{display:block}</style>
+${threeTag}</head>
 <body><canvas id="c" width="${w}" height="${h}"></canvas>
+<script>window.__postPresets = ${presets};</script>
 <script>${kit}</script>
 <script>${timeline}</script>
+<script>${post}</script>
+<script>${threeLayer}</script>
+<script>${compose}</script>
 <script>
 window.__spec = ${JSON.stringify(spec)};
 window.__data = ${JSON.stringify(data || {})};
-(async () => {
+window.__needsThree = ${includeThree ? 'true' : 'false'};
+async function __boot() {
   try {
     const probe = ${JSON.stringify(collectChars(data || {}).slice(0, 400))};
     for (const f of ${JSON.stringify(weights)}) await document.fonts.load(f, probe);
@@ -127,17 +160,34 @@ window.__data = ${JSON.stringify(data || {})};
   } catch (e) {
     window.__error = String(e && e.stack || e);
   }
-})();
+}
+window.__boot = __boot;
+if (!window.__needsThree) __boot();
 </script></body></html>`;
 }
 
-export async function openPage(browser, html, spec) {
+export async function openPage(browser, html, spec, {includeThree = false} = {}) {
   const [width, height] = spec.size;
   const page = await browser.newPage({viewport: {width, height}, deviceScaleFactor: 1});
   page.on('pageerror', err => {
     page.__err = err;
   });
-  await page.setContent(html, {waitUntil: 'load'});
+  if (includeThree) {
+    const threeSource = await fs.readFile(THREE_MODULE);
+    await page.route('http://storyweaver.local/**', route => {
+      const url = new URL(route.request().url());
+      if (url.pathname === '/index.html') {
+        return route.fulfill({status: 200, contentType: 'text/html; charset=utf-8', body: html});
+      }
+      if (url.pathname === '/three.module.js') {
+        return route.fulfill({status: 200, contentType: 'text/javascript; charset=utf-8', body: threeSource});
+      }
+      return route.abort();
+    });
+    await page.goto('http://storyweaver.local/index.html', {waitUntil: 'load'});
+  } else {
+    await page.setContent(html, {waitUntil: 'load'});
+  }
   await page.waitForFunction(() => window.__ready === true || window.__error, null, {timeout: 120_000});
   const err = await page.evaluate(() => window.__error || null);
   if (err) throw new Error(`page boot failed: ${err}`);

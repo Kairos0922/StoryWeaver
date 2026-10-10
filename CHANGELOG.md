@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.7.0 — 2026-10-10
+
+One browser render pipeline, and a recoverable path from a cloud agent to the machine that holds keys.
+
+### Added
+
+- Browser pipeline: Playwright captures `seek(t)` frames and ffmpeg encodes them. A shot stacks Canvas 2D, SVG/DOM, and Three.js. Every frame runs a WebGL post pass (`neutral`, `explainer`, `night`).
+- Draft and release modes. Draft frames are labeled `Not human-reviewed`. Release requires `qc/release.json` signed by a person. Agent names are rejected.
+- Shot thumbnails and a contact sheet before the full encode.
+- `handoff.json`, `state/<stage>.done.json`, and `studio resume`.
+- `git-sync` as its own retryable step.
+- Duration prediction from the first three recorded hook lines.
+- A phone listen pack of at most 30 seconds (`listen-pack`).
+- `cost` on `render_report.json`: TTS characters, list price at 3 CNY per 10,000 characters, render count, rework ratio. `model_calls` stays null until a usage log exists.
+- Model-budget fields on the brief. Checkpoint and resume stop at 70% when `state/model_usage.json` records it.
+- Doctor checks required before render: font weights 400/500/900, Chromium, an ffmpeg loudnorm self-test, env key presence (never the value), and scene expressions and gestures against the character rig.
+
+### Removed
+
+- Manim, Remotion, and HyperFrames adapter notes.
+- Azure Speech and ElevenLabs TTS adapters.
+
+### Migration
+
+`scenes.json` is unchanged when a shot has no `stack`: it is one Canvas 2D layer. Render output now lives in `out/<draft|release>/<preview|hook|full>/`. TTS providers are `dry-run` and `doubao`. Both language packs remain. The episode language selects the pack.
+
 ## 0.6.0 — 2026-10-10
 
 Professionalization of StoryWeaver as a general, portable toolkit.

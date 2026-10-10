@@ -292,6 +292,8 @@
       chips: (scene.chips || []).filter(c => !c.show || (t >= c.show[0] && t < c.show[1])),
     };
     if (scene.footnote) shot.footnote = scene.footnote;
+    if (scene.stack) shot.stack = scene.stack;
+    if (scene.post) shot.post = scene.post;
     return shot;
   }
 

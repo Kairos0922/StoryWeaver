@@ -13,9 +13,9 @@ Any adapter must:
 3. Cache by a hash of `(provider, voice, text, emotion, speech_rate)`.
 4. Separate caption `text` from spoken `tts_text`.
 5. Refuse a full-episode batch until the hook sample has a human ear pass.
-6. Write usage to `usage.jsonl` (characters or bytes, not the secret).
+6. Write `audio/usage.jsonl` with `chars` and, when a line is recorded again, `retake: true`. Never write the secret.
 
-Adapters shipped as contracts: Doubao / Volcengine, Azure Speech, ElevenLabs. Add another vendor by implementing `studio/tts/interface.mjs`.
+Providers: Doubao / Volcengine, and `dry-run`. Add another vendor by implementing `studio/tts/interface.mjs`.
 
 ## Roles (when a series uses characters)
 

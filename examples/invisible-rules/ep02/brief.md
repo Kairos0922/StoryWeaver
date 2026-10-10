@@ -3,6 +3,8 @@ status: approved
 series: invisible-rules
 episode: ep02
 language: zh
+model_budget_calls: 400
+model_budget_stop_ratio: 0.7
 historical_example: true
 aspect: "16:9"
 target_duration_s: 80

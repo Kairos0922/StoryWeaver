@@ -1,40 +1,33 @@
 # Adapters
 
-The core never imports a vendor SDK. Adapters are contracts plus, where wired, a runner.
+The core never imports a vendor SDK for speech. Rendering is not an adapter choice: there is one browser pipeline.
 
 ## TTS
 
-`studio/tts/interface.mjs` loads `dry-run`, `doubao`, `azure`, or `elevenlabs`.
-
-Required environment (see `.env.example`):
+`studio/tts/interface.mjs` loads `dry-run` or `doubao`.
 
 | Provider | Variables |
 |---|---|
 | Doubao / Volcengine | `VOLC_TTS_APP_ID`, `VOLC_TTS_ACCESS_TOKEN` (optional `VOLC_TTS_API_KEY`) |
-| Azure Speech | `AZURE_SPEECH_KEY`, `AZURE_SPEECH_REGION` |
-| ElevenLabs | `ELEVENLABS_API_KEY` |
+| Dry run | none |
 
-Rules every adapter must keep:
+Rules every provider must keep:
 
 - Read secrets from the environment only.
 - Never log a key.
 - Cache by hash of provider + voice + text + emotion + speech rate.
 - Split caption `text` from spoken `tts_text`.
 - Refuse a full batch until the hook sample has a human ear pass.
+- Append `audio/usage.jsonl` with `chars` and `retake`, never the secret.
 
-The shipped vendor files are contracts. They fail closed if keys are missing. A production job that you own can replace `synthesize()` with a real HTTP call without changing episode files.
+The Doubao file is a contract. It fails closed if keys are missing. A job you own can replace `synthesize()` with the real HTTP call without changing episode files.
 
-Cloud agents without keys stop at a silent preview. The machine that holds keys runs TTS.
+Cloud agents without keys stop at a silent draft preview. The machine that holds keys runs TTS, then the rest of the cut, from `handoff.json`.
 
 ## Render
 
-| Adapter | Status |
-|---|---|
-| HTML Canvas | Wired: stills, preview, hook, full |
-| Manim | Contract only |
-| Remotion | Contract only; not a core dependency |
-| HyperFrames | Contract only |
+Playwright captures `seek(t)` frames. ffmpeg encodes them. A shot stacks Canvas 2D, SVG/DOM, and Three.js. Every frame runs the WebGL post pass in `studio/render/browser/post.js`.
 
-Shared vocabulary: `studio/render/kit/manifest.json`. Picture clock 2.5s, fail at 5s, hook sample ~12s.
+Picture clock 2.5s, fail at 5s, hook sample about 12s. Draft frames are labeled `Not human-reviewed`. A release needs a person’s sign-off in `qc/release.json`.
 
-The legacy SVG / VideoSpec path is deleted. Git history is the archive.
+The legacy SVG path, and the unused Manim, Remotion, and HyperFrames notes, are deleted. Git history is the archive.

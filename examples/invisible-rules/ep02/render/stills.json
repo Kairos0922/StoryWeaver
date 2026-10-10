@@ -1,6 +1,6 @@
 {
   "schema": "storyweaver.stills.v1",
-  "adapter": "html-canvas",
+  "pipeline": "browser",
   "kit": "studio/render/kit/canvas/kit.js",
   "note": "Phase A review stills, re-rendered with the vendored IP rig (ip/sprites/rig.json). Character colours come from the sheets; scene palette is the episode proposal.",
   "size": [

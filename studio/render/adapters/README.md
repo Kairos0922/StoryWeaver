@@ -1,21 +1,18 @@
-# Render adapters
+# Render pipeline
 
-StoryWeaver does not write a physics engine, and it does not write a fresh Canvas page per episode. An adapter consumes a timeline that has already passed the checkpoints and draws the components named in `studio/render/kit/manifest.json`.
+StoryWeaver renders in the browser and encodes with ffmpeg. It does not write a physics engine, and it does not write a fresh page per episode. Episodes pass parameters to the shared kit.
 
-There is no declared default adapter. Choose one with four tests:
+The contract:
 
 1. The same timeline renders the same pixels twice.
 2. Text, caption safe areas, and embedded fonts can be checked.
 3. Editing one beat does not require rewriting the episode page.
-4. The license allows production use. Review the license before adding a dependency. Remotion stays out of `package.json` unless a later decision records a license conclusion.
+4. The license of every dependency allows production use. Three.js is the only 3D library.
 
-HTML Canvas is wired (see the Invisible Rules examples). Wiring is not a bake-off. Do not announce a winner without a timed comparison.
-
-| Adapter | Use |
+| Piece | Role |
 |---|---|
-| [HTML Canvas](html-canvas.md) | Shared `seek(t)` kit, Playwright stills and frames |
-| [Manim](manim.md) | Numbers, axes, proof steps |
-| [Remotion](remotion.md) | React timeline; not a core dependency |
-| [HyperFrames](hyperframes.md) | Evaluate before adopting |
+| [Browser pipeline](html-canvas.md) | Canvas 2D, SVG/DOM, and Three.js layers, then one WebGL post pass |
+| `studio/render/kit/manifest.json` | Component names the kit can draw |
+| `studio/render/browser/presets.json` | Color grade, bloom, grain, and vignette |
 
-Deleted from this tree: the legacy VideoSpec → SVG path. Git history is the archive.
+Run `node studio/cli.mjs render <episode-dir> --mode draft`. Doctor must pass first.

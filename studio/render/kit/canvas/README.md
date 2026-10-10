@@ -6,28 +6,30 @@ One frame function produces stills, contact sheets, and the cut. Scenes write pa
 |---|---|
 | `kit.js` | Components: rooms, queues, silhouettes, characters (from the series rig), kinetic numbers, stamps, cards, bars, HUD, transitions |
 | `timeline.js` | Line cues → seconds; keyframes; camera; beat-clock check; which shot at time `t` |
-| `runtime.mjs` | Playwright Chromium, subset fonts, temporary page |
-| `render_stills.mjs` | `<ep>/render/stills.json` → `<ep>/stills/*.png` |
-| `build_episode.mjs` | `<ep>/render/scenes.json` + `lines.json` + WAV → timeline, cover, sheet, mix, mp4 |
+| `runtime.mjs` | Playwright Chromium, subset fonts, temporary page, WebGL-capable launch |
+| `render_stills.mjs` | `<ep>/render/stills.json` → `<ep>/stills/*.png`, through the same post pass |
+| `build_episode.mjs` | Called by `studio/render/browser/pipeline.mjs` |
 | `../audio/audio_probe.py` | Decode WAV; duration, level, mouth envelope |
 | `../audio/mix.py` | Level voices, synthesize BGM/SFX, duck |
 | `../fonts/subset_fonts.py` | Subset fonts to the episode’s characters; missing glyphs fail |
 
 ```bash
-node studio/render/kit/canvas/render_stills.mjs <episode-dir> [shot-id]
-node studio/render/kit/canvas/build_episode.mjs <episode-dir> --mode preview|hook|full \
-  [--rate 4.0] [--workers N] [--audio-dir DIR] [--out DIR] [--no-video] [--frames t1,t2] [--crf 18]
+node studio/cli.mjs render <episode-dir> --mode draft --cut preview --review-only
+node studio/cli.mjs render <episode-dir> --mode draft --cut hook
+node studio/cli.mjs render <episode-dir> --mode release --cut full
 ```
+
+The lower-level entry is `studio/render/kit/canvas/build_episode.mjs`. Prefer the `render` command so doctor, review mode, and the done marker run.
 
 Needs Node 24, Playwright Chromium (or `CHROME`), Python 3 + numpy + fontTools, ffmpeg, and the fonts the episode uses. No network. No model. No TTS.
 
 ## Where time comes from
 
-- `preview`: estimate from the language rate (default 4.0 Chinese characters/s or the `--rate` you pass). Watermarked. Not a deliverable.
+- `preview`: estimate from the language rate. Draft watermark. Not a deliverable.
 - `hook`: first `hook_lines` WAVs (default 3). Needs the hook-sample checkpoint open.
-- `full`: every WAV. Needs the render checkpoint open, which means human names on the checklist.
+- `full`: every WAV, and a duration prediction that fits the brief. Draft does not need the release sign-off. Release does.
 
-Line start = previous end + `pause_after_s` + `holds[previous]`. Scenes, keys, SFX, and BGM are line cues. Change a WAV and the picture moves with it.
+Line start = previous end + `pause_after_s` + `holds[previous]`. Scenes, keys, SFX, and BGM are line cues. Change a WAV and the picture moves with it. Output is `out/<draft|release>/<cut>/`, including `thumbs/` and `contact_sheet.png` before the mp4.
 
 ## Characters
 

@@ -1,0 +1,6 @@
+{
+  "schema": "storyweaver.release.v1",
+  "signed_by": "",
+  "signed_at": "",
+  "statement": "I reviewed this cut after it was rendered. An agent must not fill signed_by."
+}

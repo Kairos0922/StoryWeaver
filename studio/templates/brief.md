@@ -3,6 +3,8 @@ status: draft
 series: {{series}}
 episode: {{episode}}
 language: en
+model_budget_calls: ""
+model_budget_stop_ratio: 0.7
 aspect: "16:9"
 target_duration_s: 90
 produce_vertical: false
@@ -55,6 +57,10 @@ Speech-rate cap (planning only; measure on the hook sample):
 - Chinese: at most 4.0 characters/s of speech, 4.6 on any one line.
 - English: at most 2.8 words/s of speech, 3.2 on any one line.
 - After a key number, hold at least 0.9s. Do not write “speak fast” in emotion cues.
+
+## Model budget
+
+`model_budget_calls` is this episode’s call budget. Record the running total in `state/model_usage.json` as `{ "calls": N }`. Stop at the current checkpoint once `model_budget_stop_ratio` (default 0.7) is reached. Leave the call count blank until a real log exists. Do not invent it.
 
 ## Five-beat story
 

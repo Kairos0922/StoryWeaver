@@ -9,16 +9,12 @@
  */
 import {createHash} from 'node:crypto';
 
-export const PROVIDERS = ['dry-run', 'doubao', 'azure', 'elevenlabs'];
+export const PROVIDERS = ['dry-run', 'doubao'];
 
 export function requiredEnv(provider) {
   switch (provider) {
     case 'doubao':
       return ['VOLC_TTS_APP_ID', 'VOLC_TTS_ACCESS_TOKEN'];
-    case 'azure':
-      return ['AZURE_SPEECH_KEY', 'AZURE_SPEECH_REGION'];
-    case 'elevenlabs':
-      return ['ELEVENLABS_API_KEY'];
     default:
       return [];
   }

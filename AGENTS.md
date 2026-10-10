@@ -26,12 +26,12 @@ StoryWeaver is a production toolkit for fact-checked animated explainer videos o
 ## Hard stops
 
 - Do not set `brief.md` `status` to `approved`, and do not fill `approved_by` or the body hash. That is a person’s job.
-- Do not run full TTS or a full render before `BRIEF_APPROVED`.
-- Do not call a paid TTS API from a cloud agent that does not hold keys. Stop at a silent preview.
+- Do not run full TTS or a full render before `BRIEF_APPROVED`. A draft preview after approval is allowed. A release is not.
+- Do not call a paid TTS API from a cloud agent that does not hold keys. Stop at a silent draft and write `handoff.json`.
 - Do not invent playback metrics. A blank `post/metrics.md` is valid and blocks the next topic.
 - Do not publish, comment, or post on behalf of the user.
-- Do not sign a human checklist item. `checked_by` values that look like an agent are rejected. Use `agent_precheck` for ASR or pace notes.
-- Do not write a one-off HTML renderer for one episode. Use an adapter and the shared kit.
+- Do not sign a human checklist item, and do not fill `qc/release.json`. `checked_by` and `signed_by` values that look like an agent are rejected. Use `agent_precheck` for ASR or pace notes.
+- Do not write a one-off HTML renderer for one episode. Use the browser pipeline and the shared kit.
 - Do not put secrets in files, prompts, or logs.
 
 ## Checkpoints (plain names)
@@ -40,15 +40,26 @@ StoryWeaver is a production toolkit for fact-checked animated explainer videos o
 |---|---|---|
 | One thing + fact card | Confirm the claim set | Draft A/B/C |
 | Creative brief | Approve and hash-lock | Draft, then stop at `BRIEF_READY_FOR_REVIEW` |
-| Hook sample | Listen; first-watch with someone who has not read the script | Render ~12s after lines are allowed |
+| Hook sample | Listen; first-watch with someone who has not read the script | Render ~12s in draft after lines are allowed |
 | Storyboard stills | Look at four frames | Draw stills from the kit |
-| Full render | Sign remaining human items | Mix and encode after `RENDER_ALLOWED` |
-| Publish | Click publish; write the AI disclosure | Hand over copy |
+| Draft render | Listen to the phone pack | `render --mode draft` after doctor passes |
+| Release | Sign `qc/release.json` after seeing the draft | Never. Agents cannot fill `signed_by` |
+| Publish | Click publish; write the AI disclosure | Hand over copy. `git-sync` is a separate retry |
 | Metrics review | Paste a real export or leave blanks | Never estimate |
 
 ## Rendering contract
 
-Every frame is `seek(t)`. No CSS transitions, no timers, no `requestAnimationFrame` in render mode, no unseeded `Math.random`. Fonts load from files, never from a CDN. Something new appears every 2–4 seconds on the picture clock. Voice pace is a separate, slower clock.
+Every frame is `seek(t)` from one browser pipeline: Playwright captures the frame, ffmpeg encodes it. A shot may stack Canvas 2D, SVG/DOM, and Three.js. Every shot then runs one WebGL post pass (grade, bloom, grain, vignette) from a named preset. No CSS transitions, no timers, no `requestAnimationFrame` in render mode, no unseeded `Math.random`. Fonts load from files, never from a CDN. Shot thumbnails and a contact sheet are written before the full encode. Something new appears every 2–4 seconds on the picture clock. Voice pace is a separate, slower clock.
+
+Draft frames are labeled `Not human-reviewed`. Release frames require a human sign-off written after the draft exists.
+
+## Stage recovery
+
+Each finished machine stage writes `state/<stage>.done.json` with the hashes of its inputs and outputs. `node studio/cli.mjs resume <episode-dir>` continues from the last intact stage. It does not read the chat. Pushing and editing a pull request are the `git-sync` step, which can be retried on its own.
+
+A cloud agent with no keys writes `handoff.json` (commit, commands, expected files) and stops. The machine that holds keys runs doctor, the hook recordings, duration prediction, the listen pack, and the draft render.
+
+Set `model_budget_calls` on the brief. When recorded usage reaches 70%, stop at the current checkpoint.
 
 ## Acceptance
 
