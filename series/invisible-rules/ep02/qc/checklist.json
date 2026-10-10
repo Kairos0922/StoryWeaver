@@ -1,0 +1,139 @@
+{
+  "schema": "storyweaver.qc.v1",
+  "episode": "ep02",
+  "items": [
+    {
+      "id": "fact_card_abc",
+      "gate": "1",
+      "blocks": ["lines", "hook-sample", "stills", "render", "publish"],
+      "required": true,
+      "kind": "auto",
+      "check": "fact_card_abc",
+      "title": "事实卡含 A 外部来源 / B 本片数字 / C 不能说的话"
+    },
+    {
+      "id": "one_thing",
+      "gate": "0",
+      "blocks": ["lines", "hook-sample", "stills", "render", "publish"],
+      "required": true,
+      "kind": "auto",
+      "check": "one_thing",
+      "title": "整集只写一件事，且不是待填"
+    },
+    {
+      "id": "phase_a_ready",
+      "gate": "2",
+      "blocks": ["lines", "hook-sample", "stills", "render", "publish"],
+      "required": true,
+      "kind": "auto",
+      "check": "phase_a_approved",
+      "title": "Phase A 已由人批准，正文哈希和画幅时长一致"
+    },
+    {
+      "id": "script_lint",
+      "gate": "2",
+      "blocks": ["lines", "hook-sample", "stills", "render", "publish"],
+      "required": true,
+      "kind": "auto",
+      "check": "script_lint",
+      "title": "口播 lint 没有脚手架错误"
+    },
+    {
+      "id": "metrics_not_invented",
+      "gate": "6",
+      "blocks": ["publish"],
+      "required": true,
+      "kind": "auto",
+      "check": "metrics_not_invented",
+      "title": "播放指标要么空着，要么同一行写了来源；禁止估算词"
+    },
+    {
+      "id": "ear_hook",
+      "gate": "3",
+      "blocks": ["stills", "render", "publish"],
+      "required": true,
+      "kind": "human",
+      "title": "人耳听过约前 12 秒钩子样片。ASR 分数不能代替这一项",
+      "status": "pending",
+      "evidence": "",
+      "checked_by": ""
+    },
+    {
+      "id": "stills_four",
+      "gate": "4",
+      "blocks": ["render", "publish"],
+      "required": true,
+      "kind": "human",
+      "title": "四张静帧人眼过目：钩子、第一个数字砸脸、最大爽点、结尾站队",
+      "status": "pending",
+      "evidence": "",
+      "checked_by": ""
+    },
+    {
+      "id": "beat_clock",
+      "gate": "4",
+      "blocks": ["render", "publish"],
+      "required": true,
+      "kind": "human",
+      "title": "时间轴按 2.5 秒节拍，没有超过 5 秒没有新视觉元素",
+      "status": "pending",
+      "evidence": "",
+      "checked_by": ""
+    },
+    {
+      "id": "no_idle",
+      "gate": "4",
+      "blocks": ["render", "publish"],
+      "required": true,
+      "kind": "human",
+      "title": "抽帧里每个节拍至少有一个角色动作，没有站桩听讲解",
+      "status": "pending",
+      "evidence": "",
+      "checked_by": ""
+    },
+    {
+      "id": "ear_numbers",
+      "gate": "5",
+      "blocks": ["publish"],
+      "required": true,
+      "kind": "human",
+      "title": "成片后人耳听过数字句和角色名。ASR 只作辅助",
+      "status": "pending",
+      "evidence": "",
+      "checked_by": ""
+    },
+    {
+      "id": "loudnorm",
+      "gate": "5",
+      "blocks": ["publish"],
+      "required": true,
+      "kind": "human",
+      "title": "混音响度对照管线目标 −16 LUFS。没有成片就不要填测量值",
+      "status": "pending",
+      "evidence": "",
+      "checked_by": ""
+    },
+    {
+      "id": "sim_disclaimer",
+      "gate": "5",
+      "blocks": ["publish"],
+      "required": true,
+      "kind": "human",
+      "title": "模拟数字在画面或片尾标明简化模拟，且没有把示意动画说成实测",
+      "status": "pending",
+      "evidence": "",
+      "checked_by": ""
+    },
+    {
+      "id": "ai_disclosure",
+      "gate": "6",
+      "blocks": ["publish"],
+      "required": true,
+      "kind": "human",
+      "title": "发布文案含 AI 生成声明，并由人点发布。代理不得代发",
+      "status": "pending",
+      "evidence": "",
+      "checked_by": ""
+    }
+  ]
+}
