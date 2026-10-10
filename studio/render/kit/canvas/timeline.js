@@ -3,6 +3,7 @@
 //   shotAt(resolved, timing, t) one frame: the shot(s) the kit should draw at time t
 // Cues: L05 (line start), L05.end, L05@0.5 (fraction of the line), start / end (scene bounds),
 // any of these with +/- seconds (L05.end+0.3), or a number of seconds after scene start.
+// A layer animates a number only when `count` is an object; queue_line keeps `count` as its head count.
 (function (root) {
   'use strict';
 
@@ -137,7 +138,7 @@
       out.exit = Object.assign({dur: 0.25, fx: 'pop'}, L.exit, {at: at(L.exit.at, `${where}.exit`)});
       mark(out.exit.at, `${L.type} exit`);
     }
-    if (L.count) {
+    if (L.count && typeof L.count === 'object') {
       out.count = Object.assign({dur: 0.8, from: 0, decimals: 0, fmt: '{v}'}, L.count, {at: at(L.count.at, `${where}.count`)});
       mark(out.count.at, 'count');
       if (L.count.sfx !== false) sfx.push({t: out.count.at, sfx: 'count', dur: out.count.dur});
@@ -225,7 +226,7 @@
     delete out.key;
     if (L.enter && t < L.enter.at + L.enter.dur) enterFx(out, L.enter.fx, clamp((t - L.enter.at) / L.enter.dur), 1);
     if (L.exit && t >= L.exit.at) enterFx(out, L.exit.fx, clamp((t - L.exit.at) / L.exit.dur), -1);
-    if (L.count) {
+    if (L.count && typeof L.count === 'object') {
       const c = L.count;
       const p = EASE.out(clamp((t - c.at) / c.dur));
       const v = c.from + (c.to - c.from) * (t < c.at ? 0 : p);
