@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.10.0 — 2026-10-11
+
+Render contract, motion tokens, and motion QC.
+
+### Added
+
+- `docs/render-contract.md` and `node studio/cli.mjs render-contract` (CI via `npm test`): no wall clock, frame callbacks, timers, unseeded randomness, network, or CSS motion in the capture path; exact dependency versions.
+- `studio/motion/tokens.js` and `docs/motion-tokens.md`: five named easings, closed-form springs by damping ratio, no overshoot on opacity/color, exits 40–50% shorter, per-beat rounded beat grid.
+- `node studio/cli.mjs motion-qc <motion.json>`: text hold (zh provisional), contrast ≥ 4.5:1, flashes ≤ 3/s, SFX sync (+0–2 frames), onion-skin and speed-graph SVGs.
+- `Banned motion` section in the brief template.
+
+### Changed
+
+- Dependencies are pinned to exact versions.
+
 ## 0.9.0 — 2026-10-10
 
 DOM stage for kinetic type. The capture clock is still the pipeline’s `t`.

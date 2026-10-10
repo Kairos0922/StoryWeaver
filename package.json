@@ -1,6 +1,6 @@
 {
   "name": "storyweaver",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "private": true,
   "type": "module",
   "description": "An AI-assisted toolkit and methodology for producing fact-checked animated explainer videos, from research and scripting to voiceover, rendering, and QC.",
@@ -12,18 +12,19 @@
     "lint-script": "node studio/cli.mjs lint-script studio/templates/script.md",
     "studio": "node studio/cli.mjs",
     "studio-layout": "node studio/cli.mjs layout",
-    "doctor": "node studio/cli.mjs doctor"
+    "doctor": "node studio/cli.mjs doctor",
+    "render-contract": "node studio/cli.mjs render-contract"
   },
   "devDependencies": {
-    "playwright": "^1.64.0"
+    "playwright": "1.64.0"
   },
   "dependencies": {
-    "esbuild": "^0.28.2",
-    "gsap": "^3.15.0",
-    "lottie-web": "^5.13.0",
-    "lucide-react": "^1.55.0",
-    "react": "^19.3.0",
-    "react-dom": "^19.3.0",
-    "three": "^0.170.0"
+    "esbuild": "0.28.2",
+    "gsap": "3.15.0",
+    "lottie-web": "5.13.0",
+    "lucide-react": "1.55.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "three": "0.170.0"
   }
 }

@@ -17,6 +17,8 @@ import {formatPrediction, predictEpisode} from './duration.mjs';
 import {buildListenPack, formatListen} from './listen_pack.mjs';
 import {formatGitSync, gitSyncStatus, markGitSync, planGitSync} from './git_sync.mjs';
 import {renderDirectory} from './render/browser/pipeline.mjs';
+import {formatRenderContract, lintRenderContract} from './lint/render_contract.mjs';
+import {formatMotionQc, runMotionQc} from './qc/motion_qc.mjs';
 
 const args = process.argv.slice(2);
 
@@ -52,6 +54,8 @@ const help = `StoryWeaver
 
   node studio/cli.mjs lint-script <script.md|lines.json>
   node studio/cli.mjs qc <episode-dir>
+  node studio/cli.mjs render-contract
+  node studio/cli.mjs motion-qc <motion.json> [--out <dir>]
   node studio/cli.mjs checkpoint <episode-dir> <brief|lines|hook-sample|stills|render|publish>
   node studio/cli.mjs hash-brief <brief.md>
   node studio/cli.mjs init-series <dir>
@@ -84,6 +88,18 @@ async function main() {
     const result = await lintFile(path.resolve(file));
     emit(result, formatLint(result));
     return result.ok ? 0 : 1;
+  }
+  if (cmd === 'render-contract') {
+    const report = await lintRenderContract();
+    emit(report, formatRenderContract(report));
+    return report.ok ? 0 : 1;
+  }
+  if (cmd === 'motion-qc') {
+    const file = positional[0];
+    if (!file) throw new Error('motion-qc needs a motion spec JSON file');
+    const report = await runMotionQc(path.resolve(file), opts.out ? path.resolve(opts.out) : undefined);
+    emit(report, formatMotionQc(report));
+    return report.ok ? 0 : 1;
   }
   if (cmd === 'qc') {
     const dir = positional[0];
