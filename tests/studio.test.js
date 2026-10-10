@@ -275,7 +275,11 @@ test('engagement numbers need a source and cannot be estimates', async () => {
 test('ep02 can start after ep01 and ep03 cannot skip blank metrics', async () => {
   const dest = await fs.mkdtemp(path.join(os.tmpdir(), 'sw-series-'));
   const series = path.join(dest, 'invisible-rules');
-  await fs.cp(path.join(root, 'series/invisible-rules'), series, {recursive: true});
+  const source = path.join(root, 'series/invisible-rules');
+  await fs.cp(source, series, {
+    recursive: true,
+    filter: file => path.relative(source, file).split(path.sep)[0] !== 'ep02',
+  });
   const created = await initEpisode(series, 'ep02');
   assert.equal(created.previous, 'PRIOR_METRICS_ABSENT_OK');
   await assert.rejects(() => initEpisode(series, 'ep03'), error => error.code === 'METRICS_REQUIRED');
