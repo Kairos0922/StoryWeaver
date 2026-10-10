@@ -2,7 +2,7 @@
   "schema": "storyweaver.stills.v1",
   "adapter": "html-canvas",
   "kit": "studio/render/kit/canvas/kit.js",
-  "note": "Review stills for Phase A. Characters are stand-ins: ip/ sprites are not vendored. Palette is an episode proposal, not the series contract.",
+  "note": "Phase A review stills, re-rendered with the vendored IP rig (ip/sprites/rig.json). Character colours come from the sheets; scene palette is the episode proposal.",
   "size": [
     1920,
     1080
@@ -20,9 +20,9 @@
     "ai_label": "AI 生成"
   },
   "palette": {
-    "ink": "#1E2633",
+    "ink": "#13232E",
     "white": "#FFFFFF",
-    "shadow": "rgba(30,38,51,0.16)",
+    "shadow": "rgba(19,35,46,0.16)",
     "wall_top": "#F8F3EA",
     "wall": "#EFE6D6",
     "floor": "#E4D8C3",
@@ -42,23 +42,24 @@
     "green": "#35B871",
     "red": "#E5484D",
     "yellow": "#F6C945",
-    "teal": "#2A9D8F",
+    "teal": "#2A9C84",
     "crowd": "#A9B1BE",
     "crowd_late": "#6E7A8C",
-    "water": "#8FD3F4",
+    "water": "#7FD3F2",
     "box": "#D9A066",
     "mouth": "#8B2E3A",
-    "dengdeng": "#F28C3F",
-    "dengdeng_dark": "#C7652A",
+    "dengdeng": "#F2A541",
+    "dengdeng_dark": "#D9862A",
     "dengdeng_belly": "#FBC28F",
-    "agui": "#2A9D8F",
-    "agui_dark": "#1C6E64",
+    "agui": "#3FC1A5",
+    "agui_dark": "#2A9C84",
     "agui_light": "#7FDCCF",
     "ruler": "#F6E7B4",
-    "dida": "#F6C945",
-    "dida_dark": "#C99A1E",
+    "dida": "#E8685A",
+    "dida_dark": "#C24E42",
     "tint_a": "#D3EEE8",
-    "tint_b": "#FCE4D3"
+    "tint_b": "#FCE4D3",
+    "dida_light": "#FFB4A8"
   },
   "shots": [
     {
@@ -215,16 +216,15 @@
           "id": "dengdeng",
           "x": 860,
           "y": 728,
-          "scale": 0.95,
-          "pose": "tiptoe",
+          "scale": 0.86,
           "facing": -1,
-          "look": -1.4,
-          "eyes": "wide",
-          "brows": "up",
-          "mouth": "o",
+          "look": -1,
           "marks": [
             "question"
-          ]
+          ],
+          "expr": "anxious",
+          "gesture": "hold_basket",
+          "legs": "tiptoe"
         },
         {
           "type": "service_point",
@@ -269,7 +269,7 @@
     },
     {
       "id": "s2_first_number_8s",
-      "t": 8.0,
+      "t": 8,
       "beat": "钩子",
       "camera": {
         "x": 980,
@@ -416,29 +416,29 @@
           "id": "dengdeng",
           "x": 860,
           "y": 728,
-          "scale": 0.98,
-          "pose": "shock",
+          "scale": 0.86,
           "facing": 1,
           "look": 0.4,
-          "eyes": "wide",
-          "brows": "up",
-          "mouth": "o",
           "marks": [
             "surprise",
             "sweat"
-          ]
+          ],
+          "expr": "aha",
+          "gesture": "arms_out",
+          "hop": 10
         },
         {
           "type": "character",
           "id": "dida",
           "x": 1560,
           "y": 860,
-          "scale": 1.05,
-          "pose": "press_watch",
+          "scale": 0.9,
           "facing": -1,
-          "eyes": "normal",
-          "mouth": "grin",
-          "hand_deg": 144
+          "expr": "smug",
+          "gesture": "press",
+          "press": 1,
+          "ticks": 0.4,
+          "hop": 26
         },
         {
           "type": "kinetic_number",
@@ -585,15 +585,16 @@
               "id": "dengdeng",
               "x": 645,
               "y": 676,
-              "scale": 0.7,
-              "pose": "stomp",
+              "scale": 0.62,
               "facing": -1,
-              "eyes": "squint",
-              "brows": "angry",
-              "mouth": "shout",
               "marks": [
                 "anger"
-              ]
+              ],
+              "expr": "anxious",
+              "gesture": "stomp",
+              "legs": "stomp",
+              "brow": 14,
+              "jitter": 1
             },
             {
               "type": "queue_line",
@@ -772,13 +773,13 @@
             {
               "type": "character",
               "id": "agui",
-              "x": 880,
+              "x": 820,
               "y": 575,
-              "scale": 0.55,
-              "pose": "point_up",
+              "scale": 0.5,
               "facing": -1,
-              "eyes": "normal",
-              "mouth": "smile"
+              "expr": "smug",
+              "gesture": "point_up",
+              "arrow_rot": -90
             }
           ]
         },
@@ -791,11 +792,11 @@
           "id": "dida",
           "x": 960,
           "y": 470,
-          "scale": 0.7,
-          "pose": "press_watch",
+          "scale": 0.6,
           "facing": 1,
-          "mouth": "grin",
-          "hand_deg": 0
+          "expr": "smug",
+          "gesture": "signature",
+          "ticks": 0
         },
         {
           "type": "kinetic_number",
@@ -825,7 +826,7 @@
     },
     {
       "id": "s4_vote_76s",
-      "t": 76.0,
+      "t": 76,
       "beat": "评论站队",
       "layers": [
         {
@@ -1024,26 +1025,22 @@
           "id": "dengdeng",
           "x": 960,
           "y": 860,
-          "scale": 1.0,
-          "pose": "point_camera",
+          "scale": 0.9,
           "facing": 1,
           "look": 0,
-          "eyes": "wide",
-          "brows": "up",
-          "mouth": "shout",
           "marks": [
             "question"
-          ]
+          ],
+          "expr": "happy",
+          "gesture": "point_camera"
         },
         {
           "type": "character",
           "id": "dida",
           "x": 1690,
           "y": 1000,
-          "scale": 0.72,
-          "pose": "hold_sign",
+          "scale": 0.62,
           "facing": -1,
-          "mouth": "grin",
           "sign": {
             "text": "评论区扣 A 或 B",
             "w": 470,
@@ -1053,18 +1050,19 @@
             "dy": 10,
             "rot": 4,
             "color": "yellow"
-          }
+          },
+          "expr": "smug",
+          "gesture": "hold_sign"
         },
         {
           "type": "character",
           "id": "agui",
           "x": 250,
           "y": 1010,
-          "scale": 0.62,
-          "pose": "think",
+          "scale": 0.56,
           "facing": 1,
-          "mouth": "smile",
-          "eyes": "normal"
+          "expr": "serious",
+          "gesture": "chin"
         }
       ],
       "footnote": "本片数字为简化模拟：3 个收银台，高峰负荷，20 组随机顾客。不代表任何真实门店。",
@@ -1073,5 +1071,6 @@
         "text": "一条长龙扣 A，三条短队自己挑扣 B。"
       }
     }
-  ]
+  ],
+  "rig": "../ip/sprites/rig.json"
 }

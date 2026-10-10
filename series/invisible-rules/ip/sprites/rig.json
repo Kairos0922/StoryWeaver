@@ -1166,6 +1166,7 @@
     "phone": {
      "name": "phone",
      "rest_angle": -78.111,
+     "over_hand": false,
      "elements": [
       {
        "tag": "rect",
@@ -1913,6 +1914,7 @@
     "pointer": {
      "name": "pointer",
      "rest_angle": -71.565,
+     "over_hand": true,
      "elements": [
       {
        "tag": "path",

@@ -302,6 +302,7 @@ def split_body(cid, body):
             continue
         if current and math.dist(center(e), arms[current]['end']) < 90:
             arms[current]['props'].append(e)
+            arms[current].setdefault('after_hand', []).append('hand' in arms[current])
             continue
         rest.append(e)
     legs = {}
@@ -336,7 +337,7 @@ def prop_record(a, name):
     for e in a['props']:
         tf = e.get('tf', [0, 0])
         els.append(dict(e, tf=[num(tf[0] - hx), num(tf[1] - hy)]))
-    return {'name': name, 'rest_angle': round(angle, 3), 'elements': els}
+    return {'name': name, 'rest_angle': round(angle, 3), 'over_hand': all(a['after_hand']), 'elements': els}
 
 
 def mirror_ok(left, right):

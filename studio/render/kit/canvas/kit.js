@@ -263,16 +263,21 @@
     ctx.restore();
   }
 
-  function person(ctx, spec, o) {
+  function person(ctx, spec, o, frame) {
     const p = spec.palette;
     const s = o.scale ?? 1;
     const fill = col(spec, o.color, p.crowd);
+    const t = o.t ?? frame?.t ?? 0;
+    const ph = ((o.x ?? 0) * 0.013 + (o.y ?? 0) * 0.007) % 1;
+    const walking = o.pose === 'walk' || o.moving;
+    const bob = walking ? -Math.abs(Math.sin(t * TAU * 2.2 + ph * TAU)) * 9 : Math.sin(t * TAU * 0.6 + ph * TAU) * 1.5;
     ctx.save();
     ctx.translate(o.x, o.y);
     ctx.scale(s, s);
-    ctx.globalAlpha = o.alpha ?? 1;
+    ctx.globalAlpha *= o.alpha ?? 1;
     shadowEllipse(ctx, spec, 0, 4, 40, 9);
-    const tilt = (o.pose === 'walk' ? -6 : 0) * (o.facing ?? -1);
+    ctx.translate(0, bob);
+    const tilt = (walking ? -6 : 0) * (o.facing ?? -1);
     ctx.rotate(tilt * DEG);
     rr(ctx, -30, -118, 60, 118, 28);
     ctx.fillStyle = fill;
@@ -282,19 +287,20 @@
     ctx.fill();
     const f = o.facing ?? -1;
     if (o.pose === 'wave') {
+      const sw = Math.sin(t * TAU * 2.4) * 10;
       ctx.strokeStyle = fill;
       ctx.lineWidth = 16;
       ctx.lineCap = 'round';
       ctx.beginPath();
       ctx.moveTo(-f * 20, -96);
       ctx.lineTo(-f * 52, -150);
-      ctx.lineTo(-f * 46, -196);
+      ctx.lineTo(-f * (46 + sw), -196);
       ctx.stroke();
       ctx.strokeStyle = p.ink;
       ctx.lineWidth = 4;
       for (let i = 0; i < 3; i++) {
         ctx.beginPath();
-        ctx.arc(-f * 46, -196, 34 + i * 14, (-f > 0 ? -0.9 : Math.PI - 0.1) , (-f > 0 ? 0.1 : Math.PI + 0.9));
+        ctx.arc(-f * (46 + sw), -196, 34 + i * 14, (-f > 0 ? -0.9 : Math.PI - 0.1), (-f > 0 ? 0.1 : Math.PI + 0.9));
         ctx.globalAlpha = (o.alpha ?? 1) * (0.7 - i * 0.2);
         ctx.stroke();
       }
@@ -304,7 +310,7 @@
     if (o.number != null) {
       ctx.rotate(-tilt * DEG);
       rr(ctx, -24, -222, 48, 40, 12);
-      inked(ctx, spec, p.white, 4);
+      inked(ctx, spec, col(spec, o.number_color, p.white), 4);
       ctx.fillStyle = p.ink;
       ctx.font = font(spec, 900, 28);
       ctx.textAlign = 'center';
@@ -314,6 +320,7 @@
     ctx.restore();
   }
 
+  // Slot k sits at offset + k * spacing along the polyline. Slots before the start have left the queue.
   function polyPoints(points, spacing, count, offset) {
     const segs = [];
     let total = 0;
@@ -327,18 +334,20 @@
     const out = [];
     for (let k = 0; k < count; k++) {
       const d = (offset ?? 0) + k * spacing;
-      if (d > total) break;
+      if (d < -1e-6) continue;
+      if (d > total + 1e-6) break;
       const seg = segs.find(sg => d <= sg.start + sg.len) || segs[segs.length - 1];
-      const t = seg.len ? (d - seg.start) / seg.len : 0;
-      out.push({x: seg.x0 + (seg.x1 - seg.x0) * t, y: seg.y0 + (seg.y1 - seg.y0) * t, dir: Math.sign(seg.x0 - seg.x1) || -1});
+      const u = seg.len ? (d - seg.start) / seg.len : 0;
+      out.push({k, x: seg.x0 + (seg.x1 - seg.x0) * u, y: seg.y0 + (seg.y1 - seg.y0) * u, dir: Math.sign(seg.x0 - seg.x1) || -1});
     }
     return out;
   }
 
-  function queueLine(ctx, L, spec) {
+  function queueLine(ctx, L, spec, W, H, frame) {
     const p = spec.palette;
     if (L.rope) {
       ctx.save();
+      ctx.globalAlpha *= L.rope_alpha ?? 1;
       for (const rope of L.rope) {
         ctx.strokeStyle = p.rope;
         ctx.lineWidth = 8;
@@ -359,171 +368,229 @@
       }
       ctx.restore();
     }
+    if (L.path_line) {
+      ctx.save();
+      ctx.strokeStyle = col(spec, L.path_line, p.rope);
+      ctx.globalAlpha *= L.path_alpha ?? 0.5;
+      ctx.lineWidth = 10;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.setLineDash([24, 18]);
+      ctx.lineDashOffset = -(frame?.t ?? 0) * 60;
+      ctx.beginPath();
+      L.points.forEach(([x, y], i) => (i ? ctx.lineTo(x, y + 6) : ctx.moveTo(x, y + 6)));
+      ctx.stroke();
+      ctx.restore();
+    }
     const slots = polyPoints(L.points, L.spacing ?? 120, L.count ?? 5, L.offset ?? 0);
-    const items = slots.map((pt, i) => Object.assign({
-      x: pt.x, y: pt.y, facing: pt.dir, scale: L.scale ?? 1, color: L.color,
-      number: L.numbered ? (L.number_from ?? 1) + i : null,
-    }, (L.people || {})[i] || {}));
+    const items = slots.map(pt => Object.assign({
+      x: pt.x, y: pt.y, facing: pt.dir, scale: L.scale ?? 1, color: L.color, moving: L.moving,
+      number: L.numbered ? (L.number_from ?? 1) + pt.k : null,
+    }, (L.people || {})[pt.k] || {}));
     items.sort((a, b) => a.y - b.y);
     for (const it of items) {
       if (it.skip) continue;
-      person(ctx, spec, it);
+      person(ctx, spec, it, frame);
     }
   }
 
-  // ---------- characters (stand-ins until ip/ sprites are vendored) ----------
+  // ---------- characters: drawn only from the series rig (ip/sprites/rig.json) ----------
 
-  const POSES = {
-    basket:       {l: [75, 68], r: [105, 68], hands: 'basket', legs: 'stand', shoulder: 0.5},
-    tiptoe:       {l: [75, 68], r: [105, 68], hands: 'basket', legs: 'tiptoe', bob: -14, shoulder: 0.5},
-    shock:        {l: [215, 80], r: [-35, 80], legs: 'wide', bob: -8},
-    stomp:        {l: [120, 64], r: [60, 64], fists: true, legs: 'stomp', tilt: 6},
-    point:        {l: [120, 60], r: [-20, 92], legs: 'stand'},
-    point_up:     {l: [120, 60], r: [-55, 90], legs: 'stand'},
-    point_camera: {l: [120, 60], r: [10, 70], big_hand: true, legs: 'wide'},
-    press_watch:  {l: [-80, 66], r: [-100, 66], legs: 'jump', bob: -30},
-    hold_sign:    {l: [-120, 90], r: [-60, 90], legs: 'stand'},
-    think:        {l: [120, 60], r: [-150, 60], legs: 'stand', tilt: -4},
-    snap:         {l: [120, 60], r: [-60, 80], legs: 'stand', snap: true},
+  const PATHS = new Map();
+  function pathOf(d) {
+    let p = PATHS.get(d);
+    if (!p) {
+      p = new Path2D(d);
+      PATHS.set(d, p);
+    }
+    return p;
+  }
+
+  function clamp(v, a = 0, b = 1) {
+    return Math.max(a, Math.min(b, v));
+  }
+
+  function hashStr(s) {
+    let h = 2166136261;
+    for (const ch of String(s)) {
+      h ^= ch.codePointAt(0);
+      h = Math.imul(h, 16777619);
+    }
+    return (h >>> 0) / 4294967296;
+  }
+
+  function hashN(a, b) {
+    const r = rng((Math.floor(a * 7919) ^ Math.floor(b * 104729)) + 1);
+    r();
+    return r();
+  }
+
+  // One sheet primitive. `o` overrides fill/alpha/dash offset; geometry is never changed here.
+  function paint(ctx, e, o) {
+    ctx.save();
+    if (e.tf) ctx.translate(e.tf[0], e.tf[1]);
+    if (e.rot) ctx.rotate(e.rot * DEG);
+    let shape = null;
+    if (e.tag === 'path') shape = pathOf(e.d);
+    else {
+      ctx.beginPath();
+      if (e.tag === 'rect') rr(ctx, e.x, e.y, e.w, e.h, e.rx || 0);
+      else if (e.tag === 'circle') ctx.arc(e.cx, e.cy, e.r, 0, TAU);
+      else ctx.ellipse(e.cx, e.cy, e.rx, e.ry, 0, 0, TAU);
+    }
+    ctx.globalAlpha *= (o?.alpha ?? 1) * (o?.op ?? e.op ?? 1);
+    const fillStyle = o?.fill ?? (e.fill === undefined ? '#000' : e.fill);
+    if (fillStyle !== 'none') {
+      ctx.fillStyle = fillStyle;
+      if (shape) ctx.fill(shape); else ctx.fill();
+    }
+    if (e.stroke && e.stroke !== 'none') {
+      ctx.strokeStyle = e.stroke;
+      ctx.lineWidth = e.sw ?? 1;
+      ctx.lineCap = e.cap || 'butt';
+      ctx.lineJoin = e.join || 'miter';
+      if (e.dash) {
+        ctx.setLineDash(e.dash);
+        ctx.lineDashOffset = o?.dashOffset ?? 0;
+      }
+      if (shape) ctx.stroke(shape); else ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function about(ctx, c, fn) {
+    ctx.translate(c[0], c[1]);
+    fn();
+    ctx.translate(-c[0], -c[1]);
+  }
+
+  // Hand targets as [out, down] in rest-arm lengths from the shoulder (out = away from the body),
+  // or the name of a body anchor. Arms listed in `front` draw over the body.
+  const GESTURES = {
+    rest: {},
+    signature: {R: 'signature'},
+    wave: {R: [0.55, -1.25], wave: 'R'},
+    point: {R: [1.25, -0.3]},
+    point_up: {R: [0.6, -1.3]},
+    point_down: {R: [1.05, 0.5]},
+    point_camera: {R: [0.25, -0.15], big: 'R', front: 'R'},
+    raise_both: {L: [0.5, -1.3], R: [0.5, -1.3]},
+    cheer: {L: [0.35, -1.4], R: [0.35, -1.4], fists: true},
+    arms_out: {L: [1.25, -0.2], R: [1.25, -0.2]},
+    shrug: {L: [1.0, -0.55], R: [1.0, -0.55], bounce: true},
+    chest: {R: 'chest', front: 'R', fists: true},
+    head: {R: 'head'},
+    hold_head: {L: 'head', R: 'head'},
+    cover_eyes: {L: 'eyes', R: 'eyes', front: 'LR'},
+    chin: {R: 'chin', front: 'R'},
+    hold_basket: {L: 'basket', R: 'basket', front: 'LR', prop: 'basket_full'},
+    hold_sign: {L: [0.3, -1.35], R: [0.3, -1.35]},
+    snap: {R: [0.75, -0.95], snap: 'R'},
+    clap: {L: 'clap', R: 'clap', front: 'LR'},
+    press: {R: 'button', front: 'R'},
+    stomp: {L: [0.65, 0.3], R: [0.65, 0.3], fists: true},
+    hips: {L: 'hip', R: 'hip'},
   };
 
-  function limb(ctx, spec, x, y, angle, len, color, handR, fist) {
-    const a = angle * DEG;
-    const ex = x + Math.cos(a) * len;
-    const ey = y + Math.sin(a) * len;
-    ctx.strokeStyle = spec.palette.ink;
-    ctx.lineWidth = 20;
-    ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(ex, ey);
-    ctx.stroke();
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 9;
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(ex, ey);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.arc(ex, ey, handR, 0, TAU);
-    inked(ctx, spec, color, 5);
-    if (fist) {
-      ctx.strokeStyle = spec.palette.ink;
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(ex - handR * 0.5, ey);
-      ctx.lineTo(ex + handR * 0.5, ey);
-      ctx.stroke();
+  function anchorPoint(C, name, side) {
+    const A = C.anchors;
+    const sg = side === 'L' ? -1 : 1;
+    const half = (A.shell[2] - A.shell[0]) / 2;
+    switch (name) {
+      case 'signature': return C.signature.R.end.slice();
+      case 'eyes': return [sg * half * 0.3, A.eyes[1] + 4];
+      case 'head': return [sg * half * 0.62, A.shell[1] + 18];
+      case 'chin': return [A.mouth[0] + 6, A.mouth[1] + 24];
+      case 'chest': return [half * 0.18, (A.mouth[1] + A.shell[3]) / 2 + 10];
+      case 'basket': return [sg * half * 0.42, A.hip - 6];
+      case 'clap': return [sg * 6, A.mouth[1] + 40];
+      case 'hip': return [sg * half * 0.92, A.hip - 26];
+      case 'button': return A.button ? [A.button[0] + 8, A.button[1] + 4] : [sg * half * 0.6, A.shell[1] + 18];
+      default: throw new Error(`Unknown body anchor ${name}`);
     }
-    return [ex, ey];
   }
 
-  function legs(ctx, spec, kind, hipY, spread, color) {
-    const p = spec.palette;
-    const pairs = {
-      stand: [[-spread, 0, -spread - 4, 52], [spread, 0, spread + 4, 52]],
-      wide: [[-spread, 0, -spread - 26, 50], [spread, 0, spread + 26, 50]],
-      tiptoe: [[-spread, 0, -spread, 62], [spread, 0, spread, 62]],
-      jump: [[-spread, 0, -spread - 18, 34], [spread, 0, spread + 26, 30]],
-      stomp: [[-spread, 0, -spread - 10, 52], [spread, 0, spread + 30, 22]],
-    }[kind] || [[-spread, 0, -spread, 52], [spread, 0, spread, 52]];
-    for (const [x0, y0, x1, y1] of pairs) {
-      ctx.strokeStyle = p.ink;
-      ctx.lineWidth = 22;
+  function restLen(C) {
+    const a = C.arms.L;
+    return Math.hypot(a.end[0] - a.shoulder[0], a.end[1] - a.shoulder[1]);
+  }
+
+  function handTargets(C, name, t, age) {
+    const g = GESTURES[name];
+    if (!g) throw new Error(`Unknown gesture ${name}`);
+    const len = restLen(C);
+    const out = {};
+    for (const side of ['L', 'R']) {
+      const sh = C.arms[side].shoulder;
+      const sg = side === 'L' ? -1 : 1;
+      const spec = g[side];
+      let p;
+      if (!spec) p = C.arms[side].end.slice();
+      else if (typeof spec === 'string') p = anchorPoint(C, spec, side);
+      else p = [sh[0] + sg * spec[0] * len, sh[1] + spec[1] * len];
+      if (g.wave === side) p[0] += Math.sin(t * TAU * 2.2) * len * 0.3 * sg;
+      if (g.bounce) p[1] -= Math.abs(Math.sin(Math.min(age, 0.9) * TAU * 1.1)) * len * 0.18;
+      out[side] = p;
+    }
+    return out;
+  }
+
+  function drawArm(ctx, C, side, hand) {
+    const sh = C.arms[side].shoulder;
+    const st = C.arm_style;
+    const sg = side === 'L' ? -1 : 1;
+    const dx = hand[0] - sh[0], dy = hand[1] - sh[1];
+    const len = Math.hypot(dx, dy) || 1;
+    let px = -dy / len, py = dx / len;
+    if (px * sg + py * 0.6 < 0) {
+      px = -px;
+      py = -py;
+    }
+    const bend = 0.22 * Math.min(len, restLen(C) * 1.5);
+    const cx = (sh[0] + hand[0]) / 2 + px * bend;
+    const cy = (sh[1] + hand[1]) / 2 + py * bend;
+    ctx.strokeStyle = st.stroke;
+    ctx.lineWidth = st.sw;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(sh[0], sh[1]);
+    ctx.quadraticCurveTo(cx, cy, hand[0], hand[1]);
+    ctx.stroke();
+    return Math.atan2(hand[1] - cy, hand[0] - cx);
+  }
+
+  function drawHand(ctx, C, hand, big, fist) {
+    const h = C.arm_style.hand;
+    const r = h.r * (big ? 1.8 : 1);
+    paint(ctx, {tag: 'circle', cx: hand[0], cy: hand[1], r, fill: h.fill, stroke: h.stroke, sw: h.sw});
+    if (fist) {
+      ctx.strokeStyle = h.stroke;
+      ctx.lineWidth = 3;
       ctx.lineCap = 'round';
       ctx.beginPath();
-      ctx.moveTo(x0, hipY + y0);
-      ctx.lineTo(x1, hipY + y1);
-      ctx.stroke();
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 10;
-      ctx.beginPath();
-      ctx.moveTo(x0, hipY + y0);
-      ctx.lineTo(x1, hipY + y1);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.ellipse(x1 + (x1 < 0 ? -8 : 8), hipY + y1 + 6, 22, 12, 0, 0, TAU);
-      inked(ctx, spec, p.ink, 2);
-    }
-  }
-
-  function face(ctx, spec, o, cx, cy, sz) {
-    const p = spec.palette;
-    const look = (o.look ?? o.facing ?? 1) * sz * 0.08;
-    const eyeDx = sz * 0.22;
-    const eyes = o.eyes || 'normal';
-    for (const sx of [-1, 1]) {
-      const ex = cx + sx * eyeDx;
-      const rx = eyes === 'wide' ? sz * 0.15 : sz * 0.12;
-      const ry = eyes === 'wide' ? sz * 0.18 : eyes === 'squint' ? sz * 0.05 : sz * 0.14;
-      ctx.beginPath();
-      ctx.ellipse(ex, cy, rx, ry, 0, 0, TAU);
-      inked(ctx, spec, p.white, 4);
-      if (eyes !== 'squint') {
-        ctx.fillStyle = p.ink;
-        ctx.beginPath();
-        ctx.arc(ex + look, cy + (eyes === 'wide' ? 0 : sz * 0.02), eyes === 'wide' ? sz * 0.05 : sz * 0.065, 0, TAU);
-        ctx.fill();
-        ctx.fillStyle = p.white;
-        ctx.beginPath();
-        ctx.arc(ex + look - sz * 0.02, cy - sz * 0.03, sz * 0.022, 0, TAU);
-        ctx.fill();
-      }
-      if (o.brows) {
-        ctx.strokeStyle = p.ink;
-        ctx.lineWidth = 6;
-        ctx.lineCap = 'round';
-        const tilt = o.brows === 'angry' ? sx * 0.35 : o.brows === 'up' ? -sx * 0.25 : 0;
-        ctx.beginPath();
-        ctx.moveTo(ex - rx, cy - ry - 14 - tilt * 20 * -1);
-        ctx.lineTo(ex + rx, cy - ry - 14 + tilt * 20 * -1);
-        ctx.stroke();
-      }
-    }
-    const my = cy + sz * 0.3;
-    ctx.strokeStyle = p.ink;
-    ctx.lineWidth = 6;
-    ctx.lineCap = 'round';
-    const mouth = o.mouth || 'smile';
-    ctx.beginPath();
-    if (mouth === 'o') {
-      ctx.ellipse(cx + look * 0.5, my, sz * 0.08, sz * 0.1, 0, 0, TAU);
-      ctx.fillStyle = p.mouth;
-      ctx.fill();
-      ctx.stroke();
-    } else if (mouth === 'shout') {
-      ctx.moveTo(cx - sz * 0.14, my - sz * 0.04);
-      ctx.quadraticCurveTo(cx, my + sz * 0.22, cx + sz * 0.14, my - sz * 0.04);
-      ctx.closePath();
-      ctx.fillStyle = p.mouth;
-      ctx.fill();
-      ctx.stroke();
-    } else if (mouth === 'frown') {
-      ctx.arc(cx, my + sz * 0.1, sz * 0.1, 1.15 * Math.PI, 1.85 * Math.PI);
-      ctx.stroke();
-    } else if (mouth === 'flat') {
-      ctx.moveTo(cx - sz * 0.08, my);
-      ctx.lineTo(cx + sz * 0.08, my);
-      ctx.stroke();
-    } else if (mouth === 'grin') {
-      ctx.moveTo(cx - sz * 0.15, my - sz * 0.03);
-      ctx.quadraticCurveTo(cx, my + sz * 0.18, cx + sz * 0.15, my - sz * 0.03);
-      ctx.closePath();
-      ctx.fillStyle = p.white;
-      ctx.fill();
-      ctx.stroke();
-    } else {
-      ctx.arc(cx, my - sz * 0.06, sz * 0.1, 0.2 * Math.PI, 0.8 * Math.PI);
+      ctx.moveTo(hand[0] - r * 0.45, hand[1] - r * 0.1);
+      ctx.lineTo(hand[0] + r * 0.45, hand[1] - r * 0.1);
       ctx.stroke();
     }
   }
 
-  function marks(ctx, spec, list, cx, top, w) {
+  function drawProp(ctx, C, name, hand, angle) {
+    const prop = C.props[name];
+    if (!prop) throw new Error(`No prop ${name} in rig`);
+    ctx.save();
+    ctx.translate(hand[0], hand[1]);
+    ctx.rotate(angle - prop.rest_angle * DEG);
+    for (const e of prop.elements) paint(ctx, e);
+    ctx.restore();
+  }
+
+  function marks(ctx, spec, list, cx, top, w, t) {
     const p = spec.palette;
+    const wob = Math.sin((t ?? 0) * TAU * 3) * 4;
     for (const m of list || []) {
       ctx.save();
       if (m === 'anger') {
-        ctx.translate(cx + w * 0.55, top + 10);
+        ctx.translate(cx + w * 0.55, top + 10 + wob);
         ctx.strokeStyle = p.red;
         ctx.lineWidth = 7;
         ctx.lineCap = 'round';
@@ -538,166 +605,248 @@
         ctx.strokeStyle = p.ink;
         ctx.lineWidth = 6;
         ctx.lineCap = 'round';
+        const k = 1 + Math.abs(wob) * 0.02;
         for (let i = -2; i <= 2; i++) {
           const a = -Math.PI / 2 + i * 0.32;
           ctx.beginPath();
-          ctx.moveTo(cx + Math.cos(a) * (w * 0.62), top + 30 + Math.sin(a) * (w * 0.62));
-          ctx.lineTo(cx + Math.cos(a) * (w * 0.82), top + 30 + Math.sin(a) * (w * 0.82));
+          ctx.moveTo(cx + Math.cos(a) * (w * 0.62 * k), top + 30 + Math.sin(a) * (w * 0.62 * k));
+          ctx.lineTo(cx + Math.cos(a) * (w * 0.82 * k), top + 30 + Math.sin(a) * (w * 0.82 * k));
           ctx.stroke();
         }
       } else if (m === 'sweat') {
-        ctx.translate(cx - w * 0.6, top + 40);
+        ctx.translate(cx - w * 0.6, top + 40 + Math.abs(wob));
         ctx.beginPath();
         ctx.moveTo(0, -18);
         ctx.quadraticCurveTo(14, 4, 0, 12);
         ctx.quadraticCurveTo(-14, 4, 0, -18);
         inked(ctx, spec, p.water, 4);
-      } else if (m === 'question') {
+      } else if (m === 'question' || m === 'exclaim') {
+        ctx.translate(cx + w * 0.62, top + 10);
+        ctx.rotate(wob * 0.02);
         ctx.fillStyle = p.ink;
-        ctx.font = font(spec, 900, 64);
+        ctx.font = font(spec, 900, 72);
         ctx.textAlign = 'center';
-        ctx.fillText('?', cx + w * 0.62, top + 10);
+        ctx.fillText(m === 'question' ? '?' : '!', 0, 0);
       }
       ctx.restore();
     }
   }
 
-  function character(ctx, L, spec) {
-    const p = spec.palette;
-    const id = L.id;
-    const pose = Object.assign({}, POSES[L.pose] || POSES.point, L.pose_override || {});
-    const s = L.scale ?? 1;
+  function legPose(L, t, ph) {
+    const mode = L.legs || 'stand';
+    let lift = {L: 0, R: 0};
+    let stretch = L.stretch ?? 0;
+    if (mode === 'walk') {
+      const s = Math.sin(t * TAU * 2.2 + ph * TAU);
+      lift = {L: Math.max(0, s) * 16, R: Math.max(0, -s) * 16};
+    } else if (mode === 'tap') {
+      lift.R = Math.max(0, Math.sin(t * TAU * 3.2 + ph * TAU)) * 12;
+    } else if (mode === 'stomp') {
+      const s = Math.sin(t * TAU * 3);
+      lift = {L: Math.max(0, s) * 26, R: Math.max(0, -s) * 26};
+    } else if (mode === 'tiptoe') {
+      stretch += 12 + Math.sin(t * TAU * 1.4 + ph) * 4;
+    }
+    return {lift, stretch};
+  }
+
+  function character(ctx, L, spec, W, H, frame) {
+    const rig = spec.rig?.characters?.[L.id];
+    if (!rig) throw new Error(`No rig for character ${L.id}`);
+    const C = rig;
+    const A = C.anchors;
+    const t = L.t ?? frame?.t ?? 0;
+    const ph = hashStr(L.id);
     const f = L.facing ?? 1;
-    const color = {dengdeng: p.dengdeng, agui: p.agui, dida: p.dida}[id];
-    const dark = {dengdeng: p.dengdeng_dark, agui: p.agui_dark, dida: p.dida_dark}[id];
+    const s = (L.scale ?? 1) * (spec.rig.lineup?.scale?.[L.id] ?? 1);
+    const exprId = L.expr || C.default_expression;
+    const ex = C.expressions[exprId];
+    if (!ex) throw new Error(`Unknown expression ${exprId} for ${L.id}`);
+    const exDef = C.expression_defaults?.[exprId] || {};
+    const talk = clamp(L.talk ?? 0);
+    const hop = L.hop ?? 0;
+    const breath = Math.sin(TAU * (t / 1.7 + ph));
+    const hasTicks = ex.elements.some(e => e.role === 'tick');
+    const tickTock = hasTicks ? (Math.floor(t * 2) % 2 ? 1 : -1) * 1.4 : 0;
+    const tilt = (L.tilt ?? 0) + Math.sin(TAU * (t / 2.9 + ph)) * 1.2 + tickTock + talk * Math.sin(t * TAU * 1.9) * 2;
+    const sq = (L.squash ?? 0) + breath * 0.014 + talk * 0.025 * Math.sin(t * TAU * 4.1);
+    const exprAge = L.expr_age ?? 9;
+    const pop = exprAge < 0.2 ? (1 - exprAge / 0.2) * 0.08 : 0;
+    const legs = legPose(L, t, ph);
+    if (hop > 0 && C.action?.leg_stretch) legs.stretch += Math.min(C.action.leg_stretch, hop * 0.4);
+
+    const gName = L.gesture || 'rest';
+    const gAge = L.gesture_age ?? 9;
+    const g = GESTURES[gName];
+    if (!g) throw new Error(`Unknown gesture ${gName}`);
+    const cur = handTargets(C, gName, t, gAge);
+    let hands = cur;
+    if (L.gesture_prev && L.gesture_prev !== gName && gAge < 0.28) {
+      const prev = handTargets(C, L.gesture_prev, t, 9);
+      const m = ease(clamp(gAge / 0.28));
+      hands = {
+        L: [prev.L[0] + (cur.L[0] - prev.L[0]) * m, prev.L[1] + (cur.L[1] - prev.L[1]) * m],
+        R: [prev.R[0] + (cur.R[0] - prev.R[0]) * m, prev.R[1] + (cur.R[1] - prev.R[1]) * m],
+      };
+    }
+    const len = restLen(C);
+    for (const side of ['L', 'R']) {
+      if (!g[side]) hands[side][1] += breath * 2.5;
+      hands[side][1] -= talk * len * 0.1 * Math.max(0, Math.sin(t * TAU * 2.6 + (side === 'L' ? 0 : 1.3)));
+    }
+    const front = g.front || '';
+    const propName = L.prop === undefined ? (g.prop || (gName === 'signature' ? C.signature.prop : null)) : L.prop;
+
     ctx.save();
     ctx.translate(L.x, L.y);
     ctx.scale(s, s);
-    shadowEllipse(ctx, spec, 0, 4, 90, 18);
-    ctx.translate(0, pose.bob ?? 0);
-    const dims = {dengdeng: [160, 170, 64], agui: [138, 236, 60], dida: [130, 130, 48]}[id];
-    const [bw, bh, hip] = dims;
-    legs(ctx, spec, pose.legs, -hip, bw * 0.2, dark);
-    ctx.translate(0, -hip);
-    ctx.rotate((pose.tilt ?? 0) * f * DEG);
-    const top = -bh;
-    const cx = 0;
-    const handR = pose.big_hand ? 30 : 17;
-    const shoulderY = top + bh * (id === 'agui' ? 0.5 : 0.58);
-    const flipA = a => (f > 0 ? a : 180 - a);
-    const back = () => limb(ctx, spec, -f * bw * (pose.shoulder ?? 0.42), shoulderY, flipA(pose.l[0]), pose.l[1], color, 17, pose.fists);
-    back();
-    if (id === 'dengdeng') {
-      ctx.beginPath();
-      ctx.ellipse(cx, top + bh / 2, bw / 2, bh / 2, 0, 0, TAU);
-      inked(ctx, spec, color, 7);
-      ctx.beginPath();
-      ctx.ellipse(cx + f * 6, top + bh * 0.66, bw * 0.3, bh * 0.24, 0, 0, TAU);
-      ctx.fillStyle = p.dengdeng_belly;
-      ctx.fill();
-      ctx.save();
-      ctx.translate(cx, top + 6);
-      for (const [dx, h, a] of [[-22, 34, -18], [0, 44, 0], [22, 30, 20]]) {
+    ctx.globalAlpha *= L.alpha ?? 1;
+    const half = (A.shell[2] - A.shell[0]) / 2;
+    shadowEllipse(ctx, spec, 0, 2, half * 0.85 * (1 - clamp(hop / 400) * 0.5), 14);
+    ctx.save();
+    ctx.translate(0, -A.ground - hop);
+    if (f < 0) ctx.scale(-1, 1);
+
+    for (const e of C.body) {
+      const lift = legs.lift[e.side] || 0;
+      if (e.role === 'leg') {
+        const top = e.y - legs.stretch;
+        paint(ctx, Object.assign({}, e, {y: top, h: e.h + legs.stretch - lift}));
+      } else {
         ctx.save();
-        ctx.translate(dx, 0);
-        ctx.rotate(a * DEG);
-        ctx.beginPath();
-        ctx.moveTo(-10, 6);
-        ctx.quadraticCurveTo(0, -h, 10, 6);
-        inked(ctx, spec, dark, 5);
+        ctx.translate(0, -lift);
+        paint(ctx, e);
         ctx.restore();
       }
-      ctx.restore();
-      face(ctx, spec, Object.assign({facing: f}, L), cx + f * 8, top + bh * 0.36, bw);
-    } else if (id === 'agui') {
-      rr(ctx, cx - bw / 2, top, bw, bh, 56);
-      inked(ctx, spec, color, 7);
+    }
+
+    ctx.translate(0, -legs.stretch);
+    about(ctx, [0, A.hip], () => {
+      ctx.rotate(tilt * DEG);
+      ctx.scale(1 + sq, 1 - sq);
+    });
+    const shellC = [(A.shell[0] + A.shell[2]) / 2, (A.shell[1] + A.shell[3]) / 2];
+    if (pop) about(ctx, shellC, () => ctx.scale(1 + pop, 1 + pop));
+
+    const angles = {};
+    const arm = side => {
+      angles[side] = drawArm(ctx, C, side, hands[side]);
+      const over = propName && C.props[propName] && side === 'R';
+      if (over && !C.props[propName].over_hand) drawProp(ctx, C, propName, hands.R, angles.R);
+      drawHand(ctx, C, hands[side], g.big === side, g.fists);
+      if (over && C.props[propName].over_hand) drawProp(ctx, C, propName, hands.R, angles.R);
+    };
+    for (const side of ['L', 'R']) if (!front.includes(side)) arm(side);
+
+    const hasPupil = ex.elements.some(e => e.role === 'pupil');
+    const blinkN = Math.floor((t + ph * 3) / 3.3);
+    const blinkAt = blinkN * 3.3 + 0.4 + hashN(blinkN, ph) * 2.2 - ph * 3;
+    const bt = (t - blinkAt) / 0.16;
+    const blink = L.blink ?? (bt > 0 && bt < 1 ? 1 - Math.abs(bt * 2 - 1) : 0);
+    const look = [(L.look ?? 0), (L.look_y ?? 0)];
+    const flip = L.arrow_flip ?? exDef.arrow_flip ?? 0;
+    const ticks = L.ticks;
+    const press = clamp(L.press ?? (gName === 'press' ? clamp(gAge / 0.15) * (gAge < 0.6 ? 1 : 0) : 0));
+
+    for (const e of ex.elements) {
       ctx.save();
-      rr(ctx, cx - bw / 2, top, bw, bh, 56);
-      ctx.clip();
-      ctx.fillStyle = p.ruler;
-      ctx.fillRect(cx - bw / 2, top + bh * 0.58, bw, 36);
-      ctx.strokeStyle = p.ink;
-      ctx.lineWidth = 3;
-      for (let x = cx - bw / 2 + 10; x < cx + bw / 2; x += 14) {
-        ctx.beginPath();
-        ctx.moveTo(x, top + bh * 0.58);
-        ctx.lineTo(x, top + bh * 0.58 + ((x / 14) % 2 ? 12 : 20));
-        ctx.stroke();
+      const r = e.role;
+      if (r === 'eye' || r === 'eye_hi' || r === 'pupil') {
+        const k = r === 'pupil' ? 7 : r === 'eye_hi' ? 6 : hasPupil ? 2 : 5;
+        ctx.translate(look[0] * k, look[1] * k);
+        if (blink && (e.tag === 'ellipse' || e.tag === 'circle')) {
+          about(ctx, [0, A.eyes[1]], () => ctx.scale(1, 1 - 0.92 * blink));
+        }
+        paint(ctx, e);
+      } else if (r === 'mouth') {
+        about(ctx, A.mouth, () => ctx.scale(1 - 0.1 * talk, 1 + 1.5 * talk));
+        paint(ctx, e);
+      } else if (r === 'brow') {
+        const sg = e.side === 'L' ? 1 : -1;
+        ctx.translate(0, L.brow_y ?? 0);
+        about(ctx, e.c, () => ctx.rotate(sg * (L.brow ?? 0) * DEG));
+        paint(ctx, e);
+      } else if (r === 'hair') {
+        const j = L.jitter ?? 0.25;
+        about(ctx, [0, A.shell[1] + 8], () => {
+          ctx.rotate(Math.sin(t * TAU * 6.5 + ph * 9) * j * 6 * DEG);
+          ctx.scale(1, 1 + 0.1 * j * Math.sin(t * TAU * 4.3));
+        });
+        paint(ctx, e);
+      } else if (r === 'belt') {
+        paint(ctx, e, {dashOffset: -t * 48 * (L.belt ?? 1)});
+      } else if (r === 'tick') {
+        const lit = ticks != null && e.index < Math.round(clamp(ticks) * 12);
+        paint(ctx, e, lit ? {fill: L.tick_color || '#E8685A', op: 1} : null);
+      } else if (r === 'button_cap' || r === 'button_stem') {
+        ctx.translate(0, press * (r === 'button_cap' ? 12 : 8));
+        paint(ctx, e);
+      } else if (r === 'sweat') {
+        ctx.translate(0, Math.abs(Math.sin(t * TAU * 1.3)) * 5);
+        paint(ctx, e);
+      } else if (r === 'blush') {
+        paint(ctx, e, {alpha: L.blush ?? 1});
+      } else {
+        paint(ctx, e);
       }
       ctx.restore();
-      ctx.beginPath();
-      ctx.moveTo(cx - 18, top + 4);
-      ctx.lineTo(cx, top - 34);
-      ctx.lineTo(cx + 18, top + 4);
-      inked(ctx, spec, dark, 5);
-      face(ctx, spec, Object.assign({facing: f}, L), cx + f * 6, top + bh * 0.26, bw * 0.95);
-    } else if (id === 'dida') {
-      rr(ctx, cx - 14, top - 30, 28, 22, 6);
-      inked(ctx, spec, dark, 5);
-      rr(ctx, cx - 26, top - 44, 52, 18, 8);
-      inked(ctx, spec, dark, 5);
-      ctx.beginPath();
-      ctx.arc(cx, top + bh / 2, bw / 2, 0, TAU);
-      inked(ctx, spec, color, 7);
-      ctx.beginPath();
-      ctx.arc(cx, top + bh / 2, bw * 0.39, 0, TAU);
-      inked(ctx, spec, p.white, 4);
-      ctx.strokeStyle = p.ink;
-      ctx.lineWidth = 4;
-      for (let i = 0; i < 12; i++) {
-        const a = (i / 12) * TAU;
-        const r0 = bw * (i % 3 ? 0.34 : 0.3);
-        ctx.beginPath();
-        ctx.moveTo(cx + Math.cos(a) * r0, top + bh / 2 + Math.sin(a) * r0);
-        ctx.lineTo(cx + Math.cos(a) * bw * 0.37, top + bh / 2 + Math.sin(a) * bw * 0.37);
-        ctx.stroke();
+      if (r === 'antenna' && C.arrow) {
+        ctx.save();
+        about(ctx, A.arrow, () => {
+          ctx.rotate((L.arrow_rot ?? 0) * DEG);
+          ctx.scale(1, Math.cos(Math.PI * clamp(flip)));
+        });
+        paint(ctx, C.arrow);
+        ctx.restore();
       }
-      face(ctx, spec, Object.assign({facing: f}, L), cx, top + bh * 0.46, bw * 0.78);
-      ctx.strokeStyle = p.red;
-      ctx.lineWidth = 5;
-      const ha = ((L.hand_deg ?? 300) - 90) * DEG;
-      ctx.beginPath();
-      ctx.moveTo(cx, top + bh / 2);
-      ctx.lineTo(cx + Math.cos(ha) * bw * 0.3, top + bh / 2 + Math.sin(ha) * bw * 0.3);
-      ctx.stroke();
     }
-    const front = limb(ctx, spec, f * bw * (pose.shoulder ?? 0.42), shoulderY, flipA(pose.r[0]), pose.r[1], color, handR, pose.fists);
-    if (pose.hands === 'basket') carry(ctx, spec, L.prop || 'basket_full', 0, top + bh * 1.12, 1.12);
-    if (pose.snap) {
-      ctx.strokeStyle = p.ink;
-      ctx.lineWidth = 5;
-      for (let i = 0; i < 3; i++) {
-        const a = (-60 + i * 40) * DEG;
+    if ((flip > 0.06 && flip < 0.94) || L.fx) for (const e of C.action?.fx || []) paint(ctx, e);
+
+    if (propName && !C.props[propName]) {
+      const mx = (hands.L[0] + hands.R[0]) / 2, my = Math.max(hands.L[1], hands.R[1]);
+      carry(ctx, spec, propName, mx, my + 34, 1.15);
+    }
+    for (const side of ['L', 'R']) if (front.includes(side)) arm(side);
+    if (g.snap && gAge < 0.35) {
+      const hp = hands[g.snap];
+      ctx.strokeStyle = spec.palette.ink;
+      ctx.lineWidth = 6;
+      ctx.lineCap = 'round';
+      const k = 1 + gAge * 2;
+      for (let i = 0; i < 5; i++) {
+        const a = (-150 + i * 30) * DEG;
         ctx.beginPath();
-        ctx.moveTo(front[0] + Math.cos(a) * 28, front[1] + Math.sin(a) * 28);
-        ctx.lineTo(front[0] + Math.cos(a) * 48, front[1] + Math.sin(a) * 48);
+        ctx.moveTo(hp[0] + Math.cos(a) * 26 * k, hp[1] + Math.sin(a) * 26 * k);
+        ctx.lineTo(hp[0] + Math.cos(a) * 46 * k, hp[1] + Math.sin(a) * 46 * k);
         ctx.stroke();
       }
     }
+    ctx.restore();
+
+    const top = -A.ground - hop - legs.stretch + A.shell[1];
     if (L.sign) {
       const sg = L.sign;
       const w = sg.w ?? 360, h = sg.h ?? 120;
-      const sx = sg.dx ?? 0, sy = top - h - (sg.dy ?? 20);
+      const sx = (sg.dx ?? 0), sy = top - h - (sg.dy ?? 20) + Math.sin(t * TAU * 1.6) * 6;
       ctx.save();
       ctx.translate(sx, sy + h / 2);
-      ctx.rotate((sg.rot ?? 0) * DEG);
-      ctx.strokeStyle = p.ink;
+      ctx.rotate(((sg.rot ?? 0) + Math.sin(t * TAU * 0.9) * 2) * DEG);
+      ctx.strokeStyle = spec.palette.ink;
       ctx.lineWidth = 8;
       ctx.beginPath();
       ctx.moveTo(0, h / 2);
       ctx.lineTo(0, h / 2 + 60);
       ctx.stroke();
       rr(ctx, -w / 2, -h / 2, w, h, 18);
-      inked(ctx, spec, col(spec, sg.color, p.white), 6);
-      ctx.fillStyle = col(spec, sg.text_color, p.ink);
+      inked(ctx, spec, col(spec, sg.color, spec.palette.white), 6);
+      ctx.fillStyle = col(spec, sg.text_color, spec.palette.ink);
       ctx.font = font(spec, 900, sg.size ?? 48);
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(sg.text, 0, 3);
       ctx.restore();
     }
-    marks(ctx, spec, L.marks, cx, top, bw);
+    marks(ctx, spec, L.marks, 0, top, half * 2, t);
     ctx.restore();
   }
 
@@ -768,12 +917,20 @@
     const p = spec.palette;
     const c = col(spec, L.color, p.red);
     ctx.save();
+    const prog = clamp(L.progress ?? 1);
     ctx.translate(L.x, L.y);
-    ctx.rotate((L.rot ?? -12) * DEG);
+    ctx.rotate(((L.rot ?? -12) + (1 - prog) * 18) * DEG);
+    const k = 1 + (1 - Math.min(1, prog * 1.15)) * 1.8;
+    ctx.scale(k, k);
     ctx.font = font(spec, 900, L.size ?? 72);
     const tw = ctx.measureText(L.text).width;
     const w = tw + 70, h = (L.size ?? 72) * 1.5;
-    ctx.globalAlpha = 0.95;
+    ctx.globalAlpha *= 0.95 * Math.min(1, prog * 3);
+    if (L.paper) {
+      rr(ctx, -w / 2, -h / 2, w, h, 14);
+      ctx.fillStyle = col(spec, L.paper, p.white);
+      ctx.fill();
+    }
     rr(ctx, -w / 2, -h / 2, w, h, 14);
     ctx.lineWidth = 10;
     ctx.strokeStyle = c;
@@ -917,7 +1074,7 @@
     ctx.restore();
   }
 
-  function panel(ctx, L, spec) {
+  function panel(ctx, L, spec, W, H, frame) {
     const [x, y, w, h] = L.rect;
     ctx.save();
     ctx.beginPath();
@@ -925,7 +1082,7 @@
     ctx.clip();
     ctx.translate(x, y);
     applyCamera(ctx, L.camera, w, h);
-    drawLayers(ctx, L.layers || [], spec, w, h);
+    drawLayers(ctx, L.layers || [], spec, w, h, frame);
     ctx.restore();
     if (L.title) {
       tag(ctx, Object.assign({x: x + w / 2, y: y + 70, size: 46}, L.title), spec);
@@ -948,19 +1105,207 @@
     ctx.restore();
   }
 
+  // ---------- cards, charts, timers ----------
+
+  function card(ctx, L, spec) {
+    const p = spec.palette;
+    const lines = Array.isArray(L.text) ? L.text : [L.text];
+    const size = L.size ?? 56;
+    ctx.save();
+    ctx.translate(L.x, L.y);
+    ctx.rotate((L.rot ?? 0) * DEG);
+    ctx.font = font(spec, 900, size);
+    const tw = Math.max(...lines.map(t => ctx.measureText(t).width));
+    const w = L.w ?? tw + 90;
+    const head = L.header ? size * 0.9 : 0;
+    const h = L.h ?? lines.length * size * 1.3 + 60 + head;
+    rr(ctx, -w / 2 + 10, -h / 2 + 12, w, h, 24);
+    ctx.fillStyle = p.shadow;
+    ctx.fill();
+    rr(ctx, -w / 2, -h / 2, w, h, 24);
+    inked(ctx, spec, col(spec, L.color, p.white), 6);
+    if (L.header) {
+      ctx.save();
+      rr(ctx, -w / 2, -h / 2, w, h, 24);
+      ctx.clip();
+      ctx.fillStyle = col(spec, L.header_color, p.ink);
+      ctx.fillRect(-w / 2, -h / 2, w, head + 10);
+      ctx.restore();
+      ctx.font = font(spec, 700, size * 0.5);
+      ctx.fillStyle = p.white;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(L.header, 0, -h / 2 + (head + 10) / 2);
+    }
+    ctx.font = font(spec, 900, size);
+    ctx.fillStyle = col(spec, L.text_color, p.ink);
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const y0 = -h / 2 + head + 30 + size * 0.65;
+    lines.forEach((t, i) => ctx.fillText(t, 0, y0 + i * size * 1.3));
+    ctx.restore();
+  }
+
+  function barCompare(ctx, L, spec) {
+    const p = spec.palette;
+    const prog = clamp(L.progress ?? 1);
+    const rows = L.rows || [];
+    const max = L.max ?? Math.max(...rows.map(r => r.value));
+    const lw = L.label_w ?? 300;
+    const bw = (L.w ?? 1000) - lw;
+    const rh = L.row_h ?? 84;
+    const gap = L.gap ?? 40;
+    ctx.save();
+    ctx.translate(L.x, L.y);
+    rows.forEach((r, i) => {
+      const y = i * (rh + gap);
+      ctx.font = font(spec, 900, L.label_size ?? 46);
+      ctx.fillStyle = p.ink;
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(r.label, lw - 30, y + rh / 2);
+      const len = bw * (r.value / max) * ease(prog);
+      rr(ctx, lw, y, Math.max(rh, len), rh, rh / 2);
+      inked(ctx, spec, col(spec, r.color, p.teal), 6);
+      if (r.text && prog > 0.6) {
+        ctx.globalAlpha = clamp((prog - 0.6) / 0.3);
+        ctx.font = font(spec, 700, L.value_size ?? 34);
+        ctx.fillStyle = p.white;
+        ctx.textAlign = 'right';
+        ctx.fillText(r.text, lw + Math.max(rh, len) - 26, y + rh / 2 + 2);
+        ctx.globalAlpha = 1;
+      }
+    });
+    if (L.diff && rows.length >= 2) {
+      const dp = clamp(L.diff.progress ?? 0);
+      const a = bw * (Math.min(rows[0].value, rows[1].value) / max);
+      const b = bw * (Math.max(rows[0].value, rows[1].value) / max);
+      const i = rows[0].value > rows[1].value ? 0 : 1;
+      const y = i * (rh + gap);
+      if (dp > 0) {
+        const lift = ease(dp) * (L.diff.lift ?? 0);
+        ctx.save();
+        ctx.translate(0, -lift);
+        rr(ctx, lw + a, y - 8, b - a, rh + 16, 16);
+        ctx.fillStyle = col(spec, L.diff.color, p.yellow);
+        ctx.fill();
+        ctx.lineWidth = 6;
+        ctx.strokeStyle = p.ink;
+        ctx.setLineDash([14, 10]);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+    ctx.restore();
+  }
+
+  function stopwatch(ctx, L, spec) {
+    const p = spec.palette;
+    const r = L.r ?? 120;
+    ctx.save();
+    ctx.translate(L.x, L.y);
+    ctx.rotate((L.rot ?? 0) * DEG);
+    rr(ctx, -22, -r - 46, 44, 34, 8);
+    inked(ctx, spec, col(spec, L.color, p.dida), 6);
+    ctx.beginPath();
+    ctx.arc(0, 0, r, 0, TAU);
+    inked(ctx, spec, col(spec, L.color, p.dida), 8);
+    ctx.beginPath();
+    ctx.arc(0, 0, r * 0.84, 0, TAU);
+    inked(ctx, spec, p.white, 5);
+    if (L.sweep) {
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.arc(0, 0, r * 0.8, -Math.PI / 2, -Math.PI / 2 + L.sweep * DEG);
+      ctx.closePath();
+      ctx.fillStyle = col(spec, L.sweep_color, p.yellow);
+      ctx.fill();
+    }
+    ctx.strokeStyle = p.ink;
+    for (let i = 0; i < 12; i++) {
+      const a = (i / 12) * TAU;
+      ctx.lineWidth = i % 3 ? 3 : 6;
+      ctx.beginPath();
+      ctx.moveTo(Math.cos(a) * r * 0.68, Math.sin(a) * r * 0.68);
+      ctx.lineTo(Math.cos(a) * r * 0.78, Math.sin(a) * r * 0.78);
+      ctx.stroke();
+    }
+    const ha = ((L.angle ?? 0) - 90) * DEG;
+    ctx.strokeStyle = p.red;
+    ctx.lineWidth = 8;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(Math.cos(ha) * r * 0.7, Math.sin(ha) * r * 0.7);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(0, 0, 12, 0, TAU);
+    inked(ctx, spec, p.ink, 2);
+    if (L.label) {
+      ctx.font = font(spec, 900, L.label_size ?? 44);
+      ctx.fillStyle = p.ink;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(L.label, 0, r + 50);
+    }
+    ctx.restore();
+  }
+
+  function mysteryBox(ctx, L, spec) {
+    const p = spec.palette;
+    const open = clamp(L.open ?? 0);
+    const s = L.scale ?? 1;
+    ctx.save();
+    ctx.translate(L.x, L.y);
+    ctx.scale(s, s);
+    if (open > 0) {
+      const bh = (L.bar ?? 0.5) * 220 * ease(clamp((open - 0.3) / 0.7));
+      rr(ctx, -16, -60 - bh, 32, bh + 10, 10);
+      inked(ctx, spec, col(spec, L.bar_color, p.red), 5);
+    }
+    rr(ctx, -46, -60, 92, 70, 8);
+    inked(ctx, spec, p.box, 5);
+    ctx.save();
+    ctx.translate(-50, -60);
+    ctx.rotate(-ease(clamp(open / 0.5)) * 110 * DEG);
+    rr(ctx, 0, -18, 100, 20, 6);
+    inked(ctx, spec, p.box, 5);
+    ctx.restore();
+    if (open < 0.4) {
+      ctx.fillStyle = p.ink;
+      ctx.font = font(spec, 900, 48);
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('?', 0, -24);
+    }
+    ctx.restore();
+  }
+
   const COMPONENTS = {
     fill, backdrop, lane, service_point: servicePoint, queue_line: queueLine,
-    person: (ctx, L, spec) => person(ctx, spec, L), character,
+    person: (ctx, L, spec, W, H, frame) => person(ctx, spec, L, frame), character,
     kinetic_number: kineticNumber, stamp, tag, label, arrow, tally,
     impact_lines: impactLines, dim, panel, divider,
+    card, bar_compare: barCompare, stopwatch, mystery_box: mysteryBox,
   };
 
-  function drawLayers(ctx, layers, spec, W, H) {
+  // fx_* are written by the timeline for enter/exit moves; stills may set them by hand.
+  function drawLayers(ctx, layers, spec, W, H, frame) {
     for (const L of layers) {
+      if (L.visible === false) continue;
       const fn = COMPONENTS[L.type];
       if (!fn) throw new Error(`Unknown kit component: ${L.type}`);
       ctx.save();
-      fn(ctx, L, spec, W, H);
+      if (L.fx_alpha != null) ctx.globalAlpha *= clamp(L.fx_alpha);
+      if (L.fx_scale != null || L.fx_dx || L.fx_dy || L.fx_rot) {
+        const o = L.fx_origin || [L.x ?? W / 2, L.y ?? H / 2];
+        ctx.translate(o[0] + (L.fx_dx || 0), o[1] + (L.fx_dy || 0));
+        ctx.rotate((L.fx_rot || 0) * DEG);
+        const k = L.fx_scale ?? 1;
+        ctx.scale(k, k);
+        ctx.translate(-o[0], -o[1]);
+      }
+      if (ctx.globalAlpha > 0.001) fn(ctx, L, spec, W, H, frame);
       ctx.restore();
     }
   }
@@ -976,7 +1321,7 @@
       ctx.textBaseline = 'middle';
       const tw = ctx.measureText(spec.hud.series).width;
       rr(ctx, safe.x, safe.y, tw + 40, 54, 27);
-      ctx.fillStyle = 'rgba(30,38,51,0.82)';
+      ctx.fillStyle = 'rgba(19,35,46,0.82)';
       ctx.fill();
       ctx.fillStyle = p.white;
       ctx.fillText(spec.hud.series, safe.x + 20, safe.y + 28);
@@ -993,14 +1338,28 @@
       ctx.fillStyle = 'rgba(255,255,255,0.86)';
       ctx.fill();
       ctx.lineWidth = 2;
-      ctx.strokeStyle = 'rgba(30,38,51,0.6)';
+      ctx.strokeStyle = 'rgba(19,35,46,0.6)';
       ctx.stroke();
       ctx.fillStyle = p.ink;
       ctx.fillText(spec.hud.ai_label, bx + (tw + 36) / 2, safe.y + 29);
       ctx.restore();
     }
+    if (shot.watermark) {
+      ctx.save();
+      ctx.font = font(spec, 700, 26);
+      ctx.textBaseline = 'middle';
+      ctx.textAlign = 'center';
+      const tw = ctx.measureText(shot.watermark).width;
+      rr(ctx, (W - tw) / 2 - 22, safe.y + 6, tw + 44, 44, 22);
+      ctx.fillStyle = 'rgba(232,104,90,0.92)';
+      ctx.fill();
+      ctx.fillStyle = p.white;
+      ctx.fillText(shot.watermark, W / 2, safe.y + 29);
+      ctx.restore();
+    }
     for (const chip of shot.chips || []) {
       ctx.save();
+      ctx.globalAlpha *= chip.alpha ?? 1;
       ctx.font = font(spec, 700, 28);
       ctx.textBaseline = 'middle';
       const tw = ctx.measureText(chip.text).width;
@@ -1033,6 +1392,7 @@
     if (shot.subtitle) {
       const sub = shot.subtitle;
       ctx.save();
+      ctx.globalAlpha *= clamp(sub.alpha ?? 1);
       ctx.font = font(spec, 700, 46);
       ctx.textBaseline = 'middle';
       const nameW = sub.speaker ? ctx.measureText(sub.speaker + '  ').width : 0;
@@ -1040,12 +1400,12 @@
       const maxW = W - safe.x * 2;
       if (tw + 80 > maxW) throw new Error(`Subtitle too wide for safe area in ${shot.id}`);
       const x = (W - tw) / 2;
-      const y = H - safe.y - 70;
+      const y = H - safe.y - 70 + (1 - clamp(sub.alpha ?? 1)) * 14;
       rr(ctx, x - 40, y - 42, tw + 80, 84, 22);
-      ctx.fillStyle = 'rgba(30,38,51,0.88)';
+      ctx.fillStyle = 'rgba(19,35,46,0.9)';
       ctx.fill();
       if (sub.speaker) {
-        const c = {等等: p.dengdeng, 阿规: p.agui_light, 嘀嗒: p.dida}[sub.speaker] || p.white;
+        const c = {等等: p.dengdeng, 阿规: p.agui_light, 嘀嗒: p.dida_light}[sub.speaker] || p.white;
         ctx.fillStyle = c;
         ctx.fillText(sub.speaker, x, y + 2);
       }
@@ -1055,17 +1415,90 @@
     }
   }
 
-  function renderShot(ctx, spec, shot) {
+  function drawScene(ctx, spec, shot, frame) {
     const [W, H] = spec.size;
+    const fr = frame || {t: shot.t ?? 0};
     ctx.save();
     ctx.fillStyle = spec.palette.wall;
     ctx.fillRect(0, 0, W, H);
     applyCamera(ctx, shot.camera, W, H);
-    drawLayers(ctx, shot.layers || [], spec, W, H);
+    drawLayers(ctx, shot.layers || [], spec, W, H, fr);
     ctx.restore();
-    drawLayers(ctx, shot.overlay || [], spec, W, H);
+    drawLayers(ctx, shot.overlay || [], spec, W, H, fr);
+  }
+
+  function renderShot(ctx, spec, shot, frame) {
+    const [W, H] = spec.size;
+    drawScene(ctx, spec, shot, frame);
     hud(ctx, shot, spec, W, H);
   }
 
-  root.SWKit = {renderShot, components: Object.keys(COMPONENTS)};
+  // Scene-to-scene moves. `a` and `b` are canvases holding the outgoing and incoming scene.
+  function transition(ctx, a, b, type, p, W, H, opt) {
+    const e = ease(clamp(p));
+    const s = clamp(p) * clamp(p) * (3 - 2 * clamp(p));
+    ctx.save();
+    if (type === 'whip') {
+      const dir = opt?.dir ?? -1;
+      ctx.drawImage(a, dir * W * s, 0);
+      ctx.drawImage(b, -dir * W * (1 - s), 0);
+      ctx.globalAlpha = Math.sin(Math.PI * s) * 0.5;
+      ctx.fillStyle = '#13232E';
+      const r = rng(11);
+      for (let i = 0; i < 26; i++) {
+        const y = r() * H, w = 200 + r() * 700;
+        ctx.fillRect((r() * W * 1.4 - 200) + dir * s * 300, y, w, 3 + r() * 6);
+      }
+    } else if (type === 'iris') {
+      ctx.drawImage(a, 0, 0);
+      const [cx, cy] = opt?.at || [W / 2, H / 2];
+      ctx.beginPath();
+      ctx.arc(cx, cy, Math.hypot(W, H) * s, 0, TAU);
+      ctx.clip();
+      ctx.drawImage(b, 0, 0);
+    } else if (type === 'wipe') {
+      ctx.drawImage(a, 0, 0);
+      const x = (W + 400) * s - 200;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(x + 200, 0);
+      ctx.lineTo(x - 200, H);
+      ctx.lineTo(0, H);
+      ctx.closePath();
+      ctx.save();
+      ctx.clip();
+      ctx.drawImage(b, 0, 0);
+      ctx.restore();
+      ctx.strokeStyle = '#F2A541';
+      ctx.lineWidth = 26;
+      ctx.beginPath();
+      ctx.moveTo(x + 200, 0);
+      ctx.lineTo(x - 200, H);
+      ctx.stroke();
+    } else if (type === 'push') {
+      ctx.drawImage(a, 0, -H * s);
+      ctx.drawImage(b, 0, H * (1 - s));
+    } else if (type === 'zoom') {
+      ctx.save();
+      ctx.translate(W / 2, H / 2);
+      ctx.scale(1 + s * 0.6, 1 + s * 0.6);
+      ctx.globalAlpha = 1 - s;
+      ctx.drawImage(a, -W / 2, -H / 2);
+      ctx.restore();
+      ctx.globalAlpha = s;
+      ctx.translate(W / 2, H / 2);
+      ctx.scale(0.85 + 0.15 * e, 0.85 + 0.15 * e);
+      ctx.drawImage(b, -W / 2, -H / 2);
+    } else if (type === 'flash') {
+      ctx.drawImage(p < 0.5 ? a : b, 0, 0);
+      ctx.globalAlpha = 1 - Math.abs(p * 2 - 1);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, W, H);
+    } else {
+      ctx.drawImage(b, 0, 0);
+    }
+    ctx.restore();
+  }
+
+  root.SWKit = {renderShot, drawScene, hud, transition, components: Object.keys(COMPONENTS), gestures: Object.keys(GESTURES)};
 })(typeof window !== 'undefined' ? window : globalThis);
