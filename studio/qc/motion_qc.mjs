@@ -2,12 +2,25 @@
 // Checks: text hold time, contrast, flash rate, SFX sync. Outputs: onion-skin and speed-graph SVGs.
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import {createRequire} from 'node:module';
 import {spawn} from 'node:child_process';
 
-// Minimum on-screen hold for readable text. The zh rate is provisional until calibrated on real viewers.
+const require = createRequire(import.meta.url);
+const zhPack = require('../lint/packs/zh.json');
+
+// Minimum on-screen hold for readable text.
+// zh per-char time is 1 / pace.comfortable_per_s from the language pack (single source).
+const HOLD_BASE_S = 0.5;
+const ZH_COMFORTABLE_PER_S = zhPack.pace.comfortable_per_s;
+
 export const HOLD_RULES = Object.freeze({
-  en: {perUnit: 0.3, unit: 'word', base: 0.5, provisional: false},
-  zh: {perUnit: 0.15, unit: 'char', base: 0.5, provisional: true},
+  en: Object.freeze({perUnit: 0.3, unit: 'word', base: HOLD_BASE_S}),
+  zh: Object.freeze({
+    comfortablePerS: ZH_COMFORTABLE_PER_S,
+    perUnit: +(1 / ZH_COMFORTABLE_PER_S).toFixed(2),
+    unit: 'char',
+    base: HOLD_BASE_S,
+  }),
 });
 
 export function countUnits(text, language) {
@@ -18,6 +31,7 @@ export function countUnits(text, language) {
 export function minHold(text, language = 'en') {
   const rule = HOLD_RULES[language];
   if (!rule) throw new Error(`No hold rule for language: ${language}`);
+  // perUnit is derived from pace.comfortable_per_s for zh; explicit for en.
   return +(countUnits(text, language) * rule.perUnit + rule.base).toFixed(3);
 }
 
@@ -27,7 +41,7 @@ export function checkTextHold(texts = [], language = 'en') {
     const need = minHold(t.text, language);
     return {id: t.id, hold_s: t.hold_s, need_s: need, ok: Number(t.hold_s) >= need};
   });
-  return {ok: items.every(i => i.ok), provisional: rule.provisional, rule: `${rule.perUnit}s/${rule.unit} + ${rule.base}s`, items};
+  return {ok: items.every(i => i.ok), rule: `${rule.perUnit}s/${rule.unit} + ${rule.base}s`, items};
 }
 
 function channel(c) {
@@ -188,7 +202,7 @@ export async function runMotionQc(specFile, outDir) {
 export function formatMotionQc(report) {
   const lines = [report.ok ? 'MOTION_QC_OK' : 'MOTION_QC_FAIL'];
   for (const [name, c] of Object.entries(report.checks)) {
-    const note = c.provisional ? ' (provisional threshold)' : c.advisory ? ` (advisory: ${c.frames.length} sharp speed changes)` : '';
+    const note = c.advisory ? ` (advisory: ${c.frames.length} sharp speed changes)` : '';
     lines.push(`${c.ok ? 'pass' : 'FAIL'} ${name}${note}`);
     for (const i of c.items || []) if (!i.ok) lines.push(`  - ${i.id}: ${JSON.stringify(i)}`);
   }

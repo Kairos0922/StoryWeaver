@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.10.1 — 2026-10-11
+
+Calibrate Chinese on-screen text hold from narration pace.
+
+### Changed
+
+- Chinese text-hold threshold is `0.27 s/char + 0.5 s`, derived from `pace.comfortable_per_s` (3.7) in `studio/lint/packs/zh.json` — the same source as the comfortable narration pace, calibrated against an approved episode. The provisional flag is removed.
+- `docs/motion-tokens.md`, `skills/produce-video/SKILL.md`, and motion-lab tests updated to match.
+
+
 ## 0.10.0 — 2026-10-11
 
 Render contract, motion tokens, and motion QC.
@@ -8,7 +18,7 @@ Render contract, motion tokens, and motion QC.
 
 - `docs/render-contract.md` and `node studio/cli.mjs render-contract` (CI via `npm test`): no wall clock, frame callbacks, timers, unseeded randomness, network, or CSS motion in the capture path; exact dependency versions.
 - `studio/motion/tokens.js` and `docs/motion-tokens.md`: five named easings, closed-form springs by damping ratio, no overshoot on opacity/color, exits 40–50% shorter, per-beat rounded beat grid.
-- `node studio/cli.mjs motion-qc <motion.json>`: text hold (zh provisional), contrast ≥ 4.5:1, flashes ≤ 3/s, SFX sync (+0–2 frames), onion-skin and speed-graph SVGs.
+- `node studio/cli.mjs motion-qc <motion.json>`: text hold, contrast ≥ 4.5:1, flashes ≤ 3/s, SFX sync (+0–2 frames), onion-skin and speed-graph SVGs.
 - `Banned motion` section in the brief template.
 
 ### Changed

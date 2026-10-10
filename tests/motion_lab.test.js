@@ -60,9 +60,13 @@ test('beat grid rounds per beat and does not drift', () => {
 
 test('text hold, contrast, flashes, sfx sync', () => {
   assert.equal(minHold('one two three', 'en'), 1.4);
-  const zh = checkTextHold([{id: 'a', text: '排队为什么慢', hold_s: 1.5}], 'zh');
-  assert.equal(zh.provisional, true);
+  // 6 chars × 0.27 s/char + 0.5 s = 2.12 s; rate from zh pack comfortable_per_s 3.7
+  assert.equal(minHold('排队为什么慢', 'zh'), 2.12);
+  const zh = checkTextHold([{id: 'a', text: '排队为什么慢', hold_s: 2.12}], 'zh');
+  assert.equal('provisional' in zh, false);
   assert.equal(zh.ok, true);
+  assert.equal(zh.rule, '0.27s/char + 0.5s');
+  assert.equal(checkTextHold([{id: 'a', text: '排队为什么慢', hold_s: 1.5}], 'zh').ok, false);
   assert.equal(checkContrast([{id: 'x', fg: '#777777', bg: '#888888'}]).ok, false);
   assert.equal(checkContrast([{id: 'x', fg: '#ffffff', bg: '#000000'}]).ok, true);
   const strobe = Array.from({length: 30}, (_, i) => (i % 2 ? 0.9 : 0.1));
