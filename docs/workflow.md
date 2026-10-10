@@ -3,22 +3,23 @@
 Folder state is the source of truth. Chats scroll. Files do not.
 
 ```text
-examples/<series>/epNN/     or any series folder you own
-  fact_card.md
-  brief.md                  creative brief; hash-locked when approved
-  script.md
-  lines.json
-  sim/                      optional
-  audio/                    WAV cache; not in git
-  render/                   stills.json, scenes.json
-  stills/                   four review frames
-  qc/checklist.json
-  qc/release.json           human release sign-off; agents leave it blank
-  qc/listen_pack.md         phone checklist, 30 seconds or less
-  state/                    stage done markers, duration prediction, model usage
-  handoff.json              commands for the machine that holds keys
-  post/metrics.md
-  out/                      draft and release renders; not in git
+<series-dir>/               outside this repository; optionally its own git repo
+  epNN/
+    fact_card.md
+    brief.md                creative brief; hash-locked when approved
+    script.md
+    lines.json
+    sim/                    optional
+    audio/                  WAV cache; not in git
+    render/                 stills.json, scenes.json, rig.json
+    stills/                 four review frames
+    qc/checklist.json
+    qc/release.json         human release sign-off; agents leave it blank
+    qc/listen_pack.md       phone checklist, 30 seconds or less
+    state/                  stage done markers, duration prediction, model usage
+    handoff.json            commands for the machine that holds keys
+    post/metrics.md
+    out/                    draft and release renders; not in git
 ```
 
 ## Inputs and outputs
@@ -42,6 +43,7 @@ examples/<series>/epNN/     or any series folder you own
 ## Commands
 
 ```bash
+node studio/cli.mjs init-series <dir>
 node studio/cli.mjs init-episode <series-dir> epNN
 node studio/cli.mjs checkpoint <episode-dir> brief
 node studio/cli.mjs lint-script <file>
@@ -60,7 +62,7 @@ Exit 0: pass, ready for review, or the next resume step is identified. Exit 1: i
 
 `resume` reads `state/<stage>.done.json`. It does not read the chat. If the input hash changed, that stage is open again. `git-sync --retry` rewrites the push step without repeating TTS or the render.
 
-`init-episode` refuses `ep03` and later until the previous `post/metrics.md` has a sourced number. The Invisible Rules EP01 sheet is a recorded exception (`metrics_exception: true` plus the fixed English sentence). Copying that sentence onto a new episode does nothing.
+`init-series` and `init-episode` refuse a directory inside the tool repository. `init-episode` refuses the next episode until the previous `post/metrics.md` has a sourced number. A blank sheet blocks the next topic. Do not invent a number to open it.
 
 ## Model budget
 

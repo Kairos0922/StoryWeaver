@@ -227,11 +227,3 @@ export function isAgentSigner(name) {
   return AGENT_SIGNER.test(String(name || '').trim());
 }
 
-export const METRICS_EXCEPTION_SENTENCE = 'This episode has no playback metrics to backfill. Leave blank. Do not estimate.';
-
-export function honorsMetricsException(seriesId, episodeId, briefMarkdown, metricsMarkdown) {
-  if (seriesId !== 'invisible-rules' || episodeId !== 'ep01') return false;
-  const {data} = parseFrontMatter(briefMarkdown);
-  if (data.metrics_exception !== true) return false;
-  return String(metricsMarkdown || '').includes(METRICS_EXCEPTION_SENTENCE);
-}

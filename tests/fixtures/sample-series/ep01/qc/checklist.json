@@ -1,0 +1,61 @@
+{
+  "schema": "storyweaver.qc.v1",
+  "episode": "ep01",
+  "note": "Fixture signatures so CI can pass human checkpoints. Not a production review.",
+  "items": [
+    {
+      "id": "ear_hook",
+      "status": "pass",
+      "checked_by": "Fixture Reviewer",
+      "evidence": "CI fixture only."
+    },
+    {
+      "id": "first_watch",
+      "status": "pass",
+      "checked_by": "Fixture Reviewer",
+      "evidence": "CI fixture only."
+    },
+    {
+      "id": "stills_four",
+      "status": "pass",
+      "checked_by": "Fixture Reviewer",
+      "evidence": "CI fixture only."
+    },
+    {
+      "id": "beat_clock",
+      "status": "pass",
+      "checked_by": "Fixture Reviewer",
+      "evidence": "CI fixture only."
+    },
+    {
+      "id": "no_idle",
+      "status": "pass",
+      "checked_by": "Fixture Reviewer",
+      "evidence": "CI fixture only."
+    },
+    {
+      "id": "ear_numbers",
+      "status": "pass",
+      "checked_by": "Fixture Reviewer",
+      "evidence": "CI fixture only."
+    },
+    {
+      "id": "loudnorm",
+      "status": "pass",
+      "checked_by": "Fixture Reviewer",
+      "evidence": "CI fixture only. No mix file."
+    },
+    {
+      "id": "sim_disclaimer",
+      "status": "pass",
+      "checked_by": "Fixture Reviewer",
+      "evidence": "CI fixture only."
+    },
+    {
+      "id": "ai_disclosure",
+      "status": "pass",
+      "checked_by": "Fixture Reviewer",
+      "evidence": "CI fixture only. Nothing was published."
+    }
+  ]
+}

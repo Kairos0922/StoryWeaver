@@ -1,0 +1,261 @@
+{
+  "schema": "storyweaver.scenes.v1",
+  "note": "One fixture shot. Times are line cues or seconds after the scene starts.",
+  "lead_in_s": 0.4,
+  "tail_s": 1.2,
+  "default_gap_s": 0.25,
+  "hook_lines": 3,
+  "hook_tail_s": 0.8,
+  "beat_clock": {
+    "warn_s": 2.5,
+    "fail_s": 5
+  },
+  "speakers": {
+    "pebble": "Narrator"
+  },
+  "preview_watermark": "PREVIEW · estimated timing · no voice",
+  "cover": {
+    "id": "cover",
+    "t": 1,
+    "layers": [
+      {
+        "type": "backdrop",
+        "horizon": 420
+      },
+      {
+        "type": "label",
+        "x": 960,
+        "y": 280,
+        "text": "Blue door",
+        "size": 84,
+        "color": "ink"
+      },
+      {
+        "type": "character",
+        "id": "pebble",
+        "x": 960,
+        "y": 860,
+        "scale": 1.6,
+        "expr": "calm",
+        "gesture": "rest"
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "id": "s01_door",
+      "beat": "hook",
+      "camera": {
+        "x": 960,
+        "y": 540,
+        "zoom": 1
+      },
+      "camera_key": [
+        {
+          "at": 2.4,
+          "x": 930,
+          "y": 540,
+          "zoom": 1.04,
+          "dur": 2.2,
+          "ease": "inout"
+        },
+        {
+          "at": 4.8,
+          "x": 990,
+          "y": 540,
+          "zoom": 1.04,
+          "dur": 2.2,
+          "ease": "inout"
+        },
+        {
+          "at": 7.2,
+          "x": 930,
+          "y": 540,
+          "zoom": 1.04,
+          "dur": 2.2,
+          "ease": "inout"
+        },
+        {
+          "at": 9.6,
+          "x": 990,
+          "y": 540,
+          "zoom": 1.04,
+          "dur": 2.2,
+          "ease": "inout"
+        },
+        {
+          "at": 12,
+          "x": 930,
+          "y": 540,
+          "zoom": 1.04,
+          "dur": 2.2,
+          "ease": "inout"
+        },
+        {
+          "at": 14.4,
+          "x": 990,
+          "y": 540,
+          "zoom": 1.04,
+          "dur": 2.2,
+          "ease": "inout"
+        },
+        {
+          "at": 16.8,
+          "x": 930,
+          "y": 540,
+          "zoom": 1.04,
+          "dur": 2.2,
+          "ease": "inout"
+        },
+        {
+          "at": 19.2,
+          "x": 990,
+          "y": 540,
+          "zoom": 1.04,
+          "dur": 2.2,
+          "ease": "inout"
+        },
+        {
+          "at": 21.6,
+          "x": 930,
+          "y": 540,
+          "zoom": 1.04,
+          "dur": 2.2,
+          "ease": "inout"
+        },
+        {
+          "at": 24,
+          "x": 990,
+          "y": 540,
+          "zoom": 1.04,
+          "dur": 2.2,
+          "ease": "inout"
+        },
+        {
+          "at": 26.4,
+          "x": 930,
+          "y": 540,
+          "zoom": 1.04,
+          "dur": 2.2,
+          "ease": "inout"
+        },
+        {
+          "at": 28.8,
+          "x": 990,
+          "y": 540,
+          "zoom": 1.04,
+          "dur": 2.2,
+          "ease": "inout"
+        },
+        {
+          "at": 31.2,
+          "x": 930,
+          "y": 540,
+          "zoom": 1.04,
+          "dur": 2.2,
+          "ease": "inout"
+        },
+        {
+          "at": 33.6,
+          "x": 990,
+          "y": 540,
+          "zoom": 1.04,
+          "dur": 2.2,
+          "ease": "inout"
+        },
+        {
+          "at": 36,
+          "x": 930,
+          "y": 540,
+          "zoom": 1.04,
+          "dur": 2.2,
+          "ease": "inout"
+        },
+        {
+          "at": 38.4,
+          "x": 990,
+          "y": 540,
+          "zoom": 1.04,
+          "dur": 2.2,
+          "ease": "inout"
+        },
+        {
+          "at": 40.8,
+          "x": 930,
+          "y": 540,
+          "zoom": 1.04,
+          "dur": 2.2,
+          "ease": "inout"
+        },
+        {
+          "at": 43.2,
+          "x": 990,
+          "y": 540,
+          "zoom": 1.04,
+          "dur": 2.2,
+          "ease": "inout"
+        },
+        {
+          "at": 45.6,
+          "x": 930,
+          "y": 540,
+          "zoom": 1.04,
+          "dur": 2.2,
+          "ease": "inout"
+        },
+        {
+          "at": 48,
+          "x": 990,
+          "y": 540,
+          "zoom": 1.04,
+          "dur": 2.2,
+          "ease": "inout"
+        }
+      ],
+      "layers": [
+        {
+          "type": "backdrop",
+          "horizon": 420
+        },
+        {
+          "type": "label",
+          "x": 960,
+          "y": 260,
+          "text": "Blue door",
+          "size": 72,
+          "color": "ink",
+          "enter": {
+            "at": 0.4
+          }
+        },
+        {
+          "type": "kinetic_number",
+          "x": 1400,
+          "y": 430,
+          "text": "2 min",
+          "size": 140,
+          "caption": "group average",
+          "enter": {
+            "at": "L02"
+          }
+        },
+        {
+          "type": "character",
+          "id": "pebble",
+          "x": 620,
+          "y": 900,
+          "scale": 1.5,
+          "expr": "calm",
+          "gesture": "rest",
+          "key": [
+            {
+              "at": "L02",
+              "gesture": "point",
+              "dur": 0.3
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

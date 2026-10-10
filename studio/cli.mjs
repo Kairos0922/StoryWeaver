@@ -5,6 +5,7 @@ import {lintFile, formatLint} from './lint/lint_script.mjs';
 import {formatQc, runQc} from './qc/run_qc.mjs';
 import {evaluateCheckpoint, formatCheckpoint} from './checkpoint.mjs';
 import {initEpisode} from './init_episode.mjs';
+import {initSeries} from './init_series.mjs';
 import {briefBodyHash} from './brief.mjs';
 import {checkLayout} from './layout.mjs';
 import {formatDoctor, runDoctor} from './doctor.mjs';
@@ -53,6 +54,7 @@ const help = `StoryWeaver
   node studio/cli.mjs qc <episode-dir>
   node studio/cli.mjs checkpoint <episode-dir> <brief|lines|hook-sample|stills|render|publish>
   node studio/cli.mjs hash-brief <brief.md>
+  node studio/cli.mjs init-series <dir>
   node studio/cli.mjs init-episode <series-dir> <epNN>
   node studio/cli.mjs layout
   node studio/cli.mjs doctor [--episode <dir>] [--require-render]
@@ -108,6 +110,13 @@ async function main() {
     const text = await fs.readFile(path.resolve(file), 'utf8');
     const hash = briefBodyHash(text);
     emit({hash}, hash);
+    return 0;
+  }
+  if (cmd === 'init-series') {
+    const dir = positional[0];
+    if (!dir) throw new Error('init-series needs a directory outside this repository');
+    const created = await initSeries(path.resolve(dir));
+    emit(created, `${created.seriesDir}\nNext: node studio/cli.mjs init-episode ${created.seriesDir} ep01`);
     return 0;
   }
   if (cmd === 'init-episode') {

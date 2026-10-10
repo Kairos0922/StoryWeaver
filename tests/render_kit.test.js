@@ -2,7 +2,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import vm from 'node:vm';
 import {extractSpokenLines, loadPack} from '../studio/lint/lint_script.mjs';
@@ -10,7 +9,7 @@ import {TL, buildTiming, estimateDurations, parseLoudnormJson} from '../studio/r
 import {loadStyle} from '../studio/render/kit/canvas/runtime.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
-const ep02 = path.join(root, 'examples/invisible-rules/ep02');
+const episode = path.join(root, 'tests/fixtures/sample-series/ep01');
 const readJson = async file => JSON.parse(await fs.readFile(file, 'utf8'));
 
 // Records nothing; only has to accept every call the kit makes, like a real 2D context.
@@ -44,9 +43,9 @@ function loadKit() {
   return context.SWKit;
 }
 
-async function ep02Timing(mode = 'preview') {
-  const linesDoc = await readJson(path.join(ep02, 'lines.json'));
-  const doc = await readJson(path.join(ep02, 'render/scenes.json'));
+async function episodeTiming(mode = 'preview') {
+  const linesDoc = await readJson(path.join(episode, 'lines.json'));
+  const doc = await readJson(path.join(episode, 'render/scenes.json'));
   let lines = linesDoc.lines;
   if (mode === 'hook') lines = lines.slice(0, doc.hook_lines);
   const timing = buildTiming(lines, estimateDurations(lines, 4.2, 30), doc, {mode, fps: 30});
@@ -83,11 +82,11 @@ test('beat clock flags stretches without a new visual', () => {
   assert.equal(TL.beatClock([{t: 2}, {t: 4}], 6).ok, true);
 });
 
-test('ep02 lines carry speaker, voice, emotion and a WAV name per line', async () => {
-  const doc = await readJson(path.join(ep02, 'lines.json'));
-  const scenes = await readJson(path.join(ep02, 'render/scenes.json'));
-  const {speakers} = await loadPack('zh');
-  const spoken = extractSpokenLines(await fs.readFile(path.join(ep02, 'script.md'), 'utf8'), speakers);
+test('fixture lines carry speaker, voice, emotion and a WAV name per line', async () => {
+  const doc = await readJson(path.join(episode, 'lines.json'));
+  const scenes = await readJson(path.join(episode, 'render/scenes.json'));
+  const {speakers} = await loadPack('en');
+  const spoken = extractSpokenLines(await fs.readFile(path.join(episode, 'script.md'), 'utf8'), speakers);
   const names = new Set(Object.values(scenes.speakers));
   assert.equal(doc.lines.length, spoken.length);
   doc.lines.forEach((line, i) => {
@@ -101,16 +100,16 @@ test('ep02 lines carry speaker, voice, emotion and a WAV name per line', async (
   });
 });
 
-test('ep02 timeline resolves, keeps the beat clock and only uses rig expressions', async () => {
-  const {doc, timing} = await ep02Timing();
-  const {spec} = await loadStyle(ep02);
+test('fixture timeline resolves, keeps the beat clock and only uses rig expressions', async () => {
+  const {doc, timing} = await episodeTiming();
+  const {spec} = await loadStyle(episode);
   const SWKit = loadKit();
   const components = new Set(SWKit.components);
   const gestures = new Set(SWKit.gestures);
   const resolved = TL.resolveScenes(doc, timing);
   const clock = TL.beatClock(resolved.events, timing.duration, doc.beat_clock);
   assert.ok(clock.ok, JSON.stringify(clock.gaps));
-  assert.ok(timing.duration <= 90, `preview runs ${timing.duration} s, over the 90 s cap`);
+  assert.ok(timing.duration <= 40, `preview runs ${timing.duration} s, over the brief cap`);
   const check = (L, where) => {
     assert.ok(components.has(L.type), `${where}: unknown component ${L.type}`);
     if (L.type === 'character') {
@@ -127,9 +126,9 @@ test('ep02 timeline resolves, keeps the beat clock and only uses rig expressions
   doc.cover.layers.forEach((L, i) => check(L, `cover[${i}]`));
 });
 
-test('every ep02 frame draws through the kit without errors', async () => {
-  const {doc, timing} = await ep02Timing();
-  const {spec} = await loadStyle(ep02);
+test('every fixture frame draws through the kit without errors', async () => {
+  const {doc, timing} = await episodeTiming();
+  const {spec} = await loadStyle(episode);
   const SWKit = loadKit();
   const resolved = JSON.parse(JSON.stringify(TL.resolveScenes(doc, timing)));
   const [W, H] = spec.size;
@@ -149,16 +148,11 @@ test('every ep02 frame draws through the kit without errors', async () => {
 });
 
 test('hook cut resolves with only the first lines', async () => {
-  const {doc, timing} = await ep02Timing('hook');
+  const {doc, timing} = await episodeTiming('hook');
   assert.deepEqual(timing.order, ['L01', 'L02', 'L03']);
   const resolved = TL.resolveScenes(doc, timing);
-  assert.deepEqual(resolved.scenes.map(s => s.id), ['s01_hook', 's02_pick_shortest']);
+  assert.deepEqual(resolved.scenes.map(s => s.id), ['s01_door']);
   assert.ok(TL.beatClock(resolved.events, timing.duration, doc.beat_clock).ok);
-});
-
-test('series rig is up to date with the character sheets', () => {
-  const r = spawnSync('python3', ['examples/invisible-rules/ip/build_rig.py', '--check'], {cwd: root, encoding: 'utf8'});
-  assert.equal(r.status, 0, r.stdout + r.stderr);
 });
 
 test('loudnorm parser keeps only the JSON object when ffmpeg trails text', () => {

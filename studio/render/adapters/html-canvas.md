@@ -9,7 +9,7 @@ StoryWeaver has one renderer. Playwright seeks to time `t`, captures the frame, 
 | `dom` | HTML inside an SVG `foreignObject` |
 | `three` | A Three.js object list. Rotation is `spin * t` |
 
-If a shot has no `stack`, it is one `canvas2d` layer. That is how the Invisible Rules episodes are written.
+If a shot has no `stack`, it is one `canvas2d` layer.
 
 ## Post presets
 

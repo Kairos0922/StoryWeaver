@@ -7,7 +7,7 @@ description: Produce a fact-checked animated explainer with StoryWeaver. Works f
 
 You are staffing a small studio, not improvising a clip. Value lives in the fact card, the brief, and QC. Rendering uses the shared browser pipeline. Do not write a physics engine. Do not write a fresh page per episode.
 
-Read `docs/methodology.md`, `docs/workflow.md`, `docs/adapters.md`, and `docs/lessons.md`. The films under `examples/invisible-rules/` are worked examples. EP01 is a counterexample (lint must fail). Do not “fix” it into the next episode.
+Read `docs/methodology.md`, `docs/workflow.md`, `docs/adapters.md`, and `docs/lessons.md`. The folder `tests/fixtures/sample-series/` is CI data, not a template and not a workspace. Do not copy its approval fields.
 
 This skill is tool-agnostic. Cursor, Claude Code, Codex, and other agents follow the same files.
 
@@ -19,19 +19,20 @@ This skill is tool-agnostic. Cursor, Claude Code, Codex, and other agents follow
 - Invent completion rate, watch time, drop-off, or comment counts.
 - Publish, comment, or post.
 - Sign a human checklist item or `qc/release.json`. If your name looks like an agent, QC will reject it. Put machine notes in `agent_precheck`.
-- Copy `metrics_exception` onto a new episode.
+- Invent a playback number so the next episode can be created.
 - Extend a deleted SVG compiler. It is not in this tree.
 
 ## 0. Open a folder
 
-The series directory must already exist. The video’s language is the episode’s language (`brief.md` and `lines.json`). Lint and pace use that language’s pack (`en.json` or `zh.json`).
+The series directory lives outside this repository. The video’s language is the episode’s language (`brief.md` and `lines.json`). Lint and pace use that language’s pack (`en.json` or `zh.json`).
 
 ```bash
 node studio/cli.mjs doctor
+node studio/cli.mjs init-series <dir>
 node studio/cli.mjs init-episode <series-dir> epNN
 ```
 
-`METRICS_REQUIRED` means the previous episode has no sourced playback numbers. Do not invent them. Invisible Rules EP01 is the only recorded exception, so `ep02` can exist and `ep03` cannot until EP02 has a sourced sheet.
+`METRICS_REQUIRED` means the previous episode has no sourced playback numbers. Do not invent them. A blank sheet blocks the next episode.
 
 ## 1. One thing and fact card
 

@@ -8,7 +8,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-noto-cjk fonts-noto-cjk-extra python3-fonttools python3-numpy
       - run: npm install
+      - run: npx playwright install --with-deps chromium
       - run: npm test
       - run: npm run lint-script
       - run: npm run studio-layout

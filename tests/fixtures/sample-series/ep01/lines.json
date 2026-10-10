@@ -1,0 +1,62 @@
+{
+  "schema": "storyweaver.lines.v1",
+  "series": "sample-series",
+  "episode": "ep01",
+  "language": "en",
+  "speech_rate": -12,
+  "voice_provider": "dry-run",
+  "tts_note": "Fixture lines. Preview timing is estimated. No speech API is called.",
+  "voices": {
+    "map": {
+      "Narrator": {"voice": "fixture-dry-run"}
+    }
+  },
+  "lines": [
+    {
+      "id": "L01",
+      "speaker": "Narrator",
+      "voice": "fixture-dry-run",
+      "text": "The blue door stayed shut.",
+      "beat": "hook",
+      "emotion": "calm tone",
+      "pause_after_s": 0.3,
+      "est_duration_s": 5,
+      "file": "audio/line_01.wav"
+    },
+    {
+      "id": "L02",
+      "speaker": "Narrator",
+      "voice": "fixture-dry-run",
+      "text": "On average two minutes.",
+      "beat": "break-assumption",
+      "emotion": "steady tone",
+      "claims": ["B1"],
+      "key_number": true,
+      "pause_after_s": 1,
+      "est_duration_s": 4,
+      "file": "audio/line_02.wav"
+    },
+    {
+      "id": "L03",
+      "speaker": "Narrator",
+      "voice": "fixture-dry-run",
+      "text": "One color clears first.",
+      "beat": "mechanism",
+      "emotion": "plain tone",
+      "pause_after_s": 0.3,
+      "est_duration_s": 3,
+      "file": "audio/line_03.wav"
+    },
+    {
+      "id": "L04",
+      "speaker": "Narrator",
+      "voice": "fixture-dry-run",
+      "text": "Which color do you pick?",
+      "beat": "audience-stance",
+      "emotion": "open question",
+      "pause_after_s": 0.4,
+      "est_duration_s": 3,
+      "file": "audio/line_04.wav"
+    }
+  ]
+}
