@@ -421,13 +421,13 @@
           "key": [
             {"at": "L14@0.4", "facing": 1, "dur": 0.25, "ease": "inout"},
             {"at": "L14@0.45", "gesture": "hold_sign", "expr": "happy", "brow": -12, "brow_y": -6, "look": 0.6, "dur": 0, "sign": {"text": "网传：长龙快三倍", "w": 520, "h": 120, "size": 54, "dy": 30, "rot": -3, "color": "white"}},
-            {"at": "L15+0.1", "expr": "aha", "marks": ["surprise"], "brow": 0, "brow_y": 0, "dur": 0},
+            {"at": "L15+0.1", "expr": "aha", "marks": ["sweat"], "brow": 0, "brow_y": 0, "dur": 0},
             {"at": "L16", "gesture": "rest", "sign": null, "marks": [], "expr": "daily", "dur": 0},
             {"at": "L16@0.4", "stretch": 22, "tilt": 8, "look": 1, "look_y": -0.6, "dur": 0.5, "ease": "back"}
           ]},
         {"type": "kinetic_number", "x": 1200, "y": 400, "text": "3×", "size": 300, "rot": -6, "caption": "模拟：闭眼随便挑，约 3.3 倍", "caption_size": 44,
           "enter": {"at": "L15+0.1", "dur": 0.45}, "exit": {"at": "L16", "dur": 0.3}},
-        {"type": "stamp", "x": 1330, "y": 480, "text": "闭眼挑队才成立", "size": 52, "rot": -12, "paper": "white",
+        {"type": "stamp", "x": 1290, "y": 360, "text": "闭眼挑队才成立", "size": 58, "rot": -12, "paper": "white",
           "enter": {"at": "L15@0.7", "dur": 0.3}, "exit": {"at": "L16", "dur": 0.3}},
         {"type": "bar_compare", "x": 380, "y": 250, "w": 1180, "label_w": 300, "max": 6.6,
           "rows": [{"label": "一条队", "value": 5.5, "text": "5.5 分", "color": "agui_dark"}, {"label": "挑最短", "value": 6.1, "text": "6.1 分", "color": "dengdeng_dark"}],
@@ -542,6 +542,7 @@
       "from": "L21",
       "transition": {"type": "wipe", "dur": 0.45},
       "camera": {"x": 960, "y": 540, "zoom": 1.0, "drift": 0.6},
+      "camera_key": [{"at": "L22.end+0.2", "x": 960, "y": 560, "zoom": 1.07, "dur": 2.2, "ease": "inout"}],
       "camera_hits": [{"at": "L21@0.75", "zoom": 0.06, "shake": 6, "dur": 0.45}, {"at": "L22.end+0.3", "zoom": 0.04, "dur": 0.4}],
       "footnote": "本片数字为简化模拟：3 个收银台，高峰负荷（忙碌率 90%），20 个随机种子平均。不代表任何真实门店。",
       "layers": [
@@ -549,7 +550,8 @@
           "layers": [
             {"type": "fill", "color": "tint_a", "dots": "agui_dark"},
             {"type": "label", "x": 480, "y": 330, "text": "A", "size": 400, "color": "agui", "outline": 22, "enter": {"at": 0.15},
-              "key": [{"at": "L22@0.2", "size": 470, "dur": 0.12}, {"at": "L22@0.2+0.12", "size": 400, "dur": 0.4, "ease": "back"}]},
+              "key": [{"at": "L22@0.2", "size": 470, "dur": 0.12}, {"at": "L22@0.2+0.12", "size": 400, "dur": 0.4, "ease": "back"},
+                      {"at": "L22.end+0.9", "rot": -8, "size": 440, "dur": 0.15}, {"at": "L22.end+1.05", "rot": 0, "size": 400, "dur": 0.5, "ease": "elastic"}]},
             {"type": "tag", "x": 480, "y": 590, "text": "一条长龙", "color": "agui_dark", "size": 56, "enter": {"at": 0.25}},
             {"type": "service_point", "x": 170, "y": 830, "scale": 0.42, "light": "green"},
             {"type": "queue_line", "rope": [[[300, 790], [460, 790], [620, 790], [760, 790]]],
@@ -560,7 +562,8 @@
           "layers": [
             {"type": "fill", "color": "tint_b", "dots": "dengdeng_dark"},
             {"type": "label", "x": 480, "y": 330, "text": "B", "size": 400, "color": "dengdeng", "outline": 22, "enter": {"at": 0.35},
-              "key": [{"at": "L22@0.75", "size": 470, "dur": 0.12}, {"at": "L22@0.75+0.12", "size": 400, "dur": 0.4, "ease": "back"}]},
+              "key": [{"at": "L22@0.75", "size": 470, "dur": 0.12}, {"at": "L22@0.75+0.12", "size": 400, "dur": 0.4, "ease": "back"},
+                      {"at": "L22.end+1.6", "rot": 8, "size": 440, "dur": 0.15}, {"at": "L22.end+1.75", "rot": 0, "size": 400, "dur": 0.5, "ease": "elastic"}]},
             {"type": "tag", "x": 480, "y": 590, "text": "三条短队 自己挑", "color": "dengdeng_dark", "size": 56, "enter": {"at": 0.45}},
             {"type": "service_point", "x": 200, "y": 740, "scale": 0.38, "light": "green"},
             {"type": "service_point", "x": 200, "y": 830, "scale": 0.38, "light": "green"},
@@ -570,12 +573,15 @@
             {"type": "queue_line", "points": [[300, 920], [800, 920]], "spacing": 80, "count": 4, "scale": 0.4}
           ]},
         {"type": "divider", "x": 960, "zig": 14},
+        {"type": "tag", "x": 960, "y": 195, "text": "你站哪边？", "color": "ink", "size": 50, "enter": {"at": "L22.end+0.3", "fx": "drop", "dur": 0.4}, "sfx": "pop"},
         {"type": "character", "id": "dengdeng", "x": 960, "y": 860, "scale": 0.9, "facing": 1, "look": 0, "expr": "daily", "gesture": "hold_basket",
           "key": [
             {"at": "L21@0.05", "facing": -1, "look": -1, "dur": 0.2, "ease": "inout"},
             {"at": "L21@0.4", "facing": 1, "look": 1, "dur": 0.2, "ease": "inout"},
             {"at": "L21@0.7", "gesture": "point_camera", "expr": "happy", "look": 0, "marks": ["question"], "dur": 0},
             {"at": "L22.end+0.3", "gesture": "cheer", "marks": [], "dur": 0},
+            {"at": "L22.end+1.0", "facing": -1, "look": -1, "dur": 0.2, "ease": "inout"},
+            {"at": "L22.end+1.7", "facing": 1, "look": 1, "dur": 0.2, "ease": "inout"},
             {"at": "L22.end+0.3", "hop": 22, "dur": 0.12},
             {"at": "L22.end+0.44", "hop": 0, "dur": 0.3}
           ]},
@@ -583,7 +589,9 @@
           "key": [
             {"at": "L22", "gesture": "hold_sign", "expr": "smug", "dur": 0, "sign": {"text": "评论区扣 A 或 B", "w": 470, "h": 110, "size": 52, "dx": -60, "dy": 10, "rot": 4, "color": "yellow"}, "sfx": "pop"},
             {"at": "L22", "hop": 24, "dur": 0.12},
-            {"at": "L22+0.14", "hop": 0, "dur": 0.3}
+            {"at": "L22+0.14", "hop": 0, "dur": 0.3},
+            {"at": "L22.end+1.9", "hop": 18, "dur": 0.12},
+            {"at": "L22.end+2.04", "hop": 0, "dur": 0.3}
           ]},
         {"type": "character", "id": "agui", "x": 250, "y": 1010, "scale": 0.56, "facing": 1, "expr": "serious", "gesture": "chin",
           "key": [{"at": "L22@0.2", "gesture": "point_up", "expr": "smug", "arrow_rot": -30, "dur": 0}, {"at": "L22.end+1.2", "gesture": "wave", "expr": "wink", "arrow_rot": 0, "dur": 0}]}

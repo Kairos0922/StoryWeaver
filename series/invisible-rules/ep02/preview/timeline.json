@@ -535,13 +535,17 @@
     {
       "t": 77.45,
       "sfx": "pop"
+    },
+    {
+      "t": 81.521,
+      "sfx": "pop"
     }
   ],
   "beat_clock": {
     "warn_s": 2.5,
     "fail_s": 5,
     "max_gap_s": 2.391,
-    "events": 311,
+    "events": 321,
     "gaps": [],
     "ok": true
   }
