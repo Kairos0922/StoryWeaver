@@ -7,6 +7,7 @@ House rules for any series that uses this toolkit. Palette, type files, and safe
 - One timeline can emit 16:9 and 9:16. Vertical is not a center crop of landscape. Review each safe area.
 - Captions stay off the edge and off faces and kinetic numbers.
 - Fonts are embedded. A missing-glyph check fails the release.
+- Every frame is `seek(t)` and then the shared WebGL post pass. Draft frames include the label `Not human-reviewed`.
 - No emoji.
 - Characters are not cropped at the face or the gesture.
 - A frame marked “schematic” cannot sit next to a number that sounds measured. Numbers come from the fact card.
@@ -23,4 +24,4 @@ House rules for any series that uses this toolkit. Palette, type files, and safe
 
 ## Review stills
 
-Before a full render, look at four frames: hook (~2.5s), first number, payoff, closing stance. The reviewer writes their name in `qc/checklist.json`.
+Before a full render, look at four frames: hook (~2.5s), first number, payoff, closing stance. The renderer also writes one thumbnail per shot and a contact sheet. The reviewer writes their name in `qc/checklist.json`. Release sign-off is a separate file, `qc/release.json`, written after the draft.

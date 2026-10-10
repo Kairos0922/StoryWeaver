@@ -2,15 +2,14 @@ import {spawnSync} from 'node:child_process';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import {parseLoudnormJson} from './render/browser/loudnorm.mjs';
+import {validateEpisodeScenes} from './render/browser/validate_scene.mjs';
 
 const KEYS = [
   'TTS_PROVIDER',
   'VOLC_TTS_API_KEY',
   'VOLC_TTS_APP_ID',
   'VOLC_TTS_ACCESS_TOKEN',
-  'AZURE_SPEECH_KEY',
-  'AZURE_SPEECH_REGION',
-  'ELEVENLABS_API_KEY',
   'CHROME',
   'SW_FONT_400',
   'SW_FONT_500',
@@ -18,31 +17,73 @@ const KEYS = [
   'SW_FONT_900',
 ];
 
+const WEIGHTS = {400: 'Regular', 500: 'Medium', 900: 'Black'};
+
 function which(bin) {
   const r = spawnSync('sh', ['-c', `command -v ${JSON.stringify(bin)}`], {encoding: 'utf8'});
   return r.status === 0 ? r.stdout.trim() : '';
 }
 
-function fontPresent(query) {
+function fontWeightCheck(weight) {
+  const override = process.env[`SW_FONT_${weight}`];
+  if (override) return {ok: true, detail: `override ${path.basename(override)}`};
   const fc = which('fc-match');
   if (!fc) return {ok: false, detail: 'fc-match not installed'};
-  const r = spawnSync(fc, ['-f', '%{file}', query], {encoding: 'utf8'});
-  const file = (r.stdout || '').trim();
-  return {ok: Boolean(file), detail: file ? path.basename(file) : 'not found'};
+  const style = WEIGHTS[weight];
+  const r = spawnSync(fc, ['-f', '%{family}\n%{style}\n%{file}', `Noto Sans CJK SC:style=${style}`], {encoding: 'utf8'});
+  const [family = '', got = '', file = ''] = (r.stdout || '').trim().split('\n');
+  const ok = family.includes('Noto Sans CJK') && got.includes(style) && Boolean(file);
+  return {ok, detail: ok ? `${style} ${path.basename(file)}` : `missing ${style}${got ? ` (got ${got})` : ''}`};
 }
 
-export async function runDoctor() {
+async function chromiumCheck() {
+  if (process.env.CHROME) return {ok: true, detail: 'CHROME set'};
+  try {
+    const pw = await import('playwright');
+    const exe = pw.chromium.executablePath();
+    await fs.access(exe);
+    return {ok: true, detail: 'playwright chromium'};
+  } catch {
+    const bin = which('google-chrome-stable') || which('chromium') || which('chromium-browser');
+    return {ok: Boolean(bin), detail: bin ? 'system browser' : 'missing (npx playwright install chromium, or set CHROME)'};
+  }
+}
+
+function loudnormSelfTest() {
+  const ffmpeg = which('ffmpeg');
+  if (!ffmpeg) return {ok: false, detail: 'ffmpeg missing'};
+  const r = spawnSync(ffmpeg, [
+    '-hide_banner', '-f', 'lavfi', '-i', 'sine=frequency=440:duration=0.35',
+    '-af', 'loudnorm=I=-16:TP=-1.5:LRA=11:print_format=json',
+    '-f', 'null', '-',
+  ], {encoding: 'utf8'});
+  try {
+    const parsed = parseLoudnormJson(`${r.stdout || ''}\n${r.stderr || ''}`);
+    if (parsed.input_i == null) return {ok: false, detail: 'loudnorm JSON missing input_i'};
+    return {ok: true, detail: 'parsed'};
+  } catch (error) {
+    return {ok: false, detail: error.message};
+  }
+}
+
+export async function runDoctor({episodeDir, forRender = false} = {}) {
   const checks = [];
   const nodeMajor = Number(process.versions.node.split('.')[0]);
   checks.push({id: 'node', ok: nodeMajor >= 24, detail: `node ${process.versions.node}`});
   const ffmpeg = which('ffmpeg');
-  checks.push({id: 'ffmpeg', ok: Boolean(ffmpeg), detail: ffmpeg || 'missing'});
+  checks.push({id: 'ffmpeg', ok: Boolean(ffmpeg), detail: ffmpeg ? 'present' : 'missing'});
+  const ffprobe = which('ffprobe');
+  checks.push({id: 'ffprobe', ok: Boolean(ffprobe), detail: ffprobe ? 'present' : 'missing'});
   const python = which('python3');
-  checks.push({id: 'python3', ok: Boolean(python), detail: python || 'missing'});
-  const chrome = process.env.CHROME || which('google-chrome-stable') || which('chromium') || which('chromium-browser');
-  checks.push({id: 'chrome', ok: Boolean(chrome), detail: chrome ? 'present' : 'missing (set CHROME or install Playwright Chromium)'});
-  const cjk = fontPresent('Noto Sans CJK SC');
-  checks.push({id: 'font-cjk', ok: cjk.ok || Boolean(process.env.SW_FONT_400), detail: cjk.detail});
+  checks.push({id: 'python3', ok: Boolean(python), detail: python ? 'present' : 'missing'});
+  const chrome = await chromiumCheck();
+  checks.push({id: 'chromium', ok: chrome.ok, detail: chrome.detail});
+  for (const weight of [400, 500, 900]) {
+    const font = fontWeightCheck(weight);
+    checks.push({id: `font-weight-${weight}`, ok: font.ok, detail: font.detail});
+  }
+  const loud = loudnormSelfTest();
+  checks.push({id: 'loudnorm-self-test', ok: loud.ok, detail: loud.detail});
   for (const key of KEYS) {
     checks.push({id: `env:${key}`, ok: true, detail: process.env[key] ? 'set' : 'unset'});
   }
@@ -53,21 +94,43 @@ export async function runDoctor() {
   } catch {
     playwright = false;
   }
-  checks.push({id: 'playwright', ok: playwright, detail: playwright ? 'installed' : 'optional until you render HTML Canvas'});
-  const required = checks.filter(c => ['node', 'ffmpeg', 'python3'].includes(c.id));
+  checks.push({id: 'playwright', ok: playwright, detail: playwright ? 'installed' : 'missing'});
+  if (episodeDir) {
+    const scenes = await validateEpisodeScenes(episodeDir);
+    checks.push({
+      id: 'scene-rig',
+      ok: scenes.ok,
+      detail: scenes.skipped ? 'no scene file' : (scenes.ok ? 'expressions and gestures match the rig' : scenes.issues.slice(0, 6).join('; ')),
+    });
+  }
+  const baseIds = ['node', 'ffmpeg', 'python3'];
+  const renderIds = [
+    ...baseIds,
+    'ffprobe',
+    'chromium',
+    'font-weight-400',
+    'font-weight-500',
+    'font-weight-900',
+    'loudnorm-self-test',
+    'playwright',
+  ];
+  if (episodeDir) renderIds.push('scene-rig');
+  const ok = baseIds.every(id => checks.find(check => check.id === id)?.ok);
+  const renderOk = renderIds.every(id => checks.find(check => check.id === id)?.ok);
   return {
-    ok: required.every(c => c.ok),
+    ok: forRender ? renderOk : ok,
+    render_ok: renderOk,
     host: os.hostname(),
     checks,
   };
 }
 
 export function formatDoctor(report) {
-  const lines = [report.ok ? 'DOCTOR_OK' : 'DOCTOR_BLOCKED'];
+  const lines = [report.ok ? 'DOCTOR_OK' : 'DOCTOR_BLOCKED', report.render_ok ? 'RENDER_READY' : 'RENDER_BLOCKED'];
   for (const check of report.checks) {
     lines.push(`${check.ok ? 'ok' : 'missing'}  ${check.id}  ${check.detail}`);
   }
-  lines.push('Secret values are never printed. Only present / absent.');
+  lines.push('Secret values are never printed. Only present or absent.');
   return lines.join('\n');
 }
 
@@ -76,20 +139,12 @@ export async function writeEnvExample(dest) {
 # Cloud agents without keys stop at a silent preview.
 
 TTS_PROVIDER=doubao
-# TTS_PROVIDER=azure
-# TTS_PROVIDER=elevenlabs
+# TTS_PROVIDER=dry-run
 
-# Doubao / Volcengine OpenSpeech (names vary by console)
+# Doubao / Volcengine speech synthesis
 VOLC_TTS_APP_ID=
 VOLC_TTS_ACCESS_TOKEN=
 VOLC_TTS_API_KEY=
-
-# Azure Speech
-AZURE_SPEECH_KEY=
-AZURE_SPEECH_REGION=
-
-# ElevenLabs
-ELEVENLABS_API_KEY=
 
 # Optional render overrides
 # CHROME=/usr/bin/google-chrome-stable

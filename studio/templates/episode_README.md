@@ -7,4 +7,4 @@ Draft. Until the creative brief is approved, do not run full TTS or a full rende
 3. Fill `script.md`, then run `node studio/cli.mjs lint-script script.md`.
 4. Run `node studio/cli.mjs checkpoint . brief`. The result should be `BRIEF_READY_FOR_REVIEW`.
 5. Stop. A person approves. Do not set `status: approved` yourself.
-6. After approval, make a ~12s hook sample. A person signs `ear_hook` and `first_watch` in `qc/checklist.json`.
+6. After approval, record the first three lines and run `predict-duration`. Then make a draft hook sample. A person signs `ear_hook` and `first_watch` in `qc/checklist.json`.

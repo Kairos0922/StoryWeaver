@@ -1,0 +1,42 @@
+{
+  "schema": "storyweaver.post-presets.v1",
+  "default": "explainer",
+  "presets": {
+    "neutral": {
+      "lift": [0, 0, 0],
+      "gamma": [1, 1, 1],
+      "gain": [1, 1, 1],
+      "saturation": 1,
+      "temperature": 0,
+      "bloom": 0,
+      "bloomThreshold": 1,
+      "grain": 0,
+      "vignette": 0,
+      "seed": 1
+    },
+    "explainer": {
+      "lift": [0.012, 0.008, 0.004],
+      "gamma": [0.94, 0.96, 1.02],
+      "gain": [1.05, 1.03, 0.98],
+      "saturation": 1.06,
+      "temperature": 0.012,
+      "bloom": 0.18,
+      "bloomThreshold": 0.78,
+      "grain": 0.04,
+      "vignette": 0.26,
+      "seed": 20261010
+    },
+    "night": {
+      "lift": [0.02, 0.02, 0.04],
+      "gamma": [1.04, 1.02, 0.92],
+      "gain": [0.92, 0.96, 1.06],
+      "saturation": 0.92,
+      "temperature": -0.02,
+      "bloom": 0.28,
+      "bloomThreshold": 0.7,
+      "grain": 0.055,
+      "vignette": 0.42,
+      "seed": 20261010
+    }
+  }
+}

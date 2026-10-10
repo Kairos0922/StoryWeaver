@@ -1,13 +1,35 @@
-# HTML Canvas adapter
+# Browser pipeline
 
-Status: wired. Entry points live in `studio/render/kit/canvas/README.md`.
+StoryWeaver has one renderer. Playwright seeks to time `t`, captures the frame, and ffmpeg encodes the sequence. A shot may stack layers. Every frame then runs the same WebGL post pass.
 
-Rules:
+| Layer | What it draws |
+|---|---|
+| `canvas2d` | The shared kit in `studio/render/kit/canvas/kit.js` |
+| `svg` | Static SVG. `{{t}}` is replaced with the frame time |
+| `dom` | HTML inside an SVG `foreignObject` |
+| `three` | A Three.js object list. Rotation is `spin * t` |
 
-- Drawing code lives in `studio/render/kit/canvas/kit.js`. An episode only writes parameters: stills in `render/stills.json`, the cut in `render/scenes.json`.
-- Time is a line cue (`L05`, `L05.end`, `L05@0.5`), not a hard-coded second. WAV duration drives the clock.
-- Playwright Chromium calls `window.__frame(t)`. The frame function depends on inputs and `t` only. No CSS transitions, no `setTimeout`, no `requestAnimationFrame` in render mode, no `Math.random`.
-- Fonts are subset and embedded as data URLs. A missing glyph fails the job.
-- Characters come from the series rig, not from a one-off drawing in the episode folder.
+If a shot has no `stack`, it is one `canvas2d` layer. That is how the Invisible Rules episodes are written.
 
-A second full `index.html` timeline in an episode folder means the kit was skipped.
+## Post presets
+
+`studio/render/browser/presets.json` holds `neutral`, `explainer`, and `night`. A scene sets `post_preset`. The default is `explainer` (a light grade, a little bloom, fine grain, a soft vignette).
+
+## Rules
+
+- `seek(t)` is the only clock. The same `t` draws the same pixels.
+- Grain is a hash of the preset seed, the pixel, and the frame index.
+- No `requestAnimationFrame`, no `Date.now`, no `Math.random`, no CSS animation, no timer.
+- Fonts are files. A missing glyph fails the job.
+- Draft frames carry the corner label `Not human-reviewed`. Release frames do not.
+- Shot thumbnails and a contact sheet are written before the full encode.
+
+```bash
+node studio/cli.mjs doctor --episode <episode-dir> --require-render
+node studio/cli.mjs render <episode-dir> --mode draft --cut preview --review-only
+node studio/cli.mjs render <episode-dir> --mode release --cut full
+```
+
+`--cut` is `preview` (no voice), `hook` (first lines), or `full`. A release is always a full cut, and it needs `qc/release.json` signed by a person after the draft has been seen.
+
+There is no second renderer in this tree.

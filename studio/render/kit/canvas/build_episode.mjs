@@ -18,6 +18,13 @@ import {once} from 'node:events';
 import crypto from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {collectChars, embedFonts, launchBrowser, loadStyle, openPage, pageHtml, run, tmpDir, TIMELINE_JS} from './runtime.mjs';
+import {parseLoudnormJson} from '../../browser/loudnorm.mjs';
+import {assertRenderReview, DRAFT_WATERMARK} from '../../../review.mjs';
+import {runDoctor, formatDoctor} from '../../../doctor.mjs';
+import {buildCost} from '../../../cost.mjs';
+import {writeDone} from '../../../state.mjs';
+
+export {parseLoudnormJson};
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repo = path.resolve(here, '..', '..', '..', '..');
@@ -48,6 +55,8 @@ function parseArgs(argv) {
     else if (a === '--allow-beat-gaps') out.allowBeatGaps = true;
     else if (a === '--crf') out.crf = Number(argv[++i]);
     else if (a === '--frames') out.frames = argv[++i].split(',').map(Number);
+    else if (a === '--review') out.review = argv[++i];
+    else if (a === '--review-only') out.reviewOnly = true;
     else rest.push(a);
   }
   out.episode = rest[0];
@@ -160,37 +169,21 @@ function toSrt(timing) {
   }).join('\n');
 }
 
-async function gateOk(episodeDir, stage) {
-  const {evaluateCheckpoint, formatCheckpoint} = await import(path.join(repo, 'studio', 'checkpoint.mjs'));
-  const r = await evaluateCheckpoint(episodeDir, stage);
-  return {ok: r.exitCode === 0, text: formatCheckpoint(r), code: r.code};
-}
-
 const BOOT = `
   const D = window.__data;
   const W = window.__spec.size[0], H = window.__spec.size[1];
-  const mk = () => { const c = document.createElement('canvas'); c.width = W; c.height = H; return c; };
-  const A = mk(), B = mk();
-  const draw = t => {
+  const presetName = D.postPreset || 'explainer';
+  const frameOpts = () => ({fps: D.fps, review: D.review, presetName, presets: window.__postPresets});
+  window.__frame = async t => {
     const f = SWTimeline.shotAt(D.resolved, D.timing, t, D.doc);
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    if (f.transition) {
-      SWKit.drawScene(A.getContext('2d'), window.__spec, f.prev, {t});
-      SWKit.drawScene(B.getContext('2d'), window.__spec, f.shot, {t});
-      SWKit.transition(ctx, A, B, f.transition.type, f.transition.p, W, H, f.transition);
-    } else {
-      SWKit.drawScene(ctx, window.__spec, f.shot, {t});
-    }
-    SWKit.hud(ctx, f.shot, window.__spec, W, H);
-    return f;
-  };
-  window.__frame = t => { draw(t); return png(); };
-  window.__cover = () => {
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    SWKit.renderShot(ctx, window.__spec, D.doc.cover, {t: D.doc.cover.t ?? 1});
+    await SWCompose.paintFrame(ctx, window.__spec, f, Object.assign({t}, frameOpts()));
     return png();
   };
-  window.__sheet = (times, cols, tw) => {
+  window.__cover = async () => {
+    await SWCompose.paintStill(ctx, window.__spec, D.doc.cover, Object.assign({t: D.doc.cover.t ?? 1}, frameOpts(), {presetName: D.doc.cover.post || presetName}));
+    return png();
+  };
+  window.__sheet = async (times, cols, tw) => {
     const th = Math.round(tw * H / W), pad = 16, lab = 34;
     const rows = Math.ceil(times.length / cols);
     const S = document.createElement('canvas');
@@ -199,14 +192,16 @@ const BOOT = `
     s.fillStyle = '#13232E'; s.fillRect(0, 0, S.width, S.height);
     s.fillStyle = '#F6F1E7'; s.font = '700 34px "SW CJK"'; s.textBaseline = 'middle';
     s.fillText(D.sheetTitle, pad, 38);
-    times.forEach((t, i) => {
-      const f = draw(t);
+    for (let i = 0; i < times.length; i++) {
+      const t = times[i];
+      const f = SWTimeline.shotAt(D.resolved, D.timing, t, D.doc);
+      await window.__frame(t);
       const x = pad + (i % cols) * (tw + pad), y = 70 + pad + Math.floor(i / cols) * (th + lab + pad);
       s.drawImage(document.getElementById('c'), x, y + lab, tw, th);
       s.fillStyle = '#F6F1E7'; s.font = '700 24px "SW CJK"';
       const sub = f.shot.subtitle ? ' ' + f.shot.subtitle.speaker : '';
       s.fillText(t.toFixed(1) + 's · ' + f.shot.id + sub, x, y + lab / 2);
-    });
+    }
     return S.toDataURL('image/png').slice(22);
   };
 `;
@@ -240,31 +235,6 @@ async function renderFrames({browserPages, frames, fps, outFile, tmp, crf, onPro
   run('ffmpeg', ['-y', '-v', 'error', '-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', outFile]);
 }
 
-// ffmpeg loudnorm print_format=json can append progress / trailer text after the object.
-export function parseLoudnormJson(text) {
-  const start = text.indexOf('{');
-  if (start < 0) throw new Error('loudnorm: no JSON object in ffmpeg output');
-  let depth = 0;
-  let inString = false;
-  let escape = false;
-  for (let i = start; i < text.length; i++) {
-    const ch = text[i];
-    if (inString) {
-      if (escape) escape = false;
-      else if (ch === '\\') escape = true;
-      else if (ch === '"') inString = false;
-      continue;
-    }
-    if (ch === '"') inString = true;
-    else if (ch === '{') depth++;
-    else if (ch === '}') {
-      depth--;
-      if (depth === 0) return JSON.parse(text.slice(start, i + 1));
-    }
-  }
-  throw new Error('loudnorm: unclosed JSON object in ffmpeg output');
-}
-
 function loudnorm(input, output, target) {
   const pass1 = run('ffmpeg', ['-hide_banner', '-i', input, '-af', `loudnorm=I=${target.I}:TP=${target.TP}:LRA=${target.LRA}:print_format=json`, '-f', 'null', '-']);
   const m = parseLoudnormJson(pass1.stderr);
@@ -292,17 +262,30 @@ export async function buildEpisode(episodeDir, opts) {
   const t0 = Date.now();
   const log = msg => console.log(`[${((Date.now() - t0) / 1000).toFixed(1)}s] ${msg}`);
   const rel = f => path.relative(repo, f);
-  if (!['preview', 'hook', 'full'].includes(opts.mode)) throw new Error(`--mode must be preview, hook or full (got ${opts.mode})`);
+  if (!['preview', 'hook', 'full'].includes(opts.mode)) throw new Error(`--cut must be preview, hook or full (got ${opts.mode})`);
+  const reviewMode = opts.review || 'draft';
+  opts.fps = opts.fps || 30;
+  opts.rate = opts.rate || 4.2;
 
-  const stage = opts.mode === 'full' ? 'render' : opts.mode === 'hook' ? 'hook-sample' : 'lines';
-  const gate = await gateOk(episodeDir, stage);
-  if (!gate.ok) {
-    const hint = opts.mode === 'full'
-      ? '\nFull render waits for the human checks above. Fill status/evidence/checked_by in qc/checklist.json after listening to the hook and reviewing stills + contact sheet.'
-      : '';
-    throw Object.assign(new Error(`gate ${stage} is not open:\n${gate.text}${hint}`), {exit: 3});
+  const doctor = await runDoctor({episodeDir, forRender: true});
+  if (!doctor.render_ok) {
+    throw Object.assign(new Error(`doctor blocked the render\n${formatDoctor(doctor)}`), {code: 'DOCTOR_BLOCKED', exit: 2});
   }
-  log(`gate ${stage}: ${gate.code}`);
+  log('doctor: render preflight passed');
+
+  const review = await assertRenderReview(episodeDir, {review: reviewMode, cut: opts.mode});
+  log(`review ${review.review}: ${review.metadata}`);
+
+  if (opts.mode === 'full') {
+    const predPath = path.join(episodeDir, 'state', 'duration_prediction.json');
+    if (!(await exists(predPath))) {
+      throw Object.assign(new Error('Full render needs predict-duration from the first 3 recorded hook lines.'), {code: 'PREDICT_NEEDS_HOOK', exit: 3});
+    }
+    const prediction = JSON.parse(await fs.readFile(predPath, 'utf8'));
+    if (prediction.over) {
+      throw Object.assign(new Error(`Predicted duration ${prediction.duration_s}s exceeds the brief limit ${prediction.limit_s}s. Revise the script before a full render.`), {code: 'PREDICT_OVER_LIMIT', exit: 3});
+    }
+  }
 
   const linesDoc = JSON.parse(await fs.readFile(path.join(episodeDir, 'lines.json'), 'utf8'));
   const doc = JSON.parse(await fs.readFile(path.join(episodeDir, 'render', 'scenes.json'), 'utf8'));
@@ -317,7 +300,7 @@ export async function buildEpisode(episodeDir, opts) {
   if (opts.until) timing.duration = Math.min(timing.duration, opts.until);
   const resolved = JSON.parse(JSON.stringify(TL.resolveScenes(doc, timing), (k, v) => (v === Infinity ? 1e9 : v)));
   const clock = TL.beatClock(resolved.events, timing.duration, doc.beat_clock);
-  const outDir = path.resolve(opts.out || path.join(episodeDir, 'out', opts.mode));
+  const outDir = path.resolve(opts.out || path.join(episodeDir, 'out', review.review, opts.mode));
   await fs.mkdir(outDir, {recursive: true});
   const plainTiming = Object.assign({}, timing, {lines: Object.fromEntries(Object.entries(timing.lines).map(([k, v]) => [k, Object.assign({}, v, {env: undefined})]))});
   await fs.writeFile(path.join(outDir, 'timeline.json'), JSON.stringify({timing: plainTiming, scenes: resolved.scenes.map(s => ({id: s.id, start: +s.start.toFixed(3), end: +s.end.toFixed(3)})), sfx: resolved.sfx, beat_clock: clock}, null, 2));
@@ -327,13 +310,20 @@ export async function buildEpisode(episodeDir, opts) {
   if (!clock.ok && !opts.allowBeatGaps) throw Object.assign(new Error('beat clock failed: a stretch longer than fail_s has no new visual'), {exit: 5});
 
   const tmp = await tmpDir('sw-episode-');
-  const chars = collectChars(doc, linesDoc.lines.map(l => [l.text, l.speaker]), spec.hud, timing.watermark || '', '0123456789.s· ');
+  const chars = collectChars(doc, linesDoc.lines.map(l => [l.text, l.speaker]), spec.hud, timing.watermark || '', DRAFT_WATERMARK, '0123456789.s· ');
   const {css, report: fontReport} = await embedFonts(chars, path.join(tmp, 'fonts'));
   log(`fonts embedded: ${fontReport.fonts.map(f => `${f.weight}=${f.glyphs} glyphs`).join(', ')}; ${fontReport.chars} chars covered`);
 
-  const data = {doc, resolved, timing, sheetTitle: `${spec.hud.series} · ${opts.mode} · ${timing.duration.toFixed(1)} s · one frame / 2.5s`};
-  const html = await pageHtml({spec, css, data, boot: BOOT});
   const fps = opts.fps;
+  const includeThree = JSON.stringify(doc).includes('"kind":"three"');
+  const data = {
+    doc, resolved, timing,
+    review: review.review,
+    fps,
+    postPreset: doc.post_preset || 'explainer',
+    sheetTitle: `${spec.hud.series} · ${review.review} ${opts.mode} · ${timing.duration.toFixed(1)} s · one frame / 2.5s`,
+  };
+  const html = await pageHtml({spec, css, data, boot: BOOT, includeThree});
   const frames = Math.round(timing.duration * fps);
   const workers = Math.max(1, Math.min(opts.workers || Math.max(1, (await import('node:os')).cpus().length), 8));
   const browsers = [];
@@ -342,8 +332,19 @@ export async function buildEpisode(episodeDir, opts) {
     for (let i = 0; i < (opts.noVideo ? 1 : workers); i++) {
       const b = await launchBrowser();
       browsers.push(b);
-      pages.push(await openPage(b, html, spec));
+      pages.push(await openPage(b, html, spec, {includeThree}));
     }
+    const thumbDir = path.join(outDir, 'thumbs');
+    await fs.mkdir(thumbDir, {recursive: true});
+    const thumbFiles = [];
+    for (const scene of resolved.scenes) {
+      const t = Math.min(scene.end - 0.04, Math.max(scene.start, scene.start + 0.35));
+      const b64 = await pages[0].evaluate(tt => window.__frame(tt), Math.max(0, t));
+      const thumbFile = path.join(thumbDir, `${scene.id}.png`);
+      await fs.writeFile(thumbFile, Buffer.from(b64, 'base64'));
+      thumbFiles.push(thumbFile);
+    }
+    log(`shot thumbnails: ${thumbFiles.length}`);
     const sheetTimes = [];
     for (let t = 0; t < timing.duration - 0.05; t += 2.5) sheetTimes.push(+t.toFixed(2));
     const sheet = await pages[0].evaluate(([ts]) => window.__sheet(ts, 6, 440), [sheetTimes]);
@@ -353,6 +354,45 @@ export async function buildEpisode(episodeDir, opts) {
     const coverFile = path.join(outDir, 'cover.png');
     await fs.writeFile(coverFile, Buffer.from(cover, 'base64'));
     log(`cover + contact sheet (${sheetTimes.length} frames) written`);
+    const cost = await buildCost(episodeDir);
+    const reviewMeta = {
+      mode: review.review,
+      metadata: review.metadata,
+      watermark: review.watermark,
+      signed_by: review.signed_by || null,
+    };
+    async function writeReport(extra) {
+      const report = {
+        schema: 'storyweaver.render_report.v1',
+        episode: rel(episodeDir),
+        pipeline: 'browser-playwright-ffmpeg',
+        mode: opts.mode,
+        review: reviewMeta,
+        post_preset: data.postPreset,
+        created_by: 'studio/render/browser',
+        gate: {stage: review.stage, code: review.gate},
+        durations: Object.fromEntries(timing.order.map(id => [id, {start: timing.lines[id].start, end: timing.lines[id].end, seconds: durations[id].duration, source: durations[id].source, probe: durations[id].probe}])),
+        duration_s: timing.duration, fps, frames, size: spec.size,
+        beat_clock: clock,
+        fonts: fontReport.fonts.map(f => ({weight: f.weight, source: f.source, source_index: f.source_index, source_sha256: f.source_sha256, subset_sha256: f.sha256, glyphs: f.glyphs})),
+        glyph_coverage: {chars: fontReport.chars, missing: fontReport.missing},
+        cost,
+        ai_label: spec.hud.ai_label,
+        contact_sheet: rel(sheetFile),
+        cover: rel(coverFile),
+        thumbs: thumbFiles.map(file => rel(file)),
+        elapsed_s: +((Date.now() - t0) / 1000).toFixed(1),
+        ...extra,
+      };
+      const reportFile = path.join(outDir, 'render_report.json');
+      await fs.writeFile(reportFile, JSON.stringify(report, null, 2));
+      await writeDone(episodeDir, review.review === 'release' ? 'render-release' : 'render-draft', {
+        inputs: ['render/scenes.json', 'lines.json', 'brief.md'].map(file => path.join(episodeDir, file)),
+        outputs: [reportFile, sheetFile, ...thumbFiles],
+        extra: {review: review.review, cut: opts.mode},
+      });
+      return {report, reportFile};
+    }
     if (opts.frames) {
       const dir = path.join(outDir, 'frames');
       await fs.mkdir(dir, {recursive: true});
@@ -362,7 +402,11 @@ export async function buildEpisode(episodeDir, opts) {
       }
       log(`${opts.frames.length} review frames in ${rel(dir)}`);
     }
-    if (opts.noVideo) return {outDir};
+    if (opts.noVideo || opts.reviewOnly) {
+      const {report} = await writeReport({output: null, audio: null, note: opts.reviewOnly ? 'review sheets only' : 'video skipped'});
+      log(`review sheets written (${rel(outDir)})`);
+      return {outDir, report};
+    }
 
     const videoOnly = path.join(tmp, 'video.mp4');
     await renderFrames({browserPages: pages, frames, fps, outFile: videoOnly, tmp, crf: opts.crf ?? 18,
@@ -397,34 +441,26 @@ export async function buildEpisode(episodeDir, opts) {
     }
     log(`audio mixed: ${loud.measured.integrated_lufs} LUFS integrated${loud.normalized ? ` (target ${target.I})` : ' (preview, not normalised)'}`);
 
-    const name = `${path.basename(path.dirname(episodeDir))}_${path.basename(episodeDir)}_${opts.mode}.mp4`;
+    const name = `${path.basename(path.dirname(episodeDir))}_${path.basename(episodeDir)}_${review.review}_${opts.mode}.mp4`;
     const final = path.join(outDir, name);
     const srt = path.join(outDir, 'subtitles.srt');
+    const captionLang = linesDoc.language === 'en' ? 'eng' : linesDoc.language === 'zh' ? 'chi' : 'und';
+    const comment = review.review === 'draft' ? DRAFT_WATERMARK : (spec.hud.ai_label || 'AI generated');
     run('ffmpeg', ['-y', '-v', 'error', '-i', videoOnly, '-i', mixFile, '-i', srt,
       '-map', '0:v', '-map', '1:a', '-map', '2:s', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-ar', '48000',
-      '-c:s', 'mov_text', '-metadata:s:s:0', 'language=chi', '-metadata', `comment=${spec.hud.ai_label}`,
+      '-c:s', 'mov_text', '-metadata:s:s:0', `language=${captionLang}`,
+      '-metadata', `comment=${comment}`,
+      '-metadata', `review_status=${review.metadata}`,
       '-movflags', '+faststart', '-t', timing.duration.toFixed(3), final]);
     const probe = ffprobe(final);
     const got = Number(probe.format?.duration);
     if (!(Math.abs(got - timing.duration) <= 0.1)) throw new Error(`muxed duration ${got} s does not match timeline ${timing.duration} s`);
     const buf = await fs.readFile(final);
-    const report = {
-      schema: 'storyweaver.render_report.v1',
-      episode: rel(episodeDir), mode: opts.mode, created_by: 'studio/render/kit/canvas/build_episode.mjs',
-      gate: {stage, code: gate.code},
-      durations: Object.fromEntries(timing.order.map(id => [id, {start: timing.lines[id].start, end: timing.lines[id].end, seconds: durations[id].duration, source: durations[id].source, probe: durations[id].probe}])),
-      duration_s: timing.duration, fps, frames, size: spec.size,
-      beat_clock: clock,
-      fonts: fontReport.fonts.map(f => ({weight: f.weight, source: f.source, source_index: f.source_index, source_sha256: f.source_sha256, subset_sha256: f.sha256, glyphs: f.glyphs})),
-      glyph_coverage: {chars: fontReport.chars, missing: fontReport.missing},
+    const {report} = await writeReport({
       audio: {mix: mixStats, loudness: loud},
-      subtitles: {burned_in: true, sidecar: rel(srt), soft_track: 'mov_text'},
-      ai_label: spec.hud.ai_label,
+      subtitles: {burned_in: true, sidecar: rel(srt), soft_track: 'mov_text', language: captionLang},
       output: {file: rel(final), bytes: buf.length, sha256: sha256(buf), probe},
-      contact_sheet: rel(sheetFile), cover: rel(coverFile),
-      elapsed_s: +((Date.now() - t0) / 1000).toFixed(1),
-    };
-    await fs.writeFile(path.join(outDir, 'render_report.json'), JSON.stringify(report, null, 2));
+    });
     log(`done: ${rel(final)} (${(buf.length / 1e6).toFixed(1)} MB)`);
     return {outDir, final, report};
   } finally {
@@ -436,7 +472,7 @@ export async function buildEpisode(episodeDir, opts) {
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const opts = parseArgs(process.argv.slice(2));
   if (!opts.episode) {
-    console.error('usage: node studio/render/kit/canvas/build_episode.mjs <episode-dir> --mode preview|hook|full [--rate 4.2] [--workers N] [--audio-dir DIR] [--no-video] [--frames t1,t2]');
+    console.error('usage: node studio/render/kit/canvas/build_episode.mjs <episode-dir> --mode preview|hook|full --review draft|release [--review-only] [--no-video] [--frames t1,t2]');
     process.exit(1);
   }
   buildEpisode(path.resolve(opts.episode), opts).catch(err => {

@@ -17,6 +17,8 @@ A blank sheet is valid. A blank sheet blocks the next topic. Do not invent a num
 - Rework: creative-brief revisions:
 - Rework: TTS characters or words:
 - Rework: full re-renders:
+- Episode TTS cost (CNY, copy from render_report.json cost.tts_cny; leave blank if the report is missing):
+- TTS rework rate (copy from render_report.json cost.rerecord_ratio; leave blank if the report is missing):
 - Decision: hook types to keep:
 - Decision: hook types to drop:
 - Data source (dashboard URL or export filename; blank if none):

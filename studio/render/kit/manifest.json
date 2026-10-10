@@ -1,7 +1,7 @@
 {
   "schema": "storyweaver.render-kit.v1",
-  "status": "html-canvas-wired",
-  "note": "Components are the shared vocabulary for adapters. html-canvas is wired end to end (stills, preview, hook, full) through studio/render/kit/canvas; other adapters remain contract-only.",
+  "status": "browser-pipeline",
+  "note": "One browser pipeline. Shots stack Canvas 2D, SVG/DOM, and Three.js, then a WebGL post pass. Playwright captures seek(t) frames and ffmpeg encodes them.",
   "beat_clock_s": 2.5,
   "max_static_s": 5,
   "hook_sample_s": 12,
@@ -27,23 +27,17 @@
       "purpose": "Tips are on-screen cards. The voice does not read first, second, third."
     }
   ],
-  "adapters": [
-    "manim",
-    "html-canvas",
-    "remotion",
-    "hyperframes"
-  ],
+  "pipeline": ["browser"],
+  "layers": ["canvas2d", "svg", "dom", "three"],
   "implementations": [
     {
-      "id": "html-canvas",
-      "path": "studio/render/kit/canvas/kit.js",
+      "id": "browser",
+      "path": "studio/render/browser/pipeline.mjs",
       "timeline": "studio/render/kit/canvas/timeline.js",
-      "runners": [
-        "studio/render/kit/canvas/render_stills.mjs",
-        "studio/render/kit/canvas/build_episode.mjs"
-      ],
+      "canvas": "studio/render/kit/canvas/kit.js",
+      "post": "studio/render/browser/post.js",
       "status": "video",
-      "note": "Stills from <episode>/render/stills.json; episodes from <episode>/render/scenes.json timed by per-line WAV durations. Characters come from the series rig. Audio: self-synthesised BGM and SFX, voice levelled, loudnorm -16 LUFS. Fonts subset and embedded.",
+      "note": "Playwright frame capture and ffmpeg. Draft renders carry the watermark Not human-reviewed. Release renders require a human sign-off.",
       "covers": [
         "kinetic_number",
         "bar_compare",

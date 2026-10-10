@@ -1,6 +1,6 @@
 {
   "name": "storyweaver",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "type": "module",
   "description": "An AI-assisted toolkit and methodology for producing fact-checked animated explainer videos, from research and scripting to voiceover, rendering, and QC.",
@@ -16,5 +16,8 @@
   },
   "devDependencies": {
     "playwright": "^1.64.0"
+  },
+  "dependencies": {
+    "three": "^0.170.0"
   }
 }

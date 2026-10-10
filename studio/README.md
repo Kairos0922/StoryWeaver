@@ -9,9 +9,10 @@ studio/
   lint/packs/             per-language AI-flavor and pace rules
   qc/                     checklist and automatic items
   contracts/              picture and voice rules
-  tts/                    provider interface (no secrets)
-  render/kit/             shared components, not a one-off page
-  render/adapters/        HTML Canvas, Manim, Remotion, HyperFrames
+  tts/                    provider interface (dry-run, Doubao)
+  render/browser/         the only pipeline: layers, post pass, Playwright, ffmpeg
+  render/kit/             shared Canvas components
+  render/adapters/        pipeline contract
 ```
 
 Episode files live in `examples/<series>/epNN/` or any series folder you create. Do not put episode copy inside `studio/`.

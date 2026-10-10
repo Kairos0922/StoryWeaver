@@ -17,10 +17,17 @@ export async function renderStills(episodeDir, {only} = {}) {
     spec,
     css,
     data: {shots},
-    boot: `window.__still = i => { const shot = window.__data.shots[i];
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      SWKit.renderShot(ctx, window.__spec, shot, {t: shot.t ?? 0});
-      return png(); };`,
+    boot: `window.__still = async i => {
+      const shot = window.__data.shots[i];
+      await SWCompose.paintStill(ctx, window.__spec, shot, {
+        t: shot.t ?? 0,
+        fps: 30,
+        review: 'draft',
+        presetName: shot.post || 'explainer',
+        presets: window.__postPresets,
+      });
+      return png();
+    };`,
   });
   const browser = await launchBrowser();
   const written = [];

@@ -24,7 +24,9 @@ These are observations from production files and reviewer notes. They are not pu
 | Picture clock fixed, voice too fast | Separate caps. Chinese 4.0 characters/s; English 2.8 words/s. |
 | Agent signed a human item | `checked_by` rejects agent-like names. |
 | ASR “pass” on a dry line, fail in the mix | Ear on the mixed number lines. ASR is assistive. |
-| Cloud agent had no TTS key | Preview without voice; TTS on the machine that holds keys. |
+| Cloud agent had no TTS key | Write `handoff.json`. Draft preview without voice. TTS on the machine that holds keys. |
+| Duration known only after a full record | Record the first three hook lines and run `predict-duration` before the rest. |
+| Agent filled a render sign-off to ship a file | Draft renders are allowed. Release needs `qc/release.json` from a person. |
 | “Speak fast” in emotion cues | Warning. Urgency is tone. |
 
 ## Stop doing

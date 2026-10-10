@@ -14,6 +14,7 @@ const COPIES = [
   ['post/metrics.md', 'templates/metrics.md'],
   ['sim/README.md', 'templates/sim_README.md'],
   ['qc/checklist.json', 'qc/checklist.json'],
+  ['qc/release.json', 'templates/release.json'],
 ];
 
 function fill(template, vars) {
