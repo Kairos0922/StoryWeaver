@@ -1,0 +1,46 @@
+{
+  "schema": "storyweaver.rig.v1",
+  "series": "sample-series",
+  "note": "Placeholder shapes for the test fixture. Not a production character.",
+  "lineup": {
+    "scale": {
+      "pebble": 1
+    }
+  },
+  "characters": {
+    "pebble": {
+      "name": "Pebble",
+      "default_expression": "calm",
+      "anchors": {
+        "top": -80,
+        "ground": 40,
+        "hip": 10,
+        "shell": [-40, -70, 40, 20],
+        "eyes": [0, -40],
+        "mouth": [0, -18]
+      },
+      "arms": {
+        "L": {"shoulder": [-28, -8], "end": [-44, 16]},
+        "R": {"shoulder": [28, -8], "end": [44, 16]}
+      },
+      "arm_style": {
+        "stroke": "#13232E",
+        "sw": 8,
+        "hand": {"r": 8, "fill": "#F6C945", "stroke": "#13232E", "sw": 3}
+      },
+      "body": [
+        {"tag": "circle", "cx": 0, "cy": -24, "r": 36, "fill": "#F2A541", "stroke": "#13232E", "sw": 6, "role": "torso"}
+      ],
+      "expressions": {
+        "calm": {
+          "elements": [
+            {"tag": "circle", "cx": -12, "cy": -36, "r": 5, "fill": "#13232E", "role": "eye"},
+            {"tag": "circle", "cx": 12, "cy": -36, "r": 5, "fill": "#13232E", "role": "eye"},
+            {"tag": "ellipse", "cx": 0, "cy": -16, "rx": 8, "ry": 4, "fill": "#8B2E3A", "role": "mouth"}
+          ]
+        }
+      },
+      "props": {}
+    }
+  }
+}

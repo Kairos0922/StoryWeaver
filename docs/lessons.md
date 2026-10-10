@@ -1,8 +1,6 @@
 # Lessons (generalized)
 
-Source episodes: Invisible Rules EP01 (elevator) and EP02 (one line vs three lines). The Chinese spoken scripts stay in `examples/`. The rules below are series-agnostic.
-
-These are observations from production files and reviewer notes. They are not published watch-time claims. Where a number is missing, the field stays blank.
+These are lessons learned from production reviews. They are not tied to one series. Spoken scripts stay in each series workspace, outside this repository. They are not published watch-time claims. Where a number is missing, the field stays blank.
 
 ## What held
 

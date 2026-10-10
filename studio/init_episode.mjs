@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {previousMetricsBlock, fileExists} from './qc/checks.mjs';
+import {isInsideToolRepo} from './init_series.mjs';
 
 const studioRoot = fileURLToPath(new URL('.', import.meta.url));
 
@@ -25,8 +26,13 @@ export async function initEpisode(seriesDir, episodeId) {
   if (!/^ep\d{2}$/.test(episodeId)) {
     throw Object.assign(new Error('Episode id must look like ep02'), {code: 'BAD_EPISODE'});
   }
+  if (isInsideToolRepo(seriesDir)) {
+    throw Object.assign(new Error(
+      'A series workspace must live outside the StoryWeaver repository. Pick a directory of its own.',
+    ), {code: 'WORKSPACE_INSIDE_REPO'});
+  }
   if (!(await fileExists(seriesDir))) {
-    throw Object.assign(new Error(`Series directory does not exist: ${seriesDir}`), {code: 'BAD_SERIES'});
+    throw Object.assign(new Error(`Series directory does not exist: ${seriesDir}. Run init-series first.`), {code: 'BAD_SERIES'});
   }
   const previous = await previousMetricsBlock(seriesDir, episodeId);
   if (previous.code === 'METRICS_REQUIRED') {

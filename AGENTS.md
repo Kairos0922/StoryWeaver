@@ -8,7 +8,7 @@ StoryWeaver is a production toolkit for fact-checked animated explainer videos o
 
 1. Read `skills/produce-video/SKILL.md`.
 2. Run `node studio/cli.mjs doctor` and `node studio/cli.mjs layout`.
-3. Work episode files in a series folder. The Invisible Rules films under `examples/invisible-rules/` are worked examples, not the product.
+3. Create a series directory outside this repository: `node studio/cli.mjs init-series <dir>`, then `init-episode <series-dir> epNN`. Each series can be its own git repository. The only episode in this repo is the CI fixture under `tests/fixtures/sample-series/`. Do not add production scripts, renders, or character sheets here.
 
 ## House rules
 

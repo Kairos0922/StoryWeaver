@@ -12,7 +12,7 @@ It is not tied to one series, one language, or one model vendor. Drop the reposi
 - Per-language voice-over lint (AI-flavored phrasing, list-reading, sentence length). The episode language selects the pack.
 - Speech-rate caps and a required pause after a key number.
 - One browser render pipeline (Canvas 2D, SVG/DOM, Three.js, then a WebGL post pass) and a TTS provider interface for Doubao or a dry run. No secrets in the repo.
-- A worked Chinese example series under `examples/invisible-rules/`.
+- Commands that create a series workspace outside this repository.
 
 ## Quick start
 
@@ -21,15 +21,16 @@ npm install
 npm test
 node studio/cli.mjs layout
 node studio/cli.mjs doctor
-node studio/cli.mjs checkpoint examples/invisible-rules/ep02 brief
+node studio/cli.mjs checkpoint tests/fixtures/sample-series/ep01 brief
 ```
 
-EP02 should print `BRIEF_APPROVED`. EP01 should refuse a render (`BRIEF_REQUIRED`): it is a historical counterexample, not a template.
+The fixture should print `BRIEF_APPROVED`. It is test data, not a film.
 
-Start a new episode in any series folder:
+Start a series outside this repository:
 
 ```bash
-node studio/cli.mjs init-episode examples/invisible-rules ep03
+node studio/cli.mjs init-series /path/to/my-series
+node studio/cli.mjs init-episode /path/to/my-series ep01
 ```
 
 Fill `fact_card.md` and `brief.md`. Run `checkpoint … brief` until you see `BRIEF_READY_FOR_REVIEW`. Stop. A person approves. Agents do not write `status: approved`.
@@ -58,6 +59,7 @@ node studio/cli.mjs lint-script <script.md|lines.json>
 node studio/cli.mjs qc <episode-dir>
 node studio/cli.mjs checkpoint <episode-dir> <brief|lines|hook-sample|stills|render|publish>
 node studio/cli.mjs hash-brief <brief.md>
+node studio/cli.mjs init-series <dir>
 node studio/cli.mjs init-episode <series-dir> <epNN>
 node studio/cli.mjs pace <episode-dir>
 node studio/cli.mjs layout
@@ -79,7 +81,7 @@ AGENTS.md                 house rules for any coding agent
 skills/produce-video/     step-by-step playbook
 docs/                     methodology, workflow, adapters, lessons
 studio/                   CLI, templates, lint packs, QC, browser pipeline
-examples/invisible-rules/ worked Chinese explainers (spoken script stays Chinese)
+tests/fixtures/           fictional episode used only by tests
 tests/                    contract tests
 ```
 

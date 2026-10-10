@@ -18,9 +18,10 @@ import {formatGitSync, planGitSync} from '../studio/git_sync.mjs';
 import {clearDone} from '../studio/state.mjs';
 import {validateSceneGraph} from '../studio/render/browser/validate_scene.mjs';
 import {formatDoctor, runDoctor} from '../studio/doctor.mjs';
+import {renderEpisode} from '../studio/render/browser/pipeline.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
-const ep02 = path.join(root, 'examples/invisible-rules/ep02');
+const fixture = path.join(root, 'tests/fixtures/sample-series/ep01');
 
 function loadBrowser(file) {
   const context = vm.createContext({globalThis: {}, document: {createElement() { return {}; }}});
@@ -144,10 +145,10 @@ test('release sign-off rejects an empty name and an agent name', () => {
   assert.equal(releaseSignoffError({signed_by: 'Kairos', signed_at: '2026-10-10'}), '');
 });
 
-test('ep02 draft review is open and release is not', async () => {
-  const draft = await assertRenderReview(ep02, {review: 'draft', cut: 'preview'});
+test('fixture draft review is open and release is not', async () => {
+  const draft = await assertRenderReview(fixture, {review: 'draft', cut: 'preview'});
   assert.equal(draft.watermark, 'Not human-reviewed');
-  await assert.rejects(() => assertRenderReview(ep02, {review: 'release', cut: 'full'}));
+  await assert.rejects(() => assertRenderReview(fixture, {review: 'release', cut: 'full'}));
 });
 
 test('scene rig check rejects an expression the character does not have', () => {
@@ -179,7 +180,7 @@ test('handoff names the commit and the commands for the key-holding machine', as
 });
 
 test('resume points at the next open stage and git-sync can be planned again', async () => {
-  const result = await resumeEpisode(ep02);
+  const result = await resumeEpisode(fixture);
   assert.ok(['RESUME_NEXT', 'RESUME_WAITING', 'RESUME_COMPLETE', 'MODEL_BUDGET_STOP'].includes(result.code));
   assert.match(formatResume(result), /git-sync/);
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'sw-git-'));
@@ -194,17 +195,37 @@ test('doctor report describes keys as set or unset and never prints the value', 
   const previous = process.env.VOLC_TTS_API_KEY;
   process.env.VOLC_TTS_API_KEY = 'super-secret-value';
   try {
-    const report = await runDoctor({episodeDir: ep02});
+    const report = await runDoctor({episodeDir: fixture, forRender: true});
     const text = `${JSON.stringify(report)}\n${formatDoctor(report)}`;
     assert.equal(text.includes('super-secret-value'), false);
     const key = report.checks.find(check => check.id === 'env:VOLC_TTS_API_KEY');
     assert.equal(key.detail, 'set');
     assert.ok(report.checks.some(check => check.id === 'font-weight-400'));
     assert.ok(report.checks.some(check => check.id === 'loudnorm-self-test'));
-    assert.ok(report.checks.some(check => check.id === 'scene-rig'));
+    assert.equal(report.checks.find(check => check.id === 'scene-rig').ok, true);
+    assert.equal(report.render_ok, true, formatDoctor(report));
     assert.ok(report.checks.some(check => check.id === 'chromium'));
   } finally {
     if (previous == null) delete process.env.VOLC_TTS_API_KEY;
     else process.env.VOLC_TTS_API_KEY = previous;
   }
+});
+
+test('fixture draft preview renders in the browser without speech keys', async () => {
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'sw-preview-'));
+  const copy = path.join(dir, 'ep01');
+  await fs.cp(fixture, copy, {recursive: true});
+  const result = await renderEpisode(copy, {
+    review: 'draft',
+    cut: 'preview',
+    reviewOnly: true,
+    noVideo: true,
+    until: 1.2,
+    workers: 1,
+  });
+  assert.equal(result.report.pipeline, 'browser-playwright-ffmpeg');
+  assert.equal(result.report.review.watermark, 'Not human-reviewed');
+  assert.equal(result.report.mode, 'preview');
+  await fs.access(path.join(copy, 'out/draft/preview/contact_sheet.png'));
+  await fs.access(path.join(copy, 'out/draft/preview/thumbs/s01_door.png'));
 });

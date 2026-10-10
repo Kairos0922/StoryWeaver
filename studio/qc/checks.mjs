@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import {approvalState, extractIntuitionRows, extractOneThing, honorsMetricsException, parseFrontMatter} from '../brief.mjs';
+import {approvalState, extractIntuitionRows, extractOneThing} from '../brief.mjs';
 import {lintFile} from '../lint/lint_script.mjs';
 import {checkClaimPrecision} from '../claims.mjs';
 import {paceEpisode} from '../pace.mjs';
@@ -147,14 +147,10 @@ export async function checkIntuition(episodeDir) {
       const ids = new Set(list.map(line => line.id));
       const missing = rows.flatMap(row => row.lineIds).filter(id => /^L\d+/i.test(id) && !ids.has(id));
       if (missing.length) return {ok: false, code: 'INTUITION', evidence: `line ids not in lines.json: ${missing.join(',')}`};
-      const briefText = await readIf(path.join(episodeDir, 'brief.md'));
-      const {data} = parseFrontMatter(briefText);
-      if (data.historical_example !== true) {
-        const firstBreak = list.findIndex(line => /break-assumption|打碎常识/i.test(line.beat || ''));
-        const firstAck = list.findIndex(line => rows.some(row => row.lineIds.includes(line.id)));
-        if (firstBreak >= 0 && firstAck >= 0 && firstAck > firstBreak) {
-          return {ok: false, code: 'INTUITION', evidence: 'acknowledge the strongest objection before the first break-assumption line'};
-        }
+      const firstBreak = list.findIndex(line => /break-assumption|打碎常识/i.test(line.beat || ''));
+      const firstAck = list.findIndex(line => rows.some(row => row.lineIds.includes(line.id)));
+      if (firstBreak >= 0 && firstAck >= 0 && firstAck > firstBreak) {
+        return {ok: false, code: 'INTUITION', evidence: 'acknowledge the strongest objection before the first break-assumption line'};
       }
     }
   }
@@ -187,10 +183,7 @@ export async function previousMetricsBlock(seriesDir, episodeId) {
   const previousId = `ep${String(number - 1).padStart(2, '0')}`;
   const previousDir = path.join(seriesDir, previousId);
   if (!(await fileExists(previousDir))) return {code: 'NO_PREVIOUS'};
-  const brief = await readIf(path.join(previousDir, 'brief.md'));
   const metrics = await readIf(path.join(previousDir, 'post', 'metrics.md'));
-  const seriesId = path.basename(seriesDir);
-  if (honorsMetricsException(seriesId, previousId, brief, metrics)) return {code: 'PRIOR_METRICS_ABSENT_OK', previousId};
   const ready = metricsReadyForNextTopic(metrics);
   if (!ready.ok) return {code: 'METRICS_REQUIRED', previousId, reason: ready.reason};
   return {code: 'METRICS_PRESENT', previousId};

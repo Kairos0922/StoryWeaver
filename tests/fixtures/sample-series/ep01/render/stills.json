@@ -1,0 +1,44 @@
+{
+  "schema": "storyweaver.stills.v1",
+  "pipeline": "browser",
+  "kit": "studio/render/kit/canvas/kit.js",
+  "rig": "render/rig.json",
+  "note": "One fixture shot. Not a storyboard delivery.",
+  "size": [1920, 1080],
+  "safe": {"x": 72, "y": 54},
+  "fonts": {
+    "family": "\"Noto Sans CJK SC\", \"Noto Sans SC\", sans-serif"
+  },
+  "hud": {
+    "series": "Sample series · EP01",
+    "ai_label": "AI generated"
+  },
+  "palette": {
+    "ink": "#13232E",
+    "white": "#FFFFFF",
+    "shadow": "rgba(19,35,46,0.16)",
+    "wall_top": "#F8F3EA",
+    "wall": "#EFE6D6",
+    "floor": "#E4D8C3",
+    "floor_line": "#CDBFA6",
+    "shelf": "#D9CDB8",
+    "shelf_line": "#C2B399",
+    "goods_a": "#7FB7BE",
+    "goods_b": "#E9A178",
+    "goods_c": "#B5C97A"
+  },
+  "shots": [
+    {
+      "id": "s1_door",
+      "t": 1,
+      "beat": "hook",
+      "camera": {"x": 960, "y": 540, "zoom": 1},
+      "layers": [
+        {"type": "backdrop", "horizon": 420},
+        {"type": "label", "x": 960, "y": 280, "text": "Blue door", "size": 72, "color": "ink"},
+        {"type": "character", "id": "pebble", "x": 960, "y": 860, "scale": 1.6, "expr": "calm", "gesture": "rest"}
+      ],
+      "subtitle": {"speaker": "Narrator", "text": "The blue door stayed shut"}
+    }
+  ]
+}

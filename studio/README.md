@@ -15,4 +15,4 @@ studio/
   render/adapters/        pipeline contract
 ```
 
-Episode files live in `examples/<series>/epNN/` or any series folder you create. Do not put episode copy inside `studio/`.
+Episode files live in a series directory outside this repository. Create it with `init-series`, then `init-episode`. Do not put episode copy inside `studio/` or anywhere else in the tool checkout.

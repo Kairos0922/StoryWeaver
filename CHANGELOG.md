@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.8.0 — 2026-10-10
+
+The repository holds the tool and the method. Series workspaces live outside it.
+
+### Added
+
+- `init-series <dir>` creates a series directory anywhere except inside this repository. `init-episode` refuses the same boundary.
+- `tests/fixtures/sample-series/ep01`, a fictional episode for CI: four lines, one shot, a placeholder rig, an approved brief, and checklist names that exist only so the checks can run.
+
+### Removed
+
+- `examples/invisible-rules/` (episodes, scripts, fact cards, character sheets, voice notes, and retrospectives). Git history is the archive.
+- The one-series metrics exception. A blank metrics sheet blocks the next episode for every series.
+
+### Migration
+
+Create the series with `node studio/cli.mjs init-series <dir>` outside this checkout, then `init-episode <series-dir> epNN`. Do not commit episode files back into the tool repository. The CI fixture is not a template.
+
 ## 0.7.0 — 2026-10-10
 
 One browser render pipeline, and a recoverable path from a cloud agent to the machine that holds keys.

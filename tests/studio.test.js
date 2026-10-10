@@ -11,13 +11,16 @@ import {inspectEngagement} from '../studio/qc/checks.mjs';
 import {runQc} from '../studio/qc/run_qc.mjs';
 import {evaluateCheckpoint} from '../studio/checkpoint.mjs';
 import {initEpisode} from '../studio/init_episode.mjs';
+import {initSeries} from '../studio/init_series.mjs';
+import {paceEpisode} from '../studio/pace.mjs';
 import {checkLayout} from '../studio/layout.mjs';
 import {evaluateClaimPrecision} from '../studio/claims.mjs';
 import {evaluatePace} from '../studio/pace.mjs';
 import {cacheKey, missingSecrets} from '../studio/tts/interface.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
-const ep01 = path.join(root, 'examples/invisible-rules/ep01');
+const fixture = path.join(root, 'tests/fixtures/sample-series/ep01');
+const zhScript = path.join(root, 'tests/fixtures/sample-series/zh-script.md');
 
 function runCli(args) {
   return spawnSync(process.execPath, ['studio/cli.mjs', ...args], {cwd: root, encoding: 'utf8'});
@@ -124,35 +127,36 @@ test('English scaffold, ordinal, emoji and long sentences are reported', async (
   assert.ok(result.warnings.some(item => item.rule === 'long-sentence'));
 });
 
-test('ep01 script and lines keep the historical scaffold', async () => {
-  const script = await fs.readFile(path.join(ep01, 'script.md'), 'utf8');
-  const rules = await loadPack('zh');
+test('fixture scripts pass the English and Chinese packs', async () => {
+  const script = await fs.readFile(path.join(fixture, 'script.md'), 'utf8');
+  const rules = await loadPack('en');
   const spoken = extractSpokenLines(script, rules.speakers);
-  const lines = JSON.parse(await fs.readFile(path.join(ep01, 'lines.json'), 'utf8'));
+  const lines = JSON.parse(await fs.readFile(path.join(fixture, 'lines.json'), 'utf8'));
   assert.equal(lines.lines.length, spoken.length);
   for (let i = 0; i < spoken.length; i++) {
     assert.equal(lines.lines[i].text, spoken[i].text);
     assert.equal(lines.lines[i].speaker, spoken[i].speaker);
   }
-  const linted = await lintFile(path.join(ep01, 'script.md'));
-  const errors = new Set(linted.errors.map(item => item.rule));
-  for (const rule of ['meta-plain-speech', 'scaffold-remember', 'scaffold-so-dash', 'oral-ordinal']) {
-    assert.ok(errors.has(rule), [...errors].join(','));
-  }
-  assert.ok(linted.warnings.some(item => item.rule === 'method-in-vo'));
-  assert.ok(linted.warnings.some(item => item.rule === 'five-beat-missing'));
-  const cli = runCli(['lint-script', 'examples/invisible-rules/ep01/script.md']);
-  assert.equal(cli.status, 1);
-  assert.match(cli.stdout, /meta-plain-speech/);
+  const linted = await lintFile(path.join(fixture, 'script.md'));
+  assert.equal(linted.errors.length, 0, JSON.stringify(linted.errors));
+  const zh = await lintFile(zhScript);
+  assert.equal(zh.language, 'zh');
+  assert.equal(zh.errors.length, 0, JSON.stringify(zh.errors));
+  const cli = runCli(['lint-script', 'tests/fixtures/sample-series/ep01/script.md']);
+  assert.equal(cli.status, 0);
 });
 
-test('ep01 cannot render', async () => {
-  const result = await evaluateCheckpoint(ep01, 'render');
-  assert.equal(result.code, 'BRIEF_REQUIRED');
-  assert.equal(result.exitCode, 2);
-  const cli = runCli(['checkpoint', 'examples/invisible-rules/ep01', 'render']);
-  assert.equal(cli.status, 2);
-  assert.match(cli.stdout, /^BRIEF_REQUIRED/m);
+test('fixture passes every checkpoint', async () => {
+  const pace = await paceEpisode(fixture);
+  assert.equal(pace.ok, true, pace.evidence);
+  assert.equal(pace.source, 'estimate');
+  for (const stage of ['brief', 'lines', 'hook-sample', 'stills', 'render', 'publish']) {
+    const result = await evaluateCheckpoint(fixture, stage);
+    assert.equal(result.exitCode, 0, `${stage} ${result.code}`);
+  }
+  const cli = runCli(['checkpoint', 'tests/fixtures/sample-series/ep01', 'brief']);
+  assert.equal(cli.status, 0);
+  assert.match(cli.stdout, /^BRIEF_APPROVED/m);
 });
 
 test('fresh episode is incomplete and blocked', async () => {
@@ -294,24 +298,23 @@ test('engagement numbers need a source and cannot be estimates', async () => {
   assert.equal(inspectEngagement(sourced).ok, true);
 });
 
-test('ep02 can start after ep01 and ep03 cannot skip blank metrics', async () => {
-  const dest = await fs.mkdtemp(path.join(os.tmpdir(), 'sw-series-'));
-  const series = path.join(dest, 'invisible-rules');
-  const source = path.join(root, 'examples/invisible-rules');
-  await fs.cp(source, series, {
-    recursive: true,
-    filter: file => path.relative(source, file).split(path.sep)[0] !== 'ep02',
-  });
+test('a sourced metrics sheet opens the next episode', async () => {
+  const parent = await fs.mkdtemp(path.join(os.tmpdir(), 'sw-series-'));
+  const series = path.join(parent, 'demo-series');
+  const createdSeries = await initSeries(series);
+  assert.equal(createdSeries.id, 'demo-series');
+  await initEpisode(series, 'ep01');
+  await assert.rejects(() => initEpisode(series, 'ep02'), error => error.code === 'METRICS_REQUIRED');
+  const metricsPath = path.join(series, 'ep01/post/metrics.md');
+  const metrics = (await fs.readFile(metricsPath, 'utf8'))
+    .replace('- Completion rate:', '- Completion rate: 40% (source: fixture-export.csv)')
+    .replace('- Data source (dashboard URL or export filename; blank if none):', '- Data source (dashboard URL or export filename; blank if none): fixture-export.csv');
+  await fs.writeFile(metricsPath, metrics);
   const created = await initEpisode(series, 'ep02');
-  assert.equal(created.previous, 'PRIOR_METRICS_ABSENT_OK');
+  assert.equal(created.previous, 'METRICS_PRESENT');
   await assert.rejects(() => initEpisode(series, 'ep03'), error => error.code === 'METRICS_REQUIRED');
-  const briefPath = path.join(series, 'ep02/brief.md');
-  const brief = await fs.readFile(briefPath, 'utf8');
-  await fs.writeFile(briefPath, brief.replace('status: draft', 'status: draft\nmetrics_exception: true'));
-  const metricsPath = path.join(series, 'ep02/post/metrics.md');
-  const metrics = await fs.readFile(metricsPath, 'utf8');
-  await fs.writeFile(metricsPath, `This episode has no playback metrics to backfill. Leave blank. Do not estimate.\n${metrics}`);
-  await assert.rejects(() => initEpisode(series, 'ep03'), error => error.code === 'METRICS_REQUIRED');
+  await assert.rejects(() => initSeries(root), error => error.code === 'WORKSPACE_INSIDE_REPO');
+  await assert.rejects(() => initEpisode(root, 'ep01'), error => error.code === 'WORKSPACE_INSIDE_REPO');
 });
 
 test('dual aspect requires a vertical duration inside 60 seconds', () => {
@@ -370,16 +373,15 @@ test('TTS adapters never see hardcoded secrets', () => {
   assert.notEqual(a, c);
 });
 
-test('ep02 stills use kit components and subtitle only script lines', async () => {
+test('fixture stills use kit components and subtitle only script lines', async () => {
   const {createContext, runInContext} = await import('node:vm');
   const kit = await fs.readFile(path.join(root, 'studio/render/kit/canvas/kit.js'), 'utf8');
   const context = createContext({});
   runInContext(kit, context);
   const known = new Set(context.SWKit.components);
-  const episode = path.join(root, 'examples/invisible-rules/ep02');
-  const spec = JSON.parse(await fs.readFile(path.join(episode, 'render/stills.json'), 'utf8'));
-  const {speakers} = await loadPack('zh');
-  const spoken = extractSpokenLines(await fs.readFile(path.join(episode, 'script.md'), 'utf8'), speakers);
+  const spec = JSON.parse(await fs.readFile(path.join(fixture, 'render/stills.json'), 'utf8'));
+  const {speakers} = await loadPack('en');
+  const spoken = extractSpokenLines(await fs.readFile(path.join(fixture, 'script.md'), 'utf8'), speakers);
   const walk = layers => layers.flatMap(layer => [layer.type, ...walk(layer.layers || [])]);
   for (const shot of spec.shots) {
     for (const type of walk([...(shot.layers || []), ...(shot.overlay || [])])) {
@@ -389,7 +391,6 @@ test('ep02 stills use kit components and subtitle only script lines', async () =
       const {speaker, text} = shot.subtitle;
       assert.ok(spoken.some(line => line.speaker === speaker && line.text.includes(text)), `${shot.id}: subtitle not in script.md`);
     }
-    await fs.access(path.join(episode, spec.out_dir, `${shot.id}.png`));
   }
 });
 

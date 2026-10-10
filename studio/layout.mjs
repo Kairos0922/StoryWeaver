@@ -37,15 +37,14 @@ export const REQUIRED_PATHS = [
   'studio/render/browser/compositor.js',
   'studio/render/browser/presets.json',
   'studio/render/kit/manifest.json',
-  'examples/invisible-rules/README.md',
-  'examples/invisible-rules/ip/README.md',
-  'examples/invisible-rules/ip/characters.json',
-  'examples/invisible-rules/voice/README.md',
-  'examples/invisible-rules/ep01/fact_card.md',
-  'examples/invisible-rules/ep01/script.md',
-  'examples/invisible-rules/ep01/brief.md',
-  'examples/invisible-rules/ep01/lines.json',
-  'examples/invisible-rules/ep01/post/metrics.md',
+  'tests/fixtures/sample-series/README.md',
+  'tests/fixtures/sample-series/zh-script.md',
+  'tests/fixtures/sample-series/ep01/fact_card.md',
+  'tests/fixtures/sample-series/ep01/script.md',
+  'tests/fixtures/sample-series/ep01/brief.md',
+  'tests/fixtures/sample-series/ep01/lines.json',
+  'tests/fixtures/sample-series/ep01/render/scenes.json',
+  'tests/fixtures/sample-series/ep01/render/rig.json',
 ];
 
 export async function checkLayout(start = root) {
