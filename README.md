@@ -13,7 +13,7 @@ StoryWeaver 是闸门制知识短片工作室。它管事实、分镜、人审�
 - **EP01「电梯为啥不理你」**：闸门样品。证明未批准不能渲成片，不是下一集的稿子。
 - **EP02「一条长龙还是三条短队」**：Phase A 已批（横屏 16:9）。正式角色、音频驱动时间轴、无配音预览。
 
-文档站：<https://kairos0922.github.io/StoryWeaver/>（仓库 README + `docs/`）。
+文档站由 `npm run pages` 生成（CI 产物 `pages-site`）。要上线 GitHub Pages，需仓库管理员在 Settings → Pages 把 Source 设为 GitHub Actions；当前 token 无法代开。启用后预期地址：<https://kairos0922.github.io/StoryWeaver/>。
 
 ## 快速开始
 
