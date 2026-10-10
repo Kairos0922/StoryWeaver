@@ -1,5 +1,7 @@
 # Project Overview
 
+> Current production path: `README.md` and `docs/studio/pipeline.md`. The compiler description below is the legacy experiment path.
+
 ## Product
 
 StoryWeaver is a **content-to-programmatic-video compiler** for repeatable self-media production.

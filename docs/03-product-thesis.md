@@ -1,5 +1,7 @@
 # Product Thesis
 
+> Series episodes are gated in `docs/studio/`. This note describes the older visual-program thesis and still applies to the legacy SVG compiler.
+
 ## Thesis
 
 StoryWeaver should be treated as a **programmatic visual storytelling layer**, not as a video renderer.

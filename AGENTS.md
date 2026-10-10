@@ -4,6 +4,14 @@
 
 Build StoryWeaver as a production tool for real self-media publishing. Do not optimize for impressive demos that do not survive repeated production.
 
+## Studio path
+
+Series episodes go through `studio/` gates: fact card, Phase A, lint, human review, QC. Start at `.cursor/skills/produce-next-episode/SKILL.md`.
+
+Do not extend `src/renderers/svg.js` for a series episode. That compiler stays for existing experiments. See `docs/studio/migration.md`.
+
+Do not approve Phase A yourself, call paid TTS, invent publish metrics, or publish for the user.
+
 ## Rules
 
 1. Content value precedes implementation convenience.

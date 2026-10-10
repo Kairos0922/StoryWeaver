@@ -1,0 +1,31 @@
+{
+  "schema": "storyweaver.render-kit.v1",
+  "status": "contract-only",
+  "note": "Components are the shared vocabulary for adapters. This repo does not ship a per-episode Canvas page or a physics engine.",
+  "beat_clock_s": 2.5,
+  "max_static_s": 5,
+  "hook_sample_s": 12,
+  "components": [
+    {
+      "id": "kinetic_number",
+      "purpose": "One number hits the frame, then shrinks into a chart. One number per beat."
+    },
+    {
+      "id": "bar_compare",
+      "purpose": "Two-bar comparison. The spoken line carries only one of the two numbers."
+    },
+    {
+      "id": "stamp",
+      "purpose": "A single stamp for one rule or one wasted stop."
+    },
+    {
+      "id": "character_slot",
+      "purpose": "A character plays an action on the beat. Idle beside a chart fails QC."
+    },
+    {
+      "id": "tip_cards",
+      "purpose": "Tips are on-screen cards. The voice does not read first, second, third."
+    }
+  ],
+  "adapters": ["manim", "html-canvas", "remotion", "hyperframes"]
+}

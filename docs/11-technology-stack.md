@@ -1,5 +1,7 @@
 # Technology Stack
 
+> The default path for a series episode is `studio/`, not the SVG runtime below. Adapters may call Manim, HTML Canvas, Remotion or HyperFrames later. None of those are installed. Remotion is still not a core dependency.
+
 ## Locked V1
 
 | Layer | Technology | Status |

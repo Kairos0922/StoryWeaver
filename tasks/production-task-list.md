@@ -1,5 +1,7 @@
 # Production Task List
 
+> These tasks exercise the legacy SVG compiler. A series episode does not start from a VideoSpec. Use `.cursor/skills/produce-next-episode/SKILL.md`.
+
 These are real publishing tasks, not demos. They are designed to exercise the reusable capabilities discovered in the case research.
 
 ## Protocol

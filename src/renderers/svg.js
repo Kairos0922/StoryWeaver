@@ -1,3 +1,5 @@
+// Legacy SVG renderer for VideoSpec experiments. Series episodes use studio/ gates.
+// See docs/studio/migration.md and src/LEGACY.md.
 import {esc,lerp,clamp} from '../utils.js';
 import {actingState,poseState} from '../animation/acting.js';
 import {motionState,progressAt,easing} from '../animation/motion.js';

@@ -1,9 +1,9 @@
 {
   "name": "storyweaver",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "type": "module",
-  "description": "Content-to-video compiler for deterministic programmatic visual storytelling.",
+  "description": "Gated studio for series explainers: fact cards, Phase A, lint and QC. Legacy SVG compiler remains for experiments.",
   "engines": {
     "node": ">=24"
   },
@@ -17,7 +17,10 @@
     "contact-sheet": "node scripts/contact-sheet.mjs",
     "method-proof": "node scripts/method-proof.js",
     "validate-production": "node scripts/validate-production.js",
-    "production-01": "node scripts/production-01.js"
+    "production-01": "node scripts/production-01.js",
+    "studio": "node studio/cli.mjs",
+    "lint-script": "node studio/cli.mjs lint-script studio/templates/script.md",
+    "studio-layout": "node studio/cli.mjs layout"
   },
   "dependencies": {
     "@resvg/resvg-js": "^2.6.2",
