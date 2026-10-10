@@ -122,7 +122,7 @@ Cache by content hash. Append `audio/usage.jsonl` with `chars` and `retake`. Nev
 - Contract: `docs/render-contract.md`. Run `node studio/cli.mjs render-contract` before a render. Every fixed render bug adds a rule.
 - Tokens: `studio/motion/tokens.js` (5 named easings, closed-form springs by damping ratio, durations, beat grid). Opacity and color never bounce. Exits are 40–50% shorter than entrances. One hero action per shot.
 - Banned motion: keep the brief's `Banned motion` list; after each first draft, name every default the render fell back to and add it.
-- Motion QC: measure the draft into a motion spec and run `node studio/cli.mjs motion-qc <motion.json>`. It checks text hold time (zh threshold is provisional), contrast ≥ 4.5:1, flashes ≤ 3/s, and SFX landing 0–2 frames after the picture event; it writes an onion skin and a speed graph per tracked element. See `docs/motion-tokens.md`.
+- Motion QC: measure the draft into a motion spec and run `node studio/cli.mjs motion-qc <motion.json>`. It checks text hold time (zh: 0.27 s/char + 0.5 s from `pace.comfortable_per_s`), contrast ≥ 4.5:1, flashes ≤ 3/s, and SFX landing 0–2 frames after the picture event; it writes an onion skin and a speed graph per tracked element. See `docs/motion-tokens.md`.
 - Self-review loop: still → look → notes with frame numbers → fix → re-render only what changed. Apply one or two notes per round; two to four rounds is normal. Count creative follow-ups and technical fixes separately in the render report.
 - If a fix will not stick, render the frames before and after the problem frame, list every difference, and change one line.
 - Make the picture work with the sound off first.
@@ -148,7 +148,7 @@ Changing the five beats, the aspect, or the duration is a new brief. Return to s
 - [ ] Hook sample heard; first-watch recorded
 - [ ] Four stills signed
 - [ ] Listen pack heard on a phone
-- [ ] Render contract clean; motion QC passes (zh hold flagged provisional)
+- [ ] Render contract clean; motion QC passes
 - [ ] Draft rendered after doctor; release signed by a person
 - [ ] AI disclosure; person published
 - [ ] Metrics blank or sourced; cost copied from the render report or left blank

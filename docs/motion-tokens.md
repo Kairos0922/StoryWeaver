@@ -36,7 +36,7 @@ One hero action per shot. Secondary motion travels 50–70% of the hero and star
 
 | Field | Check | Threshold |
 |---|---|---|
-| `texts[] {id, text, hold_s}` + `language` | Text hold | en: 0.3 s/word + 0.5 s. zh: 0.15 s/char + 0.5 s, **provisional** until calibrated |
+| `texts[] {id, text, hold_s}` + `language` | Text hold | en: 0.3 s/word + 0.5 s. zh: 0.27 s/char + 0.5 s (`1 / pace.comfortable_per_s` from `studio/lint/packs/zh.json`, calibrated against an approved episode’s narration pace) |
 | `contrast[] {id, fg, bg}` | Contrast vs the worst background in any frame | ≥ 4.5:1 |
 | `luminance[]` (per-frame mean relative luminance) | Flashes (WCAG general flash) | ≤ 3 per second |
 | `sfx {events[] {id, frame}, peaks_s[] or audio}` | SFX sync, measured on the decoded mix | peak 0–2 frames after the picture event, target +1 |

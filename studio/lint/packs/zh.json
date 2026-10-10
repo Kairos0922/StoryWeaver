@@ -45,6 +45,7 @@
     "unit": "chars",
     "max_per_s_line": 4.6,
     "max_per_s_speech_avg": 4.0,
+    "comfortable_per_s": 3.7,
     "severity": "error"
   },
   "key_number_pause": {
