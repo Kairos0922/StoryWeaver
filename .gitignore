@@ -1,5 +1,6 @@
 node_modules/
 out/
+_site/
 .production-01-build/
 package-lock.json
 
