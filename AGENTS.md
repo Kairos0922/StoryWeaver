@@ -21,7 +21,9 @@ StoryWeaver is a production toolkit for fact-checked animated explainer videos o
 7. Keep schemas backward-compatible or document the migration in `CHANGELOG.md`.
 8. Keep research, observations, hypotheses, and decisions distinct.
 9. Use `AGENTS.md` exactly; do not create `Agents.md`.
-10. Direct changes to `main` are acceptable; CI must pass before delivery is declared complete.
+10. The render contract (`docs/render-contract.md`) is binding. When you fix a render bug, add the rule that would have caught it, and a lint rule when it can be matched. Run `node studio/cli.mjs render-contract`.
+11. Motion numbers come from `studio/motion/tokens.js` by name (`docs/motion-tokens.md`). No inline easing curves or durations.
+12. Direct changes to `main` are acceptable; CI must pass before delivery is declared complete.
 
 ## Hard stops
 

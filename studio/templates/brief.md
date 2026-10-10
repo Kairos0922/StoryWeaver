@@ -84,6 +84,19 @@ Visual clock: 2.5s. A row with more than 5s of no new visual is unfinished.
 
 Device names: kinetic number, cut, stamp, character action, compare bars, cards, push, pan. Do not list them as used while the row is still TODO.
 
+## Banned motion
+
+Named defaults this episode must not use. Generic “avoid AI look” does not count. After the first draft, append every default the render still fell back to, and copy it into the series list.
+
+- Purple/blue gradients, glow, lens flares
+- Decorative floating particles
+- Everything fading in at once
+- Every element doing fade + slide-up
+- Everything centered
+- Text that moves while it is being read
+- Bounce on opacity or color
+- Inline easing or duration numbers instead of `studio/motion/tokens.js` names
+
 ## Hook sample
 
 Before full voice, render about the first 12 seconds. A person listens, then signs `ear_hook` and `first_watch` in `qc/checklist.json`.
