@@ -1,0 +1,1077 @@
+{
+  "schema": "storyweaver.stills.v1",
+  "adapter": "html-canvas",
+  "kit": "studio/render/kit/canvas/kit.js",
+  "note": "Review stills for Phase A. Characters are stand-ins: ip/ sprites are not vendored. Palette is an episode proposal, not the series contract.",
+  "size": [
+    1920,
+    1080
+  ],
+  "out_dir": "stills",
+  "safe": {
+    "x": 72,
+    "y": 54
+  },
+  "fonts": {
+    "family": "\"Noto Sans CJK SC\", \"Noto Sans SC\", \"WenQuanYi Micro Hei\", sans-serif"
+  },
+  "hud": {
+    "series": "看不见的规则 · EP02",
+    "ai_label": "AI 生成"
+  },
+  "palette": {
+    "ink": "#1E2633",
+    "white": "#FFFFFF",
+    "shadow": "rgba(30,38,51,0.16)",
+    "wall_top": "#F8F3EA",
+    "wall": "#EFE6D6",
+    "floor": "#E4D8C3",
+    "floor_line": "#CDBFA6",
+    "shelf": "#D9CDB8",
+    "shelf_line": "#C2B399",
+    "goods_a": "#7FB7BE",
+    "goods_b": "#E9A178",
+    "goods_c": "#B5C97A",
+    "lane": "#EBE1CF",
+    "lane_edge": "#CDBFA6",
+    "rope": "#3E6FB0",
+    "navy": "#2B3A55",
+    "counter_top": "#4A5C7E",
+    "screen": "#9FD8E0",
+    "lamp_off": "#8E96A3",
+    "green": "#35B871",
+    "red": "#E5484D",
+    "yellow": "#F6C945",
+    "teal": "#2A9D8F",
+    "crowd": "#A9B1BE",
+    "crowd_late": "#6E7A8C",
+    "water": "#8FD3F4",
+    "box": "#D9A066",
+    "mouth": "#8B2E3A",
+    "dengdeng": "#F28C3F",
+    "dengdeng_dark": "#C7652A",
+    "dengdeng_belly": "#FBC28F",
+    "agui": "#2A9D8F",
+    "agui_dark": "#1C6E64",
+    "agui_light": "#7FDCCF",
+    "ruler": "#F6E7B4",
+    "dida": "#F6C945",
+    "dida_dark": "#C99A1E",
+    "tint_a": "#D3EEE8",
+    "tint_b": "#FCE4D3"
+  },
+  "shots": [
+    {
+      "id": "s1_hook_2s5",
+      "t": 2.5,
+      "beat": "钩子",
+      "camera": {
+        "x": 930,
+        "y": 610,
+        "zoom": 1.16
+      },
+      "layers": [
+        {
+          "type": "backdrop",
+          "horizon": 330,
+          "shelves": [
+            {
+              "x": 760,
+              "w": 300,
+              "h": 230
+            },
+            {
+              "x": 1100,
+              "w": 300,
+              "h": 230
+            },
+            {
+              "x": 1440,
+              "w": 300,
+              "h": 230
+            }
+          ]
+        },
+        {
+          "type": "lane",
+          "y": 480,
+          "h": 70,
+          "x0": 200,
+          "x1": 1800
+        },
+        {
+          "type": "lane",
+          "y": 710,
+          "h": 70,
+          "x0": 200,
+          "x1": 1800
+        },
+        {
+          "type": "lane",
+          "y": 940,
+          "h": 70,
+          "x0": 200,
+          "x1": 1800
+        },
+        {
+          "type": "service_point",
+          "x": 330,
+          "y": 480,
+          "scale": 0.82,
+          "light": "green",
+          "label": "1"
+        },
+        {
+          "type": "arrow",
+          "from": [
+            1660,
+            380
+          ],
+          "via": [
+            1150,
+            250
+          ],
+          "to": [
+            640,
+            330
+          ],
+          "dashed": true,
+          "color": "crowd_late",
+          "width": 7
+        },
+        {
+          "type": "queue_line",
+          "points": [
+            [
+              520,
+              480
+            ],
+            [
+              1700,
+              480
+            ]
+          ],
+          "spacing": 160,
+          "count": 2,
+          "scale": 0.92,
+          "people": {
+            "0": {
+              "color": "crowd_late",
+              "carry": "bottle",
+              "pose": "wave",
+              "facing": 1
+            }
+          }
+        },
+        {
+          "type": "tag",
+          "x": 600,
+          "y": 290,
+          "text": "比等等晚到",
+          "color": "crowd_late",
+          "size": 36,
+          "pointer": [
+            0,
+            40
+          ]
+        },
+        {
+          "type": "service_point",
+          "x": 330,
+          "y": 710,
+          "scale": 0.82,
+          "light": "green",
+          "label": "2"
+        },
+        {
+          "type": "queue_line",
+          "points": [
+            [
+              520,
+              710
+            ],
+            [
+              1800,
+              710
+            ]
+          ],
+          "spacing": 165,
+          "count": 4,
+          "scale": 0.92,
+          "people": {
+            "0": {
+              "carry": "cart"
+            },
+            "1": {
+              "carry": "basket_full"
+            },
+            "2": {
+              "skip": true
+            }
+          }
+        },
+        {
+          "type": "character",
+          "id": "dengdeng",
+          "x": 860,
+          "y": 728,
+          "scale": 0.95,
+          "pose": "tiptoe",
+          "facing": -1,
+          "look": -1.4,
+          "eyes": "wide",
+          "brows": "up",
+          "mouth": "o",
+          "marks": [
+            "question"
+          ]
+        },
+        {
+          "type": "service_point",
+          "x": 330,
+          "y": 940,
+          "scale": 0.82,
+          "light": "green",
+          "label": "3"
+        },
+        {
+          "type": "queue_line",
+          "points": [
+            [
+              520,
+              940
+            ],
+            [
+              1800,
+              940
+            ]
+          ],
+          "spacing": 160,
+          "count": 4,
+          "scale": 0.92,
+          "people": {
+            "0": {
+              "carry": "basket"
+            }
+          }
+        }
+      ],
+      "chips": [
+        {
+          "text": "示意画面",
+          "corner": "br"
+        }
+      ],
+      "subtitle": {
+        "speaker": "等等",
+        "text": "哎？他比我晚来，怎么先走了？"
+      }
+    },
+    {
+      "id": "s2_first_number_8s",
+      "t": 8.0,
+      "beat": "钩子",
+      "camera": {
+        "x": 980,
+        "y": 610,
+        "zoom": 1.04,
+        "rot": -1.6,
+        "shake": 9,
+        "seed": 21
+      },
+      "layers": [
+        {
+          "type": "backdrop",
+          "horizon": 330,
+          "shelves": [
+            {
+              "x": 760,
+              "w": 300,
+              "h": 230
+            },
+            {
+              "x": 1100,
+              "w": 300,
+              "h": 230
+            },
+            {
+              "x": 1440,
+              "w": 300,
+              "h": 230
+            }
+          ]
+        },
+        {
+          "type": "lane",
+          "y": 480,
+          "h": 70,
+          "x0": 200,
+          "x1": 1800
+        },
+        {
+          "type": "lane",
+          "y": 710,
+          "h": 70,
+          "x0": 200,
+          "x1": 1800
+        },
+        {
+          "type": "lane",
+          "y": 940,
+          "h": 70,
+          "x0": 200,
+          "x1": 1800
+        },
+        {
+          "type": "service_point",
+          "x": 330,
+          "y": 480,
+          "scale": 0.82,
+          "light": "green",
+          "label": "1"
+        },
+        {
+          "type": "service_point",
+          "x": 330,
+          "y": 710,
+          "scale": 0.82,
+          "light": "green",
+          "label": "2"
+        },
+        {
+          "type": "service_point",
+          "x": 330,
+          "y": 940,
+          "scale": 0.82,
+          "light": "green",
+          "label": "3"
+        },
+        {
+          "type": "queue_line",
+          "points": [
+            [
+              520,
+              480
+            ],
+            [
+              1700,
+              480
+            ]
+          ],
+          "spacing": 160,
+          "count": 2,
+          "scale": 0.92
+        },
+        {
+          "type": "queue_line",
+          "points": [
+            [
+              520,
+              710
+            ],
+            [
+              1800,
+              710
+            ]
+          ],
+          "spacing": 165,
+          "count": 4,
+          "scale": 0.92,
+          "people": {
+            "0": {
+              "carry": "cart"
+            },
+            "1": {
+              "carry": "basket_full"
+            },
+            "2": {
+              "skip": true
+            }
+          }
+        },
+        {
+          "type": "queue_line",
+          "points": [
+            [
+              520,
+              940
+            ],
+            [
+              1800,
+              940
+            ]
+          ],
+          "spacing": 160,
+          "count": 4,
+          "scale": 0.92
+        },
+        {
+          "type": "dim",
+          "alpha": 0.5,
+          "x": 1150,
+          "y": 470
+        },
+        {
+          "type": "character",
+          "id": "dengdeng",
+          "x": 860,
+          "y": 728,
+          "scale": 0.98,
+          "pose": "shock",
+          "facing": 1,
+          "look": 0.4,
+          "eyes": "wide",
+          "brows": "up",
+          "mouth": "o",
+          "marks": [
+            "surprise",
+            "sweat"
+          ]
+        },
+        {
+          "type": "character",
+          "id": "dida",
+          "x": 1560,
+          "y": 860,
+          "scale": 1.05,
+          "pose": "press_watch",
+          "facing": -1,
+          "eyes": "normal",
+          "mouth": "grin",
+          "hand_deg": 144
+        },
+        {
+          "type": "kinetic_number",
+          "x": 1270,
+          "y": 390,
+          "text": "40%",
+          "size": 270,
+          "progress": 0.92,
+          "rot": -4,
+          "caption": "被后来的人超车",
+          "caption_size": 54
+        }
+      ],
+      "chips": [
+        {
+          "text": "高峰期 · 简化模拟",
+          "corner": "br"
+        }
+      ],
+      "subtitle": {
+        "speaker": "嘀嗒",
+        "text": "排三条队，四成的人会被后来的人超车。"
+      }
+    },
+    {
+      "id": "s3_payoff_40s",
+      "t": 40.5,
+      "beat": "内幕",
+      "layers": [
+        {
+          "type": "fill",
+          "color": "ink"
+        },
+        {
+          "type": "panel",
+          "rect": [
+            0,
+            0,
+            952,
+            1080
+          ],
+          "title": {
+            "text": "三条短队",
+            "color": "dengdeng_dark",
+            "y": 150
+          },
+          "layers": [
+            {
+              "type": "backdrop",
+              "horizon": 250
+            },
+            {
+              "type": "lane",
+              "y": 480,
+              "h": 54,
+              "x0": 110,
+              "x1": 940
+            },
+            {
+              "type": "lane",
+              "y": 660,
+              "h": 54,
+              "x0": 110,
+              "x1": 940
+            },
+            {
+              "type": "lane",
+              "y": 840,
+              "h": 54,
+              "x0": 110,
+              "x1": 940
+            },
+            {
+              "type": "service_point",
+              "x": 150,
+              "y": 480,
+              "scale": 0.62,
+              "light": "green"
+            },
+            {
+              "type": "service_point",
+              "x": 150,
+              "y": 660,
+              "scale": 0.62,
+              "light": "red"
+            },
+            {
+              "type": "service_point",
+              "x": 150,
+              "y": 840,
+              "scale": 0.62,
+              "light": "green"
+            },
+            {
+              "type": "queue_line",
+              "points": [
+                [
+                  290,
+                  480
+                ],
+                [
+                  940,
+                  480
+                ]
+              ],
+              "spacing": 118,
+              "count": 4,
+              "scale": 0.68,
+              "people": {
+                "0": {
+                  "pose": "walk"
+                },
+                "1": {
+                  "pose": "walk"
+                }
+              }
+            },
+            {
+              "type": "queue_line",
+              "points": [
+                [
+                  290,
+                  660
+                ],
+                [
+                  940,
+                  660
+                ]
+              ],
+              "spacing": 118,
+              "count": 6,
+              "scale": 0.68,
+              "people": {
+                "0": {
+                  "carry": "cart"
+                },
+                "3": {
+                  "skip": true
+                }
+              }
+            },
+            {
+              "type": "character",
+              "id": "dengdeng",
+              "x": 645,
+              "y": 676,
+              "scale": 0.7,
+              "pose": "stomp",
+              "facing": -1,
+              "eyes": "squint",
+              "brows": "angry",
+              "mouth": "shout",
+              "marks": [
+                "anger"
+              ]
+            },
+            {
+              "type": "queue_line",
+              "points": [
+                [
+                  290,
+                  840
+                ],
+                [
+                  940,
+                  840
+                ]
+              ],
+              "spacing": 118,
+              "count": 4,
+              "scale": 0.68,
+              "people": {
+                "0": {
+                  "pose": "walk"
+                }
+              }
+            },
+            {
+              "type": "stamp",
+              "x": 200,
+              "y": 610,
+              "text": "卡住",
+              "size": 58,
+              "rot": -14
+            }
+          ]
+        },
+        {
+          "type": "panel",
+          "rect": [
+            968,
+            0,
+            952,
+            1080
+          ],
+          "title": {
+            "text": "一条长龙",
+            "color": "agui_dark",
+            "y": 150
+          },
+          "layers": [
+            {
+              "type": "backdrop",
+              "horizon": 250
+            },
+            {
+              "type": "service_point",
+              "x": 150,
+              "y": 480,
+              "scale": 0.62,
+              "light": "green"
+            },
+            {
+              "type": "service_point",
+              "x": 150,
+              "y": 660,
+              "scale": 0.62,
+              "light": "red"
+            },
+            {
+              "type": "service_point",
+              "x": 150,
+              "y": 840,
+              "scale": 0.62,
+              "light": "green"
+            },
+            {
+              "type": "queue_line",
+              "rope": [
+                [
+                  [
+                    400,
+                    700
+                  ],
+                  [
+                    560,
+                    700
+                  ],
+                  [
+                    720,
+                    700
+                  ],
+                  [
+                    880,
+                    700
+                  ]
+                ],
+                [
+                  [
+                    360,
+                    818
+                  ],
+                  [
+                    520,
+                    818
+                  ],
+                  [
+                    680,
+                    818
+                  ],
+                  [
+                    840,
+                    818
+                  ]
+                ]
+              ],
+              "points": [
+                [
+                  330,
+                  640
+                ],
+                [
+                  860,
+                  640
+                ],
+                [
+                  860,
+                  760
+                ],
+                [
+                  400,
+                  760
+                ],
+                [
+                  400,
+                  875
+                ],
+                [
+                  860,
+                  875
+                ]
+              ],
+              "spacing": 100,
+              "count": 14,
+              "scale": 0.55,
+              "numbered": true
+            },
+            {
+              "type": "person",
+              "x": 250,
+              "y": 560,
+              "scale": 0.6,
+              "pose": "walk",
+              "facing": -1
+            },
+            {
+              "type": "arrow",
+              "from": [
+                300,
+                640
+              ],
+              "via": [
+                300,
+                520
+              ],
+              "to": [
+                250,
+                470
+              ],
+              "color": "green",
+              "width": 9
+            },
+            {
+              "type": "stamp",
+              "x": 200,
+              "y": 610,
+              "text": "卡住",
+              "size": 44,
+              "rot": -14
+            },
+            {
+              "type": "character",
+              "id": "agui",
+              "x": 880,
+              "y": 575,
+              "scale": 0.55,
+              "pose": "point_up",
+              "facing": -1,
+              "eyes": "normal",
+              "mouth": "smile"
+            }
+          ]
+        },
+        {
+          "type": "divider",
+          "x": 960
+        },
+        {
+          "type": "character",
+          "id": "dida",
+          "x": 960,
+          "y": 470,
+          "scale": 0.7,
+          "pose": "press_watch",
+          "facing": 1,
+          "mouth": "grin",
+          "hand_deg": 0
+        },
+        {
+          "type": "kinetic_number",
+          "x": 1490,
+          "y": 330,
+          "text": "0",
+          "size": 180,
+          "progress": 0.95,
+          "rot": 3,
+          "color": "teal",
+          "disc": "white",
+          "caption": "被后来的人超车",
+          "caption_size": 40,
+          "burst_scale": 0.95
+        }
+      ],
+      "chips": [
+        {
+          "text": "示意 · 同样卡住一个台",
+          "corner": "bl"
+        }
+      ],
+      "subtitle": {
+        "speaker": "嘀嗒",
+        "text": "一条队里，被后来的人超车的，零个。"
+      }
+    },
+    {
+      "id": "s4_vote_76s",
+      "t": 76.0,
+      "beat": "评论站队",
+      "layers": [
+        {
+          "type": "panel",
+          "rect": [
+            0,
+            0,
+            960,
+            1080
+          ],
+          "layers": [
+            {
+              "type": "fill",
+              "color": "tint_a",
+              "dots": "agui_dark"
+            },
+            {
+              "type": "label",
+              "x": 480,
+              "y": 330,
+              "text": "A",
+              "size": 400,
+              "color": "agui",
+              "outline": 22
+            },
+            {
+              "type": "tag",
+              "x": 480,
+              "y": 590,
+              "text": "一条长龙",
+              "color": "agui_dark",
+              "size": 56
+            },
+            {
+              "type": "service_point",
+              "x": 170,
+              "y": 830,
+              "scale": 0.42,
+              "light": "green"
+            },
+            {
+              "type": "queue_line",
+              "rope": [
+                [
+                  [
+                    300,
+                    790
+                  ],
+                  [
+                    460,
+                    790
+                  ],
+                  [
+                    620,
+                    790
+                  ],
+                  [
+                    760,
+                    790
+                  ]
+                ]
+              ],
+              "points": [
+                [
+                  260,
+                  760
+                ],
+                [
+                  800,
+                  760
+                ],
+                [
+                  800,
+                  880
+                ],
+                [
+                  300,
+                  880
+                ]
+              ],
+              "spacing": 84,
+              "count": 12,
+              "scale": 0.44
+            }
+          ]
+        },
+        {
+          "type": "panel",
+          "rect": [
+            960,
+            0,
+            960,
+            1080
+          ],
+          "layers": [
+            {
+              "type": "fill",
+              "color": "tint_b",
+              "dots": "dengdeng_dark"
+            },
+            {
+              "type": "label",
+              "x": 480,
+              "y": 330,
+              "text": "B",
+              "size": 400,
+              "color": "dengdeng",
+              "outline": 22
+            },
+            {
+              "type": "tag",
+              "x": 480,
+              "y": 590,
+              "text": "三条短队 自己挑",
+              "color": "dengdeng_dark",
+              "size": 56
+            },
+            {
+              "type": "service_point",
+              "x": 200,
+              "y": 740,
+              "scale": 0.38,
+              "light": "green"
+            },
+            {
+              "type": "service_point",
+              "x": 200,
+              "y": 830,
+              "scale": 0.38,
+              "light": "green"
+            },
+            {
+              "type": "service_point",
+              "x": 200,
+              "y": 920,
+              "scale": 0.38,
+              "light": "green"
+            },
+            {
+              "type": "queue_line",
+              "points": [
+                [
+                  300,
+                  740
+                ],
+                [
+                  800,
+                  740
+                ]
+              ],
+              "spacing": 80,
+              "count": 4,
+              "scale": 0.4
+            },
+            {
+              "type": "queue_line",
+              "points": [
+                [
+                  300,
+                  830
+                ],
+                [
+                  800,
+                  830
+                ]
+              ],
+              "spacing": 80,
+              "count": 4,
+              "scale": 0.4
+            },
+            {
+              "type": "queue_line",
+              "points": [
+                [
+                  300,
+                  920
+                ],
+                [
+                  800,
+                  920
+                ]
+              ],
+              "spacing": 80,
+              "count": 4,
+              "scale": 0.4
+            }
+          ]
+        },
+        {
+          "type": "divider",
+          "x": 960,
+          "zig": 14
+        },
+        {
+          "type": "character",
+          "id": "dengdeng",
+          "x": 960,
+          "y": 860,
+          "scale": 1.0,
+          "pose": "point_camera",
+          "facing": 1,
+          "look": 0,
+          "eyes": "wide",
+          "brows": "up",
+          "mouth": "shout",
+          "marks": [
+            "question"
+          ]
+        },
+        {
+          "type": "character",
+          "id": "dida",
+          "x": 1690,
+          "y": 1000,
+          "scale": 0.72,
+          "pose": "hold_sign",
+          "facing": -1,
+          "mouth": "grin",
+          "sign": {
+            "text": "评论区扣 A 或 B",
+            "w": 470,
+            "h": 110,
+            "size": 52,
+            "dx": -60,
+            "dy": 10,
+            "rot": 4,
+            "color": "yellow"
+          }
+        },
+        {
+          "type": "character",
+          "id": "agui",
+          "x": 250,
+          "y": 1010,
+          "scale": 0.62,
+          "pose": "think",
+          "facing": 1,
+          "mouth": "smile",
+          "eyes": "normal"
+        }
+      ],
+      "footnote": "本片数字为简化模拟：3 个收银台，高峰负荷，20 组随机顾客。不代表任何真实门店。",
+      "subtitle": {
+        "speaker": "嘀嗒",
+        "text": "一条长龙扣 A，三条短队自己挑扣 B。"
+      }
+    }
+  ]
+}

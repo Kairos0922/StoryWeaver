@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
+import vm from 'node:vm';
 import {extractSpokenLines, lintFile, lintText, loadRules} from '../studio/lint/lint_script.mjs';
 import {approvalState, phaseABodyHash, validatePhaseA} from '../studio/phase_a.mjs';
 import {inspectEngagement} from '../studio/qc/checks.mjs';
@@ -326,6 +327,28 @@ structure_revision: 0
 `;
   const result = validatePhaseA(markdown);
   assert.ok(result.issues.some(issue => issue.id === 'vertical_duration_cap'));
+});
+
+test('ep02 stills use kit components and subtitle only script lines', async () => {
+  const kit = await fs.readFile(path.join(root, 'studio/render/kit/canvas/kit.js'), 'utf8');
+  const context = vm.createContext({});
+  vm.runInContext(kit, context);
+  const known = new Set(context.SWKit.components);
+  const episode = path.join(root, 'series/invisible-rules/ep02');
+  const spec = JSON.parse(await fs.readFile(path.join(episode, 'render/stills.json'), 'utf8'));
+  const {speakers} = await loadRules();
+  const spoken = extractSpokenLines(await fs.readFile(path.join(episode, 'script.md'), 'utf8'), speakers);
+  const walk = layers => layers.flatMap(layer => [layer.type, ...walk(layer.layers || [])]);
+  for (const shot of spec.shots) {
+    for (const type of walk([...(shot.layers || []), ...(shot.overlay || [])])) {
+      assert.ok(known.has(type), `${shot.id}: unknown component ${type}`);
+    }
+    if (shot.subtitle) {
+      const {speaker, text} = shot.subtitle;
+      assert.ok(spoken.some(line => line.speaker === speaker && line.text.includes(text)), `${shot.id}: subtitle not in script.md`);
+    }
+    await fs.access(path.join(episode, spec.out_dir, `${shot.id}.png`));
+  }
 });
 
 test('legacy CLI points at the studio', () => {
