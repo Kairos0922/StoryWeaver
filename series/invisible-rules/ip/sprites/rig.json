@@ -1,0 +1,3524 @@
+{
+ "schema": "storyweaver.rig.v1",
+ "series": "invisible-rules",
+ "generated_by": "series/invisible-rules/ip/build_rig.py",
+ "units": "sheet units; 1 unit = 1 px at scale 1",
+ "lineup": {
+  "sha256": "e35ca7f8da54c1d6d68c227cc96ee47438e3e100749fa34f7aeb0eb2733758e3",
+  "scale": {
+   "dengdeng": 1,
+   "agui": 1,
+   "dida": 0.95
+  }
+ },
+ "characters": {
+  "agui": {
+   "name": "阿规",
+   "source": {
+    "file": "sprites/src/agui.svg",
+    "sha256": "c826d56c2a90b1396a27b1f1d04649957bcb583b6cffe170527e7c7180c671f4"
+   },
+   "sheet_scale": 1.15,
+   "palette": [
+    "#3FC1A5",
+    "#2A9C84",
+    "#0F1E28",
+    "#F2A541",
+    "#F49A8C",
+    "#13232E"
+   ],
+   "catchphrase": "“规则就藏在这儿。”",
+   "anchors": {
+    "top": -232,
+    "ground": 106,
+    "hip": 36,
+    "shell": [
+     -120,
+     -160,
+     120,
+     40
+    ],
+    "eyes": [
+     0,
+     -80
+    ],
+    "mouth": [
+     0,
+     -49
+    ],
+    "arrow": [
+     0,
+     -215
+    ]
+   },
+   "body": [
+    {
+     "tag": "rect",
+     "x": -62,
+     "y": 36,
+     "w": 26,
+     "h": 54,
+     "rx": 13,
+     "fill": "#13232E",
+     "role": "leg",
+     "side": "L",
+     "c": [
+      -49.0,
+      63.0
+     ]
+    },
+    {
+     "tag": "rect",
+     "x": 36,
+     "y": 36,
+     "w": 26,
+     "h": 54,
+     "rx": 13,
+     "fill": "#13232E",
+     "role": "leg",
+     "side": "R",
+     "c": [
+      49.0,
+      63.0
+     ]
+    },
+    {
+     "tag": "rect",
+     "x": -76,
+     "y": 82,
+     "w": 52,
+     "h": 24,
+     "rx": 12,
+     "fill": "#F2A541",
+     "stroke": "#13232E",
+     "sw": 6,
+     "role": "foot",
+     "side": "L",
+     "c": [
+      -50.0,
+      94.0
+     ]
+    },
+    {
+     "tag": "rect",
+     "x": 24,
+     "y": 82,
+     "w": 52,
+     "h": 24,
+     "rx": 12,
+     "fill": "#F2A541",
+     "stroke": "#13232E",
+     "sw": 6,
+     "role": "foot",
+     "side": "R",
+     "c": [
+      50.0,
+      94.0
+     ]
+    }
+   ],
+   "arm_style": {
+    "stroke": "#13232E",
+    "sw": 9,
+    "hand": {
+     "r": 15,
+     "fill": "#3FC1A5",
+     "stroke": "#13232E",
+     "sw": 7
+    }
+   },
+   "arms": {
+    "L": {
+     "shoulder": [
+      -114,
+      -30
+     ],
+     "ctrl": [
+      -148,
+      0
+     ],
+     "end": [
+      -144,
+      44
+     ]
+    },
+    "R": {
+     "shoulder": [
+      114,
+      -30
+     ],
+     "ctrl": [
+      148,
+      0
+     ],
+     "end": [
+      144,
+      44
+     ]
+    }
+   },
+   "signature": {
+    "R": {
+     "shoulder": [
+      112,
+      -40
+     ],
+     "ctrl": [
+      160,
+      -80
+     ],
+     "end": [
+      166,
+      -138
+     ]
+    },
+    "prop": null
+   },
+   "props": {},
+   "expressions": {
+    "neutral": {
+     "label": "主图",
+     "elements": [
+      {
+       "tag": "rect",
+       "x": -6,
+       "y": -200,
+       "w": 12,
+       "h": 44,
+       "rx": 6,
+       "fill": "#13232E",
+       "role": "antenna",
+       "c": [
+        0.0,
+        -178.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -120,
+       "y": -160,
+       "w": 240,
+       "h": 200,
+       "rx": 56,
+       "fill": "#3FC1A5",
+       "stroke": "#13232E",
+       "sw": 8,
+       "role": "shell",
+       "c": [
+        0.0,
+        -60.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -92,
+       "y": -128,
+       "w": 184,
+       "h": 120,
+       "rx": 34,
+       "fill": "#0F1E28",
+       "role": "screen",
+       "c": [
+        0.0,
+        -68.0
+       ]
+      },
+      {
+       "tag": "ellipse",
+       "cx": -32,
+       "cy": -12,
+       "rx": 11,
+       "ry": 15,
+       "fill": "#E9FFF9",
+       "tf": [
+        0,
+        -68
+       ],
+       "role": "eye",
+       "side": "L",
+       "c": [
+        -32.0,
+        -80.0
+       ]
+      },
+      {
+       "tag": "ellipse",
+       "cx": 32,
+       "cy": -12,
+       "rx": 11,
+       "ry": 15,
+       "fill": "#E9FFF9",
+       "tf": [
+        0,
+        -68
+       ],
+       "role": "eye",
+       "side": "R",
+       "c": [
+        32.0,
+        -80.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": -28,
+       "cy": -17,
+       "r": 4,
+       "fill": "#0F1E28",
+       "op": 0.35,
+       "tf": [
+        0,
+        -68
+       ],
+       "role": "eye_hi",
+       "side": "L",
+       "c": [
+        -28.0,
+        -85.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": 36,
+       "cy": -17,
+       "r": 4,
+       "fill": "#0F1E28",
+       "op": 0.35,
+       "tf": [
+        0,
+        -68
+       ],
+       "role": "eye_hi",
+       "side": "R",
+       "c": [
+        36.0,
+        -85.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M-12 14 q12 10 24 0",
+       "fill": "none",
+       "stroke": "#3FC1A5",
+       "sw": 7,
+       "cap": "round",
+       "tf": [
+        0,
+        -68
+       ],
+       "role": "mouth",
+       "c": [
+        0.0,
+        -49.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": -98,
+       "cy": 6,
+       "r": 9,
+       "fill": "#F49A8C",
+       "op": 0.8,
+       "role": "blush",
+       "side": "L",
+       "c": [
+        -98.0,
+        6.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": 98,
+       "cy": 6,
+       "r": 9,
+       "fill": "#F49A8C",
+       "op": 0.8,
+       "role": "blush",
+       "side": "R",
+       "c": [
+        98.0,
+        6.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M-84 22 H84",
+       "stroke": "#F6F1E7",
+       "sw": 7,
+       "cap": "round",
+       "dash": [
+        16,
+        12
+       ],
+       "role": "belt",
+       "c": [
+        0.0,
+        22.0
+       ]
+      }
+     ]
+    },
+    "smug": {
+     "label": "得意",
+     "elements": [
+      {
+       "tag": "rect",
+       "x": -6,
+       "y": -200,
+       "w": 12,
+       "h": 44,
+       "rx": 6,
+       "fill": "#13232E",
+       "role": "antenna",
+       "c": [
+        0.0,
+        -178.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -120,
+       "y": -160,
+       "w": 240,
+       "h": 200,
+       "rx": 56,
+       "fill": "#3FC1A5",
+       "stroke": "#13232E",
+       "sw": 8,
+       "role": "shell",
+       "c": [
+        0.0,
+        -60.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -92,
+       "y": -128,
+       "w": 184,
+       "h": 120,
+       "rx": 34,
+       "fill": "#0F1E28",
+       "role": "screen",
+       "c": [
+        0.0,
+        -68.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M-46 -14 q14 -18 28 0",
+       "fill": "none",
+       "stroke": "#E9FFF9",
+       "sw": 9,
+       "cap": "round",
+       "tf": [
+        0,
+        -68
+       ],
+       "role": "eye",
+       "side": "L",
+       "c": [
+        -32.0,
+        -91.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M18 -14 q14 -18 28 0",
+       "fill": "none",
+       "stroke": "#E9FFF9",
+       "sw": 9,
+       "cap": "round",
+       "tf": [
+        0,
+        -68
+       ],
+       "role": "eye",
+       "side": "R",
+       "c": [
+        32.0,
+        -91.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M-16 14 q16 14 32 0",
+       "fill": "none",
+       "stroke": "#3FC1A5",
+       "sw": 7,
+       "cap": "round",
+       "tf": [
+        0,
+        -68
+       ],
+       "role": "mouth",
+       "c": [
+        0.0,
+        -47.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": -98,
+       "cy": 6,
+       "r": 9,
+       "fill": "#F49A8C",
+       "op": 0.8,
+       "role": "blush",
+       "side": "L",
+       "c": [
+        -98.0,
+        6.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": 98,
+       "cy": 6,
+       "r": 9,
+       "fill": "#F49A8C",
+       "op": 0.8,
+       "role": "blush",
+       "side": "R",
+       "c": [
+        98.0,
+        6.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M-84 22 H84",
+       "stroke": "#F6F1E7",
+       "sw": 7,
+       "cap": "round",
+       "dash": [
+        16,
+        12
+       ],
+       "role": "belt",
+       "c": [
+        0.0,
+        22.0
+       ]
+      }
+     ]
+    },
+    "surprised": {
+     "label": "惊讶",
+     "elements": [
+      {
+       "tag": "rect",
+       "x": -6,
+       "y": -200,
+       "w": 12,
+       "h": 44,
+       "rx": 6,
+       "fill": "#13232E",
+       "role": "antenna",
+       "c": [
+        0.0,
+        -178.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -120,
+       "y": -160,
+       "w": 240,
+       "h": 200,
+       "rx": 56,
+       "fill": "#3FC1A5",
+       "stroke": "#13232E",
+       "sw": 8,
+       "role": "shell",
+       "c": [
+        0.0,
+        -60.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -92,
+       "y": -128,
+       "w": 184,
+       "h": 120,
+       "rx": 34,
+       "fill": "#0F1E28",
+       "role": "screen",
+       "c": [
+        0.0,
+        -68.0
+       ]
+      },
+      {
+       "tag": "ellipse",
+       "cx": -32,
+       "cy": -12,
+       "rx": 15,
+       "ry": 17,
+       "fill": "#E9FFF9",
+       "tf": [
+        0,
+        -68
+       ],
+       "role": "eye",
+       "side": "L",
+       "c": [
+        -32.0,
+        -80.0
+       ]
+      },
+      {
+       "tag": "ellipse",
+       "cx": 32,
+       "cy": -12,
+       "rx": 15,
+       "ry": 17,
+       "fill": "#E9FFF9",
+       "tf": [
+        0,
+        -68
+       ],
+       "role": "eye",
+       "side": "R",
+       "c": [
+        32.0,
+        -80.0
+       ]
+      },
+      {
+       "tag": "ellipse",
+       "cx": 0,
+       "cy": 18,
+       "rx": 8,
+       "ry": 9,
+       "fill": "#3FC1A5",
+       "tf": [
+        0,
+        -68
+       ],
+       "role": "mouth",
+       "c": [
+        0.0,
+        -50.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": -98,
+       "cy": 6,
+       "r": 9,
+       "fill": "#F49A8C",
+       "op": 0.8,
+       "role": "blush",
+       "side": "L",
+       "c": [
+        -98.0,
+        6.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": 98,
+       "cy": 6,
+       "r": 9,
+       "fill": "#F49A8C",
+       "op": 0.8,
+       "role": "blush",
+       "side": "R",
+       "c": [
+        98.0,
+        6.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M-84 22 H84",
+       "stroke": "#F6F1E7",
+       "sw": 7,
+       "cap": "round",
+       "dash": [
+        16,
+        12
+       ],
+       "role": "belt",
+       "c": [
+        0.0,
+        22.0
+       ]
+      }
+     ]
+    },
+    "serious": {
+     "label": "较真",
+     "elements": [
+      {
+       "tag": "rect",
+       "x": -6,
+       "y": -200,
+       "w": 12,
+       "h": 44,
+       "rx": 6,
+       "fill": "#13232E",
+       "role": "antenna",
+       "c": [
+        0.0,
+        -178.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -120,
+       "y": -160,
+       "w": 240,
+       "h": 200,
+       "rx": 56,
+       "fill": "#3FC1A5",
+       "stroke": "#13232E",
+       "sw": 8,
+       "role": "shell",
+       "c": [
+        0.0,
+        -60.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -92,
+       "y": -128,
+       "w": 184,
+       "h": 120,
+       "rx": 34,
+       "fill": "#0F1E28",
+       "role": "screen",
+       "c": [
+        0.0,
+        -68.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -46,
+       "y": -18,
+       "w": 28,
+       "h": 9,
+       "rx": 4.5,
+       "fill": "#E9FFF9",
+       "tf": [
+        0,
+        -68
+       ],
+       "role": "eye",
+       "side": "L",
+       "c": [
+        -32.0,
+        -81.5
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": 18,
+       "y": -18,
+       "w": 28,
+       "h": 9,
+       "rx": 4.5,
+       "fill": "#E9FFF9",
+       "tf": [
+        0,
+        -68
+       ],
+       "role": "eye",
+       "side": "R",
+       "c": [
+        32.0,
+        -81.5
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -12,
+       "y": 14,
+       "w": 24,
+       "h": 7,
+       "rx": 3.5,
+       "fill": "#3FC1A5",
+       "tf": [
+        0,
+        -68
+       ],
+       "role": "mouth",
+       "c": [
+        0.0,
+        -50.5
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": -98,
+       "cy": 6,
+       "r": 9,
+       "fill": "#F49A8C",
+       "op": 0.8,
+       "role": "blush",
+       "side": "L",
+       "c": [
+        -98.0,
+        6.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": 98,
+       "cy": 6,
+       "r": 9,
+       "fill": "#F49A8C",
+       "op": 0.8,
+       "role": "blush",
+       "side": "R",
+       "c": [
+        98.0,
+        6.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M-84 22 H84",
+       "stroke": "#F6F1E7",
+       "sw": 7,
+       "cap": "round",
+       "dash": [
+        16,
+        12
+       ],
+       "role": "belt",
+       "c": [
+        0.0,
+        22.0
+       ]
+      }
+     ]
+    },
+    "wink": {
+     "label": "眨眼",
+     "elements": [
+      {
+       "tag": "rect",
+       "x": -6,
+       "y": -200,
+       "w": 12,
+       "h": 44,
+       "rx": 6,
+       "fill": "#13232E",
+       "role": "antenna",
+       "c": [
+        0.0,
+        -178.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -120,
+       "y": -160,
+       "w": 240,
+       "h": 200,
+       "rx": 56,
+       "fill": "#3FC1A5",
+       "stroke": "#13232E",
+       "sw": 8,
+       "role": "shell",
+       "c": [
+        0.0,
+        -60.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -92,
+       "y": -128,
+       "w": 184,
+       "h": 120,
+       "rx": 34,
+       "fill": "#0F1E28",
+       "role": "screen",
+       "c": [
+        0.0,
+        -68.0
+       ]
+      },
+      {
+       "tag": "ellipse",
+       "cx": -32,
+       "cy": -12,
+       "rx": 11,
+       "ry": 15,
+       "fill": "#E9FFF9",
+       "tf": [
+        0,
+        -68
+       ],
+       "role": "eye",
+       "side": "L",
+       "c": [
+        -32.0,
+        -80.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M18 -12 q14 -12 28 0",
+       "fill": "none",
+       "stroke": "#E9FFF9",
+       "sw": 9,
+       "cap": "round",
+       "tf": [
+        0,
+        -68
+       ],
+       "role": "eye",
+       "side": "R",
+       "c": [
+        32.0,
+        -86.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M-16 12 q16 14 32 0",
+       "fill": "none",
+       "stroke": "#3FC1A5",
+       "sw": 7,
+       "cap": "round",
+       "tf": [
+        0,
+        -68
+       ],
+       "role": "mouth",
+       "c": [
+        0.0,
+        -49.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": -98,
+       "cy": 6,
+       "r": 9,
+       "fill": "#F49A8C",
+       "op": 0.8,
+       "role": "blush",
+       "side": "L",
+       "c": [
+        -98.0,
+        6.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": 98,
+       "cy": 6,
+       "r": 9,
+       "fill": "#F49A8C",
+       "op": 0.8,
+       "role": "blush",
+       "side": "R",
+       "c": [
+        98.0,
+        6.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M-84 22 H84",
+       "stroke": "#F6F1E7",
+       "sw": 7,
+       "cap": "round",
+       "dash": [
+        16,
+        12
+       ],
+       "role": "belt",
+       "c": [
+        0.0,
+        22.0
+       ]
+      }
+     ]
+    }
+   },
+   "default_expression": "neutral",
+   "expression_defaults": {
+    "surprised": {
+     "arrow_flip": 1
+    }
+   },
+   "action": {
+    "label": "头顶箭头翻转=换方向",
+    "arrow_flip": 1,
+    "expression": "serious",
+    "fx": [
+     {
+      "tag": "path",
+      "d": "M-260 -120 H-170",
+      "stroke": "#F2A541",
+      "sw": 8,
+      "cap": "round",
+      "dash": [
+       14,
+       10
+      ],
+      "role": "fx_lines",
+      "c": [
+       -215.0,
+       -120.0
+      ]
+     },
+     {
+      "tag": "path",
+      "d": "M170 -120 H260",
+      "stroke": "#F2A541",
+      "sw": 8,
+      "cap": "round",
+      "dash": [
+       14,
+       10
+      ],
+      "role": "fx_lines",
+      "c": [
+       215.0,
+       -120.0
+      ]
+     }
+    ],
+    "leg_stretch": 0
+   },
+   "arrow": {
+    "tag": "path",
+    "d": "M0 -232 L-22 -198 L22 -198 Z",
+    "fill": "#F2A541",
+    "stroke": "#13232E",
+    "sw": 6,
+    "join": "round",
+    "role": "arrow",
+    "c": [
+     0.0,
+     -215.0
+    ]
+   }
+  },
+  "dengdeng": {
+   "name": "等等",
+   "source": {
+    "file": "sprites/src/dengdeng.svg",
+    "sha256": "8c14ac4042c762a2fab80a0eff35e92f1f4ffaffe5d169edfa4b859670dc0f7f"
+   },
+   "sheet_scale": 1.15,
+   "palette": [
+    "#F2A541",
+    "#D9862A",
+    "#E8685A",
+    "#7FD3F2",
+    "#F49A8C",
+    "#13232E"
+   ],
+   "catchphrase": "“怎么还不来啊！”",
+   "anchors": {
+    "top": -238,
+    "ground": 116,
+    "hip": 60,
+    "shell": [
+     -112,
+     -194,
+     112,
+     74
+    ],
+    "eyes": [
+     0,
+     -88
+    ],
+    "mouth": [
+     0,
+     -41
+    ]
+   },
+   "body": [
+    {
+     "tag": "rect",
+     "x": -50,
+     "y": 60,
+     "w": 22,
+     "h": 40,
+     "rx": 11,
+     "fill": "#13232E",
+     "role": "leg",
+     "side": "L",
+     "c": [
+      -39.0,
+      80.0
+     ]
+    },
+    {
+     "tag": "rect",
+     "x": 28,
+     "y": 60,
+     "w": 22,
+     "h": 40,
+     "rx": 11,
+     "fill": "#13232E",
+     "role": "leg",
+     "side": "R",
+     "c": [
+      39.0,
+      80.0
+     ]
+    },
+    {
+     "tag": "ellipse",
+     "cx": -44,
+     "cy": 102,
+     "rx": 30,
+     "ry": 14,
+     "fill": "#E8685A",
+     "stroke": "#13232E",
+     "sw": 6,
+     "role": "foot",
+     "side": "L",
+     "c": [
+      -44.0,
+      102.0
+     ]
+    },
+    {
+     "tag": "ellipse",
+     "cx": 44,
+     "cy": 102,
+     "rx": 30,
+     "ry": 14,
+     "fill": "#E8685A",
+     "stroke": "#13232E",
+     "sw": 6,
+     "role": "foot",
+     "side": "R",
+     "c": [
+      44.0,
+      102.0
+     ]
+    }
+   ],
+   "arm_style": {
+    "stroke": "#13232E",
+    "sw": 9,
+    "hand": {
+     "r": 14,
+     "fill": "#F2A541",
+     "stroke": "#13232E",
+     "sw": 6
+    }
+   },
+   "arms": {
+    "L": {
+     "shoulder": [
+      -104,
+      -10
+     ],
+     "ctrl": [
+      -144,
+      0
+     ],
+     "end": [
+      -148,
+      40
+     ]
+    },
+    "R": {
+     "shoulder": [
+      104,
+      -10
+     ],
+     "ctrl": [
+      144,
+      0
+     ],
+     "end": [
+      148,
+      40
+     ]
+    }
+   },
+   "signature": {
+    "R": {
+     "shoulder": [
+      104,
+      -10
+     ],
+     "ctrl": [
+      148,
+      -16
+     ],
+     "end": [
+      156,
+      -54
+     ]
+    },
+    "prop": "phone"
+   },
+   "props": {
+    "phone": {
+     "name": "phone",
+     "rest_angle": -78.111,
+     "elements": [
+      {
+       "tag": "rect",
+       "x": 138,
+       "y": -104,
+       "w": 40,
+       "h": 66,
+       "rx": 9,
+       "fill": "#0F1E28",
+       "stroke": "#13232E",
+       "sw": 5,
+       "tf": [
+        -156,
+        46
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": 144,
+       "y": -96,
+       "w": 28,
+       "h": 44,
+       "rx": 4,
+       "fill": "#7FD3F2",
+       "tf": [
+        -156,
+        46
+       ]
+      }
+     ]
+    }
+   },
+   "expressions": {
+    "daily": {
+     "label": "日常",
+     "elements": [
+      {
+       "tag": "path",
+       "d": "M-40 -186 l14 -40 l14 30 l12 -42 l14 40 l14 -34 l10 46",
+       "fill": "#F2A541",
+       "stroke": "#13232E",
+       "sw": 7,
+       "join": "round",
+       "role": "hair",
+       "c": [
+        -1.0,
+        -212.0
+       ]
+      },
+      {
+       "tag": "ellipse",
+       "cx": 0,
+       "cy": -60,
+       "rx": 112,
+       "ry": 134,
+       "fill": "#F2A541",
+       "stroke": "#13232E",
+       "sw": 8,
+       "role": "shell",
+       "c": [
+        0.0,
+        -60.0
+       ]
+      },
+      {
+       "tag": "ellipse",
+       "cx": -66,
+       "cy": -54,
+       "rx": 13,
+       "ry": 8,
+       "fill": "#F49A8C",
+       "role": "blush",
+       "side": "L",
+       "c": [
+        -66.0,
+        -54.0
+       ]
+      },
+      {
+       "tag": "ellipse",
+       "cx": 66,
+       "cy": -54,
+       "rx": 13,
+       "ry": 8,
+       "fill": "#F49A8C",
+       "role": "blush",
+       "side": "R",
+       "c": [
+        66.0,
+        -54.0
+       ]
+      },
+      {
+       "tag": "ellipse",
+       "cx": -38,
+       "cy": -92,
+       "rx": 22,
+       "ry": 26,
+       "fill": "#FFFFFF",
+       "stroke": "#13232E",
+       "sw": 6,
+       "role": "eye",
+       "side": "L",
+       "c": [
+        -38.0,
+        -92.0
+       ]
+      },
+      {
+       "tag": "ellipse",
+       "cx": 38,
+       "cy": -92,
+       "rx": 22,
+       "ry": 26,
+       "fill": "#FFFFFF",
+       "stroke": "#13232E",
+       "sw": 6,
+       "role": "eye",
+       "side": "R",
+       "c": [
+        38.0,
+        -92.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": -34,
+       "cy": -88,
+       "r": 10,
+       "fill": "#13232E",
+       "role": "pupil",
+       "side": "L",
+       "c": [
+        -34.0,
+        -88.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": 42,
+       "cy": -88,
+       "r": 10,
+       "fill": "#13232E",
+       "role": "pupil",
+       "side": "R",
+       "c": [
+        42.0,
+        -88.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M-24 -40 q24 16 48 0",
+       "fill": "none",
+       "stroke": "#13232E",
+       "sw": 7,
+       "cap": "round",
+       "role": "mouth",
+       "c": [
+        0.0,
+        -32.0
+       ]
+      }
+     ]
+    },
+    "anxious": {
+     "label": "着急",
+     "elements": [
+      {
+       "tag": "path",
+       "d": "M-40 -186 l14 -40 l14 30 l12 -42 l14 40 l14 -34 l10 46",
+       "fill": "#F2A541",
+       "stroke": "#13232E",
+       "sw": 7,
+       "join": "round",
+       "role": "hair",
+       "c": [
+        -1.0,
+        -212.0
+       ]
+      },
+      {
+       "tag": "ellipse",
+       "cx": 0,
+       "cy": -60,
+       "rx": 112,
+       "ry": 134,
+       "fill": "#F2A541",
+       "stroke": "#13232E",
+       "sw": 8,
+       "role": "shell",
+       "c": [
+        0.0,
+        -60.0
+       ]
+      },
+      {
+       "tag": "ellipse",
+       "cx": -66,
+       "cy": -54,
+       "rx": 13,
+       "ry": 8,
+       "fill": "#F49A8C",
+       "role": "blush",
+       "side": "L",
+       "c": [
+        -66.0,
+        -54.0
+       ]
+      },
+      {
+       "tag": "ellipse",
+       "cx": 66,
+       "cy": -54,
+       "rx": 13,
+       "ry": 8,
+       "fill": "#F49A8C",
+       "role": "blush",
+       "side": "R",
+       "c": [
+        66.0,
+        -54.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M-64 -122 L-18 -110",
+       "stroke": "#13232E",
+       "sw": 8,
+       "cap": "round",
+       "role": "brow",
+       "side": "L",
+       "c": [
+        -41.0,
+        -116.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M64 -122 L18 -110",
+       "stroke": "#13232E",
+       "sw": 8,
+       "cap": "round",
+       "role": "brow",
+       "side": "R",
+       "c": [
+        41.0,
+        -116.0
+       ]
+      },
+      {
+       "tag": "ellipse",
+       "cx": -38,
+       "cy": -88,
+       "rx": 20,
+       "ry": 16,
+       "fill": "#FFFFFF",
+       "stroke": "#13232E",
+       "sw": 6,
+       "role": "eye",
+       "side": "L",
+       "c": [
+        -38.0,
+        -88.0
+       ]
+      },
+      {
+       "tag": "ellipse",
+       "cx": 38,
+       "cy": -88,
+       "rx": 20,
+       "ry": 16,
+       "fill": "#FFFFFF",
+       "stroke": "#13232E",
+       "sw": 6,
+       "role": "eye",
+       "side": "R",
+       "c": [
+        38.0,
+        -88.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": -34,
+       "cy": -86,
+       "r": 8,
+       "fill": "#13232E",
+       "role": "pupil",
+       "side": "L",
+       "c": [
+        -34.0,
+        -86.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": 42,
+       "cy": -86,
+       "r": 8,
+       "fill": "#13232E",
+       "role": "pupil",
+       "side": "R",
+       "c": [
+        42.0,
+        -86.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M-26 -34 q26 -14 52 0",
+       "fill": "none",
+       "stroke": "#13232E",
+       "sw": 7,
+       "cap": "round",
+       "role": "mouth",
+       "c": [
+        0.0,
+        -41.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M82 -150 q10 18 0 26 q-10 -8 0 -26",
+       "fill": "#7FD3F2",
+       "stroke": "#13232E",
+       "sw": 4,
+       "role": "sweat",
+       "c": [
+        82.0,
+        -137.0
+       ]
+      }
+     ]
+    },
+    "aha": {
+     "label": "恍然",
+     "elements": [
+      {
+       "tag": "path",
+       "d": "M-40 -186 l14 -40 l14 30 l12 -42 l14 40 l14 -34 l10 46",
+       "fill": "#F2A541",
+       "stroke": "#13232E",
+       "sw": 7,
+       "join": "round",
+       "role": "hair",
+       "c": [
+        -1.0,
+        -212.0
+       ]
+      },
+      {
+       "tag": "ellipse",
+       "cx": 0,
+       "cy": -60,
+       "rx": 112,
+       "ry": 134,
+       "fill": "#F2A541",
+       "stroke": "#13232E",
+       "sw": 8,
+       "role": "shell",
+       "c": [
+        0.0,
+        -60.0
+       ]
+      },
+      {
+       "tag": "ellipse",
+       "cx": -66,
+       "cy": -54,
+       "rx": 13,
+       "ry": 8,
+       "fill": "#F49A8C",
+       "role": "blush",
+       "side": "L",
+       "c": [
+        -66.0,
+        -54.0
+       ]
+      },
+      {
+       "tag": "ellipse",
+       "cx": 66,
+       "cy": -54,
+       "rx": 13,
+       "ry": 8,
+       "fill": "#F49A8C",
+       "role": "blush",
+       "side": "R",
+       "c": [
+        66.0,
+        -54.0
+       ]
+      },
+      {
+       "tag": "ellipse",
+       "cx": -38,
+       "cy": -94,
+       "rx": 25,
+       "ry": 30,
+       "fill": "#FFFFFF",
+       "stroke": "#13232E",
+       "sw": 6,
+       "role": "eye",
+       "side": "L",
+       "c": [
+        -38.0,
+        -94.0
+       ]
+      },
+      {
+       "tag": "ellipse",
+       "cx": 38,
+       "cy": -94,
+       "rx": 25,
+       "ry": 30,
+       "fill": "#FFFFFF",
+       "stroke": "#13232E",
+       "sw": 6,
+       "role": "eye",
+       "side": "R",
+       "c": [
+        38.0,
+        -94.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": -38,
+       "cy": -94,
+       "r": 7,
+       "fill": "#13232E",
+       "role": "pupil",
+       "side": "L",
+       "c": [
+        -38.0,
+        -94.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": 38,
+       "cy": -94,
+       "r": 7,
+       "fill": "#13232E",
+       "role": "pupil",
+       "side": "R",
+       "c": [
+        38.0,
+        -94.0
+       ]
+      },
+      {
+       "tag": "ellipse",
+       "cx": 0,
+       "cy": -36,
+       "rx": 14,
+       "ry": 17,
+       "fill": "#13232E",
+       "role": "mouth",
+       "c": [
+        0.0,
+        -36.0
+       ]
+      }
+     ]
+    },
+    "happy": {
+     "label": "开心",
+     "elements": [
+      {
+       "tag": "path",
+       "d": "M-40 -186 l14 -40 l14 30 l12 -42 l14 40 l14 -34 l10 46",
+       "fill": "#F2A541",
+       "stroke": "#13232E",
+       "sw": 7,
+       "join": "round",
+       "role": "hair",
+       "c": [
+        -1.0,
+        -212.0
+       ]
+      },
+      {
+       "tag": "ellipse",
+       "cx": 0,
+       "cy": -60,
+       "rx": 112,
+       "ry": 134,
+       "fill": "#F2A541",
+       "stroke": "#13232E",
+       "sw": 8,
+       "role": "shell",
+       "c": [
+        0.0,
+        -60.0
+       ]
+      },
+      {
+       "tag": "ellipse",
+       "cx": -66,
+       "cy": -54,
+       "rx": 13,
+       "ry": 8,
+       "fill": "#F49A8C",
+       "role": "blush",
+       "side": "L",
+       "c": [
+        -66.0,
+        -54.0
+       ]
+      },
+      {
+       "tag": "ellipse",
+       "cx": 66,
+       "cy": -54,
+       "rx": 13,
+       "ry": 8,
+       "fill": "#F49A8C",
+       "role": "blush",
+       "side": "R",
+       "c": [
+        66.0,
+        -54.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M-58 -90 q20 -26 40 0",
+       "fill": "none",
+       "stroke": "#13232E",
+       "sw": 8,
+       "cap": "round",
+       "role": "eye",
+       "side": "L",
+       "c": [
+        -38.0,
+        -103.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M18 -90 q20 -26 40 0",
+       "fill": "none",
+       "stroke": "#13232E",
+       "sw": 8,
+       "cap": "round",
+       "role": "eye",
+       "side": "R",
+       "c": [
+        38.0,
+        -103.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M-34 -50 q34 40 68 0 z",
+       "fill": "#13232E",
+       "role": "mouth",
+       "c": [
+        0.0,
+        -30.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M-18 -36 q18 12 36 0",
+       "fill": "#E8685A",
+       "role": "mouth",
+       "c": [
+        0.0,
+        -30.0
+       ]
+      }
+     ]
+    }
+   },
+   "default_expression": "anxious",
+   "expression_defaults": {},
+   "action": {
+    "label": "恍然大悟（原地蹦起）",
+    "expression": "aha",
+    "leg_stretch": 20
+   }
+  },
+  "dida": {
+   "name": "嘀嗒",
+   "source": {
+    "file": "sprites/src/dida.svg",
+    "sha256": "ec4c902d227585969fe9546d445882fe6775841ddd04fb85dd124c5ac2a23487"
+   },
+   "sheet_scale": 1.15,
+   "palette": [
+    "#E8685A",
+    "#F6F1E7",
+    "#13232E",
+    "#F49A8C",
+    "#3FC1A5",
+    "#F2A541"
+   ],
+   "catchphrase": "“我掐了表——”",
+   "anchors": {
+    "top": -190,
+    "ground": 202,
+    "hip": 136,
+    "shell": [
+     -146,
+     -146,
+     146,
+     146
+    ],
+    "eyes": [
+     0,
+     -6
+    ],
+    "mouth": [
+     0,
+     37
+    ],
+    "button": [
+     0,
+     -180
+    ]
+   },
+   "body": [
+    {
+     "tag": "rect",
+     "x": -46,
+     "y": 136,
+     "w": 18,
+     "h": 52,
+     "rx": 9,
+     "fill": "#13232E",
+     "role": "leg",
+     "side": "L",
+     "c": [
+      -37.0,
+      162.0
+     ]
+    },
+    {
+     "tag": "rect",
+     "x": 28,
+     "y": 136,
+     "w": 18,
+     "h": 52,
+     "rx": 9,
+     "fill": "#13232E",
+     "role": "leg",
+     "side": "R",
+     "c": [
+      37.0,
+      162.0
+     ]
+    },
+    {
+     "tag": "rect",
+     "x": -66,
+     "y": 180,
+     "w": 46,
+     "h": 22,
+     "rx": 11,
+     "fill": "#13232E",
+     "role": "foot",
+     "side": "L",
+     "c": [
+      -43.0,
+      191.0
+     ]
+    },
+    {
+     "tag": "rect",
+     "x": 20,
+     "y": 180,
+     "w": 46,
+     "h": 22,
+     "rx": 11,
+     "fill": "#13232E",
+     "role": "foot",
+     "side": "R",
+     "c": [
+      43.0,
+      191.0
+     ]
+    }
+   ],
+   "arm_style": {
+    "stroke": "#13232E",
+    "sw": 9,
+    "hand": {
+     "r": 14,
+     "fill": "#F6F1E7",
+     "stroke": "#13232E",
+     "sw": 6
+    }
+   },
+   "arms": {
+    "L": {
+     "shoulder": [
+      -140,
+      40
+     ],
+     "ctrl": [
+      -180,
+      60
+     ],
+     "end": [
+      -180,
+      106
+     ]
+    },
+    "R": {
+     "shoulder": [
+      140,
+      40
+     ],
+     "ctrl": [
+      180,
+      60
+     ],
+     "end": [
+      180,
+      106
+     ]
+    }
+   },
+   "signature": {
+    "R": {
+     "shoulder": [
+      140,
+      30
+     ],
+     "ctrl": [
+      190,
+      10
+     ],
+     "end": [
+      210,
+      -50
+     ]
+    },
+    "prop": "pointer"
+   },
+   "props": {
+    "pointer": {
+     "name": "pointer",
+     "rest_angle": -71.565,
+     "elements": [
+      {
+       "tag": "path",
+       "d": "M222 -64 L262 -104",
+       "stroke": "#E8685A",
+       "sw": 8,
+       "cap": "round",
+       "tf": [
+        -212,
+        52
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M262 -104 l-6 18 l-12 -12 z",
+       "fill": "#E8685A",
+       "stroke": "#E8685A",
+       "sw": 4,
+       "join": "round",
+       "tf": [
+        -212,
+        52
+       ]
+      }
+     ]
+    }
+   },
+   "expressions": {
+    "serious": {
+     "label": "认真",
+     "elements": [
+      {
+       "tag": "rect",
+       "x": -18,
+       "y": -176,
+       "w": 36,
+       "h": 34,
+       "rx": 8,
+       "fill": "#E8685A",
+       "stroke": "#13232E",
+       "sw": 7,
+       "role": "button_stem",
+       "c": [
+        0.0,
+        -159.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -34,
+       "y": -190,
+       "w": 68,
+       "h": 20,
+       "rx": 10,
+       "fill": "#E8685A",
+       "stroke": "#13232E",
+       "sw": 7,
+       "role": "button_cap",
+       "c": [
+        0.0,
+        -180.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": 96,
+       "y": -130,
+       "w": 26,
+       "h": 22,
+       "rx": 7,
+       "fill": "#E8685A",
+       "stroke": "#13232E",
+       "sw": 6,
+       "rot": 40,
+       "role": "side_button",
+       "c": [
+        159.99,
+        -21.1
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": 0,
+       "cy": 0,
+       "r": 146,
+       "fill": "#E8685A",
+       "stroke": "#13232E",
+       "sw": 8,
+       "role": "shell",
+       "c": [
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": 0,
+       "cy": 0,
+       "r": 122,
+       "fill": "#F6F1E7",
+       "stroke": "#13232E",
+       "sw": 6,
+       "role": "dial",
+       "c": [
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 16,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.9,
+       "rot": 0,
+       "role": "tick",
+       "index": 0,
+       "c": [
+        0.0,
+        -120.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 30,
+       "role": "tick",
+       "index": 1,
+       "c": [
+        61.75,
+        -106.95
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 60,
+       "role": "tick",
+       "index": 2,
+       "c": [
+        106.95,
+        -61.75
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 16,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.9,
+       "rot": 90,
+       "role": "tick",
+       "index": 3,
+       "c": [
+        120.0,
+        -0.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 120,
+       "role": "tick",
+       "index": 4,
+       "c": [
+        106.95,
+        61.75
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 150,
+       "role": "tick",
+       "index": 5,
+       "c": [
+        61.75,
+        106.95
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 16,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.9,
+       "rot": 180,
+       "role": "tick",
+       "index": 6,
+       "c": [
+        0.0,
+        120.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 210,
+       "role": "tick",
+       "index": 7,
+       "c": [
+        -61.75,
+        106.95
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 240,
+       "role": "tick",
+       "index": 8,
+       "c": [
+        -106.95,
+        61.75
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 16,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.9,
+       "rot": 270,
+       "role": "tick",
+       "index": 9,
+       "c": [
+        -120.0,
+        0.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 300,
+       "role": "tick",
+       "index": 10,
+       "c": [
+        -106.95,
+        -61.75
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 330,
+       "role": "tick",
+       "index": 11,
+       "c": [
+        -61.75,
+        -106.95
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": -70,
+       "cy": 30,
+       "r": 12,
+       "fill": "#F49A8C",
+       "op": 0.8,
+       "role": "blush",
+       "side": "L",
+       "c": [
+        -70.0,
+        30.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": 70,
+       "cy": 30,
+       "r": 12,
+       "fill": "#F49A8C",
+       "op": 0.8,
+       "role": "blush",
+       "side": "R",
+       "c": [
+        70.0,
+        30.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": -36,
+       "cy": -6,
+       "r": 13,
+       "fill": "#13232E",
+       "role": "eye",
+       "side": "L",
+       "c": [
+        -36.0,
+        -6.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": 36,
+       "cy": -6,
+       "r": 13,
+       "fill": "#13232E",
+       "role": "eye",
+       "side": "R",
+       "c": [
+        36.0,
+        -6.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": -32,
+       "cy": -11,
+       "r": 4,
+       "fill": "#FFFFFF",
+       "role": "eye_hi",
+       "side": "L",
+       "c": [
+        -32.0,
+        -11.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": 40,
+       "cy": -11,
+       "r": 4,
+       "fill": "#FFFFFF",
+       "role": "eye_hi",
+       "side": "R",
+       "c": [
+        40.0,
+        -11.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M-50 -38 L-20 -44",
+       "stroke": "#E8685A",
+       "sw": 8,
+       "cap": "round",
+       "role": "brow",
+       "side": "L",
+       "c": [
+        -35.0,
+        -41.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M50 -38 L20 -44",
+       "stroke": "#E8685A",
+       "sw": 8,
+       "cap": "round",
+       "role": "brow",
+       "side": "R",
+       "c": [
+        35.0,
+        -41.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M-18 30 q18 14 36 0",
+       "fill": "none",
+       "stroke": "#13232E",
+       "sw": 7,
+       "cap": "round",
+       "role": "mouth",
+       "c": [
+        0.0,
+        37.0
+       ]
+      }
+     ]
+    },
+    "smug": {
+     "label": "得意",
+     "elements": [
+      {
+       "tag": "rect",
+       "x": -18,
+       "y": -176,
+       "w": 36,
+       "h": 34,
+       "rx": 8,
+       "fill": "#E8685A",
+       "stroke": "#13232E",
+       "sw": 7,
+       "role": "button_stem",
+       "c": [
+        0.0,
+        -159.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -34,
+       "y": -190,
+       "w": 68,
+       "h": 20,
+       "rx": 10,
+       "fill": "#E8685A",
+       "stroke": "#13232E",
+       "sw": 7,
+       "role": "button_cap",
+       "c": [
+        0.0,
+        -180.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": 96,
+       "y": -130,
+       "w": 26,
+       "h": 22,
+       "rx": 7,
+       "fill": "#E8685A",
+       "stroke": "#13232E",
+       "sw": 6,
+       "rot": 40,
+       "role": "side_button",
+       "c": [
+        159.99,
+        -21.1
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": 0,
+       "cy": 0,
+       "r": 146,
+       "fill": "#E8685A",
+       "stroke": "#13232E",
+       "sw": 8,
+       "role": "shell",
+       "c": [
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": 0,
+       "cy": 0,
+       "r": 122,
+       "fill": "#F6F1E7",
+       "stroke": "#13232E",
+       "sw": 6,
+       "role": "dial",
+       "c": [
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 16,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.9,
+       "rot": 0,
+       "role": "tick",
+       "index": 0,
+       "c": [
+        0.0,
+        -120.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 30,
+       "role": "tick",
+       "index": 1,
+       "c": [
+        61.75,
+        -106.95
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 60,
+       "role": "tick",
+       "index": 2,
+       "c": [
+        106.95,
+        -61.75
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 16,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.9,
+       "rot": 90,
+       "role": "tick",
+       "index": 3,
+       "c": [
+        120.0,
+        -0.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 120,
+       "role": "tick",
+       "index": 4,
+       "c": [
+        106.95,
+        61.75
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 150,
+       "role": "tick",
+       "index": 5,
+       "c": [
+        61.75,
+        106.95
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 16,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.9,
+       "rot": 180,
+       "role": "tick",
+       "index": 6,
+       "c": [
+        0.0,
+        120.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 210,
+       "role": "tick",
+       "index": 7,
+       "c": [
+        -61.75,
+        106.95
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 240,
+       "role": "tick",
+       "index": 8,
+       "c": [
+        -106.95,
+        61.75
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 16,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.9,
+       "rot": 270,
+       "role": "tick",
+       "index": 9,
+       "c": [
+        -120.0,
+        0.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 300,
+       "role": "tick",
+       "index": 10,
+       "c": [
+        -106.95,
+        -61.75
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 330,
+       "role": "tick",
+       "index": 11,
+       "c": [
+        -61.75,
+        -106.95
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": -70,
+       "cy": 30,
+       "r": 12,
+       "fill": "#F49A8C",
+       "op": 0.8,
+       "role": "blush",
+       "side": "L",
+       "c": [
+        -70.0,
+        30.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": 70,
+       "cy": 30,
+       "r": 12,
+       "fill": "#F49A8C",
+       "op": 0.8,
+       "role": "blush",
+       "side": "R",
+       "c": [
+        70.0,
+        30.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M-50 -4 q14 -16 28 0",
+       "fill": "none",
+       "stroke": "#13232E",
+       "sw": 8,
+       "cap": "round",
+       "role": "eye",
+       "side": "L",
+       "c": [
+        -36.0,
+        -12.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M22 -4 q14 -16 28 0",
+       "fill": "none",
+       "stroke": "#13232E",
+       "sw": 8,
+       "cap": "round",
+       "role": "eye",
+       "side": "R",
+       "c": [
+        36.0,
+        -12.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M-50 -42 L-20 -34",
+       "stroke": "#E8685A",
+       "sw": 8,
+       "cap": "round",
+       "role": "brow",
+       "side": "L",
+       "c": [
+        -35.0,
+        -38.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M50 -42 L20 -34",
+       "stroke": "#E8685A",
+       "sw": 8,
+       "cap": "round",
+       "role": "brow",
+       "side": "R",
+       "c": [
+        35.0,
+        -38.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M-24 24 q24 24 48 0 z",
+       "fill": "#13232E",
+       "role": "mouth",
+       "c": [
+        0.0,
+        36.0
+       ]
+      }
+     ]
+    },
+    "doubt": {
+     "label": "怀疑",
+     "elements": [
+      {
+       "tag": "rect",
+       "x": -18,
+       "y": -176,
+       "w": 36,
+       "h": 34,
+       "rx": 8,
+       "fill": "#E8685A",
+       "stroke": "#13232E",
+       "sw": 7,
+       "role": "button_stem",
+       "c": [
+        0.0,
+        -159.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -34,
+       "y": -190,
+       "w": 68,
+       "h": 20,
+       "rx": 10,
+       "fill": "#E8685A",
+       "stroke": "#13232E",
+       "sw": 7,
+       "role": "button_cap",
+       "c": [
+        0.0,
+        -180.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": 96,
+       "y": -130,
+       "w": 26,
+       "h": 22,
+       "rx": 7,
+       "fill": "#E8685A",
+       "stroke": "#13232E",
+       "sw": 6,
+       "rot": 40,
+       "role": "side_button",
+       "c": [
+        159.99,
+        -21.1
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": 0,
+       "cy": 0,
+       "r": 146,
+       "fill": "#E8685A",
+       "stroke": "#13232E",
+       "sw": 8,
+       "role": "shell",
+       "c": [
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": 0,
+       "cy": 0,
+       "r": 122,
+       "fill": "#F6F1E7",
+       "stroke": "#13232E",
+       "sw": 6,
+       "role": "dial",
+       "c": [
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 16,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.9,
+       "rot": 0,
+       "role": "tick",
+       "index": 0,
+       "c": [
+        0.0,
+        -120.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 30,
+       "role": "tick",
+       "index": 1,
+       "c": [
+        61.75,
+        -106.95
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 60,
+       "role": "tick",
+       "index": 2,
+       "c": [
+        106.95,
+        -61.75
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 16,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.9,
+       "rot": 90,
+       "role": "tick",
+       "index": 3,
+       "c": [
+        120.0,
+        -0.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 120,
+       "role": "tick",
+       "index": 4,
+       "c": [
+        106.95,
+        61.75
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 150,
+       "role": "tick",
+       "index": 5,
+       "c": [
+        61.75,
+        106.95
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 16,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.9,
+       "rot": 180,
+       "role": "tick",
+       "index": 6,
+       "c": [
+        0.0,
+        120.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 210,
+       "role": "tick",
+       "index": 7,
+       "c": [
+        -61.75,
+        106.95
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 240,
+       "role": "tick",
+       "index": 8,
+       "c": [
+        -106.95,
+        61.75
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 16,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.9,
+       "rot": 270,
+       "role": "tick",
+       "index": 9,
+       "c": [
+        -120.0,
+        0.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 300,
+       "role": "tick",
+       "index": 10,
+       "c": [
+        -106.95,
+        -61.75
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 330,
+       "role": "tick",
+       "index": 11,
+       "c": [
+        -61.75,
+        -106.95
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": -70,
+       "cy": 30,
+       "r": 12,
+       "fill": "#F49A8C",
+       "op": 0.8,
+       "role": "blush",
+       "side": "L",
+       "c": [
+        -70.0,
+        30.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": 70,
+       "cy": 30,
+       "r": 12,
+       "fill": "#F49A8C",
+       "op": 0.8,
+       "role": "blush",
+       "side": "R",
+       "c": [
+        70.0,
+        30.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": -36,
+       "cy": -4,
+       "r": 12,
+       "fill": "#13232E",
+       "role": "eye",
+       "side": "L",
+       "c": [
+        -36.0,
+        -4.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": 36,
+       "cy": -10,
+       "r": 12,
+       "fill": "#13232E",
+       "role": "eye",
+       "side": "R",
+       "c": [
+        36.0,
+        -10.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M-50 -34 L-20 -34",
+       "stroke": "#E8685A",
+       "sw": 8,
+       "cap": "round",
+       "role": "brow",
+       "side": "L",
+       "c": [
+        -35.0,
+        -34.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M50 -50 L20 -40",
+       "stroke": "#E8685A",
+       "sw": 8,
+       "cap": "round",
+       "role": "brow",
+       "side": "R",
+       "c": [
+        35.0,
+        -45.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M-14 32 H14",
+       "stroke": "#13232E",
+       "sw": 7,
+       "cap": "round",
+       "role": "mouth",
+       "c": [
+        0.0,
+        32.0
+       ]
+      }
+     ]
+    },
+    "alarm": {
+     "label": "超时！",
+     "elements": [
+      {
+       "tag": "rect",
+       "x": -18,
+       "y": -176,
+       "w": 36,
+       "h": 34,
+       "rx": 8,
+       "fill": "#E8685A",
+       "stroke": "#13232E",
+       "sw": 7,
+       "role": "button_stem",
+       "c": [
+        0.0,
+        -159.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -34,
+       "y": -190,
+       "w": 68,
+       "h": 20,
+       "rx": 10,
+       "fill": "#E8685A",
+       "stroke": "#13232E",
+       "sw": 7,
+       "role": "button_cap",
+       "c": [
+        0.0,
+        -180.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": 96,
+       "y": -130,
+       "w": 26,
+       "h": 22,
+       "rx": 7,
+       "fill": "#E8685A",
+       "stroke": "#13232E",
+       "sw": 6,
+       "rot": 40,
+       "role": "side_button",
+       "c": [
+        159.99,
+        -21.1
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": 0,
+       "cy": 0,
+       "r": 146,
+       "fill": "#E8685A",
+       "stroke": "#13232E",
+       "sw": 8,
+       "role": "shell",
+       "c": [
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": 0,
+       "cy": 0,
+       "r": 122,
+       "fill": "#F6F1E7",
+       "stroke": "#13232E",
+       "sw": 6,
+       "role": "dial",
+       "c": [
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 16,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.9,
+       "rot": 0,
+       "role": "tick",
+       "index": 0,
+       "c": [
+        0.0,
+        -120.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 30,
+       "role": "tick",
+       "index": 1,
+       "c": [
+        61.75,
+        -106.95
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 60,
+       "role": "tick",
+       "index": 2,
+       "c": [
+        106.95,
+        -61.75
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 16,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.9,
+       "rot": 90,
+       "role": "tick",
+       "index": 3,
+       "c": [
+        120.0,
+        -0.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 120,
+       "role": "tick",
+       "index": 4,
+       "c": [
+        106.95,
+        61.75
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 150,
+       "role": "tick",
+       "index": 5,
+       "c": [
+        61.75,
+        106.95
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 16,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.9,
+       "rot": 180,
+       "role": "tick",
+       "index": 6,
+       "c": [
+        0.0,
+        120.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 210,
+       "role": "tick",
+       "index": 7,
+       "c": [
+        -61.75,
+        106.95
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 240,
+       "role": "tick",
+       "index": 8,
+       "c": [
+        -106.95,
+        61.75
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 16,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.9,
+       "rot": 270,
+       "role": "tick",
+       "index": 9,
+       "c": [
+        -120.0,
+        0.0
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 300,
+       "role": "tick",
+       "index": 10,
+       "c": [
+        -106.95,
+        -61.75
+       ]
+      },
+      {
+       "tag": "rect",
+       "x": -3,
+       "y": -128,
+       "w": 6,
+       "h": 9,
+       "rx": 3,
+       "fill": "#13232E",
+       "op": 0.45,
+       "rot": 330,
+       "role": "tick",
+       "index": 11,
+       "c": [
+        -61.75,
+        -106.95
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": -70,
+       "cy": 30,
+       "r": 12,
+       "fill": "#F49A8C",
+       "op": 0.8,
+       "role": "blush",
+       "side": "L",
+       "c": [
+        -70.0,
+        30.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": 70,
+       "cy": 30,
+       "r": 12,
+       "fill": "#F49A8C",
+       "op": 0.8,
+       "role": "blush",
+       "side": "R",
+       "c": [
+        70.0,
+        30.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": -36,
+       "cy": -6,
+       "r": 16,
+       "fill": "#FFFFFF",
+       "stroke": "#13232E",
+       "sw": 6,
+       "role": "eye",
+       "side": "L",
+       "c": [
+        -36.0,
+        -6.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": 36,
+       "cy": -6,
+       "r": 16,
+       "fill": "#FFFFFF",
+       "stroke": "#13232E",
+       "sw": 6,
+       "role": "eye",
+       "side": "R",
+       "c": [
+        36.0,
+        -6.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": -36,
+       "cy": -6,
+       "r": 6,
+       "fill": "#13232E",
+       "role": "eye",
+       "side": "L",
+       "c": [
+        -36.0,
+        -6.0
+       ]
+      },
+      {
+       "tag": "circle",
+       "cx": 36,
+       "cy": -6,
+       "r": 6,
+       "fill": "#13232E",
+       "role": "eye",
+       "side": "R",
+       "c": [
+        36.0,
+        -6.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M-50 -46 L-22 -36",
+       "stroke": "#E8685A",
+       "sw": 8,
+       "cap": "round",
+       "role": "brow",
+       "side": "L",
+       "c": [
+        -36.0,
+        -41.0
+       ]
+      },
+      {
+       "tag": "path",
+       "d": "M50 -46 L22 -36",
+       "stroke": "#E8685A",
+       "sw": 8,
+       "cap": "round",
+       "role": "brow",
+       "side": "R",
+       "c": [
+        36.0,
+        -41.0
+       ]
+      },
+      {
+       "tag": "ellipse",
+       "cx": 0,
+       "cy": 32,
+       "rx": 12,
+       "ry": 14,
+       "fill": "#13232E",
+       "role": "mouth",
+       "c": [
+        0.0,
+        32.0
+       ]
+      }
+     ]
+    }
+   },
+   "default_expression": "serious",
+   "expression_defaults": {},
+   "action": {
+    "label": "超时报警",
+    "expression": "alarm",
+    "leg_stretch": 0
+   }
+  }
+ }
+}
