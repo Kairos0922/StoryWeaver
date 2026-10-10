@@ -1,0 +1,605 @@
+{
+  "schema": "storyweaver.sim.ep02-queue.v1",
+  "model": {
+    "servers": 3,
+    "mean_service_min": 2.0,
+    "customers_per_seed": 120000,
+    "warmup_discarded": 2000,
+    "tail_threshold_min": 10.0,
+    "arrivals": "poisson",
+    "rules": {
+      "pooled": "one FIFO line feeding 3 cashiers",
+      "pick_shortest": "3 lines; join fewest people (waiting+in service); random tie-break; no switching",
+      "pick_random": "reference only, baseline only: 3 lines chosen uniformly at random; not used on screen"
+    }
+  },
+  "baseline": {
+    "config": {
+      "rho": 0.9,
+      "service": "exponential",
+      "cv": 1.0
+    },
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "pooled": {
+      "mean_wait_min": {
+        "mean": 5.550435439258712,
+        "min_over_seeds": 5.1097450958142785,
+        "max_over_seeds": 6.222836378182906
+      },
+      "p90_wait_min": {
+        "mean": 14.350129371282813,
+        "min_over_seeds": 12.97017467410624,
+        "max_over_seeds": 15.90615965634886
+      },
+      "share_wait_over_10min": {
+        "mean": 0.18821271186440677,
+        "min_over_seeds": 0.16582203389830508,
+        "max_over_seeds": 0.2201186440677966
+      },
+      "share_overtaken": {
+        "mean": 0.0,
+        "min_over_seeds": 0.0,
+        "max_over_seeds": 0.0
+      },
+      "mean_overtakers_if_overtaken": {
+        "mean": 0.0,
+        "min_over_seeds": 0.0,
+        "max_over_seeds": 0.0
+      }
+    },
+    "pick_shortest": {
+      "mean_wait_min": {
+        "mean": 6.06302825731254,
+        "min_over_seeds": 5.6314646058210185,
+        "max_over_seeds": 6.734787465813279
+      },
+      "p90_wait_min": {
+        "mean": 15.753585272052229,
+        "min_over_seeds": 14.377510183908454,
+        "max_over_seeds": 17.227399638566567
+      },
+      "share_wait_over_10min": {
+        "mean": 0.21449364406779664,
+        "min_over_seeds": 0.19447457627118644,
+        "max_over_seeds": 0.2466186440677966
+      },
+      "share_overtaken": {
+        "mean": 0.40291525423728813,
+        "min_over_seeds": 0.3965423728813559,
+        "max_over_seeds": 0.41311864406779664
+      },
+      "mean_overtakers_if_overtaken": {
+        "mean": 4.083013864289855,
+        "min_over_seeds": 3.980275044104831,
+        "max_over_seeds": 4.196934059585706
+      }
+    },
+    "pick_random": {
+      "mean_wait_min": {
+        "mean": 18.230914579257366,
+        "min_over_seeds": 16.313368346273137,
+        "max_over_seeds": 21.156630762937105
+      },
+      "p90_wait_min": {
+        "mean": 44.78744215462189,
+        "min_over_seeds": 38.87782134824887,
+        "max_over_seeds": 50.92838545959422
+      },
+      "share_wait_over_10min": {
+        "mean": 0.5484966101694915,
+        "min_over_seeds": 0.5280847457627119,
+        "max_over_seeds": 0.5832033898305085
+      },
+      "share_overtaken": {
+        "mean": 0.6308665254237289,
+        "min_over_seeds": 0.6253050847457627,
+        "max_over_seeds": 0.6364915254237288
+      },
+      "mean_overtakers_if_overtaken": {
+        "mean": 14.339726044221212,
+        "min_over_seeds": 12.346520850533953,
+        "max_over_seeds": 16.809044418859944
+      }
+    },
+    "paired_pick_shortest_minus_pooled_mean_wait_s": {
+      "per_seed": [
+        32.668097386546776,
+        30.71706525782238,
+        29.51809628306135,
+        30.891897188732855,
+        31.3031706004044,
+        29.354542468378515,
+        30.66375988180452,
+        28.92639827314971,
+        30.756806180757987,
+        32.09639203636756,
+        31.132519690819294,
+        32.168219027874954,
+        30.992446654165917,
+        30.379544933974962,
+        31.912920397848286,
+        30.84706462012667,
+        30.31561417326783,
+        30.987393542255095,
+        29.64408889632402,
+        29.835344170909863
+      ],
+      "min": 28.92639827314971,
+      "max": 32.668097386546776
+    },
+    "check_erlang_c_pooled_mean_wait_min": 5.447073474470739
+  },
+  "sensitivity": [
+    {
+      "config": {
+        "rho": 0.8,
+        "service": "exponential",
+        "cv": 1.0
+      },
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "pooled": {
+        "mean_wait_min": {
+          "mean": 2.1808865088819824,
+          "min_over_seeds": 2.0725618713601563,
+          "max_over_seeds": 2.3120688541108936
+        },
+        "p90_wait_min": {
+          "mean": 6.296997380911423,
+          "min_over_seeds": 5.999639444323111,
+          "max_over_seeds": 6.644051787706303
+        },
+        "share_wait_over_10min": {
+          "mean": 0.0329864406779661,
+          "min_over_seeds": 0.026872881355932205,
+          "max_over_seeds": 0.03993220338983051
+        },
+        "share_overtaken": {
+          "mean": 0.0,
+          "min_over_seeds": 0.0,
+          "max_over_seeds": 0.0
+        },
+        "mean_overtakers_if_overtaken": {
+          "mean": 0.0,
+          "min_over_seeds": 0.0,
+          "max_over_seeds": 0.0
+        }
+      },
+      "pick_shortest": {
+        "mean_wait_min": {
+          "mean": 2.595284710415157,
+          "min_over_seeds": 2.497748160439454,
+          "max_over_seeds": 2.7265585045238065
+        },
+        "p90_wait_min": {
+          "mean": 7.664540114707688,
+          "min_over_seeds": 7.416943301668654,
+          "max_over_seeds": 7.925542855411551
+        },
+        "share_wait_over_10min": {
+          "mean": 0.05687033898305085,
+          "min_over_seeds": 0.05198305084745763,
+          "max_over_seeds": 0.06235593220338983
+        },
+        "share_overtaken": {
+          "mean": 0.29510254237288136,
+          "min_over_seeds": 0.28988983050847456,
+          "max_over_seeds": 0.3009322033898305
+        },
+        "mean_overtakers_if_overtaken": {
+          "mean": 3.2009560208279217,
+          "min_over_seeds": 3.1488568232020424,
+          "max_over_seeds": 3.275074592609594
+        }
+      },
+      "paired_pick_shortest_minus_pooled_mean_wait_s": {
+        "per_seed": [
+          25.511177344757847,
+          25.413213360085926,
+          24.628238095820187,
+          24.86937902477478,
+          24.370571568847687,
+          24.73198499577821,
+          24.853501382503367,
+          24.764813023249275,
+          24.874385900232987,
+          25.586690600700884,
+          24.89272688665367,
+          24.79583114093363,
+          24.655308717723756,
+          25.677817999581436,
+          24.521685570768632,
+          24.829926734602942,
+          23.107637235395046,
+          24.950627614754897,
+          24.402913495354337,
+          25.839411147290026
+        ],
+        "min": 23.107637235395046,
+        "max": 25.839411147290026
+      },
+      "check_erlang_c_pooled_mean_wait_min": 2.1573033707865186
+    },
+    {
+      "config": {
+        "rho": 0.95,
+        "service": "exponential",
+        "cv": 1.0
+      },
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "pooled": {
+        "mean_wait_min": {
+          "mean": 12.329718111341052,
+          "min_over_seeds": 10.475555410351882,
+          "max_over_seeds": 16.93343528227864
+        },
+        "p90_wait_min": {
+          "mean": 30.21701009386001,
+          "min_over_seeds": 25.334221487001567,
+          "max_over_seeds": 40.3983489469447
+        },
+        "share_wait_over_10min": {
+          "mean": 0.4337478813559323,
+          "min_over_seeds": 0.3804152542372881,
+          "max_over_seeds": 0.5256525423728814
+        },
+        "share_overtaken": {
+          "mean": 0.0,
+          "min_over_seeds": 0.0,
+          "max_over_seeds": 0.0
+        },
+        "mean_overtakers_if_overtaken": {
+          "mean": 0.0,
+          "min_over_seeds": 0.0,
+          "max_over_seeds": 0.0
+        }
+      },
+      "pick_shortest": {
+        "mean_wait_min": {
+          "mean": 12.881494316764162,
+          "min_over_seeds": 11.070564236522364,
+          "max_over_seeds": 17.510860639114465
+        },
+        "p90_wait_min": {
+          "mean": 31.638290336084463,
+          "min_over_seeds": 26.930220181111874,
+          "max_over_seeds": 42.09071397976368
+        },
+        "share_wait_over_10min": {
+          "mean": 0.44779533898305085,
+          "min_over_seeds": 0.40066949152542375,
+          "max_over_seeds": 0.5363220338983051
+        },
+        "share_overtaken": {
+          "mean": 0.4782199152542373,
+          "min_over_seeds": 0.4651186440677966,
+          "max_over_seeds": 0.4952542372881356
+        },
+        "mean_overtakers_if_overtaken": {
+          "mean": 5.207366861906043,
+          "min_over_seeds": 4.9638874717586186,
+          "max_over_seeds": 5.852960301163587
+        }
+      },
+      "paired_pick_shortest_minus_pooled_mean_wait_s": {
+        "per_seed": [
+          33.191337267173004,
+          31.22976678551943,
+          35.260901847367805,
+          33.96130588984526,
+          33.70226205766805,
+          35.70052957022888,
+          30.57139746283074,
+          34.82381863484633,
+          31.485098117170338,
+          34.645521410149485,
+          31.38704503596152,
+          30.2394565396375,
+          34.81142879739593,
+          33.08484347333977,
+          37.744928065410654,
+          31.659353695194064,
+          31.81454667569053,
+          32.223672198137194,
+          31.30329825424667,
+          33.290934729917545
+        ],
+        "min": 30.2394565396375,
+        "max": 37.744928065410654
+      },
+      "check_erlang_c_pooled_mean_wait_min": 12.093446958565941
+    },
+    {
+      "config": {
+        "rho": 0.9,
+        "service": "lognormal",
+        "cv": 0.5
+      },
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "pooled": {
+        "mean_wait_min": {
+          "mean": 3.5001373227350543,
+          "min_over_seeds": 3.077516468200779,
+          "max_over_seeds": 4.037921369045958
+        },
+        "p90_wait_min": {
+          "mean": 8.860781252910922,
+          "min_over_seeds": 7.709470009026702,
+          "max_over_seeds": 10.256825808347097
+        },
+        "share_wait_over_10min": {
+          "mean": 0.07611567796610169,
+          "min_over_seeds": 0.05138983050847458,
+          "max_over_seeds": 0.10511864406779661
+        },
+        "share_overtaken": {
+          "mean": 0.0,
+          "min_over_seeds": 0.0,
+          "max_over_seeds": 0.0
+        },
+        "mean_overtakers_if_overtaken": {
+          "mean": 0.0,
+          "min_over_seeds": 0.0,
+          "max_over_seeds": 0.0
+        }
+      },
+      "pick_shortest": {
+        "mean_wait_min": {
+          "mean": 3.736719345161049,
+          "min_over_seeds": 3.3031789353077574,
+          "max_over_seeds": 4.283220963259884
+        },
+        "p90_wait_min": {
+          "mean": 9.390910987326304,
+          "min_over_seeds": 8.257310303663509,
+          "max_over_seeds": 10.857570221562494
+        },
+        "share_wait_over_10min": {
+          "mean": 0.08692330508474574,
+          "min_over_seeds": 0.06297457627118644,
+          "max_over_seeds": 0.11638135593220339
+        },
+        "share_overtaken": {
+          "mean": 0.35581525423728816,
+          "min_over_seeds": 0.34652542372881356,
+          "max_over_seeds": 0.36259322033898306
+        },
+        "mean_overtakers_if_overtaken": {
+          "mean": 2.0655462123874933,
+          "min_over_seeds": 1.9972364881389093,
+          "max_over_seeds": 2.117702052073108
+        }
+      },
+      "paired_pick_shortest_minus_pooled_mean_wait_s": {
+        "per_seed": [
+          13.987129113368555,
+          13.79799749394886,
+          14.324760749239012,
+          14.824001118403682,
+          14.660836886472293,
+          14.384773072827928,
+          14.513775917212355,
+          14.783640291959683,
+          14.462506912976414,
+          14.583263153351362,
+          13.539748026418694,
+          13.376262153972336,
+          15.002760414629277,
+          12.967164043191755,
+          14.155669183549087,
+          14.214083456431998,
+          13.855530470574493,
+          14.717975652835573,
+          13.669903380065893,
+          14.076645419763842
+        ],
+        "min": 12.967164043191755,
+        "max": 15.002760414629277
+      }
+    },
+    {
+      "config": {
+        "rho": 0.9,
+        "service": "lognormal",
+        "cv": 1.5
+      },
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "pooled": {
+        "mean_wait_min": {
+          "mean": 8.85597245297606,
+          "min_over_seeds": 7.470697181108527,
+          "max_over_seeds": 10.930001018346461
+        },
+        "p90_wait_min": {
+          "mean": 23.969297450558326,
+          "min_over_seeds": 19.52147916620343,
+          "max_over_seeds": 30.953698710407483
+        },
+        "share_wait_over_10min": {
+          "mean": 0.30731737288135597,
+          "min_over_seeds": 0.26190677966101694,
+          "max_over_seeds": 0.3626101694915254
+        },
+        "share_overtaken": {
+          "mean": 0.0,
+          "min_over_seeds": 0.0,
+          "max_over_seeds": 0.0
+        },
+        "mean_overtakers_if_overtaken": {
+          "mean": 0.0,
+          "min_over_seeds": 0.0,
+          "max_over_seeds": 0.0
+        }
+      },
+      "pick_shortest": {
+        "mean_wait_min": {
+          "mean": 9.516783488811297,
+          "min_over_seeds": 8.065722491846067,
+          "max_over_seeds": 11.582201509223204
+        },
+        "p90_wait_min": {
+          "mean": 26.071502686520716,
+          "min_over_seeds": 21.94945960178739,
+          "max_over_seeds": 32.439511997432064
+        },
+        "share_wait_over_10min": {
+          "mean": 0.3179521186440678,
+          "min_over_seeds": 0.2683559322033898,
+          "max_over_seeds": 0.37409322033898307
+        },
+        "share_overtaken": {
+          "mean": 0.4007360169491526,
+          "min_over_seeds": 0.3819322033898305,
+          "max_over_seeds": 0.41467796610169494
+        },
+        "mean_overtakers_if_overtaken": {
+          "mean": 6.84449345210435,
+          "min_over_seeds": 6.305073734814526,
+          "max_over_seeds": 7.4520967873784025
+        }
+      },
+      "paired_pick_shortest_minus_pooled_mean_wait_s": {
+        "per_seed": [
+          36.92131517677787,
+          37.12927659723274,
+          37.20402433680077,
+          40.63245569932324,
+          40.403122010284456,
+          40.16707570507311,
+          38.592088515542855,
+          40.977802791286244,
+          43.310365869918215,
+          43.33009537405232,
+          35.70151864425242,
+          36.67563990858117,
+          42.42459794478943,
+          43.22186736789515,
+          39.5250090368636,
+          40.9160981756467,
+          40.12989860167721,
+          39.13202945260455,
+          39.26883402886034,
+          37.310127764823235
+        ],
+        "min": 35.70151864425242,
+        "max": 43.33009537405232
+      }
+    }
+  ],
+  "derived": {
+    "baseline_pick_shortest_minus_pooled_mean_wait_s": 30.755569083229677,
+    "baseline_pick_random_over_pooled_mean_wait_ratio": 3.284591772801918,
+    "sensitivity_share_overtaken_pick_shortest_range": [
+      0.29510254237288136,
+      0.4782199152542373
+    ],
+    "sensitivity_pick_shortest_minus_pooled_mean_wait_s_range": [
+      14.194921345559681,
+      39.64866215011426
+    ]
+  }
+}
