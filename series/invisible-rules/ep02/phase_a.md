@@ -1,5 +1,5 @@
 ---
-status: draft
+status: approved
 series: invisible-rules
 episode: ep02
 aspect: "16:9"
@@ -7,14 +7,15 @@ target_duration_s: 80
 produce_vertical: false
 vertical_duration_s: ""
 structure_revision: 0
-approved_by: ""
-approved_at: ""
-approved_aspect: ""
-approved_duration_s: ""
-approved_produce_vertical: ""
+approved_by: Kairos
+approved_at: 2026-10-10
+approved_aspect: "16:9"
+approved_duration_s: 80
+approved_produce_vertical: false
 approved_vertical_duration_s: ""
-approved_structure_revision: ""
-approved_body_sha256: ""
+approved_structure_revision: 0
+approved_body_sha256: d472b054e4ec1011b98328a2cfa75ea31b8cc03d74e5c85decaa44096f752c1d
+approval_note: "Kairos approved via chat 2026-10-10: hook H1, horizontal only; fields transcribed by the production agent on his instruction"
 ---
 
 # Phase A · invisible-rules / ep02 · 一条长龙，还是三条短队
