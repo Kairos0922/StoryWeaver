@@ -2,3 +2,6 @@ node_modules/
 out/
 .production-01-build/
 package-lock.json
+
+# Per-line voice WAVs are produced outside the repo.
+series/*/ep*/audio/*.wav

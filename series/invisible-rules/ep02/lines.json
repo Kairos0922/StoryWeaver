@@ -2,8 +2,277 @@
   "schema": "storyweaver.lines.v1",
   "series": "invisible-rules",
   "episode": "ep02",
+  "source": "script.md 引语，逐句照抄。Phase A 由 Kairos 于 2026-10-10 批准后填写。",
   "char_budget": 3000,
   "voice_provider": "doubao-seed-tts-2.0-expressive",
-  "tts_note": "字幕数字和配音读法要分开字段。没有录音稿之前不要编读法。本工具不调用配音接口。",
-  "lines": []
+  "voices": {
+    "binding": "recorded",
+    "source": "Kairos via chat, 2026-10-10",
+    "map": {
+      "阿规": {
+        "voice": "解说小明",
+        "direction": "冷静，偶尔冷幽默"
+      },
+      "等等": {
+        "voice": "少年梓辛",
+        "direction": "急，不耐烦，语速快"
+      },
+      "嘀嗒": {
+        "voice": "知性灿灿",
+        "direction": "清脆，报数据"
+      }
+    },
+    "note": "emotion 是给配音用的语气说明草稿，由制作代理按台词写，Kairos 合成前可以改。没有沿用 EP01 的 context_texts 原文。"
+  },
+  "tts_note": "text 是字幕，tts_text 是送配音的文本。本集口播稿已经用汉字写数字，两栏相同；没有另编读法。本工具不调用配音接口。",
+  "audio": {
+    "dir": "audio",
+    "pattern": "line_{nn}.wav",
+    "note": "由 Kairos 在仓库外合成后放进 audio/。文件名按 id 序号，line_01.wav 到 line_22.wav。WAV 不进 git。"
+  },
+  "total_chars": 271,
+  "lines": [
+    {
+      "id": "L01",
+      "beat": "钩子",
+      "speaker": "等等",
+      "text": "哎？他比我晚来，怎么先走了？",
+      "tts_text": "哎？他比我晚来，怎么先走了？",
+      "voice": "少年梓辛",
+      "emotion": "又急又委屈，盯着前面的人质问。语速快，「哎」往上挑",
+      "pause_after_s": 0.25,
+      "file": "audio/line_01.wav"
+    },
+    {
+      "id": "L02",
+      "beat": "钩子",
+      "speaker": "嘀嗒",
+      "text": "不止他。排三条队，四成的人会被后来的人超车。",
+      "tts_text": "不止他。排三条队，四成的人会被后来的人超车。",
+      "voice": "知性灿灿",
+      "emotion": "干脆利落地报数，像刚按停秒表。「四成」稍加重，不拖",
+      "pause_after_s": 0.5,
+      "file": "audio/line_02.wav"
+    },
+    {
+      "id": "L03",
+      "beat": "打碎常识",
+      "speaker": "等等",
+      "text": "那是他运气好。我每次都挑最短的。",
+      "tts_text": "那是他运气好。我每次都挑最短的。",
+      "voice": "少年梓辛",
+      "emotion": "不服气，有点小得意地辩解。语速快",
+      "pause_after_s": 0.25,
+      "file": "audio/line_03.wav"
+    },
+    {
+      "id": "L04",
+      "beat": "打碎常识",
+      "speaker": "阿规",
+      "text": "这四成，就是人人都挑最短算出来的。",
+      "tts_text": "这四成，就是人人都挑最短算出来的。",
+      "voice": "解说小明",
+      "emotion": "平静，带一点冷幽默，一字一顿点破。「人人都挑最短」放慢",
+      "pause_after_s": 0.3,
+      "file": "audio/line_04.wav"
+    },
+    {
+      "id": "L05",
+      "beat": "打碎常识",
+      "speaker": "等等",
+      "text": "不可能！",
+      "tts_text": "不可能！",
+      "voice": "少年梓辛",
+      "emotion": "急了，脱口而出，短促有力",
+      "pause_after_s": 0.35,
+      "file": "audio/line_05.wav"
+    },
+    {
+      "id": "L06",
+      "beat": "打碎常识",
+      "speaker": "阿规",
+      "text": "人数你看得见。前面那位要结多久，你看不准。",
+      "tts_text": "人数你看得见。前面那位要结多久，你看不准。",
+      "voice": "解说小明",
+      "emotion": "冷静讲道理。前半句轻，「看不准」落下来",
+      "pause_after_s": 0.3,
+      "file": "audio/line_06.wav"
+    },
+    {
+      "id": "L07",
+      "beat": "打碎常识",
+      "speaker": "嘀嗒",
+      "text": "被超车的人，平均被四个人超过。",
+      "tts_text": "被超车的人，平均被四个人超过。",
+      "voice": "知性灿灿",
+      "emotion": "清脆利落地报数。「四个人」咬清楚",
+      "pause_after_s": 0.45,
+      "file": "audio/line_07.wav"
+    },
+    {
+      "id": "L08",
+      "beat": "内幕",
+      "speaker": "阿规",
+      "text": "换个排法。三个收银台，只排一条队。",
+      "tts_text": "换个排法。三个收银台，只排一条队。",
+      "voice": "解说小明",
+      "emotion": "胸有成竹，像要变一个小戏法，轻松",
+      "pause_after_s": 0.25,
+      "file": "audio/line_08.wav"
+    },
+    {
+      "id": "L09",
+      "beat": "内幕",
+      "speaker": "阿规",
+      "text": "哪个台空了，队头就去哪个。",
+      "tts_text": "哪个台空了，队头就去哪个。",
+      "voice": "解说小明",
+      "emotion": "平稳地讲规则，节奏干净，不拖腔",
+      "pause_after_s": 0.4,
+      "file": "audio/line_09.wav"
+    },
+    {
+      "id": "L10",
+      "beat": "内幕",
+      "speaker": "等等",
+      "text": "这么长一条？我宁可排短的。",
+      "tts_text": "这么长一条？我宁可排短的。",
+      "voice": "少年梓辛",
+      "emotion": "嫌弃、不耐烦。「这么长」拖一点",
+      "pause_after_s": 0.25,
+      "file": "audio/line_10.wav"
+    },
+    {
+      "id": "L11",
+      "beat": "内幕",
+      "speaker": "阿规",
+      "text": "短队前面卡住一个人，你只能干等。",
+      "tts_text": "短队前面卡住一个人，你只能干等。",
+      "voice": "解说小明",
+      "emotion": "平静，带一点幸灾乐祸的冷幽默",
+      "pause_after_s": 0.25,
+      "file": "audio/line_11.wav"
+    },
+    {
+      "id": "L12",
+      "beat": "内幕",
+      "speaker": "阿规",
+      "text": "长龙卡住一个台，另外两个照样收人。",
+      "tts_text": "长龙卡住一个台，另外两个照样收人。",
+      "voice": "解说小明",
+      "emotion": "笃定、从容，句尾不上扬",
+      "pause_after_s": 0.3,
+      "file": "audio/line_12.wav"
+    },
+    {
+      "id": "L13",
+      "beat": "内幕",
+      "speaker": "嘀嗒",
+      "text": "一条队里，被后来的人超车的，零个。",
+      "tts_text": "一条队里，被后来的人超车的，零个。",
+      "voice": "知性灿灿",
+      "emotion": "利落。「零个」前停半拍，清楚落地，带一点得意",
+      "pause_after_s": 0.8,
+      "file": "audio/line_13.wav"
+    },
+    {
+      "id": "L14",
+      "beat": "真相",
+      "speaker": "等等",
+      "text": "公平我认。可网上说长龙快三倍，真的假的？",
+      "tts_text": "公平我认。可网上说长龙快三倍，真的假的？",
+      "voice": "少年梓辛",
+      "emotion": "先勉强服气，再来劲追问。后半句语速加快",
+      "pause_after_s": 0.3,
+      "file": "audio/line_14.wav"
+    },
+    {
+      "id": "L15",
+      "beat": "真相",
+      "speaker": "嘀嗒",
+      "text": "那得闭着眼随便挑队。",
+      "tts_text": "那得闭着眼随便挑队。",
+      "voice": "知性灿灿",
+      "emotion": "干脆地纠正，略带调侃",
+      "pause_after_s": 0.3,
+      "file": "audio/line_15.wav"
+    },
+    {
+      "id": "L16",
+      "beat": "真相",
+      "speaker": "嘀嗒",
+      "text": "你会挑最短的，差距就剩半分钟。",
+      "tts_text": "你会挑最短的，差距就剩半分钟。",
+      "voice": "知性灿灿",
+      "emotion": "客观报数。「半分钟」咬清楚，不加感叹",
+      "pause_after_s": 0.6,
+      "file": "audio/line_16.wav"
+    },
+    {
+      "id": "L17",
+      "beat": "真相",
+      "speaker": "等等",
+      "text": "才半分钟？那我图啥？",
+      "tts_text": "才半分钟？那我图啥？",
+      "voice": "少年梓辛",
+      "emotion": "失望又不甘心，句尾往上挑",
+      "pause_after_s": 0.3,
+      "file": "audio/line_17.wav"
+    },
+    {
+      "id": "L18",
+      "beat": "真相",
+      "speaker": "阿规",
+      "text": "图后来的人，再也走不到你前头。",
+      "tts_text": "图后来的人，再也走不到你前头。",
+      "voice": "解说小明",
+      "emotion": "温和笃定，点题，比前面慢一点",
+      "pause_after_s": 0.5,
+      "file": "audio/line_18.wav"
+    },
+    {
+      "id": "L19",
+      "beat": "真相",
+      "speaker": "等等",
+      "text": "……行。这条龙，我排。",
+      "tts_text": "……行。这条龙，我排。",
+      "voice": "少年梓辛",
+      "emotion": "先叹一口气停顿，再无奈地服气，语速放慢",
+      "pause_after_s": 0.6,
+      "file": "audio/line_19.wav"
+    },
+    {
+      "id": "L20",
+      "beat": "评论站队",
+      "speaker": "阿规",
+      "text": "长龙别嫌长，它不会让你排错队。",
+      "tts_text": "长龙别嫌长，它不会让你排错队。",
+      "voice": "解说小明",
+      "emotion": "总结的口气，平静有分量，带一点冷幽默",
+      "pause_after_s": 0.6,
+      "file": "audio/line_20.wav"
+    },
+    {
+      "id": "L21",
+      "beat": "评论站队",
+      "speaker": "等等",
+      "text": "换你，选哪个？",
+      "tts_text": "换你，选哪个？",
+      "voice": "少年梓辛",
+      "emotion": "转向镜头直接发问，带期待",
+      "pause_after_s": 0.35,
+      "file": "audio/line_21.wav"
+    },
+    {
+      "id": "L22",
+      "beat": "评论站队",
+      "speaker": "嘀嗒",
+      "text": "一条长龙扣 A，三条短队自己挑扣 B。",
+      "tts_text": "一条长龙扣 A，三条短队自己挑扣 B。",
+      "voice": "知性灿灿",
+      "emotion": "清楚利落地给选项。A、B 按英文字母读",
+      "pause_after_s": 0,
+      "file": "audio/line_22.wav"
+    }
+  ]
 }
