@@ -27,5 +27,8 @@
     "ajv": "^8.17.1",
     "ffmpeg-static": "^5.2.0",
     "text2wav": "0.0.14"
+  },
+  "devDependencies": {
+    "playwright": "^1.64.0"
   }
 }
