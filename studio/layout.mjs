@@ -45,6 +45,12 @@ export const REQUIRED_PATHS = [
   'tests/fixtures/sample-series/ep01/lines.json',
   'tests/fixtures/sample-series/ep01/render/scenes.json',
   'tests/fixtures/sample-series/ep01/render/rig.json',
+  'docs/demo/title-card/README.md',
+  'docs/demo/title-card/shot.json',
+  'studio/render/browser/dom/README.md',
+  'studio/render/browser/dom/gsap_clock.js',
+  'studio/render/browser/dom/frame.jsx',
+  'studio/render/browser/dom/timing.js',
 ];
 
 export async function checkLayout(start = root) {

@@ -11,8 +11,10 @@ The contract:
 
 | Piece | Role |
 |---|---|
-| [Browser pipeline](html-canvas.md) | Canvas 2D, SVG/DOM, and Three.js layers, then one WebGL post pass |
+| [Browser pipeline](html-canvas.md) | DOM/SVG, GSAP seek, Lucide, sparse Lottie, Three.js on demand, then one WebGL post pass |
+| `studio/render/browser/dom/README.md` | `paused: true` + `seek(t)` / `totalProgress`. Remotion, Motion, and Rive are inspirations, not dependencies |
 | `studio/render/kit/manifest.json` | Component names the kit can draw |
 | `studio/render/browser/presets.json` | Color grade, bloom, grain, and vignette |
+| `docs/demo/title-card/` | 10s title-card fixture. Not a series |
 
 Run `node studio/cli.mjs render <episode-dir> --mode draft`. Doctor must pass first.

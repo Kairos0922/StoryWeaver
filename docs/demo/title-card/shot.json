@@ -1,0 +1,35 @@
+{
+  "schema": "storyweaver.shot-fixture.v1",
+  "id": "title-card",
+  "note": "Tool demo for the seek(t) DOM stage. Not a series episode. No brief, no voice, no Three.js.",
+  "duration_s": 10,
+  "fps": 30,
+  "size": [1920, 1080],
+  "safe": {"x": 88, "y": 64},
+  "post_preset": "explainer",
+  "three": false,
+  "stack": [{"kind": "kinetic", "id": "title-card"}],
+  "beat_clock": {"warn_s": 2.5, "fail_s": 5},
+  "flourish": {"from": 0.7, "span": 1.6, "frames": 45},
+  "events": [
+    {"t": 0.36, "id": "seek", "label": "SEEK letters"},
+    {"t": 2.55, "id": "time", "label": "( t ) and clock icon"},
+    {"t": 5.05, "id": "frame", "label": "FRAME and type icon"},
+    {"t": 6.4, "id": "stack", "label": "layers icon"},
+    {"t": 7.7, "id": "lockup", "label": "post icon and lockup"}
+  ],
+  "copy": {
+    "eyebrow": "STUDIO  /  10s",
+    "seek": "SEEK",
+    "time": "( t )",
+    "frame": "FRAME",
+    "lockup": "One clock. Every pixel.",
+    "ai": "AI generated",
+    "rows": [
+      {"id": "clock", "label": "clock"},
+      {"id": "type", "label": "type"},
+      {"id": "stack", "label": "stack"},
+      {"id": "post", "label": "post"}
+    ]
+  }
+}

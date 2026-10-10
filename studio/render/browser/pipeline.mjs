@@ -1,5 +1,7 @@
 import path from 'node:path';
 import {buildEpisode} from '../kit/canvas/build_episode.mjs';
+import {renderShotFixture} from './shot_preview.mjs';
+import {isShotFixture} from './validate_shot.mjs';
 
 /**
  * The only render pipeline: Playwright captures seek(t) frames, ffmpeg encodes them.
@@ -13,4 +15,10 @@ export async function renderEpisode(episodeDir, options = {}) {
     review,
     mode: cut,
   });
+}
+
+export async function renderDirectory(dir, options = {}) {
+  const resolved = path.resolve(dir);
+  if (await isShotFixture(resolved)) return renderShotFixture(resolved, options);
+  return renderEpisode(resolved, options);
 }

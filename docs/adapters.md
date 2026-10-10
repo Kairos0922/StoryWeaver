@@ -26,8 +26,28 @@ Cloud agents without keys stop at a silent draft preview. The machine that holds
 
 ## Render
 
-Playwright captures `seek(t)` frames. ffmpeg encodes them. A shot stacks Canvas 2D, SVG/DOM, and Three.js. Every frame runs the WebGL post pass in `studio/render/browser/post.js`.
+Playwright captures `seek(t)` frames. ffmpeg encodes them. There is one browser pipeline.
+
+Recommended picture stack:
+
+| Layer | When |
+|---|---|
+| DOM / SVG | Type, layout, icons |
+| GSAP | Motion. `paused: true`, then `timeline.seek(t)` or `totalProgress` from the pipeline clock. The ticker is slept |
+| Lucide | Icons in the DOM stage |
+| Lottie | Sparse. SVG renderer, `goToAndStop`, never `play()` |
+| Three.js | Only a shot that asks for a `three` layer |
+| WebGL post | Every frame. Grade, bloom, grain, vignette in `studio/render/browser/post.js` |
+
+Remotion, Motion, and Rive are inspirations, not dependencies. Do not install them. `useFrame()`, `useCurrentFrame()`, `Sequence`, and `AbsoluteFill` in `studio/render/browser/dom/frame.jsx` are the local equivalents, keyed off the pipeline’s `t`. The pattern is `studio/render/browser/dom/README.md`.
+
+`docs/demo/title-card/` is a 10 second tool fixture (no brief, no voice, Three.js unused). Doctor and a draft preview:
+
+```bash
+node studio/cli.mjs doctor --episode docs/demo/title-card --require-render
+node studio/cli.mjs render docs/demo/title-card --mode draft --cut preview --review-only
+```
 
 Picture clock 2.5s, fail at 5s, hook sample about 12s. Draft frames are labeled `Not human-reviewed`. A release needs a person’s sign-off in `qc/release.json`.
 
-The legacy SVG path, and the unused Manim, Remotion, and HyperFrames notes, are deleted. Git history is the archive.
+The legacy SVG path, and the unused Manim and HyperFrames notes, are deleted. Git history is the archive.

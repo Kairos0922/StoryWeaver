@@ -4,6 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import {parseLoudnormJson} from './render/browser/loudnorm.mjs';
 import {validateEpisodeScenes} from './render/browser/validate_scene.mjs';
+import {episodeFilesInShotDir, isShotFixture, readShotFile, validateShotFixture} from './render/browser/validate_shot.mjs';
 
 const KEYS = [
   'TTS_PROVIDER',
@@ -102,6 +103,15 @@ export async function runDoctor({episodeDir, forRender = false} = {}) {
       ok: scenes.ok,
       detail: scenes.skipped ? 'no scene file' : (scenes.ok ? 'expressions and gestures match the rig' : scenes.issues.slice(0, 6).join('; ')),
     });
+    if (await isShotFixture(episodeDir)) {
+      const found = await episodeFilesInShotDir(episodeDir);
+      const shot = await validateShotFixture(await readShotFile(episodeDir));
+      const ok = shot.ok && found.length === 0;
+      const detail = found.length
+        ? `episode files in a shot fixture: ${found.join(', ')}`
+        : (shot.ok ? '8–12s kinetic shot, three unused' : shot.issues.slice(0, 4).join('; '));
+      checks.push({id: 'shot-fixture', ok, detail});
+    }
   }
   const baseIds = ['node', 'ffmpeg', 'python3'];
   const renderIds = [
@@ -115,6 +125,7 @@ export async function runDoctor({episodeDir, forRender = false} = {}) {
     'playwright',
   ];
   if (episodeDir) renderIds.push('scene-rig');
+  if (checks.some(check => check.id === 'shot-fixture')) renderIds.push('shot-fixture');
   const ok = baseIds.every(id => checks.find(check => check.id === id)?.ok);
   const renderOk = renderIds.every(id => checks.find(check => check.id === id)?.ok);
   return {

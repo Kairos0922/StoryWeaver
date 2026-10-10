@@ -1,6 +1,7 @@
 // One frame = stack of layers, then the WebGL post pass.
-// Layer kinds: canvas2d (shared kit), svg, dom, three.
+// Layer kinds: canvas2d (shared kit), svg, dom, kinetic (DOM stage snapshot), three.
 // seek(t) only. SVG/DOM must not declare CSS or SMIL animation.
+// The kinetic stage is seeked outside this file, snapshotted, then presented here.
 (function (root) {
   'use strict';
 
@@ -137,6 +138,16 @@
     return finish(destCtx, spec, shot, opts);
   }
 
+  async function presentPicture(destCtx, img, spec, shot, opts) {
+    const [w, h] = spec.size;
+    const bag = processorFor(destCtx.canvas, w, h);
+    const picture = bag.picture.getContext('2d');
+    picture.setTransform(1, 0, 0, 1, 0, 0);
+    picture.clearRect(0, 0, w, h);
+    picture.drawImage(img, 0, 0, w, h);
+    return finish(destCtx, spec, shot, opts);
+  }
+
   async function paintFrame(destCtx, spec, frame, opts) {
     const [w, h] = spec.size;
     const bag = processorFor(destCtx.canvas, w, h);
@@ -164,5 +175,6 @@
     presetByName,
     paintStill,
     paintFrame,
+    presentPicture,
   };
 })(typeof globalThis !== 'undefined' ? globalThis : this);

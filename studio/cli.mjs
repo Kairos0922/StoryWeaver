@@ -16,7 +16,7 @@ import {formatResume, resumeEpisode} from './resume.mjs';
 import {formatPrediction, predictEpisode} from './duration.mjs';
 import {buildListenPack, formatListen} from './listen_pack.mjs';
 import {formatGitSync, gitSyncStatus, markGitSync, planGitSync} from './git_sync.mjs';
-import {renderEpisode} from './render/browser/pipeline.mjs';
+import {renderDirectory} from './render/browser/pipeline.mjs';
 
 const args = process.argv.slice(2);
 
@@ -63,7 +63,7 @@ const help = `StoryWeaver
   node studio/cli.mjs resume <episode-dir>
   node studio/cli.mjs predict-duration <episode-dir>
   node studio/cli.mjs listen-pack <episode-dir>
-  node studio/cli.mjs render <episode-dir> --mode draft|release [--cut preview|hook|full] [--review-only]
+  node studio/cli.mjs render <episode-dir|shot-fixture> --mode draft|release [--cut preview|hook|full] [--review-only]
   node studio/cli.mjs git-sync <episode-dir> [--retry] [--mark]
 
 lint-script can run at any time. A draft render does not need human picture
@@ -198,7 +198,7 @@ async function main() {
     if (!dir) throw new Error('render needs an episode directory');
     const review = opts.mode || 'draft';
     const cut = opts.cut || (review === 'release' ? 'full' : 'preview');
-    const result = await renderEpisode(path.resolve(dir), {
+    const result = await renderDirectory(path.resolve(dir), {
       review,
       cut,
       reviewOnly: Boolean(opts['review-only']),

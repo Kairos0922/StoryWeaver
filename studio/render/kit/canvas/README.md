@@ -1,6 +1,6 @@
 # Canvas kit
 
-One frame function produces stills, contact sheets, and the cut. Scenes write parameters; drawing lives in `kit.js`.
+One frame function produces stills, contact sheets, and the cut. Scenes write parameters; drawing lives in `kit.js`. Kinetic type on the DOM stage uses `studio/render/browser/dom/` (GSAP seek, not a second renderer).
 
 | File | Role |
 |---|---|

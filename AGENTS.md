@@ -49,7 +49,9 @@ StoryWeaver is a production toolkit for fact-checked animated explainer videos o
 
 ## Rendering contract
 
-Every frame is `seek(t)` from one browser pipeline: Playwright captures the frame, ffmpeg encodes it. A shot may stack Canvas 2D, SVG/DOM, and Three.js. Every shot then runs one WebGL post pass (grade, bloom, grain, vignette) from a named preset. No CSS transitions, no timers, no `requestAnimationFrame` in render mode, no unseeded `Math.random`. Fonts load from files, never from a CDN. Shot thumbnails and a contact sheet are written before the full encode. Something new appears every 2–4 seconds on the picture clock. Voice pace is a separate, slower clock.
+Every frame is `seek(t)` from one browser pipeline: Playwright captures the frame, ffmpeg encodes it. The picture stack is DOM/SVG, GSAP timelines created with `paused: true` and moved only by `timeline.seek(t)` or `totalProgress` from that external `t`, Lucide icons, sparse Lottie (`goToAndStop`), and Three.js only when a shot asks for it. Every shot then runs one WebGL post pass (grade, bloom, grain, vignette) from a named preset. No CSS transitions, no timers, no `requestAnimationFrame` in render mode, no unseeded `Math.random`. Fonts load from files, never from a CDN. Shot thumbnails and a contact sheet are written before the full encode. Something new appears every 2–4 seconds on the picture clock. Voice pace is a separate, slower clock.
+
+Remotion, Motion, and Rive are inspirations, not dependencies. Do not install them. The timing primitives and the GSAP seek pattern live in `studio/render/browser/dom/`. `docs/demo/title-card/` is a tool fixture, not a series.
 
 Draft frames are labeled `Not human-reviewed`. Release frames require a human sign-off written after the draft exists.
 

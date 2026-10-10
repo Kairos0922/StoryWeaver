@@ -6,8 +6,9 @@ StoryWeaver has one renderer. Playwright seeks to time `t`, captures the frame, 
 |---|---|
 | `canvas2d` | The shared kit in `studio/render/kit/canvas/kit.js` |
 | `svg` | Static SVG. `{{t}}` is replaced with the frame time |
-| `dom` | HTML inside an SVG `foreignObject` |
-| `three` | A Three.js object list. Rotation is `spin * t` |
+| `dom` | HTML inside an SVG `foreignObject`. Markup is a function of `t` |
+| `kinetic` | React/DOM stage. GSAP `seek(t)`, Lucide, optional Lottie `goToAndStop`. Snapshotted, then the post pass |
+| `three` | A Three.js object list, only when the shot asks. Rotation is `spin * t` |
 
 If a shot has no `stack`, it is one `canvas2d` layer.
 
@@ -18,8 +19,10 @@ If a shot has no `stack`, it is one `canvas2d` layer.
 ## Rules
 
 - `seek(t)` is the only clock. The same `t` draws the same pixels.
+- GSAP timelines are created with `paused: true`. The frame calls `timeline.seek(t)` or `totalProgress`. The GSAP ticker is removed and slept. See `studio/render/browser/dom/README.md`.
 - Grain is a hash of the preset seed, the pixel, and the frame index.
 - No `requestAnimationFrame`, no `Date.now`, no `Math.random`, no CSS animation, no timer.
+- Remotion, Motion, and Rive are inspirations, not dependencies.
 - Fonts are files. A missing glyph fails the job.
 - Draft frames carry the corner label `Not human-reviewed`. Release frames do not.
 - Shot thumbnails and a contact sheet are written before the full encode.

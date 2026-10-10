@@ -1,7 +1,7 @@
 {
   "schema": "storyweaver.render-kit.v1",
   "status": "browser-pipeline",
-  "note": "One browser pipeline. Shots stack Canvas 2D, SVG/DOM, and Three.js, then a WebGL post pass. Playwright captures seek(t) frames and ffmpeg encodes them.",
+  "note": "One browser pipeline. Picture stack: DOM/SVG, GSAP seek(t), Lucide, sparse Lottie, Three.js on demand, then a WebGL post pass. Remotion, Motion, and Rive are inspirations, not dependencies. Playwright captures seek(t) frames and ffmpeg encodes them.",
   "beat_clock_s": 2.5,
   "max_static_s": 5,
   "hook_sample_s": 12,
@@ -28,7 +28,14 @@
     }
   ],
   "pipeline": ["browser"],
-  "layers": ["canvas2d", "svg", "dom", "three"],
+  "layers": ["canvas2d", "svg", "dom", "kinetic", "three"],
+  "motion": {
+    "clock": "gsap timeline paused:true, seek(t) or totalProgress from pipeline t",
+    "icons": "lucide-react",
+    "lottie": "lottie-web svg renderer, goToAndStop",
+    "three": "on demand",
+    "inspirations_not_dependencies": ["remotion", "motion", "rive"]
+  },
   "implementations": [
     {
       "id": "browser",

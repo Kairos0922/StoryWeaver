@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.9.0 — 2026-10-10
+
+DOM stage for kinetic type. The capture clock is still the pipeline’s `t`.
+
+### Added
+
+- GSAP as a dependency. Timelines are created with `paused: true`. Frames call `timeline.seek(t)` or `totalProgress`. `installCaptureClock` removes GSAP’s ticker listener and sleeps it. Pattern: `studio/render/browser/dom/README.md`.
+- React primitives `useFrame()`, `useCurrentFrame()`, `Sequence`, and `AbsoluteFill` in `studio/render/browser/dom/frame.jsx`. They read the pipeline `t`. Remotion is not installed.
+- Lucide icons and one Lottie flourish (`goToAndStop`, SVG renderer, player frozen). Three.js stays unloaded in this shot.
+- `docs/demo/title-card/`, a 10 second tool fixture. `doctor --episode docs/demo/title-card --require-render` and `render … --mode draft --cut preview` run it. It is not a series and cannot be a release.
+
+### Notes
+
+Remotion, Motion, and Rive are inspirations, not dependencies. Do not install them.
+
 ## 0.8.0 — 2026-10-10
 
 The repository holds the tool and the method. Series workspaces live outside it.

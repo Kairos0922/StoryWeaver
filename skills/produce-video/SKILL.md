@@ -101,6 +101,13 @@ This CLI stops at checkpoints. It does not upload a video. A cloud agent with no
 
 Picture: `studio/contracts/visual_contract.md`. Voice: `studio/contracts/voice_contract.md`. Pipeline: `studio/render/adapters/README.md`.
 
+Motion stack for a shot, when the picture needs type and icons: DOM/SVG, GSAP seek (`paused: true`, then `timeline.seek(t)` or `totalProgress` from the pipeline clock), Lucide, and a Lottie file only when `goToAndStop` holds still. Three.js stays off unless that shot has a `three` layer. The WebGL post pass is unchanged. Remotion, Motion, and Rive are inspirations, not dependencies. Do not install them. Pattern: `studio/render/browser/dom/README.md`. The tool fixture, not an episode, is `docs/demo/title-card/`:
+
+```bash
+node studio/cli.mjs doctor --episode docs/demo/title-card --require-render
+node studio/cli.mjs render docs/demo/title-card --mode draft --cut preview --review-only
+```
+
 TTS on a machine with keys:
 
 ```text
