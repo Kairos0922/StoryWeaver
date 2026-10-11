@@ -5,6 +5,6 @@ _site/
 .env
 .env.local
 
-# Per-line voice WAVs are produced outside the repo.
-examples/*/ep*/audio/*.wav
-series/*/ep*/audio/*.wav
+# Local build output never belongs in the repo.
+.*-build/
+*.mp4
