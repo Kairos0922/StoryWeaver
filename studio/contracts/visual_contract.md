@@ -6,7 +6,8 @@ House rules for any series that uses this toolkit. Palette, type files, and safe
 
 - One timeline can emit 16:9 and 9:16. Vertical is not a center crop of landscape. Review each safe area.
 - Captions stay off the edge and off faces and kinetic numbers.
-- Fonts are embedded. A missing-glyph check fails the release.
+- Fonts are embedded as per-episode WOFF2 subsets. A missing-glyph check (any face, Noto included) fails doctor and the release.
+- Noto Sans CJK SC is the default. Other fonts are opt-in per episode from an external OFL library; they are never vendored into the repo.
 - Every frame is `seek(t)` and then the shared WebGL post pass. Draft frames include the label `Not human-reviewed`.
 - No emoji.
 - Characters are not cropped at the face or the gesture.

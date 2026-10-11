@@ -6,6 +6,8 @@ language: en
 audience_profile: ""
 model_budget_calls: ""
 model_budget_stop_ratio: 0.7
+font_display: ""
+font_body: ""
 aspect: "16:9"
 target_duration_s: 90
 produce_vertical: false
@@ -58,6 +60,10 @@ Speech-rate cap (planning only; measure on the hook sample):
 - Chinese: at most 4.0 characters/s of speech, 4.6 on any one line.
 - English: at most 2.8 words/s of speech, 3.2 on any one line.
 - After a key number, hold at least 0.9s. Do not write “speak fast” in emotion cues.
+
+## Fonts
+
+Blank `font_display` / `font_body` keep the validated default, Noto Sans CJK SC. To try a library font, set its id (see `studio/render/kit/fonts/README.md`). `font_display` replaces weights 700/900, `font_body` 400/500. Doctor fails if any on-screen character has no glyph in the chosen face.
 
 ## Model budget
 

@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.14.0 — 2026-10-11
+
+Optional per-episode fonts, WOFF2 subsets, and a missing-glyph gate for every face. Noto Sans CJK SC stays the default.
+
+### Added
+
+- `studio/render/kit/fonts/library.mjs`: resolves fonts from an external OFL library (`SW_FONT_LIBRARY`, default `~/.cache/storyweaver/fonts/qiaomu-cover-fonts`, layout compatible with joeseesun/qiaomu-cover-fonts). Checks presence, OFL license, sha256, and Reserved Font Names (reserved-name fonts are embedded whole, never subset). Font files are not vendored.
+- Brief front matter `font_display` (weights 700/900) and `font_body` (400/500). Blank keeps Noto.
+- `studio/render/kit/fonts/glyphs.py` and `episodeGlyphCheck`: every on-screen character (lines + scene text + HUD) against every used face. New doctor check `glyph-coverage` (blocks render) and quality gate `glyph_coverage`.
+- Doctor checks `woff2-tools` (fontTools + brotli) and reports `font-library` with the fetch command.
+- `studio/render/kit/fonts/README.md`; `tests/fonts.test.js` with a fictional generated font library.
+
+### Changed
+
+- `subset_fonts.py` builds subsets with `pyftsubset` and writes WOFF2 (was OTF). `render_report.json` fonts gain `library_id`, `license`, `license_file`, `subset`, `bytes`.
+- WOFF2 needs Python brotli (on Ubuntu it comes with `python3-fonttools` as a recommended package).
+
+### Migration
+
+- Install brotli for Python (`apt install python3-brotli`). Existing briefs need no change.
+
 ## 0.13.0 — 2026-10-11
 
 Release quality standard v1.1. Machine gates unchanged.

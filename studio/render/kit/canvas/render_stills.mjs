@@ -4,6 +4,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {resolveEpisodeFonts} from '../fonts/library.mjs';
 import {collectChars, embedFonts, launchBrowser, loadStyle, openPage, pageHtml, tmpDir} from './runtime.mjs';
 
 export async function renderStills(episodeDir, {only} = {}) {
@@ -12,7 +13,8 @@ export async function renderStills(episodeDir, {only} = {}) {
   const outDir = path.join(episodeDir, style.out_dir || 'stills');
   await fs.mkdir(outDir, {recursive: true});
   const tmp = await tmpDir('sw-stills-');
-  const {css, report} = await embedFonts(collectChars(shots, spec.hud), path.join(tmp, 'fonts'));
+  const {overrides} = await resolveEpisodeFonts(episodeDir);
+  const {css, report} = await embedFonts(collectChars(shots, spec.hud), path.join(tmp, 'fonts'), overrides);
   const html = await pageHtml({
     spec,
     css,

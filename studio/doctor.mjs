@@ -2,6 +2,8 @@ import {spawnSync} from 'node:child_process';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import {episodeGlyphCheck} from './render/kit/canvas/runtime.mjs';
+import {FETCH_HINT, libraryDir, loadLibrary} from './render/kit/fonts/library.mjs';
 import {parseLoudnormJson} from './render/browser/loudnorm.mjs';
 import {validateEpisodeScenes} from './render/browser/validate_scene.mjs';
 import {episodeFilesInShotDir, isShotFixture, readShotFile, validateShotFixture} from './render/browser/validate_shot.mjs';
@@ -16,6 +18,7 @@ const KEYS = [
   'SW_FONT_500',
   'SW_FONT_700',
   'SW_FONT_900',
+  'SW_FONT_LIBRARY',
 ];
 
 const WEIGHTS = {400: 'Regular', 500: 'Medium', 900: 'Black'};
@@ -83,6 +86,10 @@ export async function runDoctor({episodeDir, forRender = false} = {}) {
     const font = fontWeightCheck(weight);
     checks.push({id: `font-weight-${weight}`, ok: font.ok, detail: font.detail});
   }
+  const brotli = python ? spawnSync(python, ['-c', 'import brotli, fontTools'], {encoding: 'utf8'}).status === 0 : false;
+  checks.push({id: 'woff2-tools', ok: brotli, detail: brotli ? 'fontTools + brotli' : 'missing (apt install python3-fonttools python3-brotli)'});
+  const lib = await loadLibrary(libraryDir());
+  checks.push({id: 'font-library', ok: true, detail: lib ? `optional: ${lib.fonts.size} fonts at ${lib.dir}` : `optional, not fetched (only needed when a brief sets font_body/font_display): ${FETCH_HINT}`});
   const loud = loudnormSelfTest();
   checks.push({id: 'loudnorm-self-test', ok: loud.ok, detail: loud.detail});
   for (const key of KEYS) {
@@ -103,6 +110,8 @@ export async function runDoctor({episodeDir, forRender = false} = {}) {
       ok: scenes.ok,
       detail: scenes.skipped ? 'no scene file' : (scenes.ok ? 'expressions and gestures match the rig' : scenes.issues.slice(0, 6).join('; ')),
     });
+    const glyphs = await episodeGlyphCheck(episodeDir);
+    checks.push({id: 'glyph-coverage', ok: glyphs.ok, detail: glyphs.detail});
     if (await isShotFixture(episodeDir)) {
       const found = await episodeFilesInShotDir(episodeDir);
       const shot = await validateShotFixture(await readShotFile(episodeDir));
@@ -121,10 +130,11 @@ export async function runDoctor({episodeDir, forRender = false} = {}) {
     'font-weight-400',
     'font-weight-500',
     'font-weight-900',
+    'woff2-tools',
     'loudnorm-self-test',
     'playwright',
   ];
-  if (episodeDir) renderIds.push('scene-rig');
+  if (episodeDir) renderIds.push('scene-rig', 'glyph-coverage');
   if (checks.some(check => check.id === 'shot-fixture')) renderIds.push('shot-fixture');
   const ok = baseIds.every(id => checks.find(check => check.id === id)?.ok);
   const renderOk = renderIds.every(id => checks.find(check => check.id === id)?.ok);
@@ -163,6 +173,8 @@ VOLC_TTS_API_KEY=
 # SW_FONT_500=
 # SW_FONT_700=
 # SW_FONT_900=
+# Optional font library (fonts picked per episode with font_body / font_display in brief.md)
+# SW_FONT_LIBRARY=~/.cache/storyweaver/fonts/qiaomu-cover-fonts
 `;
   await fs.writeFile(dest, text);
 }

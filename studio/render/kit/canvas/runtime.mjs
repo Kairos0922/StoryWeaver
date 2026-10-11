@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
+import {resolveEpisodeFonts} from '../fonts/library.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const browserDir = path.resolve(here, '..', '..', 'browser');
@@ -16,6 +17,7 @@ export const THREE_LAYER_JS = path.join(browserDir, 'three_layer.js');
 export const PRESETS_JSON = path.join(browserDir, 'presets.json');
 export const THREE_MODULE = path.resolve(here, '..', '..', '..', '..', 'node_modules', 'three', 'build', 'three.module.js');
 export const SUBSET_PY = path.join(here, '..', 'fonts', 'subset_fonts.py');
+export const GLYPHS_PY = path.join(here, '..', 'fonts', 'glyphs.py');
 export const FONT_FAMILY = 'SW CJK';
 export const FONT_WEIGHTS = [400, 500, 700, 900];
 
@@ -76,13 +78,19 @@ export function collectChars(...values) {
   return [...set].filter(ch => !/\s/.test(ch)).sort().join('');
 }
 
-// Subset Noto Sans CJK SC to exactly the characters on screen and embed it in the page.
-// Fails when any character lacks a glyph.
-export async function embedFonts(chars, dir) {
+// Subset the episode's faces to exactly the characters on screen and embed them as WOFF2.
+// Default faces are Noto Sans CJK SC from fontconfig; `overrides` (weight -> library font from
+// resolveEpisodeFonts) swap individual weights. Fails when any character lacks a glyph.
+export async function embedFonts(chars, dir, overrides = {}) {
   await fs.mkdir(dir, {recursive: true});
   const textFile = path.join(dir, 'chars.txt');
   await fs.writeFile(textFile, chars);
-  const r = run('python3', [SUBSET_PY, '--text-file', textFile, '--out-dir', dir, '--weights', FONT_WEIGHTS.join(',')], {allowFail: true});
+  const extra = [];
+  for (const [w, f] of Object.entries(overrides)) {
+    extra.push('--face', `${w}=${f.file}`);
+    if (f.whole) extra.push('--whole', String(w));
+  }
+  const r = run('python3', [SUBSET_PY, '--text-file', textFile, '--out-dir', dir, '--weights', FONT_WEIGHTS.join(','), ...extra], {allowFail: true});
   let report;
   try {
     report = JSON.parse(r.stdout);
@@ -92,12 +100,76 @@ export async function embedFonts(chars, dir) {
   if (report.error) throw new Error(report.error);
   const missing = Object.entries(report.missing || {});
   if (missing.length) throw new Error(`Missing glyphs: ${missing.map(([w, s]) => `${w}: ${s}`).join('; ')}`);
+  const mime = {woff2: 'font/woff2', woff: 'font/woff', opentype: 'font/otf', truetype: 'font/ttf'};
   const faces = [];
   for (const f of report.fonts) {
+    const o = overrides[f.weight];
+    if (o) Object.assign(f, {library_id: o.id, license: o.license, license_file: o.license_file, copyright: o.copyright});
+    const fmt = f.format || 'woff2';
     const b64 = (await fs.readFile(f.file)).toString('base64');
-    faces.push(`@font-face{font-family:"${FONT_FAMILY}";font-weight:${f.weight};font-style:normal;src:url(data:font/otf;base64,${b64}) format("opentype");}`);
+    faces.push(`@font-face{font-family:"${FONT_FAMILY}";font-weight:${f.weight};font-style:normal;src:url(data:${mime[fmt]};base64,${b64}) format("${fmt}");}`);
   }
   return {css: faces.join('\n'), report};
+}
+
+// Every character the episode puts on screen: lines (text + speaker), scene text, HUD.
+export async function episodeChars(episodeDir, ...extra) {
+  const read = async file => {
+    try {
+      return JSON.parse(await fs.readFile(path.join(episodeDir, file), 'utf8'));
+    } catch {
+      return null;
+    }
+  };
+  const lines = await read('lines.json');
+  const scenes = await read('render/scenes.json');
+  const stills = await read('render/stills.json');
+  return collectChars(scenes || {}, (lines?.lines || []).map(l => [l.text, l.speaker]), stills?.hud || {}, ...extra);
+}
+
+// Missing-glyph check for ANY face the episode will use (default Noto or a brief-picked library
+// font). No subsetting. Returns {ok, skipped, detail, missing}.
+export async function episodeGlyphCheck(episodeDir, opts = {}) {
+  const chars = await episodeChars(episodeDir);
+  let overrides;
+  try {
+    ({overrides} = await resolveEpisodeFonts(episodeDir, opts));
+  } catch (err) {
+    return {ok: false, detail: err.message, missing: {}};
+  }
+  const faces = [];
+  for (const w of FONT_WEIGHTS) {
+    if (overrides[w]) faces.push(`${w}=${overrides[w].file}`);
+    else {
+      const env = process.env[`SW_FONT_${w}`];
+      if (env) faces.push(`${w}=${env}:${process.env[`SW_FONT_${w}_INDEX`] || 0}`);
+      else {
+        const m = spawnSync('fc-match', ['-f', '%{file}\n%{index}\n%{family}', `Noto Sans CJK SC:style=${{400: 'Regular', 500: 'Medium', 700: 'Bold', 900: 'Black'}[w]}`], {encoding: 'utf8'});
+        const [file, index, fam] = (m.stdout || '').split('\n');
+        if (m.status !== 0 || !file || !/Noto Sans CJK/.test(fam || '')) return {ok: false, detail: `no Noto Sans CJK SC face for weight ${w} (install fonts-noto-cjk or set SW_FONT_${w})`, missing: {}};
+        faces.push(`${w}=${file}:${index || 0}`);
+      }
+    }
+  }
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'sw-glyphs-'));
+  const textFile = path.join(dir, 'chars.txt');
+  await fs.writeFile(textFile, chars);
+  const r = spawnSync('python3', [GLYPHS_PY, '--text-file', textFile, ...faces.flatMap(f => ['--face', f])], {encoding: 'utf8'});
+  let report;
+  try {
+    report = JSON.parse(r.stdout);
+  } catch {
+    return {ok: false, detail: `glyph check failed: ${(r.stderr || '').slice(-400)}`, missing: {}};
+  }
+  if (report.error) return {ok: false, detail: report.error, missing: {}};
+  const missing = report.missing || {};
+  const bad = Object.entries(missing);
+  const used = Object.entries(overrides).map(([w, f]) => `${w}=${f.id}`).join(', ') || 'Noto default';
+  return {
+    ok: bad.length === 0,
+    detail: bad.length ? `missing glyphs: ${bad.map(([w, s]) => `${w}: ${s}`).join('; ')}` : `${report.chars} chars covered (${used})`,
+    missing,
+  };
 }
 
 export async function loadStyle(episodeDir) {
