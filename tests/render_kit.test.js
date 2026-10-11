@@ -178,14 +178,18 @@ test('loudnorm parser keeps only the JSON object when ffmpeg trails text', () =>
   assert.throws(() => parseLoudnormJson('no json here'), /no JSON object/);
 });
 
-test('loop_track and trajectory_plot draw a fictional fixture', async () => {
+test('loop_track, trajectory_plot, traffic_rear and windshield draw a fictional fixture', async () => {
   const SWKit = loadKit();
   assert.ok(SWKit.components.includes('loop_track'));
   assert.ok(SWKit.components.includes('trajectory_plot'));
+  assert.ok(SWKit.components.includes('traffic_rear') && SWKit.components.includes('windshield'));
   const {spec} = await loadStyle(episode);
   // Fictional data: four tokens on a loop and two short trajectories, one crossing the wrap seam.
   const shot = {id: 'fixture', layers: [
     {type: 'loop_track', x: 500, y: 500, r: 200, tokens: [{a: 0, v: 1}, {a: 0.25, v: 0.5}, {a: 0.5, v: 0.05, brake: true}, {a: 0.75, v: 0.9, color: 'teal'}]},
+    {type: 'loop_track', x: 500, y: 900, r: 600, token_style: 'car', bands: [{a0: 0.9, a1: 1.05}], markers: [{a: 0, trail: 0.05}], tokens: [{a: 0.02, v: 0.05, brake: true}, {a: 0.1, v: 1}]},
+    {type: 'traffic_rear', cars: [{lane: 0, depth: 0.2, brake: true}, {lane: 1, depth: 0.7, color: 'goods_b'}]},
+    {type: 'windshield'},
     {type: 'trajectory_plot', x: 1000, y: 200, w: 600, h: 500, xlabel: 'x', ylabel: 't', series: [[[0.1, 0, 1], [0.2, 0.5, 0.1], [0.3, 1, 0.8]], [[0.9, 0, 1], [0.05, 0.5, 1]]]},
   ]};
   assert.doesNotThrow(() => SWKit.drawScene(fakeContext(), spec, shot, {t: 0}));

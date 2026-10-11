@@ -1281,6 +1281,78 @@
     ctx.restore();
   }
 
+  // Top view car, nose pointing +x. Body, windows, wheels, rear lamps (lit when braking).
+  function topCar(ctx, spec, w, h, fill, brake) {
+    const p = spec.palette;
+    ctx.fillStyle = p.ink;
+    for (const [x, y] of [[-w * 0.3, -h / 2 - 3], [w * 0.22, -h / 2 - 3], [-w * 0.3, h / 2 - 5], [w * 0.22, h / 2 - 5]]) rr(ctx, x - w * 0.09, y, w * 0.18, 8, 3), ctx.fill();
+    rr(ctx, -w / 2, -h / 2, w, h, h * 0.35);
+    inked(ctx, spec, fill, Math.max(3, h * 0.09));
+    ctx.fillStyle = p.screen;
+    rr(ctx, w * 0.08, -h * 0.36, w * 0.2, h * 0.72, 4); ctx.fill();
+    rr(ctx, -w * 0.36, -h * 0.32, w * 0.14, h * 0.64, 4); ctx.fill();
+    ctx.fillStyle = brake ? p.red : p.lamp_off;
+    rr(ctx, -w / 2 - 4, -h * 0.42, 10, h * 0.26, 3); ctx.fill();
+    rr(ctx, -w / 2 - 4, h * 0.16, 10, h * 0.26, 3); ctx.fill();
+    if (brake) {
+      ctx.lineWidth = 3; ctx.strokeStyle = p.ink;
+      rr(ctx, -w / 2 - 4, -h * 0.42, 10, h * 0.26, 3); ctx.stroke();
+      rr(ctx, -w / 2 - 4, h * 0.16, 10, h * 0.26, 3); ctx.stroke();
+    }
+  }
+
+  // Rear view of cars on a road in simple perspective (school run, commute). Each car: {lane, depth 0..1, color, brake}.
+  function trafficRear(ctx, L, spec, W, H) {
+    const p = spec.palette;
+    const hz = L.horizon ?? 380, vx = L.vanish_x ?? W / 2;
+    ctx.fillStyle = col(spec, L.sky, p.wall_top); ctx.fillRect(0, 0, W, hz);
+    ctx.fillStyle = col(spec, L.ground, p.floor); ctx.fillRect(0, hz, W, H - hz);
+    const lanes = L.lanes ?? 3, roadW = L.road_w ?? W * 1.5;
+    ctx.beginPath(); ctx.moveTo(vx - 30, hz); ctx.lineTo(vx + 30, hz); ctx.lineTo(vx + roadW / 2, H); ctx.lineTo(vx - roadW / 2, H); ctx.closePath();
+    inked(ctx, spec, col(spec, L.road, p.navy), 5);
+    ctx.strokeStyle = p.lane; ctx.lineWidth = 6; ctx.setLineDash([40, 40]);
+    for (let i = 1; i < lanes; i++) {
+      const f = i / lanes - 0.5;
+      ctx.beginPath(); ctx.moveTo(vx + f * 60, hz); ctx.lineTo(vx + f * roadW, H); ctx.stroke();
+    }
+    ctx.setLineDash([]);
+    const cars = [...(L.cars || [])].sort((a, b) => a.depth - b.depth);
+    for (const c of cars) {
+      const k = 1 - c.depth;                       // 1 = nearest
+      const y = hz + (H - hz) * (0.08 + 0.92 * k * k);
+      const sc = 0.12 + 0.88 * k * k;
+      const laneF = (c.lane + 0.5) / lanes - 0.5;
+      const x = vx + laneF * (60 + (roadW - 60) * ((y - hz) / (H - hz)));
+      const w = (L.car_w ?? 420) * sc, h = w * 0.62;
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.fillStyle = p.shadow; ctx.beginPath(); ctx.ellipse(0, 4, w * 0.56, h * 0.08, 0, 0, TAU); ctx.fill();
+      ctx.fillStyle = p.ink; rr(ctx, -w * 0.42, -h * 0.12, w * 0.18, h * 0.16, 4); ctx.fill(); rr(ctx, w * 0.24, -h * 0.12, w * 0.18, h * 0.16, 4); ctx.fill();
+      ctx.beginPath(); rr(ctx, -w * 0.36, -h, w * 0.72, h * 0.5, h * 0.14); inked(ctx, spec, col(spec, c.color, p.goods_a), Math.max(2, 6 * sc));
+      ctx.fillStyle = p.screen; rr(ctx, -w * 0.28, -h * 0.92, w * 0.56, h * 0.34, h * 0.08); ctx.fill();
+      ctx.beginPath(); rr(ctx, -w / 2, -h * 0.56, w, h * 0.5, h * 0.12); inked(ctx, spec, col(spec, c.color, p.goods_a), Math.max(2, 6 * sc));
+      ctx.fillStyle = p.white; rr(ctx, -w * 0.13, -h * 0.4, w * 0.26, h * 0.12, 3); ctx.fill();
+      for (const sg of [-1, 1]) {
+        ctx.beginPath(); rr(ctx, sg > 0 ? w * 0.28 : -w * 0.46, -h * 0.48, w * 0.18, h * 0.14, h * 0.05);
+        inked(ctx, spec, c.brake ? p.red : p.lamp_off, Math.max(1.5, 4 * sc));
+      }
+      ctx.restore();
+    }
+  }
+
+  // Car interior frame: windshield pillars and a dashboard with a steering wheel, drawn over the scene.
+  function windshield(ctx, L, spec, W, H) {
+    const p = spec.palette;
+    const dash = L.dash_y ?? H - 200;
+    ctx.fillStyle = col(spec, L.color, p.ip_navy);
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(W, 0); ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath();
+    ctx.moveTo(150, 70); ctx.lineTo(160, dash); ctx.lineTo(W - 160, dash); ctx.lineTo(W - 150, 70); ctx.closePath();
+    ctx.fill('evenodd');
+    ctx.strokeStyle = p.ink; ctx.lineWidth = 6; ctx.stroke();
+    ctx.beginPath(); ctx.arc(L.wheel_x ?? W * 0.3, dash + 170, 190, Math.PI * 1.08, Math.PI * 1.92);
+    ctx.lineWidth = 34; ctx.strokeStyle = p.navy; ctx.stroke();
+  }
+
   // Speed-coloured tokens on a closed loop (ring road, conveyor, orbit). Data comes from the episode's simulation.
   function speedColor(spec, v, L) {
     const p = spec.palette;
@@ -1313,19 +1385,67 @@
     ctx.strokeStyle = col(spec, L.center_line, p.lane_edge);
     ctx.beginPath(); ctx.arc(0, 0, r, 0, TAU); ctx.stroke();
     ctx.setLineDash([]);
+    // Bold band behind a cluster (e.g. a jam): a solid arc on the road, no glow.
+    for (const band of L.bands || []) {
+      ctx.save();
+      ctx.strokeStyle = col(spec, band.color, p.red);
+      ctx.globalAlpha *= band.alpha ?? 0.35;
+      ctx.lineWidth = lane * (band.width ?? 1);
+      ctx.lineCap = 'round';
+      const d = L.dir ?? 1;
+      ctx.beginPath();
+      ctx.arc(0, 0, r, -Math.PI / 2 + band.a0 * TAU * d, -Math.PI / 2 + band.a1 * TAU * d, d < 0);
+      ctx.stroke();
+      ctx.restore();
+    }
     const cw = L.token_w ?? 34, ch = L.token_h ?? 22;
     for (const tk of L.tokens || []) {
       const a = -Math.PI / 2 + tk.a * TAU * (L.dir ?? 1);
       ctx.save();
       ctx.translate(Math.cos(a) * r, Math.sin(a) * r);
       ctx.rotate(a + Math.PI / 2 * (L.dir ?? 1));
-      rr(ctx, -cw / 2, -ch / 2, cw, ch, 6);
-      inked(ctx, spec, tk.color ? col(spec, tk.color) : speedColor(spec, tk.v ?? 1, L), tk.focus ? 5 : 3.5);
-      if (tk.brake) {
-        ctx.fillStyle = p.red;
-        ctx.fillRect(-cw / 2 - 2, -ch / 2 + 2, 6, 6);
-        ctx.fillRect(-cw / 2 - 2, ch / 2 - 8, 6, 6);
+      const fill = tk.color ? col(spec, tk.color) : speedColor(spec, tk.v ?? 1, L);
+      if (L.token_style === 'car') topCar(ctx, spec, cw, ch, fill, !!tk.brake);
+      else {
+        rr(ctx, -cw / 2, -ch / 2, cw, ch, 6);
+        inked(ctx, spec, fill, tk.focus ? 5 : 3.5);
+        if (tk.brake) {
+          ctx.fillStyle = p.red;
+          ctx.fillRect(-cw / 2 - 2, -ch / 2 + 2, 6, 6);
+          ctx.fillRect(-cw / 2 - 2, ch / 2 - 8, 6, 6);
+        }
       }
+      ctx.restore();
+    }
+    // Marker riding the loop (e.g. where braking is happening) with a trail showing where it came from.
+    for (const m of L.markers || []) {
+      const d = L.dir ?? 1;
+      const am = -Math.PI / 2 + m.a * TAU * d;
+      if (m.trail != null) {
+        const at = -Math.PI / 2 + m.trail * TAU * d;
+        ctx.save();
+        ctx.strokeStyle = col(spec, m.color, p.red);
+        ctx.lineWidth = 12;
+        ctx.setLineDash([22, 18]);
+        ctx.lineCap = 'round';
+        const rt = r + lane / 2 + 40;
+        ctx.beginPath();
+        ctx.arc(0, 0, rt, Math.min(at, am), Math.max(at, am));
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+      }
+      ctx.save();
+      const rm = r + lane / 2 + 40;
+      ctx.translate(Math.cos(am) * rm, Math.sin(am) * rm);
+      ctx.rotate(am + Math.PI / 2);
+      ctx.beginPath();
+      const s = m.size ?? 46;
+      ctx.moveTo(0, s * 0.9);
+      ctx.lineTo(-s * 0.7, -s * 0.5);
+      ctx.lineTo(s * 0.7, -s * 0.5);
+      ctx.closePath();
+      inked(ctx, spec, col(spec, m.color, p.red), 6);
       ctx.restore();
     }
     ctx.restore();
@@ -1375,7 +1495,7 @@
     kinetic_number: kineticNumber, stamp, tag, label, arrow, tally,
     impact_lines: impactLines, dim, panel, divider,
     card, bar_compare: barCompare, stopwatch, mystery_box: mysteryBox,
-    loop_track: loopTrack, trajectory_plot: trajectoryPlot,
+    loop_track: loopTrack, trajectory_plot: trajectoryPlot, traffic_rear: trafficRear, windshield,
   };
 
   // fx_* are written by the timeline for enter/exit moves; stills may set them by hand.
