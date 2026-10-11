@@ -34,7 +34,7 @@ export function textsFromScenes(resolved, spec) {
       const t1 = Math.min(s.end, L.exit ? L.exit.at + (L.exit.dur ?? 0) : s.end);
       const add = (id, text, fg, on) => {
         if (!text) return;
-        texts.push({id, text, hold_s: +(t1 - t0).toFixed(3)});
+        texts.push({id, kind: L.type, text, hold_s: +(t1 - t0).toFixed(3)});
         contrast.push({id, fg, bg: on});
       };
       const id = `${s.id}:${where}`;
@@ -50,11 +50,18 @@ export function textsFromScenes(resolved, spec) {
     };
     s.layers.forEach((L, j) => walk(L, `layers[${j}]`));
     for (const c of s.chips || []) {
-      texts.push({id: `${s.id}:chip`, text: c.text, hold_s: +(s.end - s.start).toFixed(3)});
+      texts.push({id: `${s.id}:chip`, kind: 'chip', text: c.text, hold_s: +(s.end - s.start).toFixed(3)});
       contrast.push({id: `${s.id}:chip`, fg: spec.palette.ink, bg: '#FFFFFF'});
     }
   }
   return {texts, contrast};
+}
+
+// Narration subtitle: shown from the line start to sub_end (renderer's display end); audio is start..end.
+export function subtitleText(id, l) {
+  const shown_end = l.sub_end ?? l.end;
+  return {id: `sub:${id}`, kind: 'subtitle', text: l.text, audio_start: l.start, audio_end: l.end,
+    shown_start: l.sub_start ?? l.start, shown_end, hold_s: +(shown_end - (l.sub_start ?? l.start)).toFixed(3)};
 }
 
 export async function measureMotion(episodeDir, outDir) {
@@ -67,7 +74,7 @@ export async function measureMotion(episodeDir, outDir) {
   const {texts, contrast} = textsFromScenes(resolved, spec);
   for (const id of timing.order) {
     const l = timing.lines[id];
-    texts.push({id: `sub:${id}`, text: l.text, hold_s: +((l.sub_end ?? l.end) - l.start).toFixed(3)});
+    texts.push(subtitleText(id, l));
     contrast.push({id: `sub:${id}`, fg: spec.palette.white, bg: SUB_BG});
   }
   const video = (await fs.readdir(outDir)).find(f => f.endsWith('.mp4'));

@@ -35,13 +35,32 @@ export function minHold(text, language = 'en') {
   return +(countUnits(text, language) * rule.perUnit + rule.base).toFixed(3);
 }
 
+// Two classes of on-screen text, decided by element type in the scene spec / timeline, never by guessing:
+//   kind 'subtitle'  narration-synced; paced by its audio line. Must appear by the line's audio start,
+//                    stay up until the audio ends (never cut early), and leave within SUB_TAIL_MAX_S after.
+//   anything else    read on its own (card, label, tag, stamp, chip): perUnit s/char + base s.
+export const SUB_LEAD_TOL_S = 1 / 30;
+export const SUB_TAIL_MAX_S = 0.8;
+
+export function checkSubtitle(t) {
+  const lead = +(t.shown_start - t.audio_start).toFixed(3);
+  const tail = +(t.shown_end - t.audio_end).toFixed(3);
+  const ok = lead <= SUB_LEAD_TOL_S && tail >= 0 && tail <= SUB_TAIL_MAX_S;
+  return {id: t.id, kind: 'subtitle', lead_s: lead, tail_s: tail, ok};
+}
+
 export function checkTextHold(texts = [], language = 'en') {
   const rule = HOLD_RULES[language];
   const items = texts.map(t => {
+    if (t.kind === 'subtitle') {
+      for (const k of ['audio_start', 'audio_end', 'shown_start', 'shown_end'])
+        if (!Number.isFinite(t[k])) throw new Error(`subtitle ${t.id}: missing ${k}`);
+      return checkSubtitle(t);
+    }
     const need = minHold(t.text, language);
-    return {id: t.id, hold_s: t.hold_s, need_s: need, ok: Number(t.hold_s) >= need};
+    return {id: t.id, kind: t.kind || 'text', hold_s: t.hold_s, need_s: need, ok: Number(t.hold_s) >= need};
   });
-  return {ok: items.every(i => i.ok), rule: `${rule.perUnit}s/${rule.unit} + ${rule.base}s`, items};
+  return {ok: items.every(i => i.ok), rule: `${rule.perUnit}s/${rule.unit} + ${rule.base}s`, subtitle_rule: `shown over its audio line, tail 0..${SUB_TAIL_MAX_S}s`, items};
 }
 
 function channel(c) {
