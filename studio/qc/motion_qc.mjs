@@ -191,6 +191,30 @@ export function hardStops(samples, ratio = 0.5) {
   return out;
 }
 
+// ---------- dead air: measured from the rendered picture and the final mix, never from the scene spec ----------
+export const STATIC_MAX_S = 5;
+export const SILENCE_MAX_S = 2;
+
+// diffs[i] = share of pixels that changed between sample i and i+1 (samples are 1/sampleFps apart).
+// A sample step counts as motion when share >= minShare. Returns every still stretch longer than maxS.
+export function checkStatic(diffs = [], sampleFps = 4, {minShare = 0.0008, maxS = STATIC_MAX_S} = {}) {
+  const items = [];
+  let run = 0;
+  const flush = end => {
+    if (run / sampleFps > maxS) items.push({id: `static@${(end - run) / sampleFps}s`, from_s: +((end - run) / sampleFps).toFixed(2), to_s: +(end / sampleFps).toFixed(2), still_s: +(run / sampleFps).toFixed(2), ok: false});
+  };
+  diffs.forEach((d, i) => { if (d < minShare) run++; else { flush(i); run = 0; } });
+  flush(diffs.length);
+  return {ok: items.length === 0, rule: `no stretch over ${maxS}s without pixel change (share >= ${minShare})`, measured_steps: diffs.length, items};
+}
+
+// silences: [{from_s, to_s}] measured on the final mix. allowed: [{from_s, to_s}] intended silent beats (scenes.json silent_beats).
+export function checkSilence(silences = [], allowed = [], {maxS = SILENCE_MAX_S} = {}) {
+  const inside = s => allowed.some(a => s.from_s >= a.from_s - 0.05 && s.to_s <= a.to_s + 0.05);
+  const items = silences.filter(s => s.to_s - s.from_s > maxS).map(s => ({id: `silence@${s.from_s}s`, ...s, ok: inside(s)}));
+  return {ok: items.every(i => i.ok), rule: `no silence over ${maxS}s outside silent_beats`, items};
+}
+
 // Motion kinds that are banned by default (docs/quality-standard.md). A spec can add more in `banned`.
 export const BANNED_KINDS = Object.freeze(['gradient-glow', 'lens-flare', 'decorative-particles', 'all-fade-in', 'fade-slide-up', 'text-move-while-read', 'opacity-bounce', 'color-bounce']);
 
@@ -220,6 +244,8 @@ export async function runMotionQc(specFile, outDir) {
     const peaks = spec.sfx.peaks_s ?? (spec.sfx.audio ? await measurePeaks(path.resolve(base, spec.sfx.audio), spec.sfx.events, fps) : []);
     report.checks.sfx_sync = checkSfxSync(spec.sfx.events, peaks, fps);
   }
+  if (spec.picture) report.checks.static_picture = checkStatic(spec.picture.diffs, spec.picture.sample_fps);
+  if (spec.audio) report.checks.silence = checkSilence(spec.audio.silences, spec.audio.allowed);
   if (spec.shots) report.checks.shots = checkShots(spec.shots, spec.banned);
   for (const [id, samples] of Object.entries(spec.tracks || {})) {
     const onion = path.join(out, `${id}.onion.svg`);

@@ -64,6 +64,40 @@ export function subtitleText(id, l) {
     shown_start: l.sub_start ?? l.start, shown_end, hold_s: +(shown_end - (l.sub_start ?? l.start)).toFixed(3)};
 }
 
+// Share of changed pixels between consecutive samples of the rendered video (gray, 320 px wide).
+export function pictureDiffs(video, sampleFps = 4, {w = 320, h = 180, delta = 24} = {}) {
+  const r = spawnSync('ffmpeg', ['-v', 'error', '-i', video, '-vf', `fps=${sampleFps},scale=${w}:${h}:flags=area,gblur=sigma=1.5,format=gray`, '-f', 'rawvideo', '-'], {maxBuffer: 1 << 30});
+  if (r.status !== 0) throw new Error(`picture sample failed: ${r.stderr}`);
+  return diffsFromGray(r.stdout, w * h, delta);
+}
+
+export function diffsFromGray(buf, px, delta = 16) {
+  const n = Math.floor(buf.length / px);
+  const out = [];
+  for (let f = 1; f < n; f++) {
+    let c = 0;
+    const a = (f - 1) * px, b = f * px;
+    for (let i = 0; i < px; i++) if (Math.abs(buf[a + i] - buf[b + i]) > delta) c++;
+    out.push(+(c / px).toFixed(5));
+  }
+  return out;
+}
+
+export function parseSilences(stderr) {
+  const out = [];
+  let from = null;
+  for (const m of stderr.matchAll(/silence_(start|end): (-?[\d.]+)/g)) {
+    if (m[1] === 'start') from = Math.max(0, +m[2]);
+    else if (from != null) { out.push({from_s: +from.toFixed(3), to_s: +(+m[2]).toFixed(3)}); from = null; }
+  }
+  return out;
+}
+
+export function audioSilences(video, {noiseDb = -45, minS = 0.5} = {}) {
+  const r = spawnSync('ffmpeg', ['-v', 'info', '-i', video, '-af', `silencedetect=n=${noiseDb}dB:d=${minS}`, '-f', 'null', '-'], {encoding: 'utf8', maxBuffer: 1 << 28});
+  return parseSilences(r.stderr);
+}
+
 export async function measureMotion(episodeDir, outDir) {
   const doc = JSON.parse(await fs.readFile(path.join(episodeDir, 'render', 'scenes.json'), 'utf8'));
   const tl = JSON.parse(await fs.readFile(path.join(outDir, 'timeline.json'), 'utf8'));
@@ -92,7 +126,10 @@ export async function measureMotion(episodeDir, outDir) {
   let movesFile = {};
   try { movesFile = JSON.parse(await fs.readFile(path.join(episodeDir, 'render', 'moves.json'), 'utf8')); } catch {}
   const shots = doc.scenes.map(s => ({id: s.id, moves: s.moves || movesFile[s.id] || []}));
-  const motion = {fps, language: 'zh', measured_from: path.relative(episodeDir, outDir), texts, contrast, luminance, sfx: {events, peaks_s: peaks, stem: path.relative(episodeDir, stem)}, shots};
+  const videoFile = path.join(outDir, video);
+  const picture = {sample_fps: 4, diffs: pictureDiffs(videoFile, 4)};
+  const audio = {silences: audioSilences(videoFile), allowed: (doc.silent_beats || []).map(b => ({from_s: b.from_s, to_s: b.to_s}))};
+  const motion = {fps, language: 'zh', picture, audio, measured_from: path.relative(episodeDir, outDir), texts, contrast, luminance, sfx: {events, peaks_s: peaks, stem: path.relative(episodeDir, stem)}, shots};
   const file = path.join(episodeDir, 'qc', 'motion.json');
   await fs.mkdir(path.dirname(file), {recursive: true});
   await fs.writeFile(file, JSON.stringify(motion));

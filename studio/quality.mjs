@@ -34,6 +34,8 @@ const MOTION_GATES = [
   ['flashes', 'flashes'],
   ['sfx_sync', 'sfx_sync'],
   ['hero_move_and_banned', 'shots'],
+  ['no_static_picture', 'static_picture'],
+  ['no_dead_audio', 'silence'],
 ];
 
 export function humanReviewErrors(release) {
