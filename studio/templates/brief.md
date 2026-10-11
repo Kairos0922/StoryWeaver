@@ -69,16 +69,14 @@ Blank `font_display` / `font_body` keep the validated default, Noto Sans CJK SC.
 
 `model_budget_calls` is this episode’s call budget. Record the running total in `state/model_usage.json` as `{ "calls": N }`. Stop at the current checkpoint once `model_budget_stop_ratio` (default 0.7) is reached. Leave the call count blank until a real log exists. Do not invent it.
 
-## Concept machine
+## Approach
 
-Phase A hard rule: the object is the explanation. Invent one recognizable machine whose moving parts do what the concept does. No boxes, arrows, or floating labels standing in for it. Write the idea, not the drawing. All four bullets are required; `checkpoint brief` blocks while any is missing.
+Required. Pick the technique(s) from `studio/techniques/` that fit this topic best, or `none`. Read each technique's `fits` and `avoid` lists first. Never use a technique for its own sake: a topic with no inner mechanism does not need a concept machine. Only selected techniques are checked. Paste each selected technique's `brief_section.template` below this section under its heading. See `docs/techniques.md`.
 
-- Machine: (TODO. The object or machine, e.g. a marble run for a queue.)
-- Motion: (TODO. One sentence: what moves, and what that motion means.)
-- Lit subject: (TODO. Exactly one part is lit; everything else stays quiet.)
-- Model: (TODO. `fact_card.md B#` or a `sim/` file. On-screen numbers and the motion both read this one source.)
+- Techniques: (TODO. e.g. `concept-machine`, `guess-before-reveal`, or `none`.)
+- Why: (TODO. One sentence: why this fits this topic.)
 
-Draw it inside the series style lock (`../series-style.json`): series palette names only, series fonts, series characters operate the machine, series camera language. See `docs/style-lock.md`.
+Whatever you pick, draw it inside the series style lock (`../series-style.json`). See `docs/style-lock.md`.
 
 ## Five-beat story
 
@@ -117,7 +115,7 @@ Named defaults this episode must not use. Generic “avoid AI look” does not c
 
 ## Audience profile
 
-Optional. Set front-matter `audience_profile` to a file name under `studio/profiles/` (for example `children-education`) to add that profile's gates. Leave it blank for the general standard. Profile sections such as `## Guess before reveal` and `## Try it at home` go below when the profile asks for them.
+Optional. Set front-matter `audience_profile` to a file name under `studio/profiles/` (for example `children-education`) to add that profile's gates. Leave it blank for the general standard. A profile adds gates that apply to every episode for that audience; it may list `suggested_techniques`, but choosing them is still per episode in `## Approach`.
 
 ## Hook sample
 

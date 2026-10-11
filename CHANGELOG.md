@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.16.0 — 2026-10-11
+
+Technique registry: methods are opt-in and used only where they fit. Replaces the 0.15.0 mandatory concept-machine rule.
+
+### Added
+
+- `studio/techniques/<id>.json` (schema `storyweaver.technique.v1`: `fits`, `avoid`, `brief_section`, `checks`) and `studio/techniques.mjs`. Registered: `concept-machine`, `guess-before-reveal`, `try-it-at-home`. `docs/techniques.md`.
+- Required brief section `## Approach`: technique ids or `none`, plus one sentence why. Only selected techniques' checks run (`checkpoint … brief`, QC item `techniques`, `quality` as `technique:<id>`).
+
+### Changed
+
+- `concept-machine` is a technique, no longer a required heading or a gate on every episode.
+- `children-education` profile keeps only the universal `profile_no_anxiety` gate and lists `suggested_techniques`. Guess-before-reveal and try-it-at-home moved to techniques because they do not fit every topic.
+- `docs/style-lock.md` is now style lock only.
+
+### Removed
+
+- QC item `concept_machine`, `checkConceptModel`, `validateConceptMachine` in `brief.mjs`, profile checks `profile_guess_before_reveal`, `profile_guess_order`, `profile_try_it_at_home`.
+
+### Migration
+
+- Add `## Approach` to every brief (re-approval needed: body hash changes). Briefs that keep `## Concept machine` list `concept-machine`; others may delete that section and write `none` or another technique.
+- Children's episodes that relied on the profile for guess/try-it now list those techniques in `## Approach` when they fit.
+
 ## 0.15.0 — 2026-10-11
 
 Phase A hard rule "concept machine" and a generic series style lock.

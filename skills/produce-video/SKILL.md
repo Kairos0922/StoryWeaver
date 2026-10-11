@@ -52,11 +52,11 @@ Fill `brief.md`:
 - One thing
 - Viewer intuition (at least I1, in the viewer’s words)
 - Aspect and duration
-- Concept machine: the object whose motion is the concept; what moves and what it means; one lit subject; the `fact_card.md B#` or `sim/` model that drives both motion and on-screen numbers
+- Approach: technique id(s) from `studio/techniques/` or `none`, plus one sentence why it fits this topic. Read each technique's `fits` / `avoid` first; never use one for its own sake. Paste each chosen technique's brief section. Only chosen techniques are checked (`docs/techniques.md`).
 - Five-beat story
 - At least one finished 10-second storyboard row
 
-Draw the machine inside `../series-style.json` when the series has one (`docs/style-lock.md`). `node studio/cli.mjs style <episode-dir>` lists every deviation. Never override a locked key from the brief or the scene files.
+Draw whatever you choose inside `../series-style.json` when the series has one (`docs/style-lock.md`). `node studio/cli.mjs style <episode-dir>` lists every deviation. Never override a locked key from the brief or the scene files.
 
 Speech-rate cap is per language: at most 4.0 Chinese characters/s or 2.8 English words/s. Landscape is at most 90 seconds. Vertical is at most 60. Do not write “speak fast”.
 

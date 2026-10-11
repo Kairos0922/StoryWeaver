@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import {approvalState, extractIntuitionRows, extractOneThing, validateConceptMachine} from '../brief.mjs';
+import {approvalState, extractIntuitionRows, extractOneThing} from '../brief.mjs';
+import {evaluateTechniques} from '../techniques.mjs';
 import {lintFile} from '../lint/lint_script.mjs';
 import {checkClaimPrecision} from '../claims.mjs';
 import {paceEpisode} from '../pace.mjs';
@@ -165,17 +166,12 @@ export async function checkPace(episodeDir) {
   return {ok: true, code: 'PACE', evidence: result.evidence};
 }
 
-export async function checkConceptModel(episodeDir) {
-  const text = await readIf(path.join(episodeDir, 'brief.md'));
-  if (!text) return {ok: false, code: 'BRIEF_INCOMPLETE', evidence: 'missing brief.md'};
-  const {concept, issues} = validateConceptMachine(text);
-  if (issues.length) return {ok: false, code: 'BRIEF_INCOMPLETE', evidence: issues.map(i => `${i.id}:${i.detail}`).join(', ')};
-  const missing = [];
-  for (const ref of concept.modelRefs) {
-    if (!(await fileExists(path.join(episodeDir, ref)))) missing.push(ref);
-  }
-  if (missing.length) return {ok: false, code: 'BRIEF_INCOMPLETE', evidence: `concept model not found: ${missing.join(', ')}`};
-  return {ok: true, code: 'PASS', evidence: `${concept.machine} · lit: ${concept.lit_subject} · model: ${concept.modelRefs.join(', ')}`};
+export async function checkTechniques(episodeDir) {
+  const r = await evaluateTechniques(episodeDir, {stage: 'brief'});
+  if (!r.techniques.length) return {ok: true, code: 'PASS', evidence: r.none ? 'approach: none' : 'no technique selected'};
+  const bad = r.results.filter(x => !x.ok);
+  if (bad.length) return {ok: false, code: 'BRIEF_INCOMPLETE', evidence: bad.map(x => `${x.technique}/${x.id}: ${x.evidence}`).join('; ')};
+  return {ok: true, code: 'PASS', evidence: r.results.map(x => `${x.technique}/${x.id}`).join(', ')};
 }
 
 export async function checkStyleLock(episodeDir) {
@@ -184,7 +180,7 @@ export async function checkStyleLock(episodeDir) {
 }
 
 export const AUTO_CHECKS = {
-  concept_machine: checkConceptModel,
+  techniques: checkTechniques,
   style_lock: checkStyleLock,
   fact_card_abc: checkFactCard,
   one_thing: checkOneThing,

@@ -1,0 +1,21 @@
+{
+  "schema": "storyweaver.technique.v1",
+  "id": "try-it-at-home",
+  "title": "Try it at home",
+  "summary": "End with one safe, low-cost activity the viewer can do after watching, so curiosity continues off screen.",
+  "fits": [
+    "The idea can be tested with household objects in a few minutes.",
+    "Doing it would let the viewer verify the claim themselves."
+  ],
+  "avoid": [
+    "No safe, cheap, quick activity exists; a forced one is worse than none.",
+    "The activity needs supervision, purchases, or risk the film cannot explain."
+  ],
+  "brief_section": {
+    "heading": "Try it at home",
+    "template": "(TODO. One safe, low-cost activity the viewer can do after watching.)"
+  },
+  "checks": [
+    {"id": "try_it_at_home_section", "stage": "brief", "title": "Brief section filled"}
+  ]
+}

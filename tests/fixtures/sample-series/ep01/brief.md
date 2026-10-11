@@ -17,7 +17,7 @@ approved_duration_s: 40
 approved_produce_vertical: false
 approved_vertical_duration_s: ""
 approved_structure_revision: 1
-approved_body_sha256: "9b53fc527c14d10ad6eb9a307597950e06c2742357af9f05378cf303267d6297"
+approved_body_sha256: "511e7964c14c1a7c80c3a2b7d2341423ea6bdd3f875167d9dc36cc7dc31ec396"
 ---
 
 # Creative brief · sample-series / ep01
@@ -45,6 +45,11 @@ Forty seconds is the planning target.
 ## Model budget
 
 Twenty calls. Stop at 70 percent when a usage file exists.
+
+## Approach
+
+- Techniques: concept-machine
+- Why: the rule is a hidden mechanism, and a moving machine makes its order visible.
 
 ## Concept machine
 

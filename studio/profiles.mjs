@@ -35,21 +35,9 @@ export function sectionBody(markdown, heading) {
   return body.join('\n').trim();
 }
 
-const filled = body => Boolean(body) && !/\(TODO/i.test(body);
 
 export function evaluateProfile(profile, {brief = '', lines = [], language = 'en'}) {
   const checks = [];
-  for (const s of profile.brief_sections || []) {
-    const body = sectionBody(brief, s.heading);
-    checks.push({id: `profile_${s.id}`, ok: filled(body), evidence: filled(body) ? 'filled' : `brief needs a filled "## ${s.heading}" section: ${s.hint}`});
-  }
-  if (profile.line_beats) {
-    const beats = lines.map(l => String(l.beat || ''));
-    const g = beats.indexOf(profile.line_beats.guess);
-    const r = beats.indexOf(profile.line_beats.reveal);
-    const ok = g >= 0 && r > g;
-    checks.push({id: 'profile_guess_order', ok, evidence: ok ? `guess ${lines[g].id} before reveal ${lines[r].id}` : `lines.json needs a beat "${profile.line_beats.guess}" line before the first "${profile.line_beats.reveal}" line`});
-  }
   if (profile.anxiety_phrases) {
     const phrases = profile.anxiety_phrases[language] || [];
     const text = [brief.split('## Banned motion')[0], ...lines.map(l => l.text || '')].join('\n').toLowerCase();

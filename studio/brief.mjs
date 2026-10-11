@@ -1,4 +1,6 @@
 import crypto from 'node:crypto';
+import fsSync from 'node:fs';
+import {fileURLToPath} from 'node:url';
 
 export const LANDSCAPE_MAX_S = 90;
 export const VERTICAL_MAX_S = 60;
@@ -15,7 +17,7 @@ export const BEATS = [
 const REQUIRED_HEADINGS = [
   'One thing',
   'Viewer intuition',
-  'Concept machine',
+  'Approach',
   'Five-beat story',
   'Storyboard',
   'Aspect',
@@ -141,54 +143,51 @@ export function extractIntuitionRows(markdown) {
   return rows;
 }
 
-// The concept machine: the object whose motion IS the concept. Four labelled bullets under
-// `## Concept machine`. `model` must point at the fact card or a sim file, so the numbers on
-// screen and the motion read the same source.
-export const CONCEPT_FIELDS = [
-  {id: 'machine', label: /^machine$/i},
-  {id: 'motion', label: /^motion$/i},
-  {id: 'lit_subject', label: /^lit subject$/i},
-  {id: 'model', label: /^model$/i},
-];
+// `## Approach`: which technique(s) from studio/techniques/ this episode uses, or `none`,
+// and one sentence why that fits this topic. Techniques are opt-in; their checks run only
+// when listed here.
+const TECHNIQUE_DIR = fileURLToPath(new URL('./techniques/', import.meta.url));
 
-export const MODEL_REF = /(?:^|[\s`(])((?:sim\/[^\s`),]+)|fact_card\.md(?:\s*B\d+)?)/g;
+export function knownTechniques() {
+  return fsSync.readdirSync(TECHNIQUE_DIR).filter(f => f.endsWith('.json')).map(f => f.slice(0, -5)).sort();
+}
 
-export function extractConceptMachine(markdown) {
+export function extractApproach(markdown) {
   const {body} = parseFrontMatter(markdown);
-  const lines = body.split(/\r?\n/);
-  const out = {};
+  const out = {present: false, techniques: [], none: false, why: ''};
   let inSection = false;
-  for (const line of lines) {
+  for (const line of body.split(/\r?\n/)) {
     if (/^#{1,6}\s+/.test(line)) {
-      inSection = /concept machine/i.test(line);
+      inSection = /^#{1,6}\s+approach\s*$/i.test(line.trim());
+      if (inSection) out.present = true;
       continue;
     }
     if (!inSection) continue;
     const m = line.match(/^\s*[-*]\s+\**([^:：*]+?)\**\s*[:：]\s*(.*)$/);
     if (!m) continue;
-    const field = CONCEPT_FIELDS.find(f => f.label.test(m[1].trim()));
-    if (field && !isBlankClaim(m[2])) out[field.id] = m[2].trim();
+    const key = m[1].trim().toLowerCase();
+    const value = m[2].trim();
+    if (/^techniques?$/.test(key) && !isBlankClaim(value)) {
+      const ids = value.replace(/`/g, '').split(/[,，\s]+/).map(v => v.trim()).filter(Boolean);
+      if (ids.length === 1 && ids[0].toLowerCase() === 'none') out.none = true;
+      else out.techniques = ids;
+    }
+    if (key === 'why' && !isBlankClaim(value)) out.why = value;
   }
-  out.modelRefs = [...String(out.model || '').matchAll(MODEL_REF)].map(r => r[1].replace(/\s*B\d+$/, ''));
   return out;
 }
 
-export function validateConceptMachine(markdown) {
-  const cm = extractConceptMachine(markdown);
+export function validateApproach(markdown) {
+  const ap = extractApproach(markdown);
   const issues = [];
-  for (const field of CONCEPT_FIELDS) {
-    if (!cm[field.id]) issues.push({id: 'concept_machine_missing', detail: field.id});
+  if (!ap.present) return {approach: ap, issues};
+  if (!ap.none && ap.techniques.length === 0) issues.push({id: 'approach_techniques', detail: 'List technique ids from studio/techniques/ or write "none"'});
+  const known = knownTechniques();
+  for (const id of ap.techniques) {
+    if (!known.includes(id)) issues.push({id: 'approach_unknown_technique', detail: `${id} (known: ${known.join(', ')})`});
   }
-  if (cm.motion && !/\b(means|=|→)|意味|表示|就是/i.test(cm.motion)) {
-    issues.push({id: 'concept_machine_motion', detail: 'Motion must say what moves and what that motion means ("X moves; that means Y")'});
-  }
-  if (cm.lit_subject && /[,，、]|\band\b|和/.test(cm.lit_subject)) {
-    issues.push({id: 'concept_machine_lit', detail: 'Exactly one lit subject'});
-  }
-  if (cm.model && cm.modelRefs.length === 0) {
-    issues.push({id: 'concept_machine_model', detail: 'Model must cite fact_card.md (B#) or a sim/ file'});
-  }
-  return {concept: cm, issues};
+  if (!ap.why) issues.push({id: 'approach_why', detail: 'One sentence: why this approach fits this topic'});
+  return {approach: ap, issues};
 }
 
 export function validateBrief(markdown) {
@@ -219,7 +218,7 @@ export function validateBrief(markdown) {
   if (!claim) issues.push({id: 'one_thing_empty', detail: 'One thing'});
   const realRows = storyboardDataRows(body).filter(rowIsReal);
   if (realRows.length < 1) issues.push({id: 'storyboard_empty', detail: 'Need at least one filled 10-second storyboard row'});
-  issues.push(...validateConceptMachine(markdown).issues);
+  issues.push(...validateApproach(markdown).issues);
   const intuition = extractIntuitionRows(markdown);
   if (intuition.length < 1) issues.push({id: 'intuition_empty', detail: 'Viewer intuition needs at least one filled row'});
   return {data, issues, ready: issues.length === 0, intuition};

@@ -46,6 +46,11 @@ Landscape.
 
 80 seconds.
 
+## Approach
+
+- Techniques: concept-machine
+- Why: the rule is a hidden mechanism, and a moving machine makes its order visible.
+
 ## Concept machine
 
 - Machine: an elevator car on a rail that sweeps one direction at a time

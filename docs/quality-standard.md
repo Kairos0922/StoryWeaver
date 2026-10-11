@@ -67,28 +67,10 @@ Criteria that only apply to interactive websites, such as navigation, keyboard o
 
 Set `audience_profile: <id>` in the brief front matter to add a profile from `studio/profiles/<id>.json`. Leave it blank for the general standard. Adding a profile means adding a JSON file; the code does not know any profile by name.
 
-`children-education` adds:
+`children-education` adds the gate that holds for every children's episode:
 
 | Gate | Rule | Check |
 |---|---|---|
 | `profile_no_anxiety` | No anxiety or comparison framing | phrase list per language in the profile, over the brief and `lines.json` |
-| `profile_guess_before_reveal` / `profile_guess_order` | The viewer is invited to guess before the answer | brief `## Guess before reveal` filled; a `beat: "guess"` line precedes the first `beat: "reveal"` line |
-| `profile_try_it_at_home` | One safe, low-cost thing to try after watching | brief `## Try it at home` filled |
 
-The phrase list catches obvious wording only. Tone is still judged by the person answering the four questions.
-
-## Deterministic re-render (built in)
-
-Every episode render (`render`, any cut, including `--review-only`) re-renders a sample of frames and writes `<episode>/qc/determinism.json`. There is no hand-supplied path: the gate accepts only a file written by `studio/render/browser/determinism.mjs`, and only while the hashed inputs (`render/scenes.json`, `lines.json`) are unchanged since that render.
-
-- Sample: frame 0, the last frame, the first frame of every scene, and 4 more frames picked by a PRNG seeded from the input hashes. Same inputs give the same sample; a changed input moves it.
-- Method: two passes, each in a fresh browser context (new page boot, fonts, WebGL), rendering each sampled frame through the normal `seek(t)` + post path and comparing the sha256 of the PNG.
-- Resolution: full render resolution, not thumbnails. The cost is dominated by the page boot and the per-frame post pass, not by hashing, and a thumbnail would hide sub-pixel drift (text anti-aliasing, grain) that is exactly what this gate is for.
-- Cost: two page boots plus 2 x (scenes + 6) frames. For a typical 12-scene episode that is about 36 frame captures, a few seconds on a laptop CPU; small next to a full encode (30 fps x duration). `render_report.json` records `determinism.elapsed_s`.
-- A mismatch does not stop the render (the draft is still useful for review); it fails `quality`.
-
-## What is automated vs. documented only
-
-- Automated: every row in Tier 1 and every profile row, given the inputs above.
-- Partly automated: `hero_move_and_banned` trusts the motion spec's labels, which an agent writes from the draft; `no_ai_phrasing` catches listed phrases, not every awkward sentence.
-- Documented only: the four human questions.
+It also lists `suggested_techniques` (`guess-before-reveal`, `try-it-at-home`). Those are situational, so they are techniques chosen per episode in `## Approach`, not profile gates. See `docs/techniques.md`.

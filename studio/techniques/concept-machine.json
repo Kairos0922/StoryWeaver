@@ -1,0 +1,25 @@
+{
+  "schema": "storyweaver.technique.v1",
+  "id": "concept-machine",
+  "title": "Concept machine",
+  "summary": "The object is the explanation: one recognizable machine whose moving parts do what the concept does.",
+  "fits": [
+    "The concept is a mechanism or process with moving parts (queues, caches, filters, scheduling, flows).",
+    "The viewer's misunderstanding is about how something works inside, and a physical analogy makes it visible.",
+    "A fact-card number or a sim can drive both the motion and the on-screen numbers."
+  ],
+  "avoid": [
+    "The topic is a feeling, a habit, a story, a definition, or a history with no inner mechanism.",
+    "The real object is already visible and clear; an invented machine would add a layer to decode.",
+    "Building the machine costs more model budget than the clarity it adds."
+  ],
+  "brief_section": {
+    "heading": "Concept machine",
+    "fields": ["Machine", "Motion", "Lit subject", "Model"],
+    "template": "- Machine: (TODO. The object or machine, e.g. a marble run for a queue.)\n- Motion: (TODO. One sentence: what moves, and what that motion means.)\n- Lit subject: (TODO. Exactly one part is lit; everything else stays quiet.)\n- Model: (TODO. `fact_card.md B#` or a `sim/` file. On-screen numbers and the motion both read this one source.)"
+  },
+  "checks": [
+    {"id": "concept_machine_fields", "stage": "brief", "title": "All four fields filled; motion states its meaning; exactly one lit subject; model cites fact_card.md B# or sim/"},
+    {"id": "concept_machine_model", "stage": "brief", "title": "The cited model file exists in the episode"}
+  ]
+}
