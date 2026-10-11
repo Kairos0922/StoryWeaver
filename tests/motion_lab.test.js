@@ -5,15 +5,10 @@ import os from 'node:os';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {EASINGS, beatFrame, cueFrames, ease, easingFor, exitDuration, spring, springFor} from '../studio/motion/tokens.js';
-import {lintPins, lintRenderContract, lintSource} from '../studio/lint/render_contract.mjs';
+import {lintPins, lintSource} from '../studio/lint/render_contract.mjs';
 import {checkContrast, checkFlashes, checkSfxSync, checkTextHold, hardStops, minHold, runMotionQc} from '../studio/qc/motion_qc.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
-
-test('repository satisfies the render contract', async () => {
-  const report = await lintRenderContract(root);
-  assert.deepEqual(report.findings, []);
-});
 
 test('render-contract lint catches banned calls and ignores comments', () => {
   const src = 'const a = Date.now();\nrequestAnimationFrame(f);\nsetTimeout(f, 1);\nMath.random();\nfetch("https://x.y");\nel.style.cssText = "transition: opacity 0.3s";\n// Math.random() in a comment\nconst o = {transition: tr};';

@@ -2,7 +2,7 @@
 
 Every frame is a pure function of `t` and checked-in inputs. The contract is the studio's memory: when a render bug is fixed, add the rule that would have prevented it here, and add a lint rule when it can be checked mechanically.
 
-`node studio/cli.mjs render-contract` (also `npm run render-contract`; CI runs it through `npm test` in `tests/motion_lab.test.js`) enforces the mechanical rules.
+`node studio/cli.mjs render-contract` (also `npm run render-contract`; CI runs it as its own step) enforces the mechanical rules.
 
 ## Rules
 

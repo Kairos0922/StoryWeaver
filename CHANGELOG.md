@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.14.1 — 2026-10-11
+
+CI runs `render-contract` as its own step; install brotli explicitly.
+
+### Changed
+
+- `.github/workflows/ci.yml`: add `npm run render-contract`; apt installs `python3-brotli`.
+- Drop the `npm test` stand-in that only existed because the workflow could not be edited (`tests/motion_lab.test.js` repository-wide contract check). Unit coverage of the lint rules stays.
+
 ## 0.14.0 — 2026-10-11
 
 Optional per-episode fonts, WOFF2 subsets, and a missing-glyph gate for every face. Noto Sans CJK SC stays the default.
