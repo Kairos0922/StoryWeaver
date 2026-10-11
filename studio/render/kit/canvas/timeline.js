@@ -154,8 +154,41 @@
       out.camera_key = L.camera_key.map(k => Object.assign({}, k, {at: at(k.at, `${where}.camera_key`)}));
       out.camera_key.forEach(k => mark(k.at, 'panel camera'));
     }
+    if (L.seq) {
+      // Frame sequence: data-driven playback (simulation output, recorded tracks). Each frame is a
+      // partial layer merged over the base layer; time maps to frame by fps, clamped at both ends.
+      if (!Array.isArray(L.seq.frames) || !L.seq.frames.length) throw new Error(`Empty seq.frames in ${where}`);
+      out.seq = Object.assign({fps: 30, lerp: false, wrap: []}, L.seq, {at: at(L.seq.at ?? 'start', `${where}.seq`)});
+      mark(out.seq.at, `${L.type} seq`);
+    }
     if (L.layers) out.layers = L.layers.map((c, j) => resolveLayer(c, at, mark, sfx, `${where}.layers[${j}]`));
     return out;
+  }
+
+  // Interpolate two frames; keys listed in `wrap` are periodic in [0,1) and take the short way round.
+  function lerpFrame(a, b, p, wrap) {
+    if (typeof a === 'number' && typeof b === 'number') return a + (b - a) * p;
+    if (Array.isArray(a) && Array.isArray(b) && a.length === b.length) return a.map((v, i) => lerpFrame(v, b[i], p, wrap));
+    if (a && b && typeof a === 'object' && typeof b === 'object') {
+      const out = Object.assign({}, a);
+      for (const k of Object.keys(b)) {
+        if (wrap.includes(k) && typeof a[k] === 'number' && typeof b[k] === 'number') {
+          let d = b[k] - a[k];
+          d -= Math.round(d);
+          out[k] = ((a[k] + d * p) % 1 + 1) % 1;
+        } else out[k] = lerpFrame(a[k], b[k], p, wrap);
+      }
+      return out;
+    }
+    return p < 0.5 ? a : b;
+  }
+
+  function seqFrame(seq, t) {
+    const n = seq.frames.length;
+    const x = Math.max(0, Math.min(n - 1, (t - seq.at) * seq.fps));
+    const i = Math.floor(x);
+    if (!seq.lerp || i >= n - 1 || x === i) return seq.frames[i];
+    return lerpFrame(seq.frames[i], seq.frames[i + 1], x - i, seq.wrap || []);
   }
 
   // Longest stretch without a new visible event. Continuous idle motion does not count.
@@ -224,6 +257,10 @@
     if (L.exit && t >= L.exit.at + L.exit.dur) return null;
     let out = applyKeys(L, L.key, t);
     delete out.key;
+    if (L.seq) {
+      Object.assign(out, seqFrame(L.seq, t));
+      delete out.seq;
+    }
     if (L.enter && t < L.enter.at + L.enter.dur) enterFx(out, L.enter.fx, clamp((t - L.enter.at) / L.enter.dur), 1);
     if (L.exit && t >= L.exit.at) enterFx(out, L.exit.fx, clamp((t - L.exit.at) / L.exit.dur), -1);
     if (L.count && typeof L.count === 'object') {
@@ -315,5 +352,5 @@
     return {shot: main};
   }
 
-  root.SWTimeline = {cueTime, resolveScenes, beatClock, shotAt, applyKeys, lerp, EASE};
+  root.SWTimeline = {cueTime, resolveScenes, beatClock, shotAt, applyKeys, lerp, EASE, seqFrame, lerpFrame};
 })(typeof window !== 'undefined' ? window : globalThis);

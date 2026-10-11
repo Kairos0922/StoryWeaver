@@ -194,3 +194,25 @@ test('loop_track, trajectory_plot, traffic_rear and windshield draw a fictional 
   ]};
   assert.doesNotThrow(() => SWKit.drawScene(fakeContext(), spec, shot, {t: 0}));
 });
+
+test('frame-sequence playback maps time to frames, interpolates and wraps periodic keys', () => {
+  // Fictional two-dot track: the first dot crosses the 1 -> 0 seam between frames.
+  const timing = {duration: 4, order: ['L01'], lines: {L01: {id: 'L01', speaker: 'x', text: 'x', start: 1, end: 3, sub_end: 3}}};
+  const doc = {scenes: [{id: 's1', layers: [{type: 'loop_track', x: 0, y: 0, r: 10, tokens: [],
+    seq: {at: 'L01', fps: 2, lerp: true, wrap: ['a'], frames: [
+      {tokens: [{a: 0.9, v: 1}, {a: 0.2, v: 0}]},
+      {tokens: [{a: 0.1, v: 0}, {a: 0.4, v: 1}]},
+    ]}}]}]};
+  const resolved = TL.resolveScenes(doc, timing);
+  const L = resolved.scenes[0].layers[0];
+  assert.equal(L.seq.at, 1);
+  assert.equal(TL.seqFrame(L.seq, 0).tokens[0].a, 0.9);           // before start: first frame
+  const mid = TL.seqFrame(L.seq, 1.25);                            // half way between frames
+  assert.ok(Math.abs(mid.tokens[0].a - 0.0) < 1e-9 || Math.abs(mid.tokens[0].a - 1) < 1e-9); // short way round the seam
+  assert.ok(Math.abs(mid.tokens[1].a - 0.3) < 1e-9);
+  assert.equal(TL.seqFrame(L.seq, 9).tokens[1].a, 0.4);            // after end: hold last frame
+  const shot = TL.shotAt(resolved, timing, 1.25, doc).shot;
+  assert.equal(shot.layers[0].seq, undefined);
+  assert.equal(shot.layers[0].tokens.length, 2);
+  assert.throws(() => TL.resolveScenes({scenes: [{id: 's', layers: [{type: 'fill', seq: {frames: []}}]}]}, timing), /Empty seq.frames/);
+});
