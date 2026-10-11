@@ -23,7 +23,7 @@ Every gate reuses an existing check. `quality` only aggregates; fix a gate in it
 | `contrast` | Text contrast ≥ 4.5:1 | `motion-qc` `contrast` | `studio/qc/motion_qc.mjs` |
 | `flashes` | ≤ 3 flashes per second | `motion-qc` `flashes` | `studio/qc/motion_qc.mjs` |
 | `sfx_sync` | SFX peak lands 0–2 frames after its picture event | `motion-qc` `sfx_sync` | `studio/qc/motion_qc.mjs` |
-| `deterministic` | Every frame is a pure function of `t`; re-render is identical | `render-contract` lint; plus `qc/determinism.json` frame hashes when present | `docs/render-contract.md` |
+| `deterministic` | Every frame is a pure function of `t`; re-render is identical | `render-contract` lint **and** `qc/determinism.json`, written by every episode render (see below); missing, stale, or mismatched fails | `docs/render-contract.md` |
 | `no_ai_phrasing` | No AI phrasing or jargon in the voice-over | `qc` item `script_lint` (`lint-script`) | `studio/lint/packs/<lang>.json` |
 | `claims_sourced` | Every material claim has a source (fact card A/B/C) | `qc` item `fact_card_abc` | `fact_card.md` |
 | `claims_typed` | Numbers declare their quantity type; no mixing (e.g. "fairer" is not "faster") | `qc` item `claim_precision` (`studio/claims.mjs`) | `QUANTITY_TYPES` |
@@ -54,8 +54,18 @@ Set `audience_profile: <id>` in the brief front matter to add a profile from `st
 
 The phrase list catches obvious wording only. Tone is still judged by the person answering the three questions.
 
+## Deterministic re-render (built in)
+
+Every episode render (`render`, any cut, including `--review-only`) re-renders a sample of frames and writes `<episode>/qc/determinism.json`. There is no hand-supplied path: the gate accepts only a file written by `studio/render/browser/determinism.mjs`, and only while the hashed inputs (`render/scenes.json`, `lines.json`) are unchanged since that render.
+
+- Sample: frame 0, the last frame, the first frame of every scene, and 4 more frames picked by a PRNG seeded from the input hashes. Same inputs give the same sample; a changed input moves it.
+- Method: two passes, each in a fresh browser context (new page boot, fonts, WebGL), rendering each sampled frame through the normal `seek(t)` + post path and comparing the sha256 of the PNG.
+- Resolution: full render resolution, not thumbnails. The cost is dominated by the page boot and the per-frame post pass, not by hashing, and a thumbnail would hide sub-pixel drift (text anti-aliasing, grain) that is exactly what this gate is for.
+- Cost: two page boots plus 2 x (scenes + 6) frames. For a typical 12-scene episode that is about 36 frame captures, a few seconds on a laptop CPU; small next to a full encode (30 fps x duration). `render_report.json` records `determinism.elapsed_s`.
+- A mismatch does not stop the render (the draft is still useful for review); it fails `quality`.
+
 ## What is automated vs. documented only
 
 - Automated: every row in Tier 1 and every profile row, given the inputs above.
-- Partly automated: `deterministic` is a source lint unless `qc/determinism.json` exists; `hero_move_and_banned` trusts the motion spec's labels, which an agent writes from the draft; `no_ai_phrasing` catches listed phrases, not every awkward sentence.
+- Partly automated: `hero_move_and_banned` trusts the motion spec's labels, which an agent writes from the draft; `no_ai_phrasing` catches listed phrases, not every awkward sentence.
 - Documented only: the three human questions.

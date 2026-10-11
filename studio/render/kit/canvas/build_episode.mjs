@@ -23,6 +23,7 @@ import {assertRenderReview, DRAFT_WATERMARK} from '../../../review.mjs';
 import {runDoctor, formatDoctor} from '../../../doctor.mjs';
 import {buildCost} from '../../../cost.mjs';
 import {writeDone} from '../../../state.mjs';
+import {compareRenders, inputDigest, sampleFrames, writeDeterminism} from '../../browser/determinism.mjs';
 
 export {parseLoudnormJson};
 
@@ -354,6 +355,18 @@ export async function buildEpisode(episodeDir, opts) {
     const coverFile = path.join(outDir, 'cover.png');
     await fs.writeFile(coverFile, Buffer.from(cover, 'base64'));
     log(`cover + contact sheet (${sheetTimes.length} frames) written`);
+    const detInputs = await inputDigest(episodeDir);
+    const detIndices = sampleFrames({frames, fps, boundaries: resolved.scenes.map(s => s.start), seed: JSON.stringify(detInputs)});
+    const detResult = await compareRenders({
+      indices: detIndices,
+      fps,
+      openPass: () => openPage(browsers[0], html, spec, {includeThree}),
+      frameAt: (page, t) => page.evaluate(tt => window.__frame(tt), t),
+    });
+    const {file: detFile, report: detReport} = await writeDeterminism(episodeDir, {
+      result: detResult, inputs: detInputs, size: spec.size, fps, frames, mode: opts.mode, review: review.review,
+    });
+    log(`determinism: ${detResult.frames.length} frames x2 fresh contexts, ${detResult.ok ? 'identical' : `MISMATCH at ${detReport.mismatches.join(', ')}`} (${detResult.elapsed_s} s)`);
     const cost = await buildCost(episodeDir);
     const reviewMeta = {
       mode: review.review,
@@ -381,6 +394,7 @@ export async function buildEpisode(episodeDir, opts) {
         contact_sheet: rel(sheetFile),
         cover: rel(coverFile),
         thumbs: thumbFiles.map(file => rel(file)),
+        determinism: {file: rel(detFile), ok: detReport.ok, sample: detReport.sample, mismatches: detReport.mismatches, elapsed_s: detReport.elapsed_s},
         elapsed_s: +((Date.now() - t0) / 1000).toFixed(1),
         ...extra,
       };
@@ -388,7 +402,7 @@ export async function buildEpisode(episodeDir, opts) {
       await fs.writeFile(reportFile, JSON.stringify(report, null, 2));
       await writeDone(episodeDir, review.review === 'release' ? 'render-release' : 'render-draft', {
         inputs: ['render/scenes.json', 'lines.json', 'brief.md'].map(file => path.join(episodeDir, file)),
-        outputs: [reportFile, sheetFile, ...thumbFiles],
+        outputs: [reportFile, sheetFile, detFile, ...thumbFiles],
         extra: {review: review.review, cut: opts.mode},
       });
       return {report, reportFile};
