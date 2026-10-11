@@ -2,5 +2,10 @@
   "schema": "storyweaver.release.v1",
   "signed_by": "",
   "signed_at": "",
-  "statement": "I reviewed this cut after it was rendered. An agent must not fill signed_by."
+  "statement": "I reviewed this cut after it was rendered. An agent must not fill signed_by or quality_review.",
+  "quality_review": {
+    "hook_5s": {"question": "After the first 5 seconds, does the viewer want to keep watching?", "answer": "", "checked_by": ""},
+    "key_still": {"question": "Is every key still presentable on its own?", "answer": "", "checked_by": ""},
+    "takeaway": {"question": "After watching, can the viewer state the takeaway in one sentence, and do they want to try it?", "answer": "", "checked_by": ""}
+  }
 }
