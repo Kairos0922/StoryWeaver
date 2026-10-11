@@ -345,6 +345,32 @@ ${briefBody}
   assert.ok(result.issues.some(issue => issue.id === 'vertical_duration_cap'));
 });
 
+test('landscape length has no built-in cap; the approved brief sets the window', async () => {
+  const markdown = `---
+status: draft
+aspect: "16:9"
+target_duration_s: 140
+produce_vertical: false
+vertical_duration_s: ""
+structure_revision: 0
+---
+
+${briefBody}
+`;
+  const result = validateBrief(markdown);
+  assert.ok(!result.issues.some(issue => issue.id === 'duration_cap'));
+  const {durationWindow, checkMeasured} = await import('../studio/duration.mjs');
+  const win = durationWindow({approved_duration_s: 95, target_duration_s: 95});
+  assert.equal(win.source, 'approved_duration_s');
+  assert.equal(win.max_s, 104.5);
+  assert.equal(checkMeasured(97, win).ok, true);
+  assert.equal(checkMeasured(80, win).detail, 'under');
+  assert.equal(checkMeasured(110, win).detail, 'over');
+  const series = durationWindow({}, {default_s: 60, tolerance: 0.05});
+  assert.equal(series.source, 'series default_s');
+  assert.equal(series.max_s, 63);
+});
+
 test('average claims without the word average fail precision', () => {
   const fact = `## B. Numbers
 

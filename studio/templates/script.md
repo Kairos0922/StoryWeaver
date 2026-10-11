@@ -3,7 +3,7 @@
 - **One thing:** (TODO)
 - **One action the viewer can take:** (TODO)
 - **Number sources:** only facts that exist in fact-card A or B. If none, write no numbers.
-- **Aspect and duration:** match the `brief.md` front matter. Landscape target is at most 90 seconds.
+- **Aspect and duration:** match the `brief.md` front matter. Landscape length comes from the approved brief; measured duration must be within ±10% of `approved_duration_s`.
 
 `## Self-check` must be the last section. Words in that section are not scored as speech.
 

@@ -58,7 +58,7 @@ Fill `brief.md`:
 
 Draw whatever you choose inside `../series-style.json` when the series has one (`docs/style-lock.md`). `node studio/cli.mjs style <episode-dir>` lists every deviation. Never override a locked key from the brief or the scene files.
 
-Speech-rate cap is per language: at most 4.0 Chinese characters/s or 2.8 English words/s. Landscape is at most 90 seconds. Vertical is at most 60. Do not write “speak fast”.
+Speech-rate cap is per language: at most 4.0 Chinese characters/s or 2.8 English words/s. Landscape length is chosen by the content and set by the approved brief (`approved_duration_s`); the measured cut must land within ±10% (series can override in `series-style.json` → `duration`). Vertical is at most 60. Do not write “speak fast”.
 
 Set `model_budget_calls` in the brief. Record real call counts in `state/model_usage.json`. At 70% of the budget, stop at the current checkpoint.
 

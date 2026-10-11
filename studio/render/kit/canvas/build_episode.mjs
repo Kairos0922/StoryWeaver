@@ -24,6 +24,8 @@ import {assertRenderReview} from '../../../review.mjs';
 import {runDoctor, formatDoctor} from '../../../doctor.mjs';
 import {buildCost} from '../../../cost.mjs';
 import {writeDone} from '../../../state.mjs';
+import {parseFrontMatter} from '../../../brief.mjs';
+import {durationWindow, checkMeasured, readSeriesDuration} from '../../../duration.mjs';
 import {compareRenders, inputDigest, sampleFrames, writeDeterminism} from '../../browser/determinism.mjs';
 
 export {parseLoudnormJson};
@@ -307,6 +309,13 @@ export async function buildEpisode(episodeDir, opts) {
   const plainTiming = Object.assign({}, timing, {lines: Object.fromEntries(Object.entries(timing.lines).map(([k, v]) => [k, Object.assign({}, v, {env: undefined})]))});
   await fs.writeFile(path.join(outDir, 'timeline.json'), JSON.stringify({timing: plainTiming, scenes: resolved.scenes.map(s => ({id: s.id, start: +s.start.toFixed(3), end: +s.end.toFixed(3)})), sfx: resolved.sfx, beat_clock: clock}, null, 2));
   await fs.writeFile(path.join(outDir, 'subtitles.srt'), toSrt(timing));
+  let durationCheck = null;
+  if (opts.mode === 'full') {
+    const briefData = parseFrontMatter(await fs.readFile(path.join(episodeDir, 'brief.md'), 'utf8')).data;
+    durationCheck = checkMeasured(timing.duration, durationWindow(briefData, await readSeriesDuration(episodeDir)));
+    log(`duration ${durationCheck.measured_s} s vs approved ${durationCheck.window.approved_s ?? 'none'} s ±${Math.round(durationCheck.window.tolerance * 100)}%: ${durationCheck.ok ? 'ok' : durationCheck.detail}`);
+    if (!durationCheck.ok) throw Object.assign(new Error(`Measured duration ${durationCheck.measured_s}s is ${durationCheck.detail} the approved window ${durationCheck.window.min_s}–${durationCheck.window.max_s}s.`), {code: 'DURATION_OUT_OF_WINDOW', exit: 3});
+  }
   log(`timeline ${timing.duration.toFixed(2)} s, ${resolved.scenes.length} scenes, ${resolved.events.length} visible events, longest gap ${clock.max_gap_s} s`);
   for (const g of clock.gaps) log(`  beat clock ${g.level}: ${g.from}–${g.to} s (${g.gap} s without a new visual)`);
   if (!clock.ok && !opts.allowBeatGaps) throw Object.assign(new Error('beat clock failed: a stretch longer than fail_s has no new visual'), {exit: 5});
@@ -387,7 +396,7 @@ export async function buildEpisode(episodeDir, opts) {
         created_by: 'studio/render/browser',
         gate: {stage: review.stage, code: review.gate},
         durations: Object.fromEntries(timing.order.map(id => [id, {start: timing.lines[id].start, end: timing.lines[id].end, seconds: durations[id].duration, source: durations[id].source, probe: durations[id].probe}])),
-        duration_s: timing.duration, fps, frames, size: spec.size,
+        duration_s: timing.duration, duration_check: durationCheck, fps, frames, size: spec.size,
         beat_clock: clock,
         fonts: fontReport.fonts.map(f => ({weight: f.weight, library_id: f.library_id || null, license: f.license || null, license_file: f.license_file || null, subset: f.subset, bytes: f.bytes, source: f.source, source_index: f.source_index, source_sha256: f.source_sha256, subset_sha256: f.sha256, glyphs: f.glyphs})),
         glyph_coverage: {chars: fontReport.chars, missing: fontReport.missing},

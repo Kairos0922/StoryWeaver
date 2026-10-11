@@ -8,6 +8,31 @@ import {fileExists} from './qc/checks.mjs';
 import {writeDone, clearDone} from './state.mjs';
 
 const HOOK_COUNT = 3;
+export const DEFAULT_DURATION_TOLERANCE = 0.1;
+
+// Duration window for an episode. The approved brief decides (approved_duration_s, else
+// target_duration_s); the series may set a default length and a tolerance in series-style.json
+// under "duration": {"default_s": 90, "tolerance": 0.1}. No length is hard-coded here.
+export function durationWindow(brief = {}, series = {}) {
+  const tol = Number(series.tolerance ?? DEFAULT_DURATION_TOLERANCE);
+  const pick = [brief.approved_duration_s, brief.target_duration_s, series.default_s].find(v => v !== '' && v != null && Number.isFinite(Number(v)));
+  if (pick == null) return {approved_s: null, tolerance: tol, min_s: null, max_s: null, source: 'none'};
+  const a = Number(pick);
+  const source = pick === brief.approved_duration_s ? 'approved_duration_s' : pick === brief.target_duration_s ? 'target_duration_s' : 'series default_s';
+  return {approved_s: a, tolerance: tol, min_s: +(a * (1 - tol)).toFixed(2), max_s: +(a * (1 + tol)).toFixed(2), source};
+}
+
+export function checkMeasured(seconds, win) {
+  if (win.max_s == null) return {ok: true, measured_s: seconds, window: win};
+  const ok = seconds >= win.min_s - 0.05 && seconds <= win.max_s + 0.05;
+  return {ok, measured_s: +seconds.toFixed(3), window: win, detail: ok ? 'within' : (seconds > win.max_s ? 'over' : 'under')};
+}
+
+export async function readSeriesDuration(episodeDir) {
+  const f = path.join(episodeDir, '..', 'series-style.json');
+  if (!(await fileExists(f))) return {};
+  try { return JSON.parse(await fs.readFile(f, 'utf8')).duration || {}; } catch { return {}; }
+}
 
 function probeSeconds(file) {
   const r = spawnSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', file], {encoding: 'utf8'});
@@ -88,12 +113,10 @@ export async function predictEpisode(episodeDir) {
       `Record the first ${hookCount} hook lines before predicting the full duration. Missing: ${missing.join(', ')}`,
     ), {code: 'PREDICT_NEEDS_HOOK'});
   }
-  let limit = null;
   const briefPath = path.join(episodeDir, 'brief.md');
-  if (await fileExists(briefPath)) {
-    const {data} = parseFrontMatter(await fs.readFile(briefPath, 'utf8'));
-    if (data.target_duration_s !== '' && data.target_duration_s != null) limit = Number(data.target_duration_s);
-  }
+  const briefData = (await fileExists(briefPath)) ? parseFrontMatter(await fs.readFile(briefPath, 'utf8')).data : {};
+  const win = durationWindow(briefData, await readSeriesDuration(episodeDir));
+  const limit = win.max_s;
   const language = linesDoc.language || detectLanguage(lines.map(line => line.text || '').join(''));
   const result = predictDuration({
     lines,
@@ -105,6 +128,7 @@ export async function predictEpisode(episodeDir) {
     limitSeconds: limit,
     language,
   });
+  result.window = win;
   const out = path.join(episodeDir, 'state', 'duration_prediction.json');
   await fs.mkdir(path.dirname(out), {recursive: true});
   await fs.writeFile(out, JSON.stringify({schema: 'storyweaver.duration-prediction.v1', ...result}, null, 2));

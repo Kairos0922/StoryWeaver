@@ -2,7 +2,6 @@ import crypto from 'node:crypto';
 import fsSync from 'node:fs';
 import {fileURLToPath} from 'node:url';
 
-export const LANDSCAPE_MAX_S = 90;
 export const VERTICAL_MAX_S = 60;
 export const ASPECTS = ['16:9', '9:16', '16:9+9:16'];
 
@@ -205,9 +204,9 @@ export function validateBrief(markdown) {
     issues.push({id: 'duration_missing', detail: 'target_duration_s'});
   } else if (data.aspect === '9:16' && data.target_duration_s > VERTICAL_MAX_S) {
     issues.push({id: 'duration_cap', detail: `9:16 max ${VERTICAL_MAX_S}s`});
-  } else if (data.aspect !== '9:16' && data.target_duration_s > LANDSCAPE_MAX_S) {
-    issues.push({id: 'duration_cap', detail: `16:9 max ${LANDSCAPE_MAX_S}s`});
   }
+  // Landscape has no built-in cap: the length is chosen by the content and set by the human
+  // who approves the brief (approved_duration_s). duration.mjs checks recordings against it.
   const needsVertical = data.aspect === '16:9+9:16' || data.produce_vertical === true;
   if (needsVertical) {
     if (typeof data.vertical_duration_s !== 'number' || data.vertical_duration_s <= 0 || data.vertical_duration_s > VERTICAL_MAX_S) {
