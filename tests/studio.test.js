@@ -46,6 +46,13 @@ Landscape.
 
 80 seconds.
 
+## Concept machine
+
+- Machine: an elevator car on a rail that sweeps one direction at a time
+- Motion: the car keeps sweeping up before it turns; that means requests are served by direction, not by press order
+- Lit subject: the up arrow
+- Model: fact_card.md B1
+
 ## Five-beat story
 
 1. Hook: the door does not open.

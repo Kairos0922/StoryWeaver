@@ -69,6 +69,17 @@ Blank `font_display` / `font_body` keep the validated default, Noto Sans CJK SC.
 
 `model_budget_calls` is this episode’s call budget. Record the running total in `state/model_usage.json` as `{ "calls": N }`. Stop at the current checkpoint once `model_budget_stop_ratio` (default 0.7) is reached. Leave the call count blank until a real log exists. Do not invent it.
 
+## Concept machine
+
+Phase A hard rule: the object is the explanation. Invent one recognizable machine whose moving parts do what the concept does. No boxes, arrows, or floating labels standing in for it. Write the idea, not the drawing. All four bullets are required; `checkpoint brief` blocks while any is missing.
+
+- Machine: (TODO. The object or machine, e.g. a marble run for a queue.)
+- Motion: (TODO. One sentence: what moves, and what that motion means.)
+- Lit subject: (TODO. Exactly one part is lit; everything else stays quiet.)
+- Model: (TODO. `fact_card.md B#` or a `sim/` file. On-screen numbers and the motion both read this one source.)
+
+Draw it inside the series style lock (`../series-style.json`): series palette names only, series fonts, series characters operate the machine, series camera language. See `docs/style-lock.md`.
+
 ## Five-beat story
 
 1. Hook (0–4s): (TODO. Offend a belief or show a paradox. At most one new term.)

@@ -1,9 +1,10 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import {approvalState, extractIntuitionRows, extractOneThing} from '../brief.mjs';
+import {approvalState, extractIntuitionRows, extractOneThing, validateConceptMachine} from '../brief.mjs';
 import {lintFile} from '../lint/lint_script.mjs';
 import {checkClaimPrecision} from '../claims.mjs';
 import {paceEpisode} from '../pace.mjs';
+import {checkEpisodeStyle} from '../style/style_lock.mjs';
 
 export const ENGAGEMENT_FIELDS = [
   'Completion rate',
@@ -164,7 +165,27 @@ export async function checkPace(episodeDir) {
   return {ok: true, code: 'PACE', evidence: result.evidence};
 }
 
+export async function checkConceptModel(episodeDir) {
+  const text = await readIf(path.join(episodeDir, 'brief.md'));
+  if (!text) return {ok: false, code: 'BRIEF_INCOMPLETE', evidence: 'missing brief.md'};
+  const {concept, issues} = validateConceptMachine(text);
+  if (issues.length) return {ok: false, code: 'BRIEF_INCOMPLETE', evidence: issues.map(i => `${i.id}:${i.detail}`).join(', ')};
+  const missing = [];
+  for (const ref of concept.modelRefs) {
+    if (!(await fileExists(path.join(episodeDir, ref)))) missing.push(ref);
+  }
+  if (missing.length) return {ok: false, code: 'BRIEF_INCOMPLETE', evidence: `concept model not found: ${missing.join(', ')}`};
+  return {ok: true, code: 'PASS', evidence: `${concept.machine} · lit: ${concept.lit_subject} · model: ${concept.modelRefs.join(', ')}`};
+}
+
+export async function checkStyleLock(episodeDir) {
+  const r = await checkEpisodeStyle(episodeDir);
+  return {ok: r.ok, code: r.ok ? 'PASS' : 'STYLE_LOCK', evidence: r.evidence};
+}
+
 export const AUTO_CHECKS = {
+  concept_machine: checkConceptModel,
+  style_lock: checkStyleLock,
   fact_card_abc: checkFactCard,
   one_thing: checkOneThing,
   brief_approved: checkBrief,

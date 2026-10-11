@@ -17,7 +17,7 @@ approved_duration_s: 40
 approved_produce_vertical: false
 approved_vertical_duration_s: ""
 approved_structure_revision: 1
-approved_body_sha256: "6621d9e7ecd85de73242afed18fe98b0150324c56e3d93fb5ba5a6a95dea241e"
+approved_body_sha256: "9b53fc527c14d10ad6eb9a307597950e06c2742357af9f05378cf303267d6297"
 ---
 
 # Creative brief · sample-series / ep01
@@ -45,6 +45,13 @@ Forty seconds is the planning target.
 ## Model budget
 
 Twenty calls. Stop at 70 percent when a usage file exists.
+
+## Concept machine
+
+- Machine: a waiting room with colored doors that open one color at a time
+- Motion: the lit door swings open for its whole color group; that means one color clears before the next
+- Lit subject: the blue door
+- Model: fact_card.md B1
 
 ## Five-beat story
 

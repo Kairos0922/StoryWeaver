@@ -3,6 +3,7 @@ import path from 'node:path';
 import {approvalState} from './brief.mjs';
 import {fileExists} from './qc/checks.mjs';
 import {runQc} from './qc/run_qc.mjs';
+import {checkConceptModel, checkStyleLock} from './qc/checks.mjs';
 
 export const STAGES = ['brief', 'lines', 'hook-sample', 'stills', 'render', 'publish'];
 
@@ -18,6 +19,7 @@ const PRIORITY = [
   'BRIEF_STALE',
   'BRIEF_REQUIRED',
   'BRIEF_INCOMPLETE',
+  'STYLE_LOCK',
   'SCRIPT_LINT_FAILED',
   'FACT_CARD',
   'ONE_THING',
@@ -63,6 +65,16 @@ export async function evaluateCheckpoint(episodeDir, stage) {
       return {code: 'BRIEF_INCOMPLETE', exitCode: 1, blockers: [], issues: [{id: 'missing_file', detail: 'brief.md'}]};
     }
     const state = approvalState(briefText);
+    const extra = [];
+    if (!state.structure.issues.some(i => i.id.startsWith('concept_machine'))) {
+      const model = await checkConceptModel(episodeDir);
+      if (!model.ok) extra.push({id: 'concept_machine_model', detail: model.evidence});
+    }
+    const style = await checkStyleLock(episodeDir);
+    if (!style.ok) extra.push({id: 'style_lock', detail: style.evidence});
+    if (extra.length) {
+      return {code: 'BRIEF_INCOMPLETE', exitCode: 1, blockers: [], issues: [...state.structure.issues, ...extra], hash: state.hash, status: state.status};
+    }
     return {
       code: state.code,
       exitCode: exitFor(state.code),
