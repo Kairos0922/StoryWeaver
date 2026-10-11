@@ -177,3 +177,16 @@ test('loudnorm parser keeps only the JSON object when ffmpeg trails text', () =>
   assert.throws(() => JSON.parse(`${block}\n${trailer}`), SyntaxError);
   assert.throws(() => parseLoudnormJson('no json here'), /no JSON object/);
 });
+
+test('loop_track and trajectory_plot draw a fictional fixture', async () => {
+  const SWKit = loadKit();
+  assert.ok(SWKit.components.includes('loop_track'));
+  assert.ok(SWKit.components.includes('trajectory_plot'));
+  const {spec} = await loadStyle(episode);
+  // Fictional data: four tokens on a loop and two short trajectories, one crossing the wrap seam.
+  const shot = {id: 'fixture', layers: [
+    {type: 'loop_track', x: 500, y: 500, r: 200, tokens: [{a: 0, v: 1}, {a: 0.25, v: 0.5}, {a: 0.5, v: 0.05, brake: true}, {a: 0.75, v: 0.9, color: 'teal'}]},
+    {type: 'trajectory_plot', x: 1000, y: 200, w: 600, h: 500, xlabel: 'x', ylabel: 't', series: [[[0.1, 0, 1], [0.2, 0.5, 0.1], [0.3, 1, 0.8]], [[0.9, 0, 1], [0.05, 0.5, 1]]]},
+  ]};
+  assert.doesNotThrow(() => SWKit.drawScene(fakeContext(), spec, shot, {t: 0}));
+});

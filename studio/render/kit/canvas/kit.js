@@ -1281,12 +1281,101 @@
     ctx.restore();
   }
 
+  // Speed-coloured tokens on a closed loop (ring road, conveyor, orbit). Data comes from the episode's simulation.
+  function speedColor(spec, v, L) {
+    const p = spec.palette;
+    if (v <= (L.slow ?? 0.15)) return col(spec, L.slow_color, p.red);
+    if (v <= (L.mid ?? 0.6)) return col(spec, L.mid_color, p.yellow);
+    return col(spec, L.fast_color, p.teal);
+  }
+
+  function loopTrack(ctx, L, spec) {
+    const p = spec.palette;
+    const r = L.r ?? 300, lane = L.lane ?? 70;
+    ctx.save();
+    ctx.translate(L.x, L.y);
+    ctx.beginPath();
+    ctx.arc(10, 14, r + lane / 2, 0, TAU);
+    ctx.arc(10, 14, r - lane / 2, 0, TAU, true);
+    ctx.fillStyle = p.shadow;
+    ctx.fill('evenodd');
+    ctx.beginPath();
+    ctx.arc(0, 0, r + lane / 2, 0, TAU);
+    ctx.arc(0, 0, r - lane / 2, 0, TAU, true);
+    ctx.fillStyle = col(spec, L.road, p.lane);
+    ctx.fill('evenodd');
+    ctx.lineWidth = L.stroke ?? 5;
+    ctx.strokeStyle = p.ink;
+    ctx.beginPath(); ctx.arc(0, 0, r + lane / 2, 0, TAU); ctx.stroke();
+    ctx.beginPath(); ctx.arc(0, 0, r - lane / 2, 0, TAU); ctx.stroke();
+    ctx.setLineDash([16, 18]);
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = col(spec, L.center_line, p.lane_edge);
+    ctx.beginPath(); ctx.arc(0, 0, r, 0, TAU); ctx.stroke();
+    ctx.setLineDash([]);
+    const cw = L.token_w ?? 34, ch = L.token_h ?? 22;
+    for (const tk of L.tokens || []) {
+      const a = -Math.PI / 2 + tk.a * TAU * (L.dir ?? 1);
+      ctx.save();
+      ctx.translate(Math.cos(a) * r, Math.sin(a) * r);
+      ctx.rotate(a + Math.PI / 2 * (L.dir ?? 1));
+      rr(ctx, -cw / 2, -ch / 2, cw, ch, 6);
+      inked(ctx, spec, tk.color ? col(spec, tk.color) : speedColor(spec, tk.v ?? 1, L), tk.focus ? 5 : 3.5);
+      if (tk.brake) {
+        ctx.fillStyle = p.red;
+        ctx.fillRect(-cw / 2 - 2, -ch / 2 + 2, 6, 6);
+        ctx.fillRect(-cw / 2 - 2, ch / 2 - 8, 6, 6);
+      }
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+
+  // Trajectory (space-time) plot: one polyline per agent, segments coloured by speed. Points are [x0..1, y0..1, v0..1].
+  function trajectoryPlot(ctx, L, spec) {
+    const p = spec.palette;
+    const {x, y, w, h} = L;
+    ctx.save();
+    rr(ctx, x - 24, y - 24, w + 48, h + 48, 20);
+    inked(ctx, spec, col(spec, L.bg, p.white), 5);
+    ctx.lineCap = 'round';
+    ctx.lineWidth = L.width ?? 3;
+    for (const line of L.series || []) {
+      for (let i = 1; i < line.length; i++) {
+        const [ax, ay] = line[i - 1], [bx, by, bv] = line[i];
+        if (Math.abs(bx - ax) > 0.5) continue;
+        ctx.strokeStyle = speedColor(spec, bv, L);
+        ctx.beginPath();
+        ctx.moveTo(x + ax * w, y + h - ay * h);
+        ctx.lineTo(x + bx * w, y + h - by * h);
+        ctx.stroke();
+      }
+    }
+    ctx.strokeStyle = p.ink;
+    ctx.lineWidth = 5;
+    ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + h); ctx.lineTo(x + w, y + h); ctx.stroke();
+    ctx.fillStyle = p.ink;
+    ctx.font = font(spec, 700, L.label_size ?? 34);
+    ctx.textBaseline = 'top';
+    ctx.textAlign = 'right';
+    if (L.xlabel) ctx.fillText(L.xlabel, x + w, y + h + 10);
+    ctx.save();
+    ctx.translate(x - 34, y);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'bottom';
+    if (L.ylabel) ctx.fillText(L.ylabel, 0, 0);
+    ctx.restore();
+    ctx.restore();
+  }
+
   const COMPONENTS = {
     fill, backdrop, lane, service_point: servicePoint, queue_line: queueLine,
     person: (ctx, L, spec, W, H, frame) => person(ctx, spec, L, frame), character,
     kinetic_number: kineticNumber, stamp, tag, label, arrow, tally,
     impact_lines: impactLines, dim, panel, divider,
     card, bar_compare: barCompare, stopwatch, mystery_box: mysteryBox,
+    loop_track: loopTrack, trajectory_plot: trajectoryPlot,
   };
 
   // fx_* are written by the timeline for enter/exit moves; stills may set them by hand.
