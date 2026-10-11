@@ -1,0 +1,14 @@
+{
+  "schema": "storyweaver.profile.v1",
+  "id": "children-education",
+  "summary": "Optional audience profile for educational videos aimed at children. Adds tone and structure gates on top of the general standard.",
+  "brief_sections": [
+    {"id": "guess_before_reveal", "heading": "Guess before reveal", "hint": "Where the viewer is invited to guess, and the line id where the answer is revealed."},
+    {"id": "try_it_at_home", "heading": "Try it at home", "hint": "One safe, low-cost activity the viewer can do after watching."}
+  ],
+  "line_beats": {"guess": "guess", "reveal": "reveal"},
+  "anxiety_phrases": {
+    "en": ["fall behind", "falling behind", "you will fail", "you'll fail", "only smart kids", "before it's too late", "don't be the last", "lose to others", "losers"],
+    "zh": ["输在起跑线", "落后于", "别人家的孩子", "来不及了", "考不好就", "再不学就", "被淘汰", "笨孩子", "丢人"]
+  }
+}

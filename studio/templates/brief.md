@@ -3,6 +3,7 @@ status: draft
 series: {{series}}
 episode: {{episode}}
 language: en
+audience_profile: ""
 model_budget_calls: ""
 model_budget_stop_ratio: 0.7
 aspect: "16:9"
@@ -96,6 +97,10 @@ Named defaults this episode must not use. Generic “avoid AI look” does not c
 - Text that moves while it is being read
 - Bounce on opacity or color
 - Inline easing or duration numbers instead of `studio/motion/tokens.js` names
+
+## Audience profile
+
+Optional. Set front-matter `audience_profile` to a file name under `studio/profiles/` (for example `children-education`) to add that profile's gates. Leave it blank for the general standard. Profile sections such as `## Guess before reveal` and `## Try it at home` go below when the profile asks for them.
 
 ## Hook sample
 

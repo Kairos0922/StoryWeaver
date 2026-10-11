@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.11.0 — 2026-10-11
+
+Release quality standard v1.
+
+### Added
+
+- `docs/quality-standard.md` (v1): blocking machine gates and three human-only review questions.
+- `node studio/cli.mjs quality <episode-dir>`: one pass/fail report over existing checks (`qc` pace, script lint, fact card, claim precision; `render-contract`; `motion-qc` from `qc/motion.json`; brief `## Banned motion`). Exit 3 = machine gates pass, human review pending.
+- Motion spec `shots`: exactly one `hero` move per shot; `BANNED_KINDS` plus spec `banned`.
+- Optional audience profiles in `studio/profiles/` selected by brief `audience_profile`; first profile `children-education` (no-anxiety phrases, guess before reveal, try it at home).
+- `qc/release.json` `quality_review` with three person-only answers; agent-looking names are rejected.
+
+### Migration
+
+- Existing episodes: add `quality_review` to `qc/release.json` (copy from `studio/templates/release.json`) and write `qc/motion.json` from the draft.
+
 ## 0.10.1 — 2026-10-11
 
 Calibrate Chinese on-screen text hold from narration pace.

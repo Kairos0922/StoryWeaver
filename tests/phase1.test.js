@@ -142,7 +142,9 @@ test('release sign-off rejects an empty name and an agent name', () => {
   assert.match(releaseSignoffError(null), /missing/);
   assert.match(releaseSignoffError({signed_by: '', signed_at: '2026-10-10'}), /signed_by/);
   assert.match(releaseSignoffError({signed_by: 'Claude agent', signed_at: '2026-10-10'}), /Agents cannot/);
-  assert.equal(releaseSignoffError({signed_by: 'Kairos', signed_at: '2026-10-10'}), '');
+  assert.match(releaseSignoffError({signed_by: 'Kairos', signed_at: '2026-10-10'}), /quality_review/);
+  const qr = {answer: 'yes', checked_by: 'Kairos'};
+  assert.equal(releaseSignoffError({signed_by: 'Kairos', signed_at: '2026-10-10', quality_review: {hook_5s: qr, key_still: qr, takeaway: qr}}), '');
 });
 
 test('fixture draft review is open and release is not', async () => {

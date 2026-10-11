@@ -3,6 +3,7 @@ import path from 'node:path';
 import {isAgentSigner} from './brief.mjs';
 import {evaluateCheckpoint} from './checkpoint.mjs';
 import {fileExists} from './qc/checks.mjs';
+import {humanReviewErrors} from './quality.mjs';
 
 export const DRAFT_WATERMARK = 'Not human-reviewed';
 export const REVIEWS = ['draft', 'release'];
@@ -22,6 +23,8 @@ export function releaseSignoffError(data) {
   if (!signedBy || !signedAt) return 'release needs signed_by and signed_at from a person';
   if (isAgentSigner(signedBy)) return 'Agents cannot fill release sign-off. signed_by must be a person.';
   if (!/\d{4}-\d{2}-\d{2}/.test(signedAt)) return 'signed_at must include a calendar date';
+  const open = humanReviewErrors(data).filter(r => !r.ok);
+  if (open.length) return `quality_review needs a person's yes: ${open.map(r => `${r.id} (${r.evidence})`).join(', ')}`;
   return '';
 }
 

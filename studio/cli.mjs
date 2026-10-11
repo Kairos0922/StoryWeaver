@@ -19,6 +19,7 @@ import {formatGitSync, gitSyncStatus, markGitSync, planGitSync} from './git_sync
 import {renderDirectory} from './render/browser/pipeline.mjs';
 import {formatRenderContract, lintRenderContract} from './lint/render_contract.mjs';
 import {formatMotionQc, runMotionQc} from './qc/motion_qc.mjs';
+import {formatQuality, runQuality} from './quality.mjs';
 
 const args = process.argv.slice(2);
 
@@ -54,6 +55,7 @@ const help = `StoryWeaver
 
   node studio/cli.mjs lint-script <script.md|lines.json>
   node studio/cli.mjs qc <episode-dir>
+  node studio/cli.mjs quality <episode-dir>
   node studio/cli.mjs render-contract
   node studio/cli.mjs motion-qc <motion.json> [--out <dir>]
   node studio/cli.mjs checkpoint <episode-dir> <brief|lines|hook-sample|stills|render|publish>
@@ -75,7 +77,8 @@ sign-off. A release does, and an agent cannot fill those fields. This CLI
 does not call a paid TTS API and does not publish.
 
 Exit codes: 0 pass or ready for review; 1 incomplete structure or checklist;
-2 brief missing, stale, or doctor blocked a render.`;
+2 brief missing, stale, or doctor blocked a render; 3 quality machine gates
+pass but human review is pending.`;
 
 async function main() {
   if (!cmd || cmd === 'help' || cmd === '--help') {
@@ -100,6 +103,13 @@ async function main() {
     const report = await runMotionQc(path.resolve(file), opts.out ? path.resolve(opts.out) : undefined);
     emit(report, formatMotionQc(report));
     return report.ok ? 0 : 1;
+  }
+  if (cmd === 'quality') {
+    const dir = positional[0];
+    if (!dir) throw new Error('quality needs an episode directory');
+    const report = await runQuality(path.resolve(dir));
+    emit(report, formatQuality(report));
+    return report.ok ? 0 : report.machineOk ? 3 : 1;
   }
   if (cmd === 'qc') {
     const dir = positional[0];

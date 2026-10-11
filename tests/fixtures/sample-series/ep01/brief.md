@@ -17,7 +17,7 @@ approved_duration_s: 40
 approved_produce_vertical: false
 approved_vertical_duration_s: ""
 approved_structure_revision: 1
-approved_body_sha256: "8db6f2c1efec098ffaaade482b00ee96c0df29699e7b2585021904496e0e5f7b"
+approved_body_sha256: "6621d9e7ecd85de73242afed18fe98b0150324c56e3d93fb5ba5a6a95dea241e"
 ---
 
 # Creative brief · sample-series / ep01
@@ -59,3 +59,8 @@ Twenty calls. Stop at 70 percent when a usage file exists.
 | Window | 0–3s | 3–7s | 7–10s | Devices | Character action | Voice point |
 | --- | --- | --- | --- | --- | --- | --- |
 | 0–10s | closed door | one number | a point | kinetic number, cut, character action, label | Pebble points at the door | the door stayed shut |
+
+## Banned motion
+
+- Every element doing fade + slide-up
+- Text that moves while it is being read

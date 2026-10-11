@@ -172,6 +172,21 @@ export function hardStops(samples, ratio = 0.5) {
   return out;
 }
 
+// Motion kinds that are banned by default (docs/quality-standard.md). A spec can add more in `banned`.
+export const BANNED_KINDS = Object.freeze(['gradient-glow', 'lens-flare', 'decorative-particles', 'all-fade-in', 'fade-slide-up', 'text-move-while-read', 'opacity-bounce', 'color-bounce']);
+
+// Each shot has exactly one hero move; no move uses a banned kind.
+export function checkShots(shots = [], extraBanned = []) {
+  const banned = new Set([...BANNED_KINDS, ...extraBanned]);
+  const items = shots.map(shot => {
+    const moves = shot.moves || [];
+    const heroes = moves.filter(m => m.role === 'hero').length;
+    const bannedUsed = moves.map(m => m.kind).filter(k => banned.has(k));
+    return {id: shot.id, heroes, banned: bannedUsed, ok: heroes === 1 && bannedUsed.length === 0};
+  });
+  return {ok: items.length > 0 && items.every(i => i.ok), items};
+}
+
 export async function runMotionQc(specFile, outDir) {
   const spec = JSON.parse(await fs.readFile(specFile, 'utf8'));
   const fps = spec.fps ?? 30;
@@ -186,6 +201,7 @@ export async function runMotionQc(specFile, outDir) {
     const peaks = spec.sfx.peaks_s ?? (spec.sfx.audio ? await measurePeaks(path.resolve(base, spec.sfx.audio), spec.sfx.events, fps) : []);
     report.checks.sfx_sync = checkSfxSync(spec.sfx.events, peaks, fps);
   }
+  if (spec.shots) report.checks.shots = checkShots(spec.shots, spec.banned);
   for (const [id, samples] of Object.entries(spec.tracks || {})) {
     const onion = path.join(out, `${id}.onion.svg`);
     const graph = path.join(out, `${id}.speed.svg`);
