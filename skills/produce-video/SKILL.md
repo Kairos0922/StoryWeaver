@@ -96,8 +96,8 @@ This CLI stops at checkpoints. It does not upload a video. A cloud agent with no
 3. Draw four stills. A person looks, then signs `stills_four`, `beat_clock`, `no_idle`.
 4. Run `listen-pack`. It joins number lines, character names, and the vote into a phone file of at most 30 seconds, plus `qc/listen_pack.md`. ASR may add lines. An ASR score does not pass the pack.
 5. Run `doctor --episode <dir> --require-render`, then `render --mode draft --cut full`. Doctor checks font weights 400/500/900, Chromium, an ffmpeg loudnorm self-test, key presence (never the value), and scene expressions and gestures against the rig. The draft is watermarked `Not human-reviewed`. Thumbnails and a contact sheet are written first.
-6. Run `node studio/cli.mjs quality <episode-dir>` (`docs/quality-standard.md`). Fix every machine gate. Exit 3 means only the three human questions remain; do not answer them.
-7. A person hears the listen pack and signs `qc/release.json` (`signed_by`, `signed_at`). They also answer `quality_review` (first 5 s hook, key stills, one-sentence takeaway). Agents cannot fill those fields. Only then: `render --mode release --cut full`.
+6. Run `node studio/cli.mjs quality <episode-dir>` (`docs/quality-standard.md`). Fix every machine gate. Exit 3 means only the four human questions remain; do not answer them.
+7. A person hears the listen pack and signs `qc/release.json` (`signed_by`, `signed_at`). They also answer `quality_review` (first 5 s hook, key stills, one-sentence takeaway, works as one whole piece). Agents cannot fill those fields. Only then: `render --mode release --cut full`.
 8. After `PUBLISH_ALLOWED`, hand publish copy and the AI disclosure to a person. They click publish. `git-sync` is a separate step for the push and the pull-request text. Retry it with `--retry` without rendering again.
 
 Picture: `studio/contracts/visual_contract.md`. Voice: `studio/contracts/voice_contract.md`. Pipeline: `studio/render/adapters/README.md`.
@@ -151,7 +151,7 @@ Changing the five beats, the aspect, or the duration is a new brief. Return to s
 - [ ] Listen pack heard on a phone
 - [ ] Render contract clean; motion QC passes
 - [ ] `quality` machine gates pass (`docs/quality-standard.md` v1)
-- [ ] A person answered the three review questions in `quality_review`
+- [ ] A person answered the four review questions in `quality_review`
 - [ ] Draft rendered after doctor; release signed by a person
 - [ ] AI disclosure; person published
 - [ ] Metrics blank or sourced; cost copied from the render report or left blank

@@ -1,6 +1,6 @@
-# Release quality standard — v1
+# Release quality standard — v1.1
 
-Status: v1, 2026-10-11. This is a working standard. Revise it from real, published episodes: when a shipped cut shows a number here is wrong, change the number in its single source and note the episode in `CHANGELOG.md`. A value measured on a real episode beats a value from outside material until a real cut proves otherwise.
+Status: v1.1, 2026-10-11 (v1.1 adds the fourth review question and reviewer guidance; machine gates unchanged). This is a working standard. Revise it from real, published episodes: when a shipped cut shows a number here is wrong, change the number in its single source and note the episode in `CHANGELOG.md`. A value measured on a real episode beats a value from outside material until a real cut proves otherwise.
 
 The standard applies to every topic, language, and audience. Audience-specific rules live in optional profiles (see below), never in the general gates.
 
@@ -10,7 +10,7 @@ Run it:
 node studio/cli.mjs quality <episode-dir> [--json]
 ```
 
-Exit 0: every machine gate passes and a person answered all three review questions "yes". Exit 3: machine gates pass, human review pending. Exit 1: a machine gate failed.
+Exit 0: every machine gate passes and a person answered all four review questions "yes". Exit 3: machine gates pass, human review pending. Exit 1: a machine gate failed.
 
 ## Tier 1 — Machine gates (blocking)
 
@@ -34,11 +34,34 @@ Inputs the gates read from the episode: `brief.md`, `fact_card.md`, `script.md`,
 
 ## Tier 2 — Human review (person only)
 
-Three questions. A person answers them in `qc/release.json` → `quality_review` (`answer: "yes"|"no"`, `checked_by`). Agents must not fill these fields; names that look like an agent are rejected, and `yes` without `checked_by` stays pending.
+Four questions. A person answers them in `qc/release.json` → `quality_review` (`answer: "yes"|"no"`, `checked_by`). Agents must not fill these fields; names that look like an agent are rejected, and `yes` without `checked_by` stays pending.
+
+Each question has short guidance to make the call faster. The guidance is a set of prompts, not a rubric to score.
 
 1. `hook_5s` — After the first 5 seconds, does the viewer want to keep watching?
+   - Is there a clear question or tension in the opening, stated in the viewer's own terms?
+   - Can a first-time viewer follow it without pausing or rewinding? First-watch comprehension is the video equivalent of usability.
+   - Does the opening earn attention through content, not through effects?
 2. `key_still` — Is every key still presentable on its own?
+   - Does each frame show deliberate design intent: type, colour, layout, and spacing chosen, not defaulted?
+   - Is the visual hierarchy obvious, with one focal point per frame?
+   - Does the style suit the audience and the topic, rather than following a current trend?
 3. `takeaway` — After watching, can the viewer state the takeaway in one sentence, and do they want to try it?
+   - Is the takeaway stated once, plainly, and supported by what was shown?
+   - Did every technique (3D, simulation, effects) help explain something? 3D belongs only where it shows structure that a flat view cannot.
+   - Is there a concrete next step the viewer can take on their own?
+4. `whole_piece` — Does it work as one whole piece: visuals, voice, pacing, and content pulling in the same direction, with nothing that looks good but does not fit the content?
+   - Each part being good is not enough; the parts must also work together.
+   - Look for anything that is attractive in isolation but pulls against the content: decoration, music, or motion that draws the eye away from the point.
+   - Technique serves the explanation, never display for its own sake.
+
+### Weights
+
+There are no fixed weights between the questions yet. For children's education content, resolve trade-offs in this order: content and comprehension first, visual craft second, novelty third. Fixed weights will be set from real episode data (completion, replays, viewer feedback) once enough episodes have shipped.
+
+### Excluded on purpose
+
+Criteria that only apply to interactive websites, such as navigation, keyboard operation, and SEO, are not part of this standard. A video is watched linearly; the viewer does not navigate, operate controls, or rely on page markup. The useful part of those criteria, whether the audience can follow without effort, is covered by first-watch comprehension under `hook_5s` and by the `pace` and `text_hold` gates.
 
 ## Audience profiles (optional)
 
@@ -52,7 +75,7 @@ Set `audience_profile: <id>` in the brief front matter to add a profile from `st
 | `profile_guess_before_reveal` / `profile_guess_order` | The viewer is invited to guess before the answer | brief `## Guess before reveal` filled; a `beat: "guess"` line precedes the first `beat: "reveal"` line |
 | `profile_try_it_at_home` | One safe, low-cost thing to try after watching | brief `## Try it at home` filled |
 
-The phrase list catches obvious wording only. Tone is still judged by the person answering the three questions.
+The phrase list catches obvious wording only. Tone is still judged by the person answering the four questions.
 
 ## Deterministic re-render (built in)
 
@@ -68,4 +91,4 @@ Every episode render (`render`, any cut, including `--review-only`) re-renders a
 
 - Automated: every row in Tier 1 and every profile row, given the inputs above.
 - Partly automated: `hero_move_and_banned` trusts the motion spec's labels, which an agent writes from the draft; `no_ai_phrasing` catches listed phrases, not every awkward sentence.
-- Documented only: the three human questions.
+- Documented only: the four human questions.

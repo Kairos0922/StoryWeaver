@@ -6,6 +6,7 @@
   "quality_review": {
     "hook_5s": {"question": "After the first 5 seconds, does the viewer want to keep watching?", "answer": "", "checked_by": ""},
     "key_still": {"question": "Is every key still presentable on its own?", "answer": "", "checked_by": ""},
-    "takeaway": {"question": "After watching, can the viewer state the takeaway in one sentence, and do they want to try it?", "answer": "", "checked_by": ""}
+    "takeaway": {"question": "After watching, can the viewer state the takeaway in one sentence, and do they want to try it?", "answer": "", "checked_by": ""},
+    "whole_piece": {"question": "Does it work as one whole piece: visuals, voice, pacing, and content pulling in the same direction, with nothing that looks good but does not fit the content?", "answer": "", "checked_by": ""}
   }
 }
