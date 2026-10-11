@@ -7,6 +7,7 @@ import {runQc} from './qc/run_qc.mjs';
 import {runMotionQc} from './qc/motion_qc.mjs';
 import {lintRenderContract} from './lint/render_contract.mjs';
 import {checkProfile, sectionBody} from './profiles.mjs';
+import {evaluateDeterminism} from './render/browser/determinism.mjs';
 
 export const STANDARD_VERSION = 'v1';
 
@@ -57,17 +58,10 @@ export async function runQuality(episodeDir) {
     machine.push({id: gate, source: `qc:${id}`, ok: item?.status === 'pass', evidence: item?.evidence || 'missing'});
   }
   const contract = await lintRenderContract();
-  const frameHashes = await readJson(path.join(episodeDir, 'qc', 'determinism.json'));
-  let detOk = contract.ok;
-  let detEvidence = contract.ok ? 'render-contract lint clean' : `${contract.findings.length} render-contract finding(s)`;
-  if (frameHashes) {
-    const a = frameHashes.first || [];
-    const b = frameHashes.second || [];
-    const same = a.length > 0 && a.length === b.length && a.every((h, i) => h === b[i]);
-    detOk = detOk && same;
-    detEvidence += same ? `; ${a.length} re-rendered frames identical` : '; re-rendered frame hashes differ';
-  } else detEvidence += '; no qc/determinism.json frame-hash comparison (source lint only)';
-  machine.push({id: 'deterministic', source: 'render-contract', ok: detOk, evidence: detEvidence});
+  const rerender = await evaluateDeterminism(episodeDir);
+  const detOk = contract.ok && rerender.ok;
+  const detEvidence = `${contract.ok ? 'render-contract lint clean' : `${contract.findings.length} render-contract finding(s)`}; ${rerender.evidence}`;
+  machine.push({id: 'deterministic', source: 'render-contract + render pipeline re-render', ok: detOk, evidence: detEvidence});
 
   const specFile = path.join(episodeDir, 'qc', 'motion.json');
   if (await fileExists(specFile)) {

@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.12.0 — 2026-10-11
+
+Deterministic re-render is a real, built-in check.
+
+### Added
+
+- `studio/render/browser/determinism.mjs`: every episode render re-renders a seeded sample (first, last, scene starts, 4 seeded picks) twice in fresh browser contexts at full resolution and writes `qc/determinism.json` with per-frame sha256 hashes and input hashes. `render_report.json` gains `determinism`.
+
+### Changed
+
+- `quality` gate `deterministic` now requires both a clean `render-contract` lint and a pipeline-written, non-stale, all-matching `qc/determinism.json`. Missing fails.
+
+### Removed
+
+- Hand-supplied `qc/determinism.json` (`first`/`second` hash arrays). Such files are rejected.
+
+### Migration
+
+- Re-render each episode (a `--review-only` draft is enough) before running `quality`.
+
 ## 0.11.0 — 2026-10-11
 
 Release quality standard v1.
