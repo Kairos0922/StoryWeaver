@@ -354,7 +354,9 @@ def main():
     fx = Bus(seconds)
     for e in plan.get('sfx', []):
         w = sfx_wave(e['sfx'], rng, e.get('dur'))
-        fx.add(e['t'], w, SFX_GAIN[e['sfx']] * float(e.get('gain', 1.0)) * float(plan.get('sfx_level', 1.0)), pan=float(e.get('pan', 0)))
+        # A whoosh swells to its crest at the middle; start it early so the crest lands one frame after the picture event.
+        at = e['t'] - len(w) / SR / 2 + 1 / 30 if e['sfx'] == 'whoosh' else e['t']
+        fx.add(max(0.0, at), w, SFX_GAIN[e['sfx']] * float(e.get('gain', 1.0)) * float(plan.get('sfx_level', 1.0)), pan=float(e.get('pan', 0)))
     sfx = fx.buf[:n]
 
     mix = bgm + sfx + voice[:, None]
