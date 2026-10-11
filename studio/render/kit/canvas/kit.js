@@ -1095,11 +1095,14 @@
     ctx.fillStyle = p.ink;
     const x = L.x ?? W / 2;
     const zig = L.zig ?? 0;
+    // Optional vertical extent so the divider can stop above text (notes, subtitles).
+    const y0 = L.y0 ?? 0, y1 = L.y1 ?? H;
     ctx.beginPath();
-    ctx.moveTo(x - 10, 0);
-    for (let y = 0; y <= H; y += 60) ctx.lineTo(x - 10 + ((y / 60) % 2 ? zig : 0), y);
-    ctx.lineTo(x + 10, H);
-    for (let y = H; y >= 0; y -= 60) ctx.lineTo(x + 10 + ((y / 60) % 2 ? zig : 0), y);
+    ctx.moveTo(x - 10, y0);
+    for (let y = y0; y <= y1; y += 60) ctx.lineTo(x - 10 + ((y / 60) % 2 ? zig : 0), y);
+    ctx.lineTo(x - 10, y1);
+    ctx.lineTo(x + 10, y1);
+    for (let y = y1; y >= y0; y -= 60) ctx.lineTo(x + 10 + ((y / 60) % 2 ? zig : 0), y);
     ctx.closePath();
     ctx.fill();
     ctx.restore();
