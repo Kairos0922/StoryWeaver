@@ -11,11 +11,12 @@ import {evaluateDeterminism} from './render/browser/determinism.mjs';
 
 export const STANDARD_VERSION = 'v1';
 
-// The three human-only questions. Agents cannot answer them.
+// The four human-only questions. Agents cannot answer them.
 export const HUMAN_QUESTIONS = Object.freeze([
   {id: 'hook_5s', question: 'After the first 5 seconds, does the viewer want to keep watching?'},
   {id: 'key_still', question: 'Is every key still presentable on its own?'},
   {id: 'takeaway', question: 'After watching, can the viewer state the takeaway in one sentence, and do they want to try it?'},
+  {id: 'whole_piece', question: 'Does it work as one whole piece: visuals, voice, pacing, and content pulling in the same direction, with nothing that looks good but does not fit the content?'},
 ]);
 
 // Machine gate -> existing check that enforces it.

@@ -43,11 +43,11 @@ test('fixture passes machine gates and waits for a person', async () => {
 
 test('human questions reject agent signers and accept a person', async () => {
   const yes = by => ({answer: 'yes', checked_by: by});
-  assert.ok(humanReviewErrors({quality_review: {hook_5s: yes('Grok Bot'), key_still: yes('Ana'), takeaway: yes('Ana')}})[0].ok === false);
+  assert.ok(humanReviewErrors({quality_review: {hook_5s: yes('Grok Bot'), key_still: yes('Ana'), takeaway: yes('Ana'), whole_piece: yes('Ana')}})[0].ok === false);
   const dir = await copyFixture();
   const file = path.join(dir, 'qc', 'release.json');
   const rel = JSON.parse(await fs.readFile(file, 'utf8'));
-  for (const k of ['hook_5s', 'key_still', 'takeaway']) rel.quality_review[k] = yes('Ana');
+  for (const k of ['hook_5s', 'key_still', 'takeaway', 'whole_piece']) rel.quality_review[k] = yes('Ana');
   await fs.writeFile(file, JSON.stringify(rel));
   assert.equal((await runQuality(dir)).ok, true);
 });
@@ -136,4 +136,14 @@ test('deterministic gate fails when the report is missing, hand-written, stale, 
   const g = await gate(bad);
   assert.equal(g.ok, false);
   assert.match(g.evidence, /differs at frame/);
+});
+
+test('v1.1: whole_piece is required and agent-proof', async () => {
+  const yes = by => ({answer: 'yes', checked_by: by});
+  const three = {hook_5s: yes('Ana'), key_still: yes('Ana'), takeaway: yes('Ana')};
+  const r = humanReviewErrors({quality_review: three});
+  assert.equal(r.length, 4);
+  assert.equal(r.find(x => x.id === 'whole_piece').ok, false);
+  assert.equal(humanReviewErrors({quality_review: {...three, whole_piece: yes('Grok Bot')}}).find(x => x.id === 'whole_piece').ok, false);
+  assert.ok(humanReviewErrors({quality_review: {...three, whole_piece: yes('Ana')}}).every(x => x.ok));
 });

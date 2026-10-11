@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.13.0 — 2026-10-11
+
+Release quality standard v1.1. Machine gates unchanged.
+
+### Added
+
+- Fourth human review question `whole_piece`: does the cut work as one whole piece, with nothing that looks good but does not fit the content.
+- Reviewer guidance for each of the four questions, an explicit note that there are no fixed weights yet (children's education: content and comprehension > visual craft > novelty), and the reasons web-only criteria are excluded.
+
+### Changed
+
+- `quality` and release sign-off require `quality_review.whole_piece` from a person (same agent-name rejection). Templates updated.
+
+### Migration
+
+- Add `whole_piece` to existing `qc/release.json` files (copy from `studio/templates/release.json`).
+
 ## 0.12.0 — 2026-10-11
 
 Deterministic re-render is a real, built-in check.
