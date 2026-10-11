@@ -88,7 +88,7 @@ export async function resumeEpisode(episodeDir) {
     done: publish.code === 'PUBLISH_ALLOWED',
     waiting: publish.code === 'PUBLISH_ALLOWED' ? null : 'person',
     code: publish.code,
-    command: 'A person publishes and writes the AI disclosure. Agents do not post.',
+    command: 'A person publishes and ticks the platform AI-generated-content declaration. Agents do not post.',
   });
 
   let next = stages.find(stage => !stage.done);

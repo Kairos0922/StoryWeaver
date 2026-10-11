@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Removed the in-frame `AI 生成` label and the `Not human-reviewed` draft watermark (kit HUD, compositor, review, preview, fixtures, docs). Draft vs release is recorded in `render_report.json` (`review.mode`, `review.file_suffix`) and draft files end in `_draft`. AI disclosure is now the publish checklist item: tick the platform AI-generated-content declaration on upload (China AIGC labeling rules).
+
 ## 0.16.0 — 2026-10-11
 
 Technique registry: methods are opt-in and used only where they fit. Replaces the 0.15.0 mandatory concept-machine rule.

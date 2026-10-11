@@ -56,6 +56,6 @@ Do not call the browser frame callback. Do not set CSS `transition` or `animatio
 
 ## Capture
 
-`shot_preview.mjs` mounts the stage, seeks, snapshots `#sw-stage`, and hands the bitmap to `SWCompose.presentPicture`. That runs the shared WebGL post pass and, in draft, draws `Not human-reviewed`. ffmpeg encodes only when the command asks for a picture, not for `--review-only`.
+`shot_preview.mjs` mounts the stage, seeks, snapshots `#sw-stage`, and hands the bitmap to `SWCompose.presentPicture`. That runs the shared WebGL post pass with no in-frame draft mark. ffmpeg encodes only when the command asks for a picture, not for `--review-only`.
 
 The reference shot is `docs/demo/title-card/`. It is a tool fixture, not a series.

@@ -48,6 +48,6 @@ node studio/cli.mjs doctor --episode docs/demo/title-card --require-render
 node studio/cli.mjs render docs/demo/title-card --mode draft --cut preview --review-only
 ```
 
-Picture clock 2.5s, fail at 5s, hook sample about 12s. Draft frames are labeled `Not human-reviewed`. A release needs a person’s sign-off in `qc/release.json`.
+Picture clock 2.5s, fail at 5s, hook sample about 12s. Draft and release frames are identical; the mode is in `render_report.json` and draft files end in `_draft`. A release needs a person’s sign-off in `qc/release.json`.
 
 The legacy SVG path, and the unused Manim and HyperFrames notes, are deleted. Git history is the archive.

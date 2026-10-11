@@ -118,7 +118,8 @@ test('draft preview seeks the title card without speech keys', async () => {
   const {report} = result;
   assert.equal(report.pipeline, 'browser-playwright-ffmpeg');
   assert.equal(report.kind, 'shot-fixture');
-  assert.equal(report.review.watermark, 'Not human-reviewed');
+  assert.equal(report.review.mode, 'draft');
+  assert.equal(report.review.file_suffix, '_draft');
   assert.equal(report.motion.three, false);
   assert.equal(report.motion.repeat_hash_match, true);
   assert.equal(report.motion.lucide, true);

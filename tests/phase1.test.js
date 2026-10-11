@@ -55,7 +55,7 @@ test('a shot without a stack is a single canvas layer', async () => {
   const stack = context.SWCompose.stackOf({id: 's'});
   assert.equal(stack.length, 1);
   assert.equal(stack[0].kind, 'canvas2d');
-  assert.equal(context.SWCompose.DRAFT_WATERMARK, 'Not human-reviewed');
+  assert.equal('DRAFT_WATERMARK' in context.SWCompose, false);
   const preset = context.SWCompose.presetByName({default: 'explainer', presets: {explainer: {bloom: 0.2}}}, undefined);
   assert.equal(preset.name, 'explainer');
   assert.equal(preset.bloom, 0.2);
@@ -150,7 +150,8 @@ test('release sign-off rejects an empty name and an agent name', () => {
 
 test('fixture draft review is open and release is not', async () => {
   const draft = await assertRenderReview(fixture, {review: 'draft', cut: 'preview'});
-  assert.equal(draft.watermark, 'Not human-reviewed');
+  assert.equal(draft.file_suffix, '_draft');
+  assert.equal('watermark' in draft, false);
   await assert.rejects(() => assertRenderReview(fixture, {review: 'release', cut: 'full'}));
 });
 
@@ -227,7 +228,8 @@ test('fixture draft preview renders in the browser without speech keys', async (
     workers: 1,
   });
   assert.equal(result.report.pipeline, 'browser-playwright-ffmpeg');
-  assert.equal(result.report.review.watermark, 'Not human-reviewed');
+  assert.equal(result.report.review.mode, 'draft');
+  assert.equal(result.report.review.file_suffix, '_draft');
   assert.equal(result.report.mode, 'preview');
   await fs.access(path.join(copy, 'out/draft/preview/contact_sheet.png'));
   await fs.access(path.join(copy, 'out/draft/preview/thumbs/s01_door.png'));

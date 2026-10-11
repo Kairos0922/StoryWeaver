@@ -264,7 +264,7 @@
       ],
       "required": true,
       "kind": "human",
-      "title": "Publish copy includes an AI-generated disclosure. A person clicks publish. Agents do not post.",
+      "title": "When uploading, tick the platform's AI-generated-content declaration (China's AIGC labeling rules require disclosure; the platform adds the visible label once declared). The picture carries no in-frame AI label. A person clicks publish. Agents do not post.",
       "status": "pending",
       "evidence": "",
       "checked_by": ""

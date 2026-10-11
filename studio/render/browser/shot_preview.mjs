@@ -8,7 +8,7 @@ import {spawn, spawnSync} from 'node:child_process';
 import {once} from 'node:events';
 import {fileURLToPath} from 'node:url';
 import {formatDoctor, runDoctor} from '../../doctor.mjs';
-import {DRAFT_WATERMARK} from '../../review.mjs';
+import {DRAFT_SUFFIX} from '../../review.mjs';
 import {writeDone} from '../../state.mjs';
 import {collectChars, embedFonts, launchBrowser, openPage, tmpDir} from '../kit/canvas/runtime.mjs';
 import {kineticBundle} from './dom/bundle.mjs';
@@ -138,7 +138,7 @@ window.__sheetCell = label => {
 window.__sheetPng = () => window.__sheet.sheet.toDataURL('image/png').slice(22);
 async function __boot() {
   try {
-    const probe = ${JSON.stringify(collectChars(shot, DRAFT_WATERMARK, '看规').slice(0, 500))};
+    const probe = ${JSON.stringify(collectChars(shot, '看规').slice(0, 500))};
     const faces = ${JSON.stringify(weights)};
     for (const face of faces) await document.fonts.load(face, probe);
     for (const face of faces) if (!document.fonts.check(face, '看规')) throw new Error('embedded font not usable: ' + face);
@@ -214,14 +214,13 @@ export async function renderShotFixture(dir, options = {}) {
     safe: doc.safe || {x: 88, y: 64},
     fonts: {family: '"SW CJK", sans-serif'},
     palette: {ink: '#101820', white: '#EFE7DA'},
-    hud: {ai_label: doc.copy.ai},
   };
   const outDir = path.resolve(options.out || path.join(dir, 'out', 'draft', 'preview'));
   await fs.mkdir(outDir, {recursive: true});
   const tmp = await tmpDir('sw-shot-');
   const browser = await launchBrowser();
   try {
-    const chars = collectChars(doc, DRAFT_WATERMARK, '看规', 'Title card');
+    const chars = collectChars(doc, '看规', 'Title card');
     const {css, report: fontReport} = await embedFonts(chars, path.join(tmp, 'fonts'));
     log(`fonts embedded: ${fontReport.fonts.map(font => `${font.weight}=${font.glyphs}`).join(', ')}`);
     const html = await pageHtml({spec, css, shot: doc, review});
@@ -291,7 +290,7 @@ export async function renderShotFixture(dir, options = {}) {
       episode: rel(dir),
       pipeline: 'browser-playwright-ffmpeg',
       mode: 'preview',
-      review: {mode: 'draft', metadata: 'unreviewed', watermark: DRAFT_WATERMARK, signed_by: null},
+      review: {mode: 'draft', metadata: 'unreviewed', file_suffix: DRAFT_SUFFIX, signed_by: null},
       post_preset: doc.post_preset,
       created_by: 'studio/render/browser/shot_preview',
       duration_s: duration,

@@ -34,9 +34,9 @@ Folder state is the source of truth. Chats scroll. Files do not.
 | Hook recordings | First 3 lines | WAV files | No key on this machine |
 | Duration prediction | Those 3 recordings | `state/duration_prediction.json` | Prediction exceeds the brief limit |
 | Listen pack | Number lines, names, vote | `qc/listen_pack.md` and an m4a ≤ 30s | — |
-| Draft render | Timeline + kit | Thumbnails, contact sheet, watermarked mp4 | Doctor failed, or brief not approved |
-| Release | Human sign-off | Unwatermarked mp4 | `qc/release.json` missing or signed by an agent |
-| Publish | Copy + AI disclosure | A person clicks | Agent posted |
+| Draft render | Timeline + kit | Thumbnails, contact sheet, `*_draft.mp4` (no in-frame mark) | Doctor failed, or brief not approved |
+| Release | Human sign-off | Release mp4 (same picture, no `_draft` suffix) | `qc/release.json` missing or signed by an agent |
+| Publish | Copy + tick the platform AI-generated-content declaration | A person clicks | Agent posted |
 | Git sync | The episode diff | Push and pull-request text | Retry this step alone; do not re-render |
 | Metrics | Platform export | `post/metrics.md` | Estimated playback numbers |
 

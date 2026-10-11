@@ -46,9 +46,9 @@ One thing
   → Human approval (hash-locked)
   → Voice-over lint
   → Hook recordings → duration prediction
-  → Draft render (watermarked) and a 30-second listen pack
+  → Draft render (`_draft` file, no in-frame mark) and a 30-second listen pack
   → Human release sign-off → release render
-  → Human publish + AI disclosure
+  → Human publish + platform AI-generated-content declaration
   → Metrics review (blank if the export is missing)
 ```
 

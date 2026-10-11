@@ -76,7 +76,7 @@ export async function validateShotFixture(doc) {
     issues.push('flourish needs from, span, and frames: 45');
   }
   const copy = doc?.copy || {};
-  for (const key of ['eyebrow', 'seek', 'time', 'frame', 'lockup', 'ai']) {
+  for (const key of ['eyebrow', 'seek', 'time', 'frame', 'lockup']) {
     if (typeof copy[key] !== 'string' || !copy[key].trim()) issues.push(`copy.${key} is required`);
   }
   const rows = Array.isArray(copy.rows) ? copy.rows : [];

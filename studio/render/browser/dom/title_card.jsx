@@ -186,20 +186,6 @@ export function TitleCard() {
         >
           {copy.lockup}
         </div>
-        <div
-          data-k="ai"
-          style={{
-            position: 'absolute',
-            left: 1188,
-            top: 860,
-            color: QUIET,
-            fontWeight: 500,
-            fontSize: 18,
-            letterSpacing: '0.08em',
-          }}
-        >
-          {copy.ai}
-        </div>
       </Sequence>
     </AbsoluteFill>
   );

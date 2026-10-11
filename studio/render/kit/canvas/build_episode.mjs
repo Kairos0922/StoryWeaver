@@ -3,7 +3,7 @@
 //
 //   node studio/render/kit/canvas/build_episode.mjs <episode-dir> --mode preview|hook|full [options]
 //
-//   preview  no voice; line lengths estimated at --rate chars/s; watermarked; never a deliverable
+//   preview  no voice; line lengths estimated at --rate chars/s; draft only; never a deliverable
 //   hook     L01–L03 from <episode>/audio/line_XX.wav; needs checkpoint hook-sample
 //   full     every line from WAV; needs checkpoint render (human checks in qc/checklist.json)
 //
@@ -20,7 +20,7 @@ import {fileURLToPath} from 'node:url';
 import {resolveEpisodeFonts} from '../fonts/library.mjs';
 import {collectChars, embedFonts, launchBrowser, loadStyle, openPage, pageHtml, run, tmpDir, TIMELINE_JS} from './runtime.mjs';
 import {parseLoudnormJson} from '../../browser/loudnorm.mjs';
-import {assertRenderReview, DRAFT_WATERMARK} from '../../../review.mjs';
+import {assertRenderReview} from '../../../review.mjs';
 import {runDoctor, formatDoctor} from '../../../doctor.mjs';
 import {buildCost} from '../../../cost.mjs';
 import {writeDone} from '../../../state.mjs';
@@ -154,7 +154,7 @@ export function buildTiming(lines, durations, doc, opts) {
   const duration = +(lastEnd + tail).toFixed(4);
   return {
     lines: lineMap, order, duration, env_fps: opts.fps, partial: opts.mode === 'hook',
-    watermark: opts.mode === 'preview' ? (doc.preview_watermark || 'PREVIEW · estimated timing · no voice') : null,
+    timing_source: opts.mode === 'preview' ? 'estimated' : 'audio',
   };
 }
 
@@ -312,7 +312,7 @@ export async function buildEpisode(episodeDir, opts) {
   if (!clock.ok && !opts.allowBeatGaps) throw Object.assign(new Error('beat clock failed: a stretch longer than fail_s has no new visual'), {exit: 5});
 
   const tmp = await tmpDir('sw-episode-');
-  const chars = collectChars(doc, linesDoc.lines.map(l => [l.text, l.speaker]), spec.hud, timing.watermark || '', DRAFT_WATERMARK, '0123456789.s· ');
+  const chars = collectChars(doc, linesDoc.lines.map(l => [l.text, l.speaker]), spec.hud, '0123456789.s· ');
   const {overrides: fontOverrides} = await resolveEpisodeFonts(episodeDir);
   const {css, report: fontReport} = await embedFonts(chars, path.join(tmp, 'fonts'), fontOverrides);
   log(`fonts embedded (woff2 subsets): ${fontReport.fonts.map(f => `${f.weight}=${f.library_id || 'noto'} ${f.glyphs} glyphs ${(f.bytes / 1024).toFixed(0)} KB`).join(', ')}; ${fontReport.chars} chars covered`);
@@ -373,7 +373,7 @@ export async function buildEpisode(episodeDir, opts) {
     const reviewMeta = {
       mode: review.review,
       metadata: review.metadata,
-      watermark: review.watermark,
+      file_suffix: review.file_suffix,
       signed_by: review.signed_by || null,
     };
     async function writeReport(extra) {
@@ -392,7 +392,6 @@ export async function buildEpisode(episodeDir, opts) {
         fonts: fontReport.fonts.map(f => ({weight: f.weight, library_id: f.library_id || null, license: f.license || null, license_file: f.license_file || null, subset: f.subset, bytes: f.bytes, source: f.source, source_index: f.source_index, source_sha256: f.source_sha256, subset_sha256: f.sha256, glyphs: f.glyphs})),
         glyph_coverage: {chars: fontReport.chars, missing: fontReport.missing},
         cost,
-        ai_label: spec.hud.ai_label,
         contact_sheet: rel(sheetFile),
         cover: rel(coverFile),
         thumbs: thumbFiles.map(file => rel(file)),
@@ -457,11 +456,11 @@ export async function buildEpisode(episodeDir, opts) {
     }
     log(`audio mixed: ${loud.measured.integrated_lufs} LUFS integrated${loud.normalized ? ` (target ${target.I})` : ' (preview, not normalised)'}`);
 
-    const name = `${path.basename(path.dirname(episodeDir))}_${path.basename(episodeDir)}_${review.review}_${opts.mode}.mp4`;
+    const name = `${path.basename(path.dirname(episodeDir))}_${path.basename(episodeDir)}_${opts.mode}${review.file_suffix}.mp4`;
     const final = path.join(outDir, name);
     const srt = path.join(outDir, 'subtitles.srt');
     const captionLang = linesDoc.language === 'en' ? 'eng' : linesDoc.language === 'zh' ? 'chi' : 'und';
-    const comment = review.review === 'draft' ? DRAFT_WATERMARK : (spec.hud.ai_label || 'AI generated');
+    const comment = review.review === 'draft' ? 'draft: not human-reviewed' : 'release: human-signed';
     run('ffmpeg', ['-y', '-v', 'error', '-i', videoOnly, '-i', mixFile, '-i', srt,
       '-map', '0:v', '-map', '1:a', '-map', '2:s', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-ar', '48000',
       '-c:s', 'mov_text', '-metadata:s:s:0', `language=${captionLang}`,

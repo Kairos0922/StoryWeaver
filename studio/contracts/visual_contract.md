@@ -8,7 +8,7 @@ House rules for any series that uses this toolkit. Palette, type files, and safe
 - Captions stay off the edge and off faces and kinetic numbers.
 - Fonts are embedded as per-episode WOFF2 subsets. A missing-glyph check (any face, Noto included) fails doctor and the release.
 - Noto Sans CJK SC is the default. Other fonts are opt-in per episode from an external OFL library; they are never vendored into the repo.
-- Every frame is `seek(t)` and then the shared WebGL post pass. Draft frames include the label `Not human-reviewed`.
+- Every frame is `seek(t)` and then the shared WebGL post pass. Nothing marks a draft inside the picture; the mode is in `render_report.json` and draft files end in `_draft`. No in-frame AI label: disclosure is the platform declaration ticked at upload.
 - No emoji.
 - Characters are not cropped at the face or the gesture.
 - A frame marked “schematic” cannot sit next to a number that sounds measured. Numbers come from the fact card.

@@ -1536,36 +1536,6 @@
       ctx.fillText(spec.hud.series, safe.x + 20, safe.y + 28);
       ctx.restore();
     }
-    if (spec.hud?.ai_label) {
-      ctx.save();
-      ctx.font = font(spec, 700, 26);
-      ctx.textBaseline = 'middle';
-      ctx.textAlign = 'center';
-      const tw = ctx.measureText(spec.hud.ai_label).width;
-      const bx = W - safe.x - tw - 36;
-      rr(ctx, bx, safe.y + 6, tw + 36, 44, 22);
-      ctx.fillStyle = 'rgba(255,255,255,0.86)';
-      ctx.fill();
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = 'rgba(19,35,46,0.6)';
-      ctx.stroke();
-      ctx.fillStyle = p.ink;
-      ctx.fillText(spec.hud.ai_label, bx + (tw + 36) / 2, safe.y + 29);
-      ctx.restore();
-    }
-    if (shot.watermark) {
-      ctx.save();
-      ctx.font = font(spec, 700, 26);
-      ctx.textBaseline = 'middle';
-      ctx.textAlign = 'center';
-      const tw = ctx.measureText(shot.watermark).width;
-      rr(ctx, (W - tw) / 2 - 22, safe.y + 6, tw + 44, 44, 22);
-      ctx.fillStyle = 'rgba(232,104,90,0.92)';
-      ctx.fill();
-      ctx.fillStyle = p.white;
-      ctx.fillText(shot.watermark, W / 2, safe.y + 29);
-      ctx.restore();
-    }
     for (const chip of shot.chips || []) {
       ctx.save();
       ctx.globalAlpha *= chip.alpha ?? 1;

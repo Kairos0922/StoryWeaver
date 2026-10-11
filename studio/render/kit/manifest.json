@@ -44,7 +44,7 @@
       "canvas": "studio/render/kit/canvas/kit.js",
       "post": "studio/render/browser/post.js",
       "status": "video",
-      "note": "Playwright frame capture and ffmpeg. Draft renders carry the watermark Not human-reviewed. Release renders require a human sign-off.",
+      "note": "Playwright frame capture and ffmpeg. Draft and release frames are identical; the mode is recorded in render_report.json and draft files end in _draft. Release renders require a human sign-off.",
       "covers": [
         "kinetic_number",
         "bar_compare",

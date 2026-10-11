@@ -27,7 +27,7 @@ Needs Node 24, Playwright Chromium (or `CHROME`), Python 3 + numpy + fontTools +
 
 ## Where time comes from
 
-- `preview`: estimate from the language rate. Draft watermark. Not a deliverable.
+- `preview`: estimate from the language rate. Draft only (`_draft` file). Not a deliverable.
 - `hook`: first `hook_lines` WAVs (default 3). Needs the hook-sample checkpoint open.
 - `full`: every WAV, and a duration prediction that fits the brief. Draft does not need the release sign-off. Release does.
 

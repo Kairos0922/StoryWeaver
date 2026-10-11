@@ -24,7 +24,6 @@
     "time": "( t )",
     "frame": "FRAME",
     "lockup": "One clock. Every pixel.",
-    "ai": "AI generated",
     "rows": [
       {"id": "clock", "label": "clock"},
       {"id": "type", "label": "type"},

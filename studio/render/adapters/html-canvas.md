@@ -24,7 +24,7 @@ If a shot has no `stack`, it is one `canvas2d` layer.
 - No `requestAnimationFrame`, no `Date.now`, no `Math.random`, no CSS animation, no timer.
 - Remotion, Motion, and Rive are inspirations, not dependencies.
 - Fonts are files. A missing glyph fails the job.
-- Draft frames carry the corner label `Not human-reviewed`. Release frames do not.
+- Draft and release frames are identical. The mode is in `render_report.json` and draft files end in `_draft`. There is no in-frame AI label; the platform AI-generated-content declaration is ticked at upload.
 - Shot thumbnails and a contact sheet are written before the full encode.
 
 ```bash

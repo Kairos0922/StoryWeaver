@@ -49,7 +49,7 @@ StoryWeaver is a production toolkit for fact-checked animated explainer videos o
 | Storyboard stills | Look at four frames | Draw stills from the kit |
 | Draft render | Listen to the phone pack | `render --mode draft` after doctor passes |
 | Release | Sign `qc/release.json` after seeing the draft | Never. Agents cannot fill `signed_by` |
-| Publish | Click publish; write the AI disclosure | Hand over copy. `git-sync` is a separate retry |
+| Publish | Click publish; tick the platform AI-generated-content declaration | Hand over copy. `git-sync` is a separate retry |
 | Metrics review | Paste a real export or leave blanks | Never estimate |
 
 ## Rendering contract
@@ -58,7 +58,7 @@ Every frame is `seek(t)` from one browser pipeline: Playwright captures the fram
 
 Remotion, Motion, and Rive are inspirations, not dependencies. Do not install them. The timing primitives and the GSAP seek pattern live in `studio/render/browser/dom/`. `docs/demo/title-card/` is a tool fixture, not a series.
 
-Draft frames are labeled `Not human-reviewed`. Release frames require a human sign-off written after the draft exists.
+Draft and release frames are identical: nothing marks the picture. The mode lives in `render_report.json` (`review.mode`) and draft files end in `_draft`. Release frames require a human sign-off written after the draft exists.
 
 ## Stage recovery
 

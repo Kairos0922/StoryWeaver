@@ -308,7 +308,6 @@
       const a = clamp((t - line.start) / 0.12) * clamp((line.sub_end - t) / 0.12);
       main.subtitle = {speaker: line.speaker, text: line.text, alpha: a};
     }
-    if (timing.watermark) main.watermark = timing.watermark;
     const tr = scene.transition;
     if (tr && i > 0 && t < scene.start + (tr.dur ?? 0.35)) {
       return {shot: main, prev: shotFor(scenes[i - 1], t, timing, doc), transition: {type: tr.type, p: (t - scene.start) / (tr.dur ?? 0.35), dir: tr.dir, at: tr.at}};

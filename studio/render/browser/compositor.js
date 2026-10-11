@@ -5,7 +5,6 @@
 (function (root) {
   'use strict';
 
-  const DRAFT_WATERMARK = 'Not human-reviewed';
   const svgCache = new Map();
 
   function stackOf(shot) {
@@ -97,24 +96,6 @@
     return dest.__swPost;
   }
 
-  function drawDraftMark(ctx, spec, w, h) {
-    const text = DRAFT_WATERMARK;
-    ctx.save();
-    ctx.font = `500 28px ${spec.fonts.family}`;
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'middle';
-    const tw = ctx.measureText(text).width;
-    const bw = tw + 36;
-    const bh = 44;
-    const x = w - (spec.safe?.x || 48) - bw;
-    const y = h - (spec.safe?.y || 48) - bh;
-    ctx.fillStyle = 'rgba(19, 35, 46, 0.82)';
-    ctx.fillRect(x, y, bw, bh);
-    ctx.fillStyle = '#F6F1E7';
-    ctx.fillText(text, x + 18, y + bh / 2);
-    ctx.restore();
-  }
-
   async function finish(destCtx, spec, shot, opts) {
     const [w, h] = spec.size;
     const bag = processorFor(destCtx.canvas, w, h);
@@ -123,7 +104,6 @@
     destCtx.setTransform(1, 0, 0, 1, 0, 0);
     destCtx.clearRect(0, 0, w, h);
     destCtx.drawImage(bag.glCanvas, 0, 0, w, h);
-    if (opts.review !== 'release') drawDraftMark(destCtx, spec, w, h);
     return preset.name;
   }
 
@@ -170,7 +150,6 @@
   }
 
   root.SWCompose = {
-    DRAFT_WATERMARK,
     stackOf,
     presetByName,
     paintStill,

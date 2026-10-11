@@ -9,6 +9,6 @@ node studio/cli.mjs doctor --episode docs/demo/title-card --require-render
 node studio/cli.mjs render docs/demo/title-card --mode draft --cut preview --review-only
 ```
 
-Sheets land in `docs/demo/title-card/out/draft/preview/` (`thumbs/`, `contact_sheet.png`, `cover.png`, `render_report.json`). Drop `--review-only` for a silent draft mp4. Draft frames are labeled `Not human-reviewed`.
+Sheets land in `docs/demo/title-card/out/draft/preview/` (`thumbs/`, `contact_sheet.png`, `cover.png`, `render_report.json`). Drop `--review-only` for a silent draft mp4. Draft frames carry no in-frame mark; the report records the mode.
 
 A release render is refused. This directory must not grow a `brief.md`, `lines.json`, or `script.md`.

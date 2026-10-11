@@ -5,7 +5,9 @@ import {evaluateCheckpoint} from './checkpoint.mjs';
 import {fileExists} from './qc/checks.mjs';
 import {humanReviewErrors} from './quality.mjs';
 
-export const DRAFT_WATERMARK = 'Not human-reviewed';
+// Draft and release never differ inside the picture. The difference lives in render_report.json
+// (review.mode) and in the output file name (draft files end in `_draft`).
+export const DRAFT_SUFFIX = '_draft';
 export const REVIEWS = ['draft', 'release'];
 export const CUTS = ['preview', 'hook', 'full'];
 
@@ -47,7 +49,7 @@ export async function assertRenderReview(episodeDir, {review, cut}) {
       review,
       cut,
       stage: 'brief',
-      watermark: DRAFT_WATERMARK,
+      file_suffix: DRAFT_SUFFIX,
       metadata: 'unreviewed',
       gate: brief.code,
     };
@@ -62,7 +64,7 @@ export async function assertRenderReview(episodeDir, {review, cut}) {
       review,
       cut,
       stage,
-      watermark: DRAFT_WATERMARK,
+      file_suffix: DRAFT_SUFFIX,
       metadata: 'unreviewed',
       gate: gate.code,
     };
@@ -76,7 +78,7 @@ export async function assertRenderReview(episodeDir, {review, cut}) {
     review,
     cut,
     stage,
-    watermark: null,
+    file_suffix: '',
     metadata: 'human-signed',
     signed_by: String(release.data.signed_by).trim(),
     signed_at: String(release.data.signed_at).trim(),
