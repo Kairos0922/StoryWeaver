@@ -7,6 +7,7 @@ import {evaluateCheckpoint, formatCheckpoint} from './checkpoint.mjs';
 import {initEpisode} from './init_episode.mjs';
 import {initSeries} from './init_series.mjs';
 import {briefBodyHash} from './brief.mjs';
+import {checkEpisodeStyle, formatStyle} from './style/style_lock.mjs';
 import {checkLayout} from './layout.mjs';
 import {formatDoctor, runDoctor} from './doctor.mjs';
 import {formatPace, paceEpisode} from './pace.mjs';
@@ -60,6 +61,7 @@ const help = `StoryWeaver
   node studio/cli.mjs motion-qc <motion.json> [--out <dir>]
   node studio/cli.mjs checkpoint <episode-dir> <brief|lines|hook-sample|stills|render|publish>
   node studio/cli.mjs hash-brief <brief.md>
+  node studio/cli.mjs style <episode-dir>      check the episode against ../series-style.json
   node studio/cli.mjs init-series <dir>
   node studio/cli.mjs init-episode <series-dir> <epNN>
   node studio/cli.mjs layout
@@ -110,6 +112,13 @@ async function main() {
     const report = await runQuality(path.resolve(dir));
     emit(report, formatQuality(report));
     return report.ok ? 0 : report.machineOk ? 3 : 1;
+  }
+  if (cmd === 'style') {
+    const dir = positional[0];
+    if (!dir) throw new Error('style needs an episode directory');
+    const report = await checkEpisodeStyle(path.resolve(dir));
+    emit(report, formatStyle(report));
+    return report.ok ? 0 : 1;
   }
   if (cmd === 'qc') {
     const dir = positional[0];

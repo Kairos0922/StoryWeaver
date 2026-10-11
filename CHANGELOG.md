@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.15.0 — 2026-10-11
+
+Phase A hard rule "concept machine" and a generic series style lock.
+
+### Added
+
+- Brief section `## Concept machine` (Machine, Motion, Lit subject, Model) in `studio/templates/brief.md`. `validateBrief` requires it; the motion must state its meaning, the lit subject must be one thing, and the model must cite `fact_card.md B#` or a `sim/` file that exists. QC item `concept_machine`.
+- `studio/style/style_lock.mjs` and `docs/style-lock.md`: schema `storyweaver.series_style.v1` for `series-style.json` in the series directory (never in this repo). Pins palette, fonts, characters (with human approval), camera language, line/shading treatment, and a motion subset. `node studio/cli.mjs style <episode-dir>`; QC item `style_lock`; `checkpoint … brief` also fails on deviation or a brief that sets a locked key.
+- Fictional fixture lock `tests/fixtures/sample-series/series-style.json`; `tests/style_lock.test.js`.
+
+### Migration
+
+- Existing briefs need a `## Concept machine` section; the body hash changes, so re-approval is required.
+- A series without `series-style.json` stays unlocked and passes the style check.
+
 ## 0.14.1 — 2026-10-11
 
 CI runs `render-contract` as its own step; install brotli explicitly.

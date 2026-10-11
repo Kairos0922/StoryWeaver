@@ -15,6 +15,7 @@ export const BEATS = [
 const REQUIRED_HEADINGS = [
   'One thing',
   'Viewer intuition',
+  'Concept machine',
   'Five-beat story',
   'Storyboard',
   'Aspect',
@@ -140,6 +141,56 @@ export function extractIntuitionRows(markdown) {
   return rows;
 }
 
+// The concept machine: the object whose motion IS the concept. Four labelled bullets under
+// `## Concept machine`. `model` must point at the fact card or a sim file, so the numbers on
+// screen and the motion read the same source.
+export const CONCEPT_FIELDS = [
+  {id: 'machine', label: /^machine$/i},
+  {id: 'motion', label: /^motion$/i},
+  {id: 'lit_subject', label: /^lit subject$/i},
+  {id: 'model', label: /^model$/i},
+];
+
+export const MODEL_REF = /(?:^|[\s`(])((?:sim\/[^\s`),]+)|fact_card\.md(?:\s*B\d+)?)/g;
+
+export function extractConceptMachine(markdown) {
+  const {body} = parseFrontMatter(markdown);
+  const lines = body.split(/\r?\n/);
+  const out = {};
+  let inSection = false;
+  for (const line of lines) {
+    if (/^#{1,6}\s+/.test(line)) {
+      inSection = /concept machine/i.test(line);
+      continue;
+    }
+    if (!inSection) continue;
+    const m = line.match(/^\s*[-*]\s+\**([^:：*]+?)\**\s*[:：]\s*(.*)$/);
+    if (!m) continue;
+    const field = CONCEPT_FIELDS.find(f => f.label.test(m[1].trim()));
+    if (field && !isBlankClaim(m[2])) out[field.id] = m[2].trim();
+  }
+  out.modelRefs = [...String(out.model || '').matchAll(MODEL_REF)].map(r => r[1].replace(/\s*B\d+$/, ''));
+  return out;
+}
+
+export function validateConceptMachine(markdown) {
+  const cm = extractConceptMachine(markdown);
+  const issues = [];
+  for (const field of CONCEPT_FIELDS) {
+    if (!cm[field.id]) issues.push({id: 'concept_machine_missing', detail: field.id});
+  }
+  if (cm.motion && !/\b(means|=|→)|意味|表示|就是/i.test(cm.motion)) {
+    issues.push({id: 'concept_machine_motion', detail: 'Motion must say what moves and what that motion means ("X moves; that means Y")'});
+  }
+  if (cm.lit_subject && /[,，、]|\band\b|和/.test(cm.lit_subject)) {
+    issues.push({id: 'concept_machine_lit', detail: 'Exactly one lit subject'});
+  }
+  if (cm.model && cm.modelRefs.length === 0) {
+    issues.push({id: 'concept_machine_model', detail: 'Model must cite fact_card.md (B#) or a sim/ file'});
+  }
+  return {concept: cm, issues};
+}
+
 export function validateBrief(markdown) {
   const {data, body} = parseFrontMatter(markdown);
   const issues = [];
@@ -168,6 +219,7 @@ export function validateBrief(markdown) {
   if (!claim) issues.push({id: 'one_thing_empty', detail: 'One thing'});
   const realRows = storyboardDataRows(body).filter(rowIsReal);
   if (realRows.length < 1) issues.push({id: 'storyboard_empty', detail: 'Need at least one filled 10-second storyboard row'});
+  issues.push(...validateConceptMachine(markdown).issues);
   const intuition = extractIntuitionRows(markdown);
   if (intuition.length < 1) issues.push({id: 'intuition_empty', detail: 'Viewer intuition needs at least one filled row'});
   return {data, issues, ready: issues.length === 0, intuition};

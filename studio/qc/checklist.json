@@ -5,7 +5,13 @@
     {
       "id": "fact_card_abc",
       "gate": "1",
-      "blocks": ["lines", "hook-sample", "stills", "render", "publish"],
+      "blocks": [
+        "lines",
+        "hook-sample",
+        "stills",
+        "render",
+        "publish"
+      ],
       "required": true,
       "kind": "auto",
       "check": "fact_card_abc",
@@ -14,7 +20,13 @@
     {
       "id": "one_thing",
       "gate": "0",
-      "blocks": ["lines", "hook-sample", "stills", "render", "publish"],
+      "blocks": [
+        "lines",
+        "hook-sample",
+        "stills",
+        "render",
+        "publish"
+      ],
       "required": true,
       "kind": "auto",
       "check": "one_thing",
@@ -23,16 +35,58 @@
     {
       "id": "brief_ready",
       "gate": "2",
-      "blocks": ["lines", "hook-sample", "stills", "render", "publish"],
+      "blocks": [
+        "lines",
+        "hook-sample",
+        "stills",
+        "render",
+        "publish"
+      ],
       "required": true,
       "kind": "auto",
       "check": "brief_approved",
       "title": "Creative brief is human-approved; body hash, aspect, and duration still match"
     },
     {
+      "id": "concept_machine",
+      "gate": "2",
+      "blocks": [
+        "lines",
+        "hook-sample",
+        "stills",
+        "render",
+        "publish"
+      ],
+      "required": true,
+      "kind": "auto",
+      "check": "concept_machine",
+      "title": "Brief names the concept machine (what moves, what it means, one lit subject) and its model file exists"
+    },
+    {
+      "id": "style_lock",
+      "gate": "2",
+      "blocks": [
+        "lines",
+        "hook-sample",
+        "stills",
+        "render",
+        "publish"
+      ],
+      "required": true,
+      "kind": "auto",
+      "check": "style_lock",
+      "title": "Episode stays inside the series style lock (palette, fonts, characters, camera, motion subset)"
+    },
+    {
       "id": "intuition_addressed",
       "gate": "2",
-      "blocks": ["lines", "hook-sample", "stills", "render", "publish"],
+      "blocks": [
+        "lines",
+        "hook-sample",
+        "stills",
+        "render",
+        "publish"
+      ],
       "required": true,
       "kind": "auto",
       "check": "intuition_addressed",
@@ -41,7 +95,13 @@
     {
       "id": "script_lint",
       "gate": "2",
-      "blocks": ["lines", "hook-sample", "stills", "render", "publish"],
+      "blocks": [
+        "lines",
+        "hook-sample",
+        "stills",
+        "render",
+        "publish"
+      ],
       "required": true,
       "kind": "auto",
       "check": "script_lint",
@@ -50,7 +110,13 @@
     {
       "id": "claim_precision",
       "gate": "2",
-      "blocks": ["lines", "hook-sample", "stills", "render", "publish"],
+      "blocks": [
+        "lines",
+        "hook-sample",
+        "stills",
+        "render",
+        "publish"
+      ],
       "required": true,
       "kind": "auto",
       "check": "claim_precision",
@@ -59,7 +125,10 @@
     {
       "id": "pace_ok",
       "gate": "3",
-      "blocks": ["render", "publish"],
+      "blocks": [
+        "render",
+        "publish"
+      ],
       "required": true,
       "kind": "auto",
       "check": "pace_ok",
@@ -68,7 +137,9 @@
     {
       "id": "metrics_not_invented",
       "gate": "6",
-      "blocks": ["publish"],
+      "blocks": [
+        "publish"
+      ],
       "required": true,
       "kind": "auto",
       "check": "metrics_not_invented",
@@ -77,7 +148,11 @@
     {
       "id": "ear_hook",
       "gate": "3",
-      "blocks": ["stills", "render", "publish"],
+      "blocks": [
+        "stills",
+        "render",
+        "publish"
+      ],
       "required": true,
       "kind": "human",
       "title": "A person heard the ~12s hook sample. ASR scores do not replace this.",
@@ -88,7 +163,10 @@
     {
       "id": "first_watch",
       "gate": "3",
-      "blocks": ["render", "publish"],
+      "blocks": [
+        "render",
+        "publish"
+      ],
       "required": true,
       "kind": "human",
       "title": "Someone who has not read the script watches the hook (or silent preview) once and can restate the one thing plus one objection",
@@ -100,7 +178,10 @@
     {
       "id": "stills_four",
       "gate": "4",
-      "blocks": ["render", "publish"],
+      "blocks": [
+        "render",
+        "publish"
+      ],
       "required": true,
       "kind": "human",
       "title": "Four stills reviewed by eye: hook, first number, payoff, closing stance",
@@ -111,7 +192,10 @@
     {
       "id": "beat_clock",
       "gate": "4",
-      "blocks": ["render", "publish"],
+      "blocks": [
+        "render",
+        "publish"
+      ],
       "required": true,
       "kind": "human",
       "title": "Timeline uses a 2.5s visual beat; no stretch longer than 5s without a new visual",
@@ -122,7 +206,10 @@
     {
       "id": "no_idle",
       "gate": "4",
-      "blocks": ["render", "publish"],
+      "blocks": [
+        "render",
+        "publish"
+      ],
       "required": true,
       "kind": "human",
       "title": "Every beat has at least one character action; no standing-and-listening",
@@ -133,7 +220,9 @@
     {
       "id": "ear_numbers",
       "gate": "5",
-      "blocks": ["publish"],
+      "blocks": [
+        "publish"
+      ],
       "required": true,
       "kind": "human",
       "title": "After the full mix, a person heard every number line and every character name. ASR is assistive only.",
@@ -144,7 +233,9 @@
     {
       "id": "loudnorm",
       "gate": "5",
-      "blocks": ["publish"],
+      "blocks": [
+        "publish"
+      ],
       "required": true,
       "kind": "human",
       "title": "Mix loudness matches the pipeline target −16 LUFS. Do not invent a reading without a mix.",
@@ -155,7 +246,9 @@
     {
       "id": "sim_disclaimer",
       "gate": "5",
-      "blocks": ["publish"],
+      "blocks": [
+        "publish"
+      ],
       "required": true,
       "kind": "human",
       "title": "Simulated numbers are labeled as a simplified model on screen or at the end; schematic motion is not sold as a field measurement",
@@ -166,7 +259,9 @@
     {
       "id": "ai_disclosure",
       "gate": "6",
-      "blocks": ["publish"],
+      "blocks": [
+        "publish"
+      ],
       "required": true,
       "kind": "human",
       "title": "Publish copy includes an AI-generated disclosure. A person clicks publish. Agents do not post.",

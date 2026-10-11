@@ -1,0 +1,94 @@
+{
+  "schema": "storyweaver.series_style.v1",
+  "series": "sample-series",
+  "note": "Fictional fixture lock for CI. Not a production series.",
+  "source": {
+    "measured_from": [
+      "ep01/render/stills.json",
+      "ep01/render/scenes.json",
+      "ep01/render/rig.json"
+    ]
+  },
+  "palette": {
+    "ink": "#13232E",
+    "white": "#FFFFFF",
+    "shadow": "rgba(19,35,46,0.16)",
+    "wall_top": "#F8F3EA",
+    "wall": "#EFE6D6",
+    "floor": "#E4D8C3",
+    "floor_line": "#CDBFA6",
+    "shelf": "#D9CDB8",
+    "shelf_line": "#C2B399",
+    "goods_a": "#7FB7BE",
+    "goods_b": "#E9A178",
+    "goods_c": "#B5C97A"
+  },
+  "palette_aliases": [],
+  "fonts": {
+    "families": [
+      "Noto Sans CJK SC",
+      "Noto Sans SC",
+      "sans-serif"
+    ],
+    "library_ids": [
+      "pebble"
+    ],
+    "weights": [
+      400,
+      500,
+      700,
+      900
+    ]
+  },
+  "characters": {
+    "pebble": {
+      "name": "Pebble",
+      "colors": [
+        "#F2A541",
+        "#13232E",
+        "#F6C945",
+        "#8B2E3A"
+      ],
+      "expressions": [
+        "calm"
+      ],
+      "approval": {
+        "by": "Fixture Reviewer",
+        "at": "2026-10-10",
+        "evidence": "fixture"
+      }
+    }
+  },
+  "camera": {
+    "zoom": [
+      1,
+      1.1
+    ],
+    "max_rot_deg": 2,
+    "max_shake": 10,
+    "max_hit_zoom": 0.1,
+    "transitions": [
+      "cut",
+      "push"
+    ],
+    "language": "Fixed side view; slow push-ins; cuts on beats."
+  },
+  "line": {
+    "ink": "#13232E",
+    "stroke_px": [
+      3,
+      6
+    ],
+    "shading": "flat fills, one ink outline, one soft drop shadow (palette.shadow); no gradients"
+  },
+  "motion": {
+    "scene_eases": [
+      "inout",
+      "out"
+    ],
+    "tokens": [
+      "outExpo",
+      "inOutQuart"
+    ]
+  }
+}

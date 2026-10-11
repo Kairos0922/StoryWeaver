@@ -24,7 +24,8 @@ StoryWeaver is a production toolkit for fact-checked animated explainer videos o
 10. The render contract (`docs/render-contract.md`) is binding. When you fix a render bug, add the rule that would have caught it, and a lint rule when it can be matched. Run `node studio/cli.mjs render-contract`.
 11. Motion numbers come from `studio/motion/tokens.js` by name (`docs/motion-tokens.md`). No inline easing curves or durations.
 12. `docs/quality-standard.md` (v1) is the release bar. `node studio/cli.mjs quality <episode-dir>` aggregates the existing gates; add a gate to its source check, not a second copy. Audience rules go in `studio/profiles/<id>.json`, never in general code.
-13. Direct changes to `main` are acceptable; CI must pass before delivery is declared complete.
+13. Phase A names a concept machine and every episode stays inside its series style lock (`docs/style-lock.md`). The lock lives in the series directory, never in this repository; the repo keeps the schema, checker, and a fictional fixture.
+14. Direct changes to `main` are acceptable; CI must pass before delivery is declared complete.
 
 ## Hard stops
 
@@ -35,6 +36,7 @@ StoryWeaver is a production toolkit for fact-checked animated explainer videos o
 - Do not publish, comment, or post on behalf of the user.
 - Do not sign a human checklist item, and do not fill `qc/release.json` (including `quality_review`). `checked_by` and `signed_by` values that look like an agent are rejected. Use `agent_precheck` for ASR or pace notes.
 - Do not write a one-off HTML renderer for one episode. Use the browser pipeline and the shared kit.
+- Do not add a character, color, font, or camera move to an episode that the series lock does not list. Do not edit a lock's `approval` fields.
 - Do not put secrets in files, prompts, or logs.
 
 ## Checkpoints (plain names)
