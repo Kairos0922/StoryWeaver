@@ -7,6 +7,7 @@ import {runQc} from './qc/run_qc.mjs';
 import {runMotionQc} from './qc/motion_qc.mjs';
 import {lintRenderContract} from './lint/render_contract.mjs';
 import {checkProfile, sectionBody} from './profiles.mjs';
+import {episodeGlyphCheck} from './render/kit/canvas/runtime.mjs';
 import {evaluateDeterminism} from './render/browser/determinism.mjs';
 
 export const STANDARD_VERSION = 'v1';
@@ -81,6 +82,9 @@ export async function runQuality(episodeDir) {
   const banned = sectionBody(brief, 'Banned motion');
   const bannedCount = (banned || '').split('\n').filter(l => /^\s*-\s+\S/.test(l)).length;
   machine.push({id: 'banned_list_in_brief', source: 'brief:Banned motion', ok: bannedCount > 0, evidence: bannedCount ? `${bannedCount} named defaults` : 'brief needs a filled "## Banned motion" list'});
+
+  const glyphs = await episodeGlyphCheck(episodeDir);
+  machine.push({id: 'glyph_coverage', source: 'fonts: lines + scene text vs every face', ok: glyphs.ok, evidence: glyphs.detail});
 
   const profile = await checkProfile(episodeDir);
   for (const c of profile.checks) machine.push({id: c.id, source: `profile:${profile.id}`, ok: c.ok, evidence: c.evidence});

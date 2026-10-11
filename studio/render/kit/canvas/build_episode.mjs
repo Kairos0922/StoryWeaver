@@ -17,6 +17,7 @@ import {spawn} from 'node:child_process';
 import {once} from 'node:events';
 import crypto from 'node:crypto';
 import {fileURLToPath} from 'node:url';
+import {resolveEpisodeFonts} from '../fonts/library.mjs';
 import {collectChars, embedFonts, launchBrowser, loadStyle, openPage, pageHtml, run, tmpDir, TIMELINE_JS} from './runtime.mjs';
 import {parseLoudnormJson} from '../../browser/loudnorm.mjs';
 import {assertRenderReview, DRAFT_WATERMARK} from '../../../review.mjs';
@@ -312,8 +313,9 @@ export async function buildEpisode(episodeDir, opts) {
 
   const tmp = await tmpDir('sw-episode-');
   const chars = collectChars(doc, linesDoc.lines.map(l => [l.text, l.speaker]), spec.hud, timing.watermark || '', DRAFT_WATERMARK, '0123456789.s· ');
-  const {css, report: fontReport} = await embedFonts(chars, path.join(tmp, 'fonts'));
-  log(`fonts embedded: ${fontReport.fonts.map(f => `${f.weight}=${f.glyphs} glyphs`).join(', ')}; ${fontReport.chars} chars covered`);
+  const {overrides: fontOverrides} = await resolveEpisodeFonts(episodeDir);
+  const {css, report: fontReport} = await embedFonts(chars, path.join(tmp, 'fonts'), fontOverrides);
+  log(`fonts embedded (woff2 subsets): ${fontReport.fonts.map(f => `${f.weight}=${f.library_id || 'noto'} ${f.glyphs} glyphs ${(f.bytes / 1024).toFixed(0)} KB`).join(', ')}; ${fontReport.chars} chars covered`);
 
   const fps = opts.fps;
   const includeThree = JSON.stringify(doc).includes('"kind":"three"');
@@ -387,7 +389,7 @@ export async function buildEpisode(episodeDir, opts) {
         durations: Object.fromEntries(timing.order.map(id => [id, {start: timing.lines[id].start, end: timing.lines[id].end, seconds: durations[id].duration, source: durations[id].source, probe: durations[id].probe}])),
         duration_s: timing.duration, fps, frames, size: spec.size,
         beat_clock: clock,
-        fonts: fontReport.fonts.map(f => ({weight: f.weight, source: f.source, source_index: f.source_index, source_sha256: f.source_sha256, subset_sha256: f.sha256, glyphs: f.glyphs})),
+        fonts: fontReport.fonts.map(f => ({weight: f.weight, library_id: f.library_id || null, license: f.license || null, license_file: f.license_file || null, subset: f.subset, bytes: f.bytes, source: f.source, source_index: f.source_index, source_sha256: f.source_sha256, subset_sha256: f.sha256, glyphs: f.glyphs})),
         glyph_coverage: {chars: fontReport.chars, missing: fontReport.missing},
         cost,
         ai_label: spec.hud.ai_label,

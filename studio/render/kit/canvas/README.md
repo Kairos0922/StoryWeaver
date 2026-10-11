@@ -11,7 +11,9 @@ One frame function produces stills, contact sheets, and the cut. Scenes write pa
 | `build_episode.mjs` | Called by `studio/render/browser/pipeline.mjs` |
 | `../audio/audio_probe.py` | Decode WAV; duration, level, mouth envelope |
 | `../audio/mix.py` | Level voices, synthesize BGM/SFX, duck |
-| `../fonts/subset_fonts.py` | Subset fonts to the episode’s characters; missing glyphs fail |
+| `../fonts/subset_fonts.py` | Subset fonts to the episode’s characters as WOFF2 (pyftsubset); missing glyphs fail |
+| `../fonts/glyphs.py` | Missing-glyph check for any face, no subsetting (doctor + quality) |
+| `../fonts/library.mjs` | Optional external font library picked per episode in the brief (see `../fonts/README.md`) |
 
 ```bash
 node studio/cli.mjs render <episode-dir> --mode draft --cut preview --review-only
@@ -21,7 +23,7 @@ node studio/cli.mjs render <episode-dir> --mode release --cut full
 
 The lower-level entry is `studio/render/kit/canvas/build_episode.mjs`. Prefer the `render` command so doctor, review mode, and the done marker run.
 
-Needs Node 24, Playwright Chromium (or `CHROME`), Python 3 + numpy + fontTools, ffmpeg, and the fonts the episode uses. No network. No model. No TTS.
+Needs Node 24, Playwright Chromium (or `CHROME`), Python 3 + numpy + fontTools + brotli, ffmpeg, and the fonts the episode uses. No network. No model. No TTS.
 
 ## Where time comes from
 
