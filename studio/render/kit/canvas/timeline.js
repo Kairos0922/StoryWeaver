@@ -169,6 +169,7 @@
   function lerpFrame(a, b, p, wrap) {
     if (typeof a === 'number' && typeof b === 'number') return a + (b - a) * p;
     if (Array.isArray(a) && Array.isArray(b) && a.length === b.length) return a.map((v, i) => lerpFrame(v, b[i], p, wrap));
+    if (Array.isArray(a) || Array.isArray(b)) return p < 0.5 ? a : b;   // lists that change length switch, never blend
     if (a && b && typeof a === 'object' && typeof b === 'object') {
       const out = Object.assign({}, a);
       for (const k of Object.keys(b)) {

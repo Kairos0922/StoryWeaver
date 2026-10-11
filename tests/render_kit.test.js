@@ -215,4 +215,6 @@ test('frame-sequence playback maps time to frames, interpolates and wraps period
   assert.equal(shot.layers[0].seq, undefined);
   assert.equal(shot.layers[0].tokens.length, 2);
   assert.throws(() => TL.resolveScenes({scenes: [{id: 's', layers: [{type: 'fill', seq: {frames: []}}]}]}, timing), /Empty seq.frames/);
+  const grown = TL.lerpFrame({bands: []}, {bands: [{a0: 0.1, a1: 0.2}]}, 0.7, []);
+  assert.ok(Array.isArray(grown.bands) && grown.bands.length === 1);
 });

@@ -59,12 +59,16 @@ export function sampleFrames({frames, fps, boundaries = [], seed = '', random = 
  * Render `indices` twice, each pass in a new browser context, and compare PNG hashes.
  * `openPass()` must return a freshly booted page in a new context; `frameAt(page, t)` returns PNG base64.
  */
-export async function compareRenders({indices, fps, openPass, frameAt, closePass = page => page.context().close()}) {
+export async function compareRenders({indices, fps, openPass, frameAt, closePass = page => page.context().close(), warm = true}) {
   const passes = [];
   const started = Date.now();
   for (let p = 0; p < 2; p++) {
     const page = await openPass();
     try {
+      // Warm-up: draw every sampled frame once and discard it. A sequential render has already
+      // drawn each glyph and path many frames earlier; a sparse sample would otherwise compare a
+      // first-use rasterisation (which Chromium may anti-alias a pixel differently) against a warm one.
+      if (warm) for (const i of indices) await frameAt(page, i / fps);
       const hashes = [];
       for (const i of indices) hashes.push(sha256(Buffer.from(await frameAt(page, i / fps), 'base64')));
       passes.push(hashes);
@@ -80,7 +84,7 @@ export async function writeDeterminism(episodeDir, {result, inputs, size, fps, f
   const report = {
     schema: DETERMINISM_SCHEMA,
     created_by: DETERMINISM_CREATED_BY,
-    method: 'two passes, fresh browser context each, full render resolution, sha256 of frame PNG',
+    method: 'two passes, fresh browser context each, every sampled frame drawn once to warm caches, then captured at full render resolution; sha256 of frame PNG',
     render: {mode, review, size, fps, frames},
     inputs,
     sample: result.frames.length,
