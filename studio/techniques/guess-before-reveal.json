@@ -1,0 +1,24 @@
+{
+  "schema": "storyweaver.technique.v1",
+  "id": "guess-before-reveal",
+  "title": "Guess before reveal",
+  "summary": "Invite the viewer to commit to a guess, then reveal the answer later in the film.",
+  "fits": [
+    "There is a single answer the viewer can plausibly predict (and often predicts wrong).",
+    "The surprise of being wrong is itself the lesson.",
+    "Pacing allows a beat of thinking time before the reveal."
+  ],
+  "avoid": [
+    "The topic is open-ended or has no single answer to guess.",
+    "The guess would be a trick question with no fair path to it.",
+    "The film is a calm walkthrough where a quiz beat breaks the mood."
+  ],
+  "brief_section": {
+    "heading": "Guess before reveal",
+    "template": "(TODO. Where the viewer is invited to guess, and the line id where the answer is revealed.)"
+  },
+  "checks": [
+    {"id": "guess_before_reveal_section", "stage": "brief", "title": "Brief section filled"},
+    {"id": "guess_before_reveal_order", "stage": "lines", "title": "lines.json has a beat \"guess\" line before the first beat \"reveal\" line"}
+  ]
+}

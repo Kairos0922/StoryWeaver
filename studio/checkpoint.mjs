@@ -3,7 +3,8 @@ import path from 'node:path';
 import {approvalState} from './brief.mjs';
 import {fileExists} from './qc/checks.mjs';
 import {runQc} from './qc/run_qc.mjs';
-import {checkConceptModel, checkStyleLock} from './qc/checks.mjs';
+import {checkStyleLock} from './qc/checks.mjs';
+import {evaluateTechniques} from './techniques.mjs';
 
 export const STAGES = ['brief', 'lines', 'hook-sample', 'stills', 'render', 'publish'];
 
@@ -66,10 +67,8 @@ export async function evaluateCheckpoint(episodeDir, stage) {
     }
     const state = approvalState(briefText);
     const extra = [];
-    if (!state.structure.issues.some(i => i.id.startsWith('concept_machine'))) {
-      const model = await checkConceptModel(episodeDir);
-      if (!model.ok) extra.push({id: 'concept_machine_model', detail: model.evidence});
-    }
+    const techniques = await evaluateTechniques(episodeDir, {stage: 'brief'});
+    for (const r of techniques.results) if (!r.ok) extra.push({id: r.id, detail: `${r.technique}: ${r.evidence}`});
     const style = await checkStyleLock(episodeDir);
     if (!style.ok) extra.push({id: 'style_lock', detail: style.evidence});
     if (extra.length) {

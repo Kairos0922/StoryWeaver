@@ -1,21 +1,6 @@
-# Concept machine and series style lock
+# Series style lock
 
-Two Phase A rules. The first decides *what* an episode shows. The second decides *how* every episode of a series looks. They do not conflict: the concept machine changes per episode, the look does not.
-
-## Concept machine (per episode, hard rule)
-
-The object is the explanation. Before any storyboard, invent one recognizable machine whose moving parts do what the concept does: a marble run for a queue, a bookshelf for a cache, a sweeping elevator car for collective control. Boxes, arrows, and floating labels standing in for the mechanism do not count.
-
-`brief.md` must contain `## Concept machine` with four bullets:
-
-| Field | Rule |
-|---|---|
-| `Machine` | The object or machine. Write the idea, not the drawing. |
-| `Motion` | One sentence: what moves, and what that motion means (`X moves; that means Y`). |
-| `Lit subject` | Exactly one part is lit. Everything else stays quiet. Matches "one primary action per shot" in `docs/motion-tokens.md`. |
-| `Model` | `fact_card.md B#` or a `sim/` file. The numbers on screen and the motion both read this one source, so they cannot disagree. |
-
-`checkpoint <episode-dir> brief` returns `BRIEF_INCOMPLETE` while a field is missing, the motion has no meaning, the lit subject names more than one thing, or the cited model file does not exist. The QC item `concept_machine` blocks every later stage the same way.
+A universal Phase A rule: every episode of a series keeps one look, whatever technique it uses (`docs/techniques.md`). Techniques change per episode; the look does not.
 
 ## Series style lock (per series)
 
@@ -53,7 +38,9 @@ Locked keys: `palette`, `fonts`, `characters`, `camera`, `line`, `motion`.
 
 No lock file means the series is unlocked; the check passes and says so. To change the look, edit the lock (a direction decision for a person), not the episode.
 
-## Drawing a concept machine inside the lock
+## Drawing a technique inside the lock
+
+Example: a concept machine (`studio/techniques/concept-machine.json`).
 
 - Build the machine from kit layers and series palette names. New parts get palette names that already exist (`ink`, `teal`, `goods_a` …); a genuinely new color is a lock change, not an episode choice.
 - Treatment follows `line`: flat fills, one ink outline at the locked stroke range, one soft shadow. No gradients or glow (banned list).

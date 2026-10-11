@@ -24,7 +24,7 @@ StoryWeaver is a production toolkit for fact-checked animated explainer videos o
 10. The render contract (`docs/render-contract.md`) is binding. When you fix a render bug, add the rule that would have caught it, and a lint rule when it can be matched. Run `node studio/cli.mjs render-contract`.
 11. Motion numbers come from `studio/motion/tokens.js` by name (`docs/motion-tokens.md`). No inline easing curves or durations.
 12. `docs/quality-standard.md` (v1) is the release bar. `node studio/cli.mjs quality <episode-dir>` aggregates the existing gates; add a gate to its source check, not a second copy. Audience rules go in `studio/profiles/<id>.json`, never in general code.
-13. Phase A names a concept machine and every episode stays inside its series style lock (`docs/style-lock.md`). The lock lives in the series directory, never in this repository; the repo keeps the schema, checker, and a fictional fixture.
+13. Methods are opt-in techniques (`studio/techniques/<id>.json`, `docs/techniques.md`), chosen per episode in the brief's `## Approach` only where they fit; never make a situational method a universal gate. Universal gates (quality standard, style lock, pace, text hold, render contract, glyph coverage) apply to every episode. Every episode stays inside its series style lock (`docs/style-lock.md`). The lock lives in the series directory, never in this repository; the repo keeps the schema, checker, and a fictional fixture.
 14. Direct changes to `main` are acceptable; CI must pass before delivery is declared complete.
 
 ## Hard stops

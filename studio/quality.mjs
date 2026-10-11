@@ -7,6 +7,7 @@ import {runQc} from './qc/run_qc.mjs';
 import {runMotionQc} from './qc/motion_qc.mjs';
 import {lintRenderContract} from './lint/render_contract.mjs';
 import {checkProfile, sectionBody} from './profiles.mjs';
+import {evaluateTechniques} from './techniques.mjs';
 import {episodeGlyphCheck} from './render/kit/canvas/runtime.mjs';
 import {evaluateDeterminism} from './render/browser/determinism.mjs';
 
@@ -88,6 +89,9 @@ export async function runQuality(episodeDir) {
 
   const profile = await checkProfile(episodeDir);
   for (const c of profile.checks) machine.push({id: c.id, source: `profile:${profile.id}`, ok: c.ok, evidence: c.evidence});
+
+  const techniques = await evaluateTechniques(episodeDir);
+  for (const c of techniques.results) machine.push({id: c.id, source: `technique:${c.technique}`, ok: c.ok, evidence: c.evidence});
 
   const release = await readJson(path.join(episodeDir, 'qc', 'release.json'));
   const human = humanReviewErrors(release).map(r => ({...r, question: HUMAN_QUESTIONS.find(q => q.id === r.id).question}));

@@ -28,7 +28,7 @@ Folder state is the source of truth. Chats scroll. Files do not.
 |---|---|---|---|
 | One thing | Topic note | One sentence + one action | Two mechanisms in one episode |
 | Fact card | Sources, optional `sim/` | A/B/C filled, B rows typed | Placeholder or unsourced number |
-| Creative brief | Fact card, `../series-style.json` | Concept machine, five-beat story, intuition table, storyboard, model budget | `BRIEF_INCOMPLETE` (also on style-lock deviation) |
+| Creative brief | Fact card, `../series-style.json` | Approach (techniques or none), five-beat story, intuition table, storyboard, model budget | `BRIEF_INCOMPLETE` (also on style-lock deviation) |
 | Brief approval | `brief.md` | `status: approved` + matching hash | Agent wrote the approval |
 | Voice-over | Brief | `script.md`, `lines.json` | Lint errors |
 | Hook recordings | First 3 lines | WAV files | No key on this machine |

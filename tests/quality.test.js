@@ -70,18 +70,17 @@ test('one hero move per shot and no banned kinds', () => {
 test('children-education profile is optional and pluggable', async () => {
   assert.ok((await listProfiles()).includes('children-education'));
   const p = await loadProfile('children-education');
-  const brief = '## Guess before reveal\n\nL02 guess, L04 reveal\n\n## Try it at home\n\nSort socks by color.\n';
-  const lines = [{id: 'L01', beat: 'hook', text: 'Why?'}, {id: 'L02', beat: 'guess', text: 'Guess!'}, {id: 'L04', beat: 'reveal', text: 'Here it is.'}];
-  assert.ok(evaluateProfile(p, {brief, lines}).every(c => c.ok));
+  const lines = [{id: 'L01', beat: 'hook', text: 'Why?'}, {id: 'L02', beat: 'reveal', text: 'Here it is.'}];
+  assert.ok(evaluateProfile(p, {brief: '', lines}).every(c => c.ok), 'situational devices are techniques, not profile gates');
   const bad = evaluateProfile(p, {brief: '', lines: [{id: 'L1', beat: 'reveal', text: "Don't fall behind"}]});
-  assert.deepEqual(bad.filter(c => !c.ok).map(c => c.id).sort(), ['profile_guess_order', 'profile_no_anxiety', 'profile_try_it_at_home', 'profile_guess_before_reveal'].sort());
+  assert.deepEqual(bad.filter(c => !c.ok).map(c => c.id), ['profile_no_anxiety']);
   await assert.rejects(loadProfile('nope'));
   const dir = await copyFixture();
   const bf = path.join(dir, 'brief.md');
   await fs.writeFile(bf, (await fs.readFile(bf, 'utf8')).replace('language: en', 'language: en\naudience_profile: children-education'));
   const r = await runQuality(dir);
   assert.equal(r.profile, 'children-education');
-  assert.ok(r.machine.some(g => g.source === 'profile:children-education' && !g.ok));
+  assert.ok(r.machine.some(g => g.source === 'profile:children-education' && g.id === 'profile_no_anxiety'));
 });
 
 test('render pipeline writes qc/determinism.json from two fresh-context passes', async () => {

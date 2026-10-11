@@ -4,7 +4,6 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {validateBrief, validateConceptMachine} from '../studio/brief.mjs';
 import {checkBriefAgainstLock, checkEpisodeStyle, checkSceneDoc, validateLock} from '../studio/style/style_lock.mjs';
 import {evaluateCheckpoint} from '../studio/checkpoint.mjs';
 
@@ -17,32 +16,6 @@ async function copySeries() {
   await fs.cp(series, dir, {recursive: true});
   return dir;
 }
-
-test('concept machine: all four fields are required', () => {
-  const {issues} = validateConceptMachine('## Concept machine\n\n- Machine: a marble run\n');
-  assert.deepEqual(issues.map(i => i.detail).sort(), ['lit_subject', 'model', 'motion']);
-  const brief = validateBrief('---\naspect: "16:9"\ntarget_duration_s: 40\n---\n## One thing\nx\n');
-  assert.ok(brief.issues.some(i => i.id === 'missing_heading' && i.detail === 'Concept machine'));
-});
-
-test('concept machine: motion has a meaning, one lit subject, a model reference', () => {
-  const {issues} = validateConceptMachine(`## Concept machine
-- Machine: a marble run
-- Motion: marbles roll
-- Lit subject: the gate, the bell
-- Model: we will see
-`);
-  assert.deepEqual(issues.map(i => i.id).sort(), ['concept_machine_lit', 'concept_machine_model', 'concept_machine_motion']);
-});
-
-test('checkpoint brief blocks when the concept model file is missing', async () => {
-  const dir = await copySeries();
-  const brief = path.join(dir, 'ep01/brief.md');
-  await fs.writeFile(brief, (await fs.readFile(brief, 'utf8')).replace('Model: fact_card.md B1', 'Model: sim/doors.json'));
-  const r = await evaluateCheckpoint(path.join(dir, 'ep01'), 'brief');
-  assert.equal(r.code, 'BRIEF_INCOMPLETE');
-  assert.ok(r.issues.some(i => i.id === 'concept_machine_model' && /sim\/doors.json/.test(i.detail)));
-});
 
 test('fixture episode matches its series lock', async () => {
   assert.deepEqual(validateLock(lock), []);

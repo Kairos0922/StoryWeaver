@@ -48,7 +48,7 @@
       "title": "Creative brief is human-approved; body hash, aspect, and duration still match"
     },
     {
-      "id": "concept_machine",
+      "id": "techniques",
       "gate": "2",
       "blocks": [
         "lines",
@@ -59,8 +59,8 @@
       ],
       "required": true,
       "kind": "auto",
-      "check": "concept_machine",
-      "title": "Brief names the concept machine (what moves, what it means, one lit subject) and its model file exists"
+      "check": "techniques",
+      "title": "Brief-stage checks of every technique selected in ## Approach pass (none selected passes)"
     },
     {
       "id": "style_lock",
