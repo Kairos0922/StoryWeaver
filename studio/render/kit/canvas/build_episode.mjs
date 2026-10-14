@@ -21,6 +21,7 @@ import {resolveEpisodeFonts} from '../fonts/library.mjs';
 import {collectChars, embedFonts, launchBrowser, loadStyle, openPage, pageHtml, run, tmpDir, TIMELINE_JS} from './runtime.mjs';
 import {parseLoudnormJson} from '../../browser/loudnorm.mjs';
 import {assertRenderReview} from '../../../review.mjs';
+import {acquireRenderLock, checkFullRenderCap, preflightHeavyRender, recordFullRender} from '../../../production.mjs';
 import {runDoctor, formatDoctor} from '../../../doctor.mjs';
 import {buildCost} from '../../../cost.mjs';
 import {writeDone} from '../../../state.mjs';
@@ -282,6 +283,25 @@ export async function buildEpisode(episodeDir, opts) {
 
   const review = await assertRenderReview(episodeDir, {review: reviewMode, cut: opts.mode});
   log(`review ${review.review}: ${review.metadata}`);
+  if (opts.mode === 'preview') return renderUnlocked(episodeDir, opts, {review, log, rel, t0});
+
+  // Hook and full cuts cost real time and quota: stage order, caps and one-at-a-time are enforced here.
+  await preflightHeavyRender(episodeDir, opts.mode);
+  const lock = await acquireRenderLock(episodeDir, {cut: opts.mode, review: review.review});
+  try {
+    if (opts.mode === 'full') {
+      const cap = await checkFullRenderCap(episodeDir); // re-read under the lock
+      if (!cap.ok) throw Object.assign(new Error(cap.detail), {code: cap.code, exit: 4});
+      await recordFullRender(episodeDir, {review: review.review, caps: cap.caps});
+      log(`caps: ${cap.detail}`);
+    }
+    return await renderUnlocked(episodeDir, opts, {review, log, rel, t0});
+  } finally {
+    await lock.release();
+  }
+}
+
+async function renderUnlocked(episodeDir, opts, {review, log, rel, t0}) {
 
   if (opts.mode === 'full') {
     const predPath = path.join(episodeDir, 'state', 'duration_prediction.json');

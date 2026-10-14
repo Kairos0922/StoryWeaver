@@ -1,0 +1,5 @@
+{
+  "_doc": "Filled by a person, in stage order. sha256 values come from: node studio/cli.mjs approval-hashes <episode> --voice <file>. Changing the stills or the trial audio voids the approval.",
+  "stills": {"by": "", "at": "", "sha256": ""},
+  "voice_trial": {"by": "", "at": "", "file": "", "sha256": ""}
+}

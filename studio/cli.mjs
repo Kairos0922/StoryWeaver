@@ -18,7 +18,13 @@ import {formatResume, resumeEpisode} from './resume.mjs';
 import {formatPrediction, predictEpisode} from './duration.mjs';
 import {buildListenPack, formatListen} from './listen_pack.mjs';
 import {formatGitSync, gitSyncStatus, markGitSync, planGitSync} from './git_sync.mjs';
+import crypto from 'node:crypto';
 import {renderDirectory} from './render/browser/pipeline.mjs';
+import {isShotFixture} from './render/browser/validate_shot.mjs';
+import {renderStills} from './render/kit/canvas/render_stills.mjs';
+import {assertRenderReview} from './review.mjs';
+import {preflightHeavyRender, stillsDigest} from './production.mjs';
+import {formatRenderStatus, renderStatus, startDetachedRender} from './jobs.mjs';
 import {formatRenderContract, lintRenderContract} from './lint/render_contract.mjs';
 import {formatMotionQc, runMotionQc} from './qc/motion_qc.mjs';
 import {formatQuality, runQuality} from './quality.mjs';
@@ -73,7 +79,12 @@ const help = `StoryWeaver
   node studio/cli.mjs resume <episode-dir>
   node studio/cli.mjs predict-duration <episode-dir>
   node studio/cli.mjs listen-pack <episode-dir>
-  node studio/cli.mjs render <episode-dir|shot-fixture> --mode draft|release [--cut preview|hook|full] [--review-only]
+  node studio/cli.mjs stills <episode-dir>          render review stills (needs approved brief)
+  node studio/cli.mjs approval-hashes <episode-dir> [--voice <file>]   hashes a person puts in qc/approvals.json
+  node studio/cli.mjs render <episode-dir|shot-fixture> --mode draft|release [--cut preview|hook|full] [--review-only] [--foreground]
+                    hook/full need stills (+ voice trial for full) approvals, CAPS.md, and the
+                    episode render lock; they run detached and log to out/logs/
+  node studio/cli.mjs render-status <episode-dir>
   node studio/cli.mjs git-sync <episode-dir> [--retry] [--mark]
 
 lint-script can run at any time. A draft render does not need human picture
@@ -240,7 +251,18 @@ async function main() {
     if (!dir) throw new Error('render needs an episode directory');
     const review = opts.mode || 'draft';
     const cut = opts.cut || (review === 'release' ? 'full' : 'preview');
-    const result = await renderDirectory(path.resolve(dir), {
+    const episodeDir = path.resolve(dir);
+    const heavy = (cut === 'full' || cut === 'hook') && !(await isShotFixture(episodeDir));
+    if (heavy && !opts.foreground) {
+      // Long renders run detached with progress in a log, so a tool timeout or a closed
+      // terminal cannot orphan or duplicate them. Gates are checked here first to fail fast.
+      await assertRenderReview(episodeDir, {review, cut});
+      await preflightHeavyRender(episodeDir, cut);
+      const job = await startDetachedRender(episodeDir, args);
+      emit(job, `RENDER_STARTED ${cut} (pid ${job.pid}, detached)\nlog: ${job.log}\nstatus: node studio/cli.mjs render-status ${dir}`);
+      return 0;
+    }
+    const result = await renderDirectory(episodeDir, {
       review,
       cut,
       reviewOnly: Boolean(opts['review-only']),
@@ -250,6 +272,29 @@ async function main() {
       until: opts.until ? Number(opts.until) : undefined,
     });
     emit({outDir: result.outDir, report: result.report || null}, `RENDER_${review.toUpperCase()}\n${result.outDir}`);
+    return 0;
+  }
+  if (cmd === 'render-status') {
+    const dir = positional[0];
+    if (!dir) throw new Error('render-status needs an episode directory');
+    const status = await renderStatus(path.resolve(dir));
+    emit(status, formatRenderStatus(status));
+    return status.running ? 3 : 0;
+  }
+  if (cmd === 'stills') {
+    const dir = positional[0];
+    if (!dir) throw new Error('stills needs an episode directory');
+    const {written} = await renderStills(path.resolve(dir));
+    const digest = await stillsDigest(path.resolve(dir));
+    emit({written, sha256: digest}, `${written.join('\n')}\nstills sha256 (for a person's qc/approvals.json): ${digest}`);
+    return 0;
+  }
+  if (cmd === 'approval-hashes') {
+    const dir = positional[0];
+    if (!dir) throw new Error('approval-hashes needs an episode directory');
+    const out = {stills: await stillsDigest(path.resolve(dir))};
+    if (opts.voice) out.voice_trial = {file: String(opts.voice), sha256: crypto.createHash('sha256').update(await fs.readFile(path.resolve(dir, String(opts.voice)))).digest('hex')};
+    emit(out, JSON.stringify(out, null, 2));
     return 0;
   }
   throw new Error(`Unknown command: ${cmd}`);

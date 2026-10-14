@@ -127,6 +127,13 @@ export async function checkScriptLint(episodeDir) {
   return {ok: true, code: 'SCRIPT_LINT_FAILED', evidence: 'no scaffold errors'};
 }
 
+export async function checkCapabilities(episodeDir) {
+  const {episodeCapabilityIssues} = await import('../capabilities.mjs');
+  const issues = await episodeCapabilityIssues(episodeDir);
+  if (issues.length) return {ok: false, code: 'CAPABILITY', evidence: issues.map(i => i.detail).join('; ')};
+  return {ok: true, code: 'CAPABILITY', evidence: 'every promised capability is declared and verified'};
+}
+
 export async function checkMetrics(episodeDir) {
   const file = path.join(episodeDir, 'post', 'metrics.md');
   const text = await readIf(file);
@@ -186,6 +193,7 @@ export const AUTO_CHECKS = {
   one_thing: checkOneThing,
   brief_approved: checkBrief,
   script_lint: checkScriptLint,
+  capabilities: checkCapabilities,
   metrics_not_invented: checkMetrics,
   intuition_addressed: checkIntuition,
   claim_precision: checkClaimPrecision,

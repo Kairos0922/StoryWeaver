@@ -16,6 +16,8 @@ const COPIES = [
   ['sim/README.md', 'templates/sim_README.md'],
   ['qc/checklist.json', 'qc/checklist.json'],
   ['qc/release.json', 'templates/release.json'],
+  ['qc/approvals.json', 'templates/approvals.json'],
+  ['CAPS.md', 'templates/CAPS.md'],
 ];
 
 function fill(template, vars) {

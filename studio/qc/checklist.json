@@ -108,6 +108,21 @@
       "title": "Voice-over lint has no scaffold errors"
     },
     {
+      "id": "capabilities",
+      "gate": "1",
+      "blocks": [
+        "lines",
+        "hook-sample",
+        "stills",
+        "render",
+        "publish"
+      ],
+      "required": true,
+      "kind": "auto",
+      "check": "capabilities",
+      "title": "Everything the brief/acceptance promises (e.g. 3D) is installed and has a passing doctor sample"
+    },
+    {
       "id": "claim_precision",
       "gate": "2",
       "blocks": [

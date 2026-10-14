@@ -1,13 +1,20 @@
 #!/usr/bin/env node
 // Renders review stills for one episode: <episode>/render/stills.json -> <episode>/stills/<id>.png.
-// Stills only. This does not render video, call TTS, or open any gate.
+// Stills only. Needs the approved brief (storyboard). Does not render video or call TTS.
+// A person approves the result in qc/approvals.json (stills.sha256 = studio stills-digest).
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {evaluateCheckpoint} from '../../../checkpoint.mjs';
 import {resolveEpisodeFonts} from '../fonts/library.mjs';
 import {collectChars, embedFonts, launchBrowser, loadStyle, openPage, pageHtml, tmpDir} from './runtime.mjs';
 
 export async function renderStills(episodeDir, {only} = {}) {
+  // Stage order: stills come after the storyboard, which lives in the approved brief.
+  const gate = await evaluateCheckpoint(episodeDir, 'brief');
+  if (gate.code !== 'BRIEF_APPROVED') {
+    throw Object.assign(new Error(`stills need the approved storyboard (brief): ${gate.code}`), {code: 'STAGE_ORDER'});
+  }
   const {style, spec} = await loadStyle(episodeDir);
   const shots = style.shots.filter(s => !only || s.id === only);
   const outDir = path.join(episodeDir, style.out_dir || 'stills');
