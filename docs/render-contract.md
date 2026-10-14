@@ -21,6 +21,7 @@ Every frame is a pure function of `t` and checked-in inputs. The contract is the
 | R11 | Easing curves, springs, and durations come from `studio/motion/tokens.js` by name. | review, `docs/motion-tokens.md` |
 | R12 | Springs are closed-form (`spring(t, zeta, freq)`), never simulated frame by frame. | `tokens.js` |
 | R13 | Beat or cue frames are computed from time and rounded per beat; never add rounded values. | `beatFrame`, `cueFrames` |
+| R14 | Deliverable mp4: H.264 High@4.1, bitrate capped (`DELIVERY_VIDEO`: maxrate 5.5 Mbps), AAC 48 kHz, faststart, no soft subtitle track (captions burned in plus a sidecar `.srt`). EP03 v2 shipped 8.5 Mbps with a `mov_text` track and stalled after the opening on the user's players. | `build_episode.mjs`, test `delivery_profile` |
 
 ## Capture path
 

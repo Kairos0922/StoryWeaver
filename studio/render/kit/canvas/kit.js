@@ -1547,8 +1547,10 @@
       ctx.textBaseline = 'middle';
       const tw = ctx.measureText(chip.text).width;
       const w = tw + 36;
-      const x = chip.corner === 'br' ? W - safe.x - w : safe.x;
-      const y = H - safe.y - 210;
+      // Corners: bl/br sit above the subtitle band; tr sits top-right, clear of characters at the bottom.
+      const corner = chip.corner || 'bl';
+      const x = corner.endsWith('r') ? W - safe.x - w : safe.x;
+      const y = corner.startsWith('t') ? safe.y : H - safe.y - 210;
       rr(ctx, x, y, w, 48, 10);
       ctx.fillStyle = 'rgba(255,255,255,0.9)';
       ctx.fill();

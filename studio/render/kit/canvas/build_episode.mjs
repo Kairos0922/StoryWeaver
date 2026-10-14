@@ -210,6 +210,9 @@ const BOOT = `
   };
 `;
 
+// Delivery profile for phones and desktop players: H.264 High@4.1, capped bitrate (CRF with a VBV ceiling).
+export const DELIVERY_VIDEO = ['-profile:v', 'high', '-level:v', '4.1', '-maxrate', '5500k', '-bufsize', '11000k'];
+
 async function renderFrames({browserPages, frames, fps, outFile, tmp, crf, onProgress}) {
   const n = browserPages.length;
   const chunk = Math.ceil(frames / n);
@@ -219,7 +222,7 @@ async function renderFrames({browserPages, frames, fps, outFile, tmp, crf, onPro
     if (a >= b) return null;
     const seg = path.join(tmp, `seg_${String(w).padStart(2, '0')}.mp4`);
     const ff = spawn('ffmpeg', ['-y', '-v', 'error', '-f', 'image2pipe', '-framerate', String(fps), '-c:v', 'png', '-i', '-',
-      '-c:v', 'libx264', '-preset', 'medium', '-crf', String(crf), '-pix_fmt', 'yuv420p', '-r', String(fps), '-g', String(fps * 2), seg],
+      '-c:v', 'libx264', '-preset', 'medium', '-crf', String(crf), ...DELIVERY_VIDEO, '-pix_fmt', 'yuv420p', '-r', String(fps), '-g', String(fps * 2), seg],
     {stdio: ['pipe', 'ignore', 'pipe']});
     let err = '';
     ff.stderr.on('data', d => (err += d));
@@ -470,9 +473,10 @@ export async function buildEpisode(episodeDir, opts) {
     const srt = path.join(outDir, 'subtitles.srt');
     const captionLang = linesDoc.language === 'en' ? 'eng' : linesDoc.language === 'zh' ? 'chi' : 'und';
     const comment = review.review === 'draft' ? 'draft: not human-reviewed' : 'release: human-signed';
-    run('ffmpeg', ['-y', '-v', 'error', '-i', videoOnly, '-i', mixFile, '-i', srt,
-      '-map', '0:v', '-map', '1:a', '-map', '2:s', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-ar', '48000',
-      '-c:s', 'mov_text', '-metadata:s:s:0', `language=${captionLang}`,
+    // No soft subtitle track: captions are burned in and shipped as a sidecar .srt. A mov_text track
+    // stalled some phone and desktop players after the first seconds (EP03 v2 playback report).
+    run('ffmpeg', ['-y', '-v', 'error', '-i', videoOnly, '-i', mixFile,
+      '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-ar', '48000',
       '-metadata', `comment=${comment}`,
       '-metadata', `review_status=${review.metadata}`,
       '-movflags', '+faststart', '-t', timing.duration.toFixed(3), final]);
@@ -482,7 +486,7 @@ export async function buildEpisode(episodeDir, opts) {
     const buf = await fs.readFile(final);
     const {report} = await writeReport({
       audio: {mix: mixStats, loudness: loud},
-      subtitles: {burned_in: true, sidecar: rel(srt), soft_track: 'mov_text', language: captionLang},
+      subtitles: {burned_in: true, sidecar: rel(srt), soft_track: null, language: captionLang},
       output: {file: rel(final), bytes: buf.length, sha256: sha256(buf), probe},
     });
     log(`done: ${rel(final)} (${(buf.length / 1e6).toFixed(1)} MB)`);
