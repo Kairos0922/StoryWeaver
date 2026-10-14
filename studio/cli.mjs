@@ -24,6 +24,8 @@ import {isShotFixture} from './render/browser/validate_shot.mjs';
 import {renderStills} from './render/kit/canvas/render_stills.mjs';
 import {assertRenderReview} from './review.mjs';
 import {preflightHeavyRender, stillsDigest} from './production.mjs';
+import {deliver, formatDelivery} from './deliver/deliver.mjs';
+import {checkCover} from './deliver/cover.mjs';
 import {formatRenderStatus, renderStatus, startDetachedRender} from './jobs.mjs';
 import {formatRenderContract, lintRenderContract} from './lint/render_contract.mjs';
 import {formatMotionQc, runMotionQc} from './qc/motion_qc.mjs';
@@ -85,6 +87,10 @@ const help = `StoryWeaver
                     hook/full need stills (+ voice trial for full) approvals, CAPS.md, and the
                     episode render lock; they run detached and log to out/logs/
   node studio/cli.mjs render-status <episode-dir>
+  node studio/cli.mjs cover-check <episode-dir>    cover glyph contrast at 320 px (iteration aid)
+  node studio/cli.mjs deliver <episode-dir>        the only way to make a publish package:
+                    publish encode ≤30 MB, real-Chrome playback + seeks, cover check,
+                    manifest with bytes + sha256; refuses if any check fails
   node studio/cli.mjs git-sync <episode-dir> [--retry] [--mark]
 
 lint-script can run at any time. A draft render does not need human picture
@@ -273,6 +279,21 @@ async function main() {
     });
     emit({outDir: result.outDir, report: result.report || null}, `RENDER_${review.toUpperCase()}\n${result.outDir}`);
     return 0;
+  }
+  if (cmd === 'deliver') {
+    const dir = positional[0];
+    if (!dir) throw new Error('deliver needs an episode directory');
+    const result = await deliver(path.resolve(dir), {log: msg => !json && console.error(msg)});
+    emit(result.manifest, formatDelivery(result));
+    return result.ok ? 0 : 1;
+  }
+  if (cmd === 'cover-check') {
+    const dir = positional[0];
+    if (!dir) throw new Error('cover-check needs an episode directory');
+    const out = path.join(path.resolve(dir), 'out', 'cover-check');
+    const result = await checkCover(path.resolve(dir), out);
+    emit(result, `${result.ok ? 'COVER_OK' : 'COVER_UNREADABLE'} (iteration aid; only deliver makes a package)\n${result.detail}\n${result.thumb}`);
+    return result.ok ? 0 : 1;
   }
   if (cmd === 'render-status') {
     const dir = positional[0];

@@ -1,7 +1,6 @@
-// Delivery check: what the viewer actually gets.
-// (a) plays the final mp4 end-to-end in real Chrome at 1x over HTTP (range requests),
-//     asserting time is monotonic and 'ended' fires at ~duration;
-// (b) checks cover title contrast (WCAG >= 4.5) at thumbnail size.
+// Real-player check for the publish file: play it end to end in real Google Chrome at 1x over
+// HTTP with range requests (how a browser or app streams a download), assert time is monotonic
+// and 'ended' fires at the duration, then seek to 10%…90% and assert each seek lands.
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -67,8 +66,11 @@ export async function playInChrome(file, { channel = 'chrome' } = {}) {
       const v = document.getElementById('v'); const out = [];
       for (let i = 1; i <= 9; i++) {
         const target = (dur * i) / 10; v.currentTime = target;
-        await new Promise((r) => v.addEventListener('seeked', r, { once: true }));
-        out.push({ target, got: v.currentTime, ok: Math.abs(v.currentTime - target) < 0.5 && !v.ended });
+        const landed = await Promise.race([
+          new Promise((r) => v.addEventListener('seeked', () => r(true), { once: true })),
+          new Promise((r) => setTimeout(() => r(false), 8000)),
+        ]);
+        out.push({ target, got: v.currentTime, ok: landed && Math.abs(v.currentTime - target) < 0.5 && !v.ended && v.readyState >= 2 });
       }
       return out;
     }, duration);
@@ -76,27 +78,4 @@ export async function playInChrome(file, { channel = 'chrome' } = {}) {
     if (seeks.some((s) => !s.ok)) { verdict.ok = false; verdict.errors.push('seek failed'); }
     return { file, duration, ...verdict, seeks, log };
   } finally { await browser.close(); srv.close(); }
-}
-
-// Mean RGB of a rect in a png scaled to `width` px (via ffmpeg).
-function rectMean(png, width, [x, y, w, h], srcW) {
-  const k = width / srcW;
-  const [X, Y, W, H] = [x, y, w, h].map((n) => Math.max(1, Math.round(n * k)));
-  const buf = execFileSync('ffmpeg', ['-v', 'error', '-i', png, '-vf', `scale=${width}:-1:flags=area,crop=${W}:${H}:${X}:${Y}`, '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-']);
-  const s = [0, 0, 0]; for (let i = 0; i < buf.length; i++) s[i % 3] += buf[i];
-  return s.map((v) => v / (buf.length / 3));
-}
-
-// spec: { png, srcWidth, title: { fill: [r,g,b], bbox:[x,y,w,h], bg_bbox:[x,y,w,h] } }
-export function coverContrast(spec, thumbWidth = 320) {
-  const bg = rectMean(spec.png, thumbWidth, spec.title.bg_bbox, spec.srcWidth);
-  const ratio = contrastRatio(spec.title.fill, bg);
-  return { png: spec.png, thumbWidth, bg: bg.map(Math.round), ratio: +ratio.toFixed(2), ok: ratio >= 4.5 };
-}
-
-if (import.meta.url === `file://${process.argv[1]}`) {
-  const [cmd, arg] = process.argv.slice(2);
-  const r = cmd === 'play' ? await playInChrome(arg) : coverContrast(JSON.parse(fs.readFileSync(arg, 'utf8')));
-  console.log(JSON.stringify(r, null, 1));
-  process.exit(r.ok ? 0 : 1);
 }

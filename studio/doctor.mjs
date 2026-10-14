@@ -104,6 +104,8 @@ export async function runDoctor({episodeDir, forRender = false} = {}) {
     playwright = false;
   }
   checks.push({id: 'playwright', ok: playwright, detail: playwright ? 'installed' : 'missing'});
+  const realChrome = which('google-chrome') || which('google-chrome-stable');
+  checks.push({id: 'google-chrome', ok: Boolean(realChrome), detail: realChrome ? 'present (deliver plays the publish file in real Chrome)' : 'missing: deliver cannot run its playback check (npx playwright install chrome)'});
   for (const id of Object.keys(CAPABILITIES)) {
     const status = await capabilityStatus(id);
     checks.push({id: `capability:${id}`, ok: true, optional: true, ready: status.ok, detail: `${status.ok ? 'ready' : 'not ready'}: ${status.detail}`});

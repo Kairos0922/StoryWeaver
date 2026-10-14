@@ -158,14 +158,16 @@ test('fixture scripts pass the English and Chinese packs', async () => {
   assert.equal(cli.status, 0);
 });
 
-test('fixture passes every checkpoint', async () => {
+test('fixture passes every checkpoint up to render; publish waits for studio deliver', async () => {
   const pace = await paceEpisode(fixture);
   assert.equal(pace.ok, true, pace.evidence);
   assert.equal(pace.source, 'estimate');
-  for (const stage of ['brief', 'lines', 'hook-sample', 'stills', 'render', 'publish']) {
+  for (const stage of ['brief', 'lines', 'hook-sample', 'stills', 'render']) {
     const result = await evaluateCheckpoint(fixture, stage);
     assert.equal(result.exitCode, 0, `${stage} ${result.code}`);
   }
+  const publish = await evaluateCheckpoint(fixture, 'publish');
+  assert.deepEqual(publish.blockers.map(b => b.id), ['delivery']);
   const cli = runCli(['checkpoint', 'tests/fixtures/sample-series/ep01', 'brief']);
   assert.equal(cli.status, 0);
   assert.match(cli.stdout, /^BRIEF_APPROVED/m);

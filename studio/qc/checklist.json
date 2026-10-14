@@ -161,6 +161,17 @@
       "title": "Playback metrics are blank or sourced on the same line; no estimate words"
     },
     {
+      "id": "delivery",
+      "gate": "3",
+      "blocks": [
+        "publish"
+      ],
+      "required": true,
+      "kind": "auto",
+      "check": "delivery",
+      "title": "studio deliver produced a deliverable package (encode, real-Chrome playback, cover at 320 px) and its files still match the manifest"
+    },
+    {
       "id": "ear_hook",
       "gate": "3",
       "blocks": [

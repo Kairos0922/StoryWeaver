@@ -134,6 +134,12 @@ export async function checkCapabilities(episodeDir) {
   return {ok: true, code: 'CAPABILITY', evidence: 'every promised capability is declared and verified'};
 }
 
+export async function checkDelivery(episodeDir) {
+  const {latestDelivery} = await import('../deliver/deliver.mjs');
+  const r = await latestDelivery(episodeDir);
+  return {ok: r.ok, code: 'DELIVERY', evidence: r.detail};
+}
+
 export async function checkMetrics(episodeDir) {
   const file = path.join(episodeDir, 'post', 'metrics.md');
   const text = await readIf(file);
@@ -194,6 +200,7 @@ export const AUTO_CHECKS = {
   brief_approved: checkBrief,
   script_lint: checkScriptLint,
   capabilities: checkCapabilities,
+  delivery: checkDelivery,
   metrics_not_invented: checkMetrics,
   intuition_addressed: checkIntuition,
   claim_precision: checkClaimPrecision,
