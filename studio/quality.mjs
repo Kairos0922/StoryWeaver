@@ -36,6 +36,7 @@ const MOTION_GATES = [
   ['hero_move_and_banned', 'shots'],
   ['no_static_picture', 'static_picture'],
   ['no_dead_audio', 'silence'],
+  ['speaker_on_screen', 'speakers'],
 ];
 
 export function humanReviewErrors(release) {
@@ -72,6 +73,18 @@ export async function runQuality(episodeDir) {
   if (await fileExists(specFile)) {
     const out = await fs.mkdtemp(path.join(os.tmpdir(), 'sw-quality-'));
     const report = await runMotionQc(specFile, out);
+    // motion.json must be measured from the final encoded mp4, and be newer than it.
+    const spec = JSON.parse(await fs.readFile(specFile, 'utf8'));
+    let fresh = {ok: false, evidence: 'qc/motion.json does not name the measured mp4 (rerun studio/qc/measure_motion.mjs)'};
+    if (spec.video && spec.measured_from) {
+      const mp4 = path.resolve(episodeDir, spec.measured_from, spec.video);
+      if (!(await fileExists(mp4))) fresh = {ok: false, evidence: `measured mp4 missing: ${spec.video}`};
+      else {
+        const [a, b] = await Promise.all([fs.stat(mp4), fs.stat(specFile)]);
+        fresh = b.mtimeMs >= a.mtimeMs ? {ok: true, evidence: `measured from ${spec.video}`} : {ok: false, evidence: `${spec.video} is newer than qc/motion.json; re-measure`};
+      }
+    }
+    machine.push({id: 'motion_measured_from_final_mp4', source: 'qc/motion.json video', ...fresh});
     for (const [gate, key] of MOTION_GATES) {
       const c = report.checks[key];
       machine.push({id: gate, source: `motion-qc:${key}`, ok: Boolean(c?.ok), evidence: c ? (c.ok ? 'pass' : JSON.stringify((c.items || []).filter(i => !i.ok))) : `qc/motion.json has no ${key} data`});

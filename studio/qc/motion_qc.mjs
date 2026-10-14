@@ -215,6 +215,13 @@ export function checkSilence(silences = [], allowed = [], {maxS = SILENCE_MAX_S}
   return {ok: items.every(i => i.ok), rule: `no silence over ${maxS}s outside silent_beats`, items};
 }
 
+// Speaker on screen: every line's speaker character is visible from (line start + tolerance) to line end.
+export const SPEAKER_LEAD_TOL_S = 0.15;
+export function checkSpeakers(items = []) {
+  const out = items.map(i => ({...i, ok: i.speaker_id == null ? true : (i.visible_from != null && i.visible_from <= i.start + SPEAKER_LEAD_TOL_S && i.visible_to >= i.end - 0.05)}));
+  return {ok: out.every(i => i.ok), rule: `speaker character visible from line start (+${SPEAKER_LEAD_TOL_S}s) to line end`, items: out};
+}
+
 // Motion kinds that are banned by default (docs/quality-standard.md). A spec can add more in `banned`.
 export const BANNED_KINDS = Object.freeze(['gradient-glow', 'lens-flare', 'decorative-particles', 'all-fade-in', 'fade-slide-up', 'text-move-while-read', 'opacity-bounce', 'color-bounce']);
 
@@ -246,6 +253,7 @@ export async function runMotionQc(specFile, outDir) {
   }
   if (spec.picture) report.checks.static_picture = checkStatic(spec.picture.diffs, spec.picture.sample_fps);
   if (spec.audio) report.checks.silence = checkSilence(spec.audio.silences, spec.audio.allowed);
+  if (spec.speakers) report.checks.speakers = checkSpeakers(spec.speakers);
   if (spec.shots) report.checks.shots = checkShots(spec.shots, spec.banned);
   for (const [id, samples] of Object.entries(spec.tracks || {})) {
     const onion = path.join(out, `${id}.onion.svg`);

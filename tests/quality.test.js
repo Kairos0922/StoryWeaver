@@ -14,8 +14,17 @@ const fixture = fileURLToPath(new URL('./fixtures/sample-series/ep01', import.me
 
 async function copyFrom(src) {
   const dir = path.join(await fs.mkdtemp(path.join(os.tmpdir(), 'sw-q-')), 'ep01');
-  await fs.cp(src, dir, {recursive: true});
+  await fs.cp(src, dir, {recursive: true, preserveTimestamps: true});
   return dir;
+}
+
+// motion.json names the encoded mp4 it was measured from and must be newer than it.
+async function stampMeasuredMp4(dir) {
+  await fs.mkdir(path.join(dir, 'out', 'fixture'), {recursive: true});
+  await fs.writeFile(path.join(dir, 'out', 'fixture', 'fixture.mp4'), 'placeholder');
+  const spec = path.join(dir, 'qc', 'motion.json');
+  const later = new Date(Date.now() + 1000);
+  await fs.utimes(spec, later, later);
 }
 
 // The deterministic gate needs qc/determinism.json, which only the render pipeline writes.
@@ -24,6 +33,7 @@ function renderedFixture() {
   rendered ||= (async () => {
     const dir = await copyFrom(fixture);
     await renderEpisode(dir, {review: 'draft', cut: 'preview', reviewOnly: true, noVideo: true, until: 1.2, workers: 1});
+    await stampMeasuredMp4(dir);
     return dir;
   })();
   return rendered;
@@ -145,4 +155,13 @@ test('v1.1: whole_piece is required and agent-proof', async () => {
   assert.equal(r.find(x => x.id === 'whole_piece').ok, false);
   assert.equal(humanReviewErrors({quality_review: {...three, whole_piece: yes('Grok Bot')}}).find(x => x.id === 'whole_piece').ok, false);
   assert.ok(humanReviewErrors({quality_review: {...three, whole_piece: yes('Ana')}}).every(x => x.ok));
+});
+
+test('motion.json older than the final mp4 blocks quality', async () => {
+  const dir = await copyFixture();
+  const mp4 = path.join(dir, 'out', 'fixture', 'fixture.mp4');
+  const later = new Date(Date.now() + 5000);
+  await fs.utimes(mp4, later, later);
+  const g = (await runQuality(dir)).machine.find(x => x.id === 'motion_measured_from_final_mp4');
+  assert.equal(g.ok, false);
 });

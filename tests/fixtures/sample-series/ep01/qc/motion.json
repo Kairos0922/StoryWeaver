@@ -341,5 +341,8 @@
   "audio": {
     "silences": [],
     "allowed": []
-  }
+  },
+  "measured_from": "out/fixture",
+  "video": "fixture.mp4",
+  "speakers": []
 }

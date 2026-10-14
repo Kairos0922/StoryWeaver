@@ -925,7 +925,8 @@
     ctx.font = font(spec, 900, L.size ?? 72);
     const tw = ctx.measureText(L.text).width;
     const w = tw + 70, h = (L.size ?? 72) * 1.5;
-    ctx.globalAlpha *= 0.95 * Math.min(1, prog * 3);
+    // Invisible for the first fifth of the slam, then up within 0.1: a faint oversized first frame reads as a ghost.
+    ctx.globalAlpha *= 0.95 * clamp((prog - 0.2) / 0.1);
     if (L.paper) {
       rr(ctx, -w / 2, -h / 2, w, h, 14);
       ctx.fillStyle = col(spec, L.paper, p.white);

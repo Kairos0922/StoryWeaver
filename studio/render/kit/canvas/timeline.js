@@ -160,6 +160,17 @@
       if (!Array.isArray(L.seq.frames) || !L.seq.frames.length) throw new Error(`Empty seq.frames in ${where}`);
       out.seq = Object.assign({fps: 30, lerp: false, wrap: []}, L.seq, {at: at(L.seq.at ?? 'start', `${where}.seq`)});
       mark(out.seq.at, `${L.type} seq`);
+      // A playing sequence is visible change: mark each frame where the token count changes (things placed
+      // or removed) and one mark per second of playback while frames still differ.
+      const fr = out.seq.frames;
+      const sig = f => JSON.stringify(f);
+      let lastMark = out.seq.at;
+      for (let k = 1; k < fr.length; k++) {
+        const tk = out.seq.at + k / out.seq.fps;
+        const cnt = f => (Array.isArray(f.tokens) ? f.tokens.length : -1);
+        if (cnt(fr[k]) !== cnt(fr[k - 1])) { mark(tk, `${L.type} seq place`); lastMark = tk; }
+        else if (tk - lastMark >= 1 && sig(fr[k]) !== sig(fr[k - 1])) { mark(tk, `${L.type} seq play`); lastMark = tk; }
+      }
     }
     if (L.layers) out.layers = L.layers.map((c, j) => resolveLayer(c, at, mark, sfx, `${where}.layers[${j}]`));
     return out;

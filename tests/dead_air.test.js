@@ -27,3 +27,16 @@ test('parseSilences reads ffmpeg silencedetect output', () => {
   const err = '[silencedetect @ 0x1] silence_start: 4.5\n[silencedetect @ 0x1] silence_end: 7.25 | silence_duration: 2.75\n';
   assert.deepEqual(parseSilences(err), [{from_s: 4.5, to_s: 7.25}]);
 });
+
+import {checkSpeakers} from '../studio/qc/motion_qc.mjs';
+import {speakerWindows} from '../studio/qc/measure_motion.mjs';
+test('speaker must be on screen from the start of its line', () => {
+  const timing = {order: ['L1', 'L2'], lines: {L1: {speaker: '阿规', start: 1, end: 4}, L2: {speaker: '旁白', start: 5, end: 6}}};
+  const scene = enterAt => ({scenes: [{id: 's', start: 0, end: 7, layers: [{type: 'character', id: 'agui', enter: {at: enterAt}}]}]});
+  const late = checkSpeakers(speakerWindows(scene(3.9), timing, {agui: '阿规'}));
+  assert.equal(late.ok, false);
+  assert.equal(late.items[0].visible_from, 3.9);
+  assert.equal(checkSpeakers(speakerWindows(scene(1.1), timing, {agui: '阿规'})).ok, true);
+  const exits = {scenes: [{id: 's', start: 0, end: 7, layers: [{type: 'character', id: 'agui', enter: {at: 0}, exit: {at: 2}}]}]};
+  assert.equal(checkSpeakers(speakerWindows(exits, timing, {agui: '阿规'})).ok, false);
+});

@@ -98,6 +98,26 @@ export function audioSilences(video, {noiseDb = -45, minS = 0.5} = {}) {
   return parseSilences(r.stderr);
 }
 
+// For each narration line: when its speaker's character (scenes.json speakers: id -> name) is on screen,
+// taken from the resolved scene spec (enter/exit times on the real audio timeline).
+export function speakerWindows(resolved, timing, speakers = {}) {
+  const idOf = Object.fromEntries(Object.entries(speakers).map(([id, name]) => [name, id]));
+  return timing.order.map(lid => {
+    const l = timing.lines[lid];
+    const speaker_id = idOf[l.speaker] ?? null;
+    let from = null, to = null;
+    if (speaker_id) for (const s of resolved.scenes) {
+      for (const L of s.layers) {
+        if (L.type !== 'character' || L.id !== speaker_id) continue;
+        const a = Math.max(s.start, L.enter ? L.enter.at : s.start);
+        const b = Math.min(s.end, L.exit ? L.exit.at : s.end);
+        if (a <= l.end && b >= l.start) { from = from == null ? a : Math.min(from, a); to = to == null ? b : Math.max(to, b); }
+      }
+    }
+    return {id: lid, speaker: l.speaker, speaker_id, start: l.start, end: l.end, visible_from: from, visible_to: to};
+  });
+}
+
 export async function measureMotion(episodeDir, outDir) {
   const doc = JSON.parse(await fs.readFile(path.join(episodeDir, 'render', 'scenes.json'), 'utf8'));
   const tl = JSON.parse(await fs.readFile(path.join(outDir, 'timeline.json'), 'utf8'));
@@ -111,7 +131,11 @@ export async function measureMotion(episodeDir, outDir) {
     texts.push(subtitleText(id, l));
     contrast.push({id: `sub:${id}`, fg: spec.palette.white, bg: SUB_BG});
   }
-  const video = (await fs.readdir(outDir)).find(f => f.endsWith('.mp4'));
+  // Always measure the final encoded file: the newest .mp4 in the render output, and record which one.
+  const mp4s = (await fs.readdir(outDir)).filter(f => f.endsWith('.mp4'));
+  if (!mp4s.length) throw new Error(`no encoded .mp4 in ${outDir}`);
+  const stat = await Promise.all(mp4s.map(async f => [f, (await fs.stat(path.join(outDir, f))).mtimeMs]));
+  const video = stat.sort((a, b) => b[1] - a[1])[0][0];
   const r = spawnSync('ffmpeg', ['-v', 'error', '-i', path.join(outDir, video), '-vf', 'scale=320:-1,signalstats,metadata=print:key=lavfi.signalstats.YAVG:file=-', '-f', 'null', '-'], {encoding: 'utf8', maxBuffer: 1 << 28});
   const luminance = [...r.stdout.matchAll(/YAVG=([\d.]+)/g)].map(m => +(Number(m[1]) / 255).toFixed(4));
   const plan = JSON.parse(await fs.readFile(path.join(outDir, 'mix_plan.json'), 'utf8'));
@@ -129,7 +153,8 @@ export async function measureMotion(episodeDir, outDir) {
   const videoFile = path.join(outDir, video);
   const picture = {sample_fps: 4, diffs: pictureDiffs(videoFile, 4)};
   const audio = {silences: audioSilences(videoFile), allowed: (doc.silent_beats || []).map(b => ({from_s: b.from_s, to_s: b.to_s}))};
-  const motion = {fps, language: 'zh', picture, audio, measured_from: path.relative(episodeDir, outDir), texts, contrast, luminance, sfx: {events, peaks_s: peaks, stem: path.relative(episodeDir, stem)}, shots};
+  const speakers = speakerWindows(resolved, timing, doc.speakers || {});
+  const motion = {fps, language: 'zh', picture, audio, speakers, measured_from: path.relative(episodeDir, outDir), video: video, texts, contrast, luminance, sfx: {events, peaks_s: peaks, stem: path.relative(episodeDir, stem)}, shots};
   const file = path.join(episodeDir, 'qc', 'motion.json');
   await fs.mkdir(path.dirname(file), {recursive: true});
   await fs.writeFile(file, JSON.stringify(motion));
