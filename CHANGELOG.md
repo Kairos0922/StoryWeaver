@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+EP03 retro: each failure gets a gate in the tool, not a reminder.
+
+- `deliver <episode>` is the only publish package: publish encode (H.264 High@4.1, ≤30 MB, faststart, no soft subtitle track, clean decode), real-Chrome 1x playback + seeks, cover glyph-pixel contrast at 320 px, `manifest.json` + `SHA256SUMS`; rejects with no media when any check fails. Checkpoint `publish` requires it. Removed `studio/qc/delivery_check.mjs` (its cover check compared a declared color and passed EP03's unreadable title).
+- Script lint reads per-character speech rules (`characters.<id>.speech`, `dialogue`) from `series-style.json` and flags written register (parallel 没…没… clauses, 不是…而是, 你知道吗, 其实, 总结, 首先, 我们做个实验, over-long sentences per character, too many tidy lines). Lints script tables and draft line lists. TTS opens only via `openEpisodeTts` behind checkpoint `lines`.
+- Renderer enforces stage order (storyboard → stills → voice trial → full) with person approvals bound to file hashes (`qc/approvals.json`), `CAPS.md` render caps from a ledger, one heavy render per episode (PID lock, stale detection), and detached hook/full renders with logs (`render-status`). `ear_hook` no longer blocks stills (stills come first).
+- Capabilities: a brief or acceptance standard that promises 3D must declare `requires: blender-3d` and the doctor must have a passing recorded sample (`doctor --verify blender-3d`); QC item `capabilities` blocks every later stage.
+
 - Removed the in-frame `AI 生成` label and the `Not human-reviewed` draft watermark (kit HUD, compositor, review, preview, fixtures, docs). Draft vs release is recorded in `render_report.json` (`review.mode`, `review.file_suffix`) and draft files end in `_draft`. AI disclosure is now the publish checklist item: tick the platform AI-generated-content declaration on upload (China AIGC labeling rules).
 
 ## 0.16.0 — 2026-10-11

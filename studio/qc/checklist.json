@@ -175,7 +175,6 @@
       "id": "ear_hook",
       "gate": "3",
       "blocks": [
-        "stills",
         "render",
         "publish"
       ],

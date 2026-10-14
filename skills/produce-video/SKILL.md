@@ -94,13 +94,13 @@ Do not make a hook sample before `LINES_ALLOWED`.
 
 This CLI stops at checkpoints. It does not upload a video. A cloud agent with no keys writes `handoff.json` and stops. The machine that holds keys runs `node studio/cli.mjs resume <episode-dir>` and continues from the last intact stage.
 
-1. Record the first 3 hook lines. Run `predict-duration`. If the prediction exceeds the brief limit, revise the script. Do not record the rest yet.
-2. After `HOOK_SAMPLE_ALLOWED`, render about the first 12 seconds: `render --mode draft --cut hook`. A person listens. Sign `ear_hook` with a person’s name. Run a first-watch with someone who has not read the script. Sign `first_watch`.
-3. Draw four stills. A person looks, then signs `stills_four`, `beat_clock`, `no_idle`.
-4. Run `listen-pack`. It joins number lines, character names, and the vote into a phone file of at most 30 seconds, plus `qc/listen_pack.md`. ASR may add lines. An ASR score does not pass the pack.
-5. Run `doctor --episode <dir> --require-render`, then `render --mode draft --cut full`. Doctor checks font weights 400/500/900, WOFF2 tooling, glyph coverage of every on-screen character in every used face (optional library fonts from `font_display` / `font_body` included), Chromium, an ffmpeg loudnorm self-test, key presence (never the value), and scene expressions and gestures against the rig. The draft file ends in `_draft`; nothing marks the picture. Thumbnails and a contact sheet are written first.
-6. Run `node studio/cli.mjs quality <episode-dir>` (`docs/quality-standard.md`). Fix every machine gate. Exit 3 means only the four human questions remain; do not answer them.
-7. A person hears the listen pack and signs `qc/release.json` (`signed_by`, `signed_at`). They also answer `quality_review` (first 5 s hook, key stills, one-sentence takeaway, works as one whole piece). Agents cannot fill those fields. Only then: `render --mode release --cut full`.
+1. Stills: `stills <episode-dir>` (needs the approved brief, which holds the storyboard). A person looks and records `stills` in `qc/approvals.json` with the hash from `approval-hashes`; they also sign `stills_four`, `beat_clock`, `no_idle`. Changing a still voids the approval.
+2. Voice trial: record the first 3 hook lines (TTS goes through `openEpisodeTts`, which refuses while lint fails). Run `predict-duration`; if it exceeds the brief limit, revise the script. After `HOOK_SAMPLE_ALLOWED`, `render --mode draft --cut hook`. A person listens, records `voice_trial` (file + sha256) and signs `ear_hook`; first-watch with someone who has not read the script, then `first_watch`.
+3. Run `listen-pack`. It joins number lines, character names, and the vote into a phone file of at most 30 seconds, plus `qc/listen_pack.md`. ASR may add lines. An ASR score does not pass the pack.
+4. A person writes `CAPS.md` (`MAX_FULL_RENDERS`, `APPROVED: <name> <date>`). Run `doctor --episode <dir> --require-render`, then `render --mode draft --cut full`. It refuses without both approvals, beyond the cap, or while another render holds the lock; it runs detached and prints its log path. Follow it with `render-status`; never start another to "retry". The draft file ends in `_draft`; nothing marks the picture.
+5. Run `node studio/cli.mjs quality <episode-dir>` (`docs/quality-standard.md`). Fix every machine gate. Exit 3 means only the four human questions remain; do not answer them.
+6. A person hears the listen pack and signs `qc/release.json` (`signed_by`, `signed_at`) and `quality_review`. Agents cannot fill those fields. Only then: `render --mode release --cut full`.
+7. `deliver <episode-dir>`. It makes the publish encode, plays it in real Chrome end to end with seeks, checks the cover at 320 px on rendered glyph pixels, and writes `deliver/<stamp>/` with `manifest.json` and `SHA256SUMS`. If it prints `DELIVERY_REJECTED`, fix the cause (cover in the kit doc, not by hand) and run it again. Hand over only that folder, with each file's byte size and sha256.
 8. After `PUBLISH_ALLOWED`, hand publish copy to a person and remind them to tick the platform AI-generated-content declaration. They click publish. `git-sync` is a separate step for the push and the pull-request text. Retry it with `--retry` without rendering again.
 
 Picture: `studio/contracts/visual_contract.md`. Voice: `studio/contracts/voice_contract.md`. Pipeline: `studio/render/adapters/README.md`.
@@ -155,6 +155,8 @@ Changing the five beats, the aspect, or the duration is a new brief. Return to s
 - [ ] Render contract clean; motion QC passes
 - [ ] `quality` machine gates pass (`docs/quality-standard.md` v1)
 - [ ] A person answered the four review questions in `quality_review`
+- [ ] Stills and voice trial approved by a person before the full render; renders within `CAPS.md`
 - [ ] Draft rendered after doctor; release signed by a person
+- [ ] `deliver` printed `DELIVERABLE`; person got `deliver/<stamp>/` with bytes + sha256
 - [ ] Platform AI-generated-content declaration ticked on upload; person published
 - [ ] Metrics blank or sourced; cost copied from the render report or left blank

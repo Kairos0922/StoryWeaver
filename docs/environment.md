@@ -5,12 +5,23 @@
 ```bash
 npm install
 npx playwright install chromium
+npx playwright install chrome      # real Google Chrome: deliver plays the publish file in it
 pip install numpy fonttools
 # System tools (Debian/Ubuntu examples)
 sudo apt-get install -y ffmpeg fonts-noto-cjk fonts-noto-cjk-extra
 ```
 
 `node studio/cli.mjs doctor` checks Node ≥ 24, ffmpeg, ffprobe, Python 3, Chromium, Playwright, and whether TTS variables are set. `doctor --episode <dir> --require-render` also requires font weights 400, 500, and 900, a loudnorm self-test, and a scene file whose expressions and gestures exist on the character rig. It never prints a secret.
+
+Missing `font-weight-500` / `font-weight-900` (install `fonts-noto-cjk-extra`) blocks every render, and with it the render tests: fix the machine, not the tests.
+
+### Optional capabilities
+
+A brief may only promise what this machine has proved. `doctor` lists each capability as ready or not; `doctor --verify <id>` runs its sample and records the result in `~/.cache/storyweaver/capabilities/<id>.json` (`SW_CAPABILITY_DIR` overrides).
+
+| Capability | Install | Sample |
+|---|---|---|
+| `blender-3d` | Official Blender LTS Linux build from download.blender.org (verify its `.sha256`), unpacked under `/opt/blender/<version>`, `blender` on `PATH` or `BLENDER=/path/to/blender`. Runs headless (`-b`). | `studio/capabilities/blender_ring_sample.py`: 5 s ring road with 16 cars, 640×360, 8 samples, Cycles CPU by default (`--engine BLENDER_EEVEE` to test EEVEE). Re-run after upgrading Blender; a version mismatch marks it not ready. |
 
 ## Variables
 

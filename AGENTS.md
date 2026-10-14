@@ -35,7 +35,10 @@ StoryWeaver is a production toolkit for fact-checked animated explainer videos o
 - Do not invent playback metrics. A blank `post/metrics.md` is valid and blocks the next topic.
 - Do not publish, comment, or post on behalf of the user.
 - Do not sign a human checklist item, and do not fill `qc/release.json` (including `quality_review`). `checked_by` and `signed_by` values that look like an agent are rejected. Use `agent_precheck` for ASR or pace notes.
-- Do not write a one-off HTML renderer for one episode. Use the browser pipeline and the shared kit.
+- Do not write a one-off HTML renderer for one episode (covers included). Use the browser pipeline and the shared kit; the cover is `render/cover.json` or `scenes.json` `cover`.
+- Do not hand over a draft or a render from `out/` as final, and do not encode a publish file by hand. `deliver` is the only path; if it rejects, fix the cause and run it again.
+- Do not edit `CAPS.md`, `qc/approvals.json`, or the render ledger/lock to get past a refusal. Stop and report.
+- Do not promise a capability (e.g. 3D) in a brief or acceptance standard unless `doctor` shows it ready.
 - Do not add a character, color, font, or camera move to an episode that the series lock does not list. Do not edit a lock's `approval` fields.
 - Do not put secrets in files, prompts, or logs.
 
@@ -45,10 +48,11 @@ StoryWeaver is a production toolkit for fact-checked animated explainer videos o
 |---|---|---|
 | One thing + fact card | Confirm the claim set | Draft A/B/C |
 | Creative brief | Approve and hash-lock | Draft, then stop at `BRIEF_READY_FOR_REVIEW` |
-| Hook sample | Listen; first-watch with someone who has not read the script | Render ~12s in draft after lines are allowed |
-| Storyboard stills | Look at four frames | Draw stills from the kit |
-| Draft render | Listen to the phone pack | `render --mode draft` after doctor passes |
+| Storyboard stills | Look at the stills; record `stills` in `qc/approvals.json` | `stills` after brief approval; print `approval-hashes` |
+| Voice trial (hook sample) | Listen; record `voice_trial`; first-watch with someone who has not read the script | Render ~12s in draft after stills are approved |
+| Full draft render | Set `CAPS.md` (`MAX_FULL_RENDERS`, `APPROVED`); listen to the phone pack | `render --cut full` (detached) after both approvals; never start a second one, check `render-status` |
 | Release | Sign `qc/release.json` after seeing the draft | Never. Agents cannot fill `signed_by` |
+| Delivery | Download `deliver/<stamp>/`, compare bytes/sha256 | `deliver` only. Never hand out a file from `out/` |
 | Publish | Click publish; tick the platform AI-generated-content declaration | Hand over copy. `git-sync` is a separate retry |
 | Metrics review | Paste a real export or leave blanks | Never estimate |
 

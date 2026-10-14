@@ -42,15 +42,24 @@ Fill `fact_card.md` and `brief.md`. Run `checkpoint … brief` until you see `BR
 ```text
 One thing
   → Fact card (A sources / B numbers / C do-not-say)
-  → Creative brief (viewer intuition, five-beat story, storyboard)
-  → Human approval (hash-locked)
-  → Voice-over lint
-  → Hook recordings → duration prediction
-  → Draft render (`_draft` file, no in-frame mark) and a 30-second listen pack
+  → Creative brief (viewer intuition, five-beat story, storyboard, `requires:` capabilities)
+  → Human approval (hash-locked) = storyboard approval
+  → Voice-over lint (series per-character speech rules; blocks TTS)
+  → Stills → person approves (qc/approvals.json, bound to the files)
+  → Voice trial (hook recordings) → person approves → duration prediction
+  → Full render: detached, one at a time, counted against CAPS.md
   → Human release sign-off → release render
+  → `studio deliver` (the only publish package: encode, real-Chrome playback, cover at 320 px, sha256)
   → Human publish + platform AI-generated-content declaration
   → Metrics review (blank if the export is missing)
 ```
+
+What each gate exists to stop (EP03 retro):
+
+- **Delivery** is never "the render finished". `deliver` encodes the publish file (H.264 High@4.1, ≤30 MB, faststart, no soft subtitle track), plays it end to end and seeks it in real Google Chrome, measures the cover's glyph pixels at 320 px (a dark fill inside a dark outline fails), and writes `manifest.json` + `SHA256SUMS`. If anything fails there is no package. Hand over only `deliver/<stamp>/`, with its byte size and sha256 so a truncated download is caught.
+- **Script register.** `series-style.json` holds each character's age, identity, and speech (`characters.<id>.speech`, `dialogue`). Lint flags written register: tidy parallel clauses (没…，没…，只能…), 不是…而是, 你知道吗, 其实, 总结, 首先, sentences longer than that character speaks, and too many tidy lines overall. TTS opens only through `openEpisodeTts`, behind checkpoint `lines`.
+- **Spend.** Stills need the approved brief; a hook render needs approved stills; a full render needs approved stills and voice trial. `CAPS.md` (`MAX_FULL_RENDERS`, `APPROVED: <person> <date>`) is enforced by the renderer from `state/full_renders.jsonl`; raising it needs a new approval line. `state/render.lock` allows one hook/full render per episode (a dead PID is stale). Hook/full renders run detached and log to `out/logs/`; check with `render-status`.
+- **Promises.** A brief or `acceptance.md` that mentions 3D/Blender must declare `requires: blender-3d`, and that capability must have a passing sample recorded by `doctor --verify blender-3d`. Otherwise the brief stage fails before any work.
 
 Topic approval is not brief approval. Changing aspect, duration, or the five-beat structure voids the brief and sends the episode back.
 
@@ -70,11 +79,17 @@ node studio/cli.mjs handoff <episode-dir>
 node studio/cli.mjs resume <episode-dir>
 node studio/cli.mjs predict-duration <episode-dir>
 node studio/cli.mjs listen-pack <episode-dir>
-node studio/cli.mjs render <episode-dir> --mode draft|release [--cut preview|hook|full]
+node studio/cli.mjs doctor --verify blender-3d          # record a capability sample
+node studio/cli.mjs stills <episode-dir>
+node studio/cli.mjs approval-hashes <episode-dir> [--voice <file>]
+node studio/cli.mjs render <episode-dir> --mode draft|release [--cut preview|hook|full] [--foreground]
+node studio/cli.mjs render-status <episode-dir>
+node studio/cli.mjs cover-check <episode-dir>
+node studio/cli.mjs deliver <episode-dir>
 node studio/cli.mjs git-sync <episode-dir>
 ```
 
-Exit codes: 0 pass or ready for review; 1 incomplete; 2 brief missing or stale.
+Exit codes: 0 pass or ready for review; 1 incomplete or refused (stage order, caps, lock, delivery check); 2 brief missing or stale; 3 human review pending or a render is running (`render-status`).
 
 ## Layout
 
