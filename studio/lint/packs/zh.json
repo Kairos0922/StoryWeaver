@@ -1,17 +1,115 @@
 {
   "language": "zh",
-  "speakers": ["等等", "阿规", "嘀嗒", "旁白", "Narrator"],
+  "speakers": [
+    "等等",
+    "阿规",
+    "嘀嗒",
+    "旁白",
+    "Narrator"
+  ],
   "forbidden": [
-    {"id": "meta-plain-speech", "pattern": "说人话", "severity": "error", "message": "Meta-narration. State the conflict; do not announce that you will speak plainly."},
-    {"id": "meta-simply", "pattern": "简单来说", "severity": "error", "message": "Scaffold transition."},
-    {"id": "meta-in-other-words", "pattern": "换句话说", "severity": "error", "message": "Scaffold transition."},
-    {"id": "scaffold-remember", "pattern": "记住一件事", "severity": "error", "message": "Summary scaffold. Put the list on screen; keep one principle in the voice."},
-    {"id": "scaffold-so-dash", "pattern": "所以(?:—|–|―|－|-){1,3}", "regex": true, "severity": "error", "message": "“所以——” is a slide transition, not speech."},
-    {"id": "scaffold-worth", "pattern": "值得一提", "severity": "error", "message": "Scaffold cliché."},
-    {"id": "scaffold-have-you", "pattern": "你有没有想过", "severity": "error", "message": "Explainer-open cliché."},
-    {"id": "scaffold-let-us", "pattern": "让我们", "severity": "error", "message": "Explainer-open cliché."},
-    {"id": "scaffold-in-sum", "pattern": "总而言之", "severity": "error", "message": "Wrap-up cliché."},
-    {"id": "scaffold-not-only", "pattern": "不仅[^。！？!?]{0,40}更", "regex": true, "severity": "error", "message": "“不仅…更…” is canned parallelism."}
+    {
+      "id": "meta-plain-speech",
+      "pattern": "说人话",
+      "severity": "error",
+      "message": "Meta-narration. State the conflict; do not announce that you will speak plainly."
+    },
+    {
+      "id": "meta-simply",
+      "pattern": "简单来说",
+      "severity": "error",
+      "message": "Scaffold transition."
+    },
+    {
+      "id": "meta-in-other-words",
+      "pattern": "换句话说",
+      "severity": "error",
+      "message": "Scaffold transition."
+    },
+    {
+      "id": "scaffold-remember",
+      "pattern": "记住一件事",
+      "severity": "error",
+      "message": "Summary scaffold. Put the list on screen; keep one principle in the voice."
+    },
+    {
+      "id": "scaffold-so-dash",
+      "pattern": "所以(?:—|–|―|－|-){1,3}",
+      "regex": true,
+      "severity": "error",
+      "message": "“所以——” is a slide transition, not speech."
+    },
+    {
+      "id": "scaffold-worth",
+      "pattern": "值得一提",
+      "severity": "error",
+      "message": "Scaffold cliché."
+    },
+    {
+      "id": "scaffold-have-you",
+      "pattern": "你有没有想过",
+      "severity": "error",
+      "message": "Explainer-open cliché."
+    },
+    {
+      "id": "scaffold-let-us",
+      "pattern": "让我们",
+      "severity": "error",
+      "message": "Explainer-open cliché."
+    },
+    {
+      "id": "scaffold-in-sum",
+      "pattern": "总而言之",
+      "severity": "error",
+      "message": "Wrap-up cliché."
+    },
+    {
+      "id": "scaffold-not-only",
+      "pattern": "不仅[^。！？!?]{0,40}更",
+      "regex": true,
+      "severity": "error",
+      "message": "“不仅…更…” is canned parallelism."
+    },
+    {
+      "id": "register-not-but",
+      "pattern": "不是[^。！？!?]{1,20}而是",
+      "regex": true,
+      "severity": "error",
+      "message": "“不是…而是…” is written argument, not how kids talk. Say the one true thing."
+    },
+    {
+      "id": "register-you-know",
+      "pattern": "你知道吗",
+      "severity": "error",
+      "message": "Explainer hook. Let a character react instead."
+    },
+    {
+      "id": "register-actually",
+      "pattern": "其实",
+      "severity": "error",
+      "message": "“其实” is lecture register. Cut it or turn it into a reaction (诶？/不对不对)."
+    },
+    {
+      "id": "register-summary",
+      "pattern": "(总结|总的来说|综上)",
+      "regex": true,
+      "severity": "error",
+      "message": "Summary scaffold. End on a character's line, not a recap."
+    },
+    {
+      "id": "register-firstly",
+      "pattern": "(首先|其次|最后一点)",
+      "regex": true,
+      "severity": "error",
+      "message": "Ordered-list speech. Put steps on screen."
+    },
+    {
+      "id": "register-we-experiment",
+      "pattern": "我们(来)?(做个|做一个)实验",
+      "regex": true,
+      "severity": "error",
+      "message": "Host register. A kid says 要不咱试试？"
+    }
   ],
   "oral_ordinal": {
     "id": "oral-ordinal",
@@ -38,7 +136,18 @@
     "severity": "warning",
     "message": "Sentence is longer than 40 characters. One beat, one number; split it."
   },
-  "five_beats": ["Hook", "Break the assumption", "Mechanism", "Payoff", "Audience stance", "钩子", "打碎常识", "内幕", "真相", "评论站队"],
+  "five_beats": [
+    "Hook",
+    "Break the assumption",
+    "Mechanism",
+    "Payoff",
+    "Audience stance",
+    "钩子",
+    "打碎常识",
+    "内幕",
+    "真相",
+    "评论站队"
+  ],
   "five_beat_severity": "warning",
   "pace": {
     "id": "pace",
@@ -64,5 +173,13 @@
     "window_s": 10,
     "max_new_terms": 1,
     "severity": "warning"
-  }
+  },
+  "parallel_clauses": {
+    "id": "parallel-clauses",
+    "lead": "没|不|无|没有",
+    "max_clause_chars": 8,
+    "severity": "error",
+    "message": "Tidy parallel clauses (没…，没…，只能…) read as written copy. Break the rhythm: one item, interrupt, or react."
+  },
+  "oral_markers": "[啊呀吧呢嘛呗哦哇诶欸哈嗯切咋啥喽啦呃哎咦嘿哟滴]|……|——|？？|！！|(.{1,2})\\1|个头"
 }

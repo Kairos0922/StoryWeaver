@@ -1,7 +1,7 @@
 /**
  * TTS adapter contract.
  *
- *   const tts = await loadAdapter(process.env.TTS_PROVIDER || 'dry-run');
+ *   const tts = await openEpisodeTts(episodeDir);   // refuses unless checkpoint `lines` is open
  *   await tts.synthesize({ text, voice, emotion, speechRate, cacheDir, outFile });
  *
  * Adapters read secrets from the environment only. They must not log those values.
@@ -35,6 +35,18 @@ export async function loadAdapter(name = 'dry-run') {
   }
   const mod = await import(`./adapters/${provider}.mjs`);
   return mod.createAdapter();
+}
+
+// The only entry point for synthesizing an episode's lines. Voice costs money and locks in the
+// words, so the `lines` checkpoint (approved brief + script lint, including the series' per-character
+// speech rules) must be open first. A bookish script stops here, before any TTS call.
+export async function openEpisodeTts(episodeDir, name = process.env.TTS_PROVIDER || 'dry-run') {
+  const {evaluateCheckpoint, formatCheckpoint} = await import('../checkpoint.mjs');
+  const gate = await evaluateCheckpoint(episodeDir, 'lines');
+  if (gate.exitCode !== 0) {
+    throw Object.assign(new Error(`TTS blocked: checkpoint lines is not open\n${formatCheckpoint(gate)}`), {code: 'TTS_BLOCKED'});
+  }
+  return loadAdapter(name);
 }
 
 export function missingSecrets(provider) {

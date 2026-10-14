@@ -1,0 +1,61 @@
+{
+ "schema": "storyweaver.series_style.v1",
+ "series": "register-fixture",
+ "note": "Speech rules copied from invisible-rules series-style.json for lint tests.",
+ "characters": {
+  "agui": {
+   "name": "阿规",
+   "speech": {
+    "register": "松弛、爱逗人、冷幽默；说话照样随意，一句只讲一个点",
+    "max_sentence_chars": 20,
+    "sounds_like": [
+     "挨太近了呗。",
+     "诶，要不咱试试？",
+     "嗯哼。下回堵车你自己瞅瞅。"
+    ],
+    "never": [
+     "老师/主持人腔（我们做个实验、让我们…）",
+     "一口气讲完因果链"
+    ]
+   }
+  },
+  "dengdeng": {
+   "name": "等等",
+   "speech": {
+    "register": "咋咋呼呼的12岁孩子：抢话、说半截、叠词、口头禅，急了就喊",
+    "max_sentence_chars": 16,
+    "sounds_like": [
+     "啊——又堵！",
+     "畅通个头啊！",
+     "诶？诶诶？它在往后挪？？"
+    ],
+    "never": [
+     "讲解腔、总结句",
+     "整齐的排比"
+    ]
+   }
+  },
+  "dida": {
+   "name": "嘀嗒",
+   "speech": {
+    "register": "有点欠、爱抢着报数、插嘴补刀；一句最多一个数",
+    "max_sentence_chars": 20,
+    "sounds_like": [
+     "滴！前方畅通。",
+     "两秒。他就踩了两秒。",
+     "零。"
+    ],
+    "never": [
+     "一句里堆两个以上数字",
+     "播音腔长句"
+    ]
+   }
+  }
+ },
+ "dialogue": {
+  "note": "Speech rules read by StoryWeaver lint-script (blocks before TTS). Calibrated on EP03: v1 89% tidy lines, v2 62%, v3 (accepted) 23%.",
+  "register": "kids_chat",
+  "max_tidy_line_ratio": 0.4,
+  "tidy_min_chars": 8
+ }
+}
