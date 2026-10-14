@@ -5,6 +5,7 @@ import {fileExists} from './qc/checks.mjs';
 import {runQc} from './qc/run_qc.mjs';
 import {checkStyleLock} from './qc/checks.mjs';
 import {evaluateTechniques} from './techniques.mjs';
+import {episodeCapabilityIssues} from './capabilities.mjs';
 
 export const STAGES = ['brief', 'lines', 'hook-sample', 'stills', 'render', 'publish'];
 
@@ -71,6 +72,8 @@ export async function evaluateCheckpoint(episodeDir, stage) {
     for (const r of techniques.results) if (!r.ok) extra.push({id: r.id, detail: `${r.technique}: ${r.evidence}`});
     const style = await checkStyleLock(episodeDir);
     if (!style.ok) extra.push({id: 'style_lock', detail: style.evidence});
+    // Promise only what this machine has proved (doctor capability record), before any work starts.
+    extra.push(...await episodeCapabilityIssues(episodeDir));
     if (extra.length) {
       return {code: 'BRIEF_INCOMPLETE', exitCode: 1, blockers: [], issues: [...state.structure.issues, ...extra], hash: state.hash, status: state.status};
     }

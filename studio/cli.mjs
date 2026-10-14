@@ -10,6 +10,7 @@ import {briefBodyHash} from './brief.mjs';
 import {checkEpisodeStyle, formatStyle} from './style/style_lock.mjs';
 import {checkLayout} from './layout.mjs';
 import {formatDoctor, runDoctor} from './doctor.mjs';
+import {verifyCapability} from './capabilities.mjs';
 import {formatPace, paceEpisode} from './pace.mjs';
 import {budgetStatus} from './budget.mjs';
 import {createHandoff, formatHandoff} from './handoff.mjs';
@@ -66,6 +67,7 @@ const help = `StoryWeaver
   node studio/cli.mjs init-episode <series-dir> <epNN>
   node studio/cli.mjs layout
   node studio/cli.mjs doctor [--episode <dir>] [--require-render]
+  node studio/cli.mjs doctor --verify <capability>   run and record a capability sample (blender-3d)
   node studio/cli.mjs pace <episode-dir>
   node studio/cli.mjs handoff <episode-dir>
   node studio/cli.mjs resume <episode-dir>
@@ -165,6 +167,11 @@ async function main() {
     const report = await checkLayout();
     emit(report, report.ok ? 'LAYOUT_OK' : `LAYOUT_MISSING\n${report.missing.join('\n')}`);
     return report.ok ? 0 : 1;
+  }
+  if (cmd === 'doctor' && opts.verify) {
+    const result = await verifyCapability(String(opts.verify), opts.engine ? {engine: String(opts.engine)} : undefined);
+    emit(result, `${result.ok ? 'CAPABILITY_VERIFIED' : 'CAPABILITY_FAILED'} ${result.id}\n${result.detail}`);
+    return result.ok ? 0 : 1;
   }
   if (cmd === 'doctor') {
     const report = await runDoctor({

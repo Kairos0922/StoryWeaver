@@ -6,6 +6,7 @@ import {episodeGlyphCheck} from './render/kit/canvas/runtime.mjs';
 import {FETCH_HINT, libraryDir, loadLibrary} from './render/kit/fonts/library.mjs';
 import {parseLoudnormJson} from './render/browser/loudnorm.mjs';
 import {validateEpisodeScenes} from './render/browser/validate_scene.mjs';
+import {CAPABILITIES, capabilityStatus, episodeCapabilityIssues} from './capabilities.mjs';
 import {episodeFilesInShotDir, isShotFixture, readShotFile, validateShotFixture} from './render/browser/validate_shot.mjs';
 
 const KEYS = [
@@ -103,7 +104,13 @@ export async function runDoctor({episodeDir, forRender = false} = {}) {
     playwright = false;
   }
   checks.push({id: 'playwright', ok: playwright, detail: playwright ? 'installed' : 'missing'});
+  for (const id of Object.keys(CAPABILITIES)) {
+    const status = await capabilityStatus(id);
+    checks.push({id: `capability:${id}`, ok: true, optional: true, ready: status.ok, detail: `${status.ok ? 'ready' : 'not ready'}: ${status.detail}`});
+  }
   if (episodeDir) {
+    const capIssues = await episodeCapabilityIssues(episodeDir);
+    checks.push({id: 'episode-capabilities', ok: capIssues.length === 0, detail: capIssues.length ? capIssues.map(i => i.detail).join('; ') : 'every promised capability is declared and verified'});
     const scenes = await validateEpisodeScenes(episodeDir);
     checks.push({
       id: 'scene-rig',
@@ -134,7 +141,7 @@ export async function runDoctor({episodeDir, forRender = false} = {}) {
     'loudnorm-self-test',
     'playwright',
   ];
-  if (episodeDir) renderIds.push('scene-rig', 'glyph-coverage');
+  if (episodeDir) renderIds.push('scene-rig', 'glyph-coverage', 'episode-capabilities');
   if (checks.some(check => check.id === 'shot-fixture')) renderIds.push('shot-fixture');
   const ok = baseIds.every(id => checks.find(check => check.id === id)?.ok);
   const renderOk = renderIds.every(id => checks.find(check => check.id === id)?.ok);
