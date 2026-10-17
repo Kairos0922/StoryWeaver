@@ -35,6 +35,7 @@ import {fileExists} from './qc/checks.mjs';
 import {formatSeriesNext, formatSeriesStatus, seriesNext, seriesStatus} from './series/status.mjs';
 import {formatSeriesAudit, seriesAudit} from './series/audit.mjs';
 import {formatSeriesDeliver, seriesDeliver} from './series/deliver.mjs';
+import {checkFactCheck, formatFactCheck} from './fact_check.mjs';
 
 const args = process.argv.slice(2);
 
@@ -69,6 +70,7 @@ function emit(payload, text) {
 const help = `StoryWeaver
 
   node studio/cli.mjs lint-script <script.md|lines.json>
+  node studio/cli.mjs fact-check <episode-dir>       claim ledger + human sign-off (blocks TTS)
   node studio/cli.mjs qc <episode-dir>
   node studio/cli.mjs quality <episode-dir>
   node studio/cli.mjs render-contract
@@ -149,6 +151,13 @@ async function main() {
     if (!dir) throw new Error('style needs an episode directory');
     const report = await checkEpisodeStyle(path.resolve(dir));
     emit(report, formatStyle(report));
+    return report.ok ? 0 : 1;
+  }
+  if (cmd === 'fact-check') {
+    const dir = positional[0];
+    if (!dir) throw new Error('fact-check needs an episode directory');
+    const report = await checkFactCheck(path.resolve(dir));
+    emit(report, formatFactCheck(report));
     return report.ok ? 0 : 1;
   }
   if (cmd === 'qc') {

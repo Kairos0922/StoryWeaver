@@ -1,0 +1,12 @@
+{
+  "schema": "storyweaver.fact_check.v1",
+  "episode": "{{episode}}",
+  "script_sha256": "",
+  "lines_sha256": "",
+  "review": {
+    "by": "",
+    "at": "",
+    "statement": "I checked every claim against the cited source. No unsupported claim remains. Visual analogies are labeled."
+  },
+  "claims": []
+}

@@ -8,8 +8,10 @@ The core never imports a vendor SDK for speech. Rendering is not an adapter choi
 
 | Provider | Variables |
 |---|---|
-| Doubao / Volcengine | `VOLC_TTS_APP_ID`, `VOLC_TTS_ACCESS_TOKEN` (optional `VOLC_TTS_API_KEY`) |
+| Doubao / Volcengine V3 | `VOLC_TTS_API_KEY` (or `DOUBAO_TTS_API_KEY`), or legacy `VOLC_TTS_APP_ID` + `VOLC_TTS_ACCESS_TOKEN`; optional `DOUBAO_TTS_SPEAKER`, `DOUBAO_TTS_ENDPOINT` |
 | Dry run | none |
+
+The Doubao adapter calls `https://openspeech.bytedance.com/api/v3/tts/unidirectional` (it retries `/sse` on 404/405) with `X-Api-Resource-Id: seed-tts-2.0`. A 2.0 speaker must end in `_uranus_bigtts`. See `docs/fact-check.md` for the claim gate that opens before TTS.
 
 Rules every provider must keep:
 
@@ -19,8 +21,6 @@ Rules every provider must keep:
 - Split caption `text` from spoken `tts_text`.
 - Refuse a full batch until the hook sample has a human ear pass.
 - Append `audio/usage.jsonl` with `chars` and `retake`, never the secret.
-
-The Doubao file is a contract. It fails closed if keys are missing. A job you own can replace `synthesize()` with the real HTTP call without changing episode files.
 
 Cloud agents without keys stop at a silent draft preview. The machine that holds keys runs TTS, then the rest of the cut, from `handoff.json`.
 

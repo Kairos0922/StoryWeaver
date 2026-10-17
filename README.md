@@ -70,6 +70,7 @@ Topic approval is not brief approval. Changing aspect, duration, or the five-bea
 
 ```bash
 node studio/cli.mjs lint-script <script.md|lines.json>
+node studio/cli.mjs fact-check <episode-dir>   claim ledger + human sign-off; blocks TTS
 node studio/cli.mjs qc <episode-dir>
 node studio/cli.mjs checkpoint <episode-dir> <brief|lines|hook-sample|stills|render|publish>
 node studio/cli.mjs hash-brief <brief.md>

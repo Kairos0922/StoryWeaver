@@ -1,0 +1,28 @@
+{
+  "schema": "storyweaver.fact_check.v1",
+  "episode": "ep01",
+  "script_sha256": "6f52a4d1b33db545d0f89157ef3082213497b22956efde1d15aa6f8d8369d916",
+  "lines_sha256": "2545bbeab7c849bdb7bc1824932b40d34c8fc1ddd7cc71d60be0f9b22e312079",
+  "review": {
+    "by": "Fixture Reviewer",
+    "at": "2026-10-10",
+    "statement": "CI fixture. Not a production fact check; it exercises the gate only."
+  },
+  "claims": [
+    {
+      "id": "F1",
+      "claim": "On average the group waits two minutes less when one color finishes first.",
+      "kind": "fact",
+      "line_ids": [
+        "L02"
+      ],
+      "source": {
+        "type": "primary",
+        "title": "Fixture fact card B1",
+        "citation": "tests/fixtures/sample-series/ep01/fact_card.md B1 (CI fixture)"
+      },
+      "status": "verified",
+      "note": "CI fixture; no real-world claim."
+    }
+  ]
+}

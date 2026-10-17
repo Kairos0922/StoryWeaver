@@ -32,7 +32,10 @@ See `.env.example`. None of these belong in git, in a prompt, or in a cloud-agen
 | `TTS_PROVIDER` | `doubao` or `dry-run` |
 | `VOLC_TTS_APP_ID` | Doubao application id |
 | `VOLC_TTS_ACCESS_TOKEN` | Doubao access token |
-| `VOLC_TTS_API_KEY` | Alternate Doubao key name some consoles use |
+| `VOLC_TTS_API_KEY` | New-console API key (`X-Api-Key`); preferred when set |
+| `DOUBAO_TTS_API_KEY` | Alias for the same API key |
+| `DOUBAO_TTS_SPEAKER` | Optional seed-tts-2.0 speaker; default `zh_female_xiaohe_uranus_bigtts` |
+| `DOUBAO_TTS_ENDPOINT` | Optional endpoint override; default `https://openspeech.bytedance.com/api/v3/tts/unidirectional` |
 | `CHROME` | Path to Chrome if Playwright’s Chromium is missing |
 | `SW_FONT_400`, `SW_FONT_500`, `SW_FONT_900` | Override font files. TTC files may need `SW_FONT_<w>_INDEX` |
 

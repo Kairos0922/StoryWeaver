@@ -46,6 +46,14 @@ export async function openEpisodeTts(episodeDir, name = process.env.TTS_PROVIDER
   if (gate.exitCode !== 0) {
     throw Object.assign(new Error(`TTS blocked: checkpoint lines is not open\n${formatCheckpoint(gate)}`), {code: 'TTS_BLOCKED'});
   }
+  const {checkFactCheck, formatFactCheck} = await import('../fact_check.mjs');
+  const fact = await checkFactCheck(episodeDir);
+  if (!fact.ok) {
+    throw Object.assign(new Error(`TTS blocked: fact check is not signed\n${formatFactCheck(fact)}`), {
+      code: 'FACT_CHECK_BLOCKED',
+      report: fact,
+    });
+  }
   return loadAdapter(name);
 }
 
