@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {previousMetricsBlock, fileExists} from './qc/checks.mjs';
+import {markEpisodeStarted, readCollection, slotFor, validateCollection} from './collection.mjs';
 import {isInsideToolRepo} from './init_series.mjs';
 
 const studioRoot = fileURLToPath(new URL('.', import.meta.url));
@@ -36,6 +37,21 @@ export async function initEpisode(seriesDir, episodeId) {
   if (!(await fileExists(seriesDir))) {
     throw Object.assign(new Error(`Series directory does not exist: ${seriesDir}. Run init-series first.`), {code: 'BAD_SERIES'});
   }
+  const collection = await readCollection(seriesDir);
+  if (collection) {
+    const plan = validateCollection(collection);
+    if (!plan.ok) {
+      throw Object.assign(new Error(`collection.json is invalid: ${plan.issues.join('; ')}`), {
+        code: 'COLLECTION_INVALID',
+        issues: plan.issues,
+      });
+    }
+    if (!slotFor(collection, episodeId)) {
+      throw Object.assign(new Error(
+        `${episodeId} is not in collection.json (${collection.episodes.length} slots). A collection is fixed; do not add another episode.`,
+      ), {code: 'COLLECTION_FULL', count: collection.episodes.length});
+    }
+  }
   const previous = await previousMetricsBlock(seriesDir, episodeId);
   if (previous.code === 'METRICS_REQUIRED') {
     throw Object.assign(new Error(
@@ -53,5 +69,6 @@ export async function initEpisode(seriesDir, episodeId) {
     await fs.mkdir(path.dirname(out), {recursive: true});
     await fs.writeFile(out, fill(raw, vars));
   }
+  if (collection) await markEpisodeStarted(seriesDir, episodeId);
   return {episodeDir: dest, previous: previous.code};
 }

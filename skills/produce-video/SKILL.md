@@ -34,6 +34,15 @@ node studio/cli.mjs init-episode <series-dir> epNN
 
 `METRICS_REQUIRED` means the previous episode has no sourced playback numbers. Do not invent them. A blank sheet blocks the next episode.
 
+A series may also have a fixed-size `collection.json` (default 10 slots; `docs/series-workflow.md`). Read it before creating an episode:
+
+```bash
+node studio/cli.mjs series status <series-dir>
+node studio/cli.mjs series next <series-dir>
+```
+
+Do not create an episode outside the plan (`COLLECTION_FULL`) and do not bypass the previous episode's metrics gate. After the first episode is approved, a person runs `series lock --from ep01` (or reviews the draft it writes) and fills the lock/character approvals; an agent never fills them.
+
 ## 1. One thing and fact card
 
 Edit `fact_card.md`.

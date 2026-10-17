@@ -12,6 +12,8 @@ It is not tied to one series, one language, or one model vendor. Drop the reposi
 - Per-language voice-over lint (AI-flavored phrasing, list-reading, sentence length). The episode language selects the pack.
 - Speech-rate caps and a required pause after a key number.
 - One browser render pipeline. DOM/SVG, GSAP seek, Lucide, sparse Lottie, Three.js on demand, then a WebGL post pass. Remotion, Motion, and Rive are inspirations, not dependencies. A TTS provider interface for Doubao or a dry run. No secrets in the repo.
+- A fixed-size collection plan (`collection.json`, default 10 slots) with `series status/next`; episode folders are still created one at a time after the previous episode's sourced metrics.
+- A v2 series lock that a first episode can seed (`series lock --from ep01`): visual keys, rig hash, voice identity, and the slots for intro/outro, music, mix, cover and glossary. A person approves the lock; an agent never fills its approval.
 - Commands that create a series workspace outside this repository.
 
 ## Quick start
@@ -70,7 +72,12 @@ node studio/cli.mjs lint-script <script.md|lines.json>
 node studio/cli.mjs qc <episode-dir>
 node studio/cli.mjs checkpoint <episode-dir> <brief|lines|hook-sample|stills|render|publish>
 node studio/cli.mjs hash-brief <brief.md>
-node studio/cli.mjs init-series <dir>
+node studio/cli.mjs init-series <dir> [--collection --episodes 10]
+node studio/cli.mjs series plan <series-dir> --episodes 10
+node studio/cli.mjs series status <series-dir>
+node studio/cli.mjs series next <series-dir>
+node studio/cli.mjs series lock <series-dir> --from ep01
+node studio/cli.mjs series lock <series-dir> --check
 node studio/cli.mjs init-episode <series-dir> <epNN>
 node studio/cli.mjs pace <episode-dir>
 node studio/cli.mjs layout
@@ -89,7 +96,7 @@ node studio/cli.mjs deliver <episode-dir>
 node studio/cli.mjs git-sync <episode-dir>
 ```
 
-Exit codes: 0 pass or ready for review; 1 incomplete or refused (stage order, caps, lock, delivery check); 2 brief missing or stale; 3 human review pending or a render is running (`render-status`).
+Exit codes: 0 pass or ready for review; 1 incomplete or refused (stage order, caps, lock, delivery check); 2 brief missing or stale; 3 human review pending, a render is running (`render-status`), or the next collection slot is blocked by the previous metrics sheet (`series next`).
 
 ## Layout
 

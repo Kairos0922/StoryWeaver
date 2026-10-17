@@ -3,6 +3,7 @@
 // Schema and rules: docs/style-lock.md
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import {createHash} from 'node:crypto';
 import {isAgentSigner, parseFrontMatter} from '../brief.mjs';
 
 async function fileExists(file) {
@@ -15,6 +16,7 @@ async function fileExists(file) {
 }
 
 export const SCHEMA = 'storyweaver.series_style.v1';
+export const SCHEMA_V2 = 'storyweaver.series_style.v2';
 export const LOCK_FILE = 'series-style.json';
 export const LOCKED_KEYS = ['palette', 'fonts', 'characters', 'camera', 'line', 'motion'];
 const TRANSITIONS = new Set(['push', 'whip', 'wipe', 'zoom', 'iris', 'cut', 'dissolve', 'fade', 'slide', 'spin']);
@@ -27,9 +29,8 @@ export async function findStyleLock(episodeDir) {
   return {file, lock: JSON.parse(await fs.readFile(file, 'utf8'))};
 }
 
-export function validateLock(lock) {
+function validateLockedShape(lock) {
   const issues = [];
-  if (lock?.schema !== SCHEMA) issues.push(`schema must be ${SCHEMA}`);
   for (const key of LOCKED_KEYS) if (!lock?.[key]) issues.push(`missing ${key}`);
   for (const [id, ch] of Object.entries(lock?.characters || {})) {
     const by = String(ch?.approval?.by || '').trim();
@@ -37,6 +38,65 @@ export function validateLock(lock) {
       issues.push(`character ${id} has no human series approval (approval.by / approval.at)`);
     }
   }
+  return issues;
+}
+
+function isSha256(value) {
+  return typeof value === 'string' && /^[0-9a-f]{64}$/.test(value);
+}
+
+function humanApproval(value) {
+  const by = String(value?.by || '').trim();
+  return Boolean(by) && !isAgentSigner(by) && /\d{4}-\d{2}-\d{2}/.test(String(value?.at || ''));
+}
+
+// v1 checks the six visual keys. v2 keeps those keys at the top level and adds the
+// series-level sections that make 10 episodes feel like one collection: rig, voice,
+// open/close, music/mix, cover, glossary. The new sections are optional here so an
+// episode can start before the intro/outro assets exist; series audit (week 2) will
+// require them for a collection package.
+export function validateLock(lock) {
+  if (lock?.schema === SCHEMA_V2) return validateLockV2(lock);
+  const issues = [];
+  if (lock?.schema !== SCHEMA) issues.push(`schema must be ${SCHEMA}`);
+  issues.push(...validateLockedShape(lock));
+  return issues;
+}
+
+export function validateLockV2(lock) {
+  const issues = [];
+  if (lock?.schema !== SCHEMA_V2) issues.push(`schema must be ${SCHEMA_V2}`);
+  issues.push(...validateLockedShape(lock));
+  if (!humanApproval(lock?.approval)) issues.push('lock has no human approval (approval.by / approval.at)');
+  if (!isSha256(lock?.rig?.sha256)) issues.push('rig.sha256 must be a sha256 hex digest');
+  const voice = lock?.voice || {};
+  if (!String(voice.provider || '').trim()) issues.push('missing voice.provider');
+  if (!String(voice.voice_id || '').trim()) issues.push('missing voice.voice_id');
+  if (typeof voice.speech_rate !== 'number') issues.push('voice.speech_rate must be a number');
+  if (lock?.open) {
+    if (!['fixed', 'template', 'hybrid'].includes(lock.open.mode)) issues.push('open.mode must be fixed/template/hybrid');
+    if (typeof lock.open.duration_s !== 'number' || lock.open.duration_s <= 0) issues.push('open.duration_s must be a positive number');
+  }
+  if (lock?.close) {
+    if (!['fixed', 'template'].includes(lock.close.mode)) issues.push('close.mode must be fixed/template');
+    if (typeof lock.close.duration_s !== 'number' || lock.close.duration_s <= 0) issues.push('close.duration_s must be a positive number');
+  }
+  if (lock?.music) {
+    if (!String(lock.music.theme || '').trim()) issues.push('missing music.theme');
+    if (!['self-synthesized', 'licensed', 'none'].includes(String(lock.music.license || '').trim())) {
+      issues.push('music.license must be self-synthesized/licensed/none');
+    }
+  }
+  if (lock?.mix) {
+    for (const key of ['target_lufs', 'true_peak_db', 'lra']) {
+      if (typeof lock.mix[key] !== 'number') issues.push(`mix.${key} must be a number`);
+    }
+  }
+  if (lock?.cover) {
+    if (!String(lock.cover.template || '').trim()) issues.push('missing cover.template');
+    if (!Array.isArray(lock.cover.fields)) issues.push('cover.fields must be an array');
+  }
+  if (lock?.glossary && !String(lock.glossary.file || '').trim()) issues.push('missing glossary.file');
   return issues;
 }
 
@@ -164,4 +224,198 @@ export async function checkEpisodeStyle(episodeDir) {
 export function formatStyle(r) {
   if (!r.locked) return `STYLE_UNLOCKED\n${r.evidence}`;
   return [r.ok ? 'STYLE_LOCK_OK' : 'STYLE_LOCK_FAILED', r.file, ...r.issues.map(i => `- ${i}`)].join('\n');
+}
+
+function uniqueHexes(value) {
+  const found = new Set();
+  const visit = node => {
+    if (typeof node === 'string') {
+      for (const match of node.match(/#[0-9a-f]{3,8}\b/gi) || []) found.add(normHex(match));
+    } else if (Array.isArray(node)) {
+      node.forEach(visit);
+    } else if (node && typeof node === 'object') {
+      Object.values(node).forEach(visit);
+    }
+  };
+  visit(value);
+  return [...found];
+}
+
+// Build a v2 lock draft from one episode's render inputs. It deliberately does not
+// fill approval fields: a person approves the lock (and each character) after looking
+// at the first episode. Missing intro/outro/cover sections are warnings, not failures;
+// series audit will require them once the collection assets exist.
+export async function measureLock(episodeDir) {
+  const dir = path.resolve(episodeDir);
+  const [stills, scenes, rig, lines] = await Promise.all([
+    readJson(path.join(dir, 'render', 'stills.json')),
+    readJson(path.join(dir, 'render', 'scenes.json')),
+    readJson(path.join(dir, 'render', 'rig.json')),
+    readJson(path.join(dir, 'lines.json')),
+  ]);
+  if (!stills && !scenes) {
+    throw Object.assign(new Error('measureLock needs render/stills.json or render/scenes.json'), {code: 'LOCK_MEASURE_INPUT_MISSING'});
+  }
+  if (!rig) {
+    throw Object.assign(new Error('measureLock needs render/rig.json'), {code: 'LOCK_MEASURE_INPUT_MISSING'});
+  }
+
+  const warnings = [];
+  const measuredFrom = [];
+  if (stills) measuredFrom.push('render/stills.json');
+  if (scenes) measuredFrom.push('render/scenes.json');
+  measuredFrom.push('render/rig.json');
+  if (lines) measuredFrom.push('lines.json');
+
+  const palette = stills?.palette || scenes?.palette || {};
+  if (!Object.keys(palette).length) warnings.push('palette is empty; fill it from the first episode palette by hand');
+
+  const familySource = stills?.fonts?.family || scenes?.fonts?.family || '';
+  const fontFamilies = [...new Set(families(familySource))];
+  if (!fontFamilies.length) warnings.push('fonts.families is empty; fill the font families by hand');
+  const weights = [...new Set([...(stills?.fonts?.weights || []), ...(scenes?.fonts?.weights || [])])];
+  const libraryIds = [...new Set([...(stills?.fonts?.library_ids || []), ...(scenes?.fonts?.library_ids || [])])];
+
+  const characters = {};
+  for (const [id, character] of Object.entries(rig?.characters || {})) {
+    characters[id] = {
+      name: character?.name || id,
+      colors: uniqueHexes(character),
+      expressions: Object.keys(character?.expressions || {}),
+      approval: {by: '', at: ''},
+    };
+  }
+  if (!Object.keys(characters).length) warnings.push('characters is empty; the rig has no characters');
+
+  const sceneDocs = [
+    ...(scenes?.scenes || []),
+    ...(scenes?.shots || []),
+    ...(scenes?.cover ? [scenes.cover] : []),
+    ...(stills?.shots || []),
+  ];
+  const zooms = [];
+  const hitZooms = [];
+  const rots = [];
+  const shakes = [];
+  const transitions = new Set(['cut']);
+  const eases = new Set();
+  walk(sceneDocs, 'measure', node => {
+    if (node.camera && typeof node.camera === 'object' && typeof node.camera.zoom === 'number') zooms.push(node.camera.zoom);
+    for (const key of node.camera_key || []) if (typeof key?.zoom === 'number') zooms.push(key.zoom);
+    for (const hit of node.camera_hits || []) {
+      if (typeof hit?.zoom === 'number') hitZooms.push(Math.abs(hit.zoom));
+      if (typeof hit?.rot === 'number') rots.push(Math.abs(hit.rot));
+      if (typeof hit?.shake === 'number') shakes.push(hit.shake);
+    }
+    if (TRANSITIONS.has(node.type)) transitions.add(node.type);
+    if (typeof node.ease === 'string') eases.add(node.ease);
+  });
+  if (!zooms.length) warnings.push('camera.zoom has no measured values; using 1–1');
+
+  const strokes = [];
+  walk(rig, 'rig', node => {
+    if (typeof node.sw === 'number' && node.sw > 0) strokes.push(node.sw);
+  });
+  const hexes = Object.values(palette).filter(value => String(value).startsWith('#'));
+  const lineInk = palette.ink || hexes[0] || '#000000';
+
+  const voiceIds = new Set();
+  for (const line of lines?.lines || []) if (line?.voice) voiceIds.add(line.voice);
+  for (const entry of Object.values(lines?.voices?.map || {})) if (entry?.voice) voiceIds.add(entry.voice);
+  const emotions = [...new Set((lines?.lines || []).map(line => line?.emotion).filter(Boolean))];
+  const voice = {
+    provider: lines?.voice_provider || '',
+    voice_id: [...voiceIds][0] || '',
+    speech_rate: typeof lines?.speech_rate === 'number' ? lines.speech_rate : null,
+    emotion_default: emotions[0] || '',
+    emotion_range: emotions,
+  };
+  if (!voice.provider) warnings.push('voice.provider is empty; fill it from the TTS provider');
+  if (!voice.voice_id) warnings.push('voice.voice_id is empty; fill it from the TTS voice');
+
+  const speakerVoice = new Map();
+  for (const line of lines?.lines || []) if (line?.speaker && line?.voice) speakerVoice.set(line.speaker, line.voice);
+  const sceneSpeakers = scenes?.speakers || {};
+  for (const [id, character] of Object.entries(characters)) {
+    const speaker = sceneSpeakers[id] || id;
+    if (speakerVoice.has(speaker)) character.voice_id = speakerVoice.get(speaker);
+  }
+
+  const rigBytes = await fs.readFile(path.join(dir, 'render', 'rig.json'));
+  const lock = {
+    schema: SCHEMA_V2,
+    approval: {by: '', at: ''},
+    palette,
+    palette_aliases: [],
+    fonts: {families: fontFamilies, library_ids: libraryIds, weights},
+    characters,
+    camera: {
+      zoom: [Math.min(...zooms, 1), Math.max(...zooms, 1)],
+      max_rot_deg: rots.length ? Math.max(...rots) : 0,
+      max_shake: shakes.length ? Math.max(...shakes) : 0,
+      max_hit_zoom: hitZooms.length ? Math.max(...hitZooms) : 0,
+      transitions: [...transitions],
+      language: '',
+    },
+    line: {
+      ink: lineInk,
+      stroke_px: strokes.length ? [Math.min(...strokes), Math.max(...strokes)] : [1, 1],
+      shading: '',
+    },
+    motion: {scene_eases: [...eases], tokens: []},
+    rig: {file: 'render/rig.json', sha256: createHash('sha256').update(rigBytes).digest('hex')},
+    voice,
+    source: {measured_from: measuredFrom},
+  };
+
+  warnings.push('open/close/cover/music/mix/glossary are not measured; add them before series audit');
+  warnings.push('approval fields are empty by design; a person fills lock approval and each character approval');
+  return {lock, warnings, measuredFrom};
+}
+
+export async function writeLock(seriesDir, lock, {force = false} = {}) {
+  const file = path.join(seriesDir, LOCK_FILE);
+  if ((await fileExists(file)) && !force) {
+    throw Object.assign(new Error(`${LOCK_FILE} already exists in ${seriesDir}. Use --force only after a person approves the replacement.`), {code: 'LOCK_EXISTS'});
+  }
+  await fs.mkdir(seriesDir, {recursive: true});
+  await fs.writeFile(file, `${JSON.stringify(lock, null, 2)}\n`);
+  return {file, lock};
+}
+
+export async function checkSeriesLock(seriesDir) {
+  const lock = await readJson(path.join(seriesDir, LOCK_FILE));
+  if (!lock) {
+    return {ok: false, code: 'LOCK_MISSING', issues: [`no ${LOCK_FILE} in ${seriesDir}`], rows: []};
+  }
+  const issues = validateLock(lock);
+  const entries = await fs.readdir(seriesDir, {withFileTypes: true}).catch(() => []);
+  const episodes = entries
+    .filter(entry => entry.isDirectory() && /^ep\d{2}$/.test(entry.name))
+    .map(entry => entry.name)
+    .sort();
+  const rows = [];
+  for (const episode of episodes) {
+    const result = await checkEpisodeStyle(path.join(seriesDir, episode));
+    rows.push({episode, ok: result.ok, issues: result.issues});
+  }
+  if (!rows.length) issues.push('no epNN folders in the series');
+  return {
+    ok: issues.length === 0 && rows.every(row => row.ok),
+    code: issues.length === 0 && rows.every(row => row.ok) ? 'LOCK_OK' : 'LOCK_FAILED',
+    file: path.join(seriesDir, LOCK_FILE),
+    issues,
+    rows,
+  };
+}
+
+export function formatSeriesLock(report) {
+  if (report.code === 'LOCK_OK') return `SERIES_LOCK_OK ${report.file} (${report.rows.length} episodes)`;
+  const lines = [`SERIES_LOCK_FAILED ${report.file || ''}`.trim()];
+  for (const issue of report.issues) lines.push(`- ${issue}`);
+  for (const row of report.rows) {
+    if (row.ok) continue;
+    lines.push(`- ${row.episode}: ${row.issues.slice(0, 4).join('; ')}`);
+  }
+  return lines.join('\n');
 }

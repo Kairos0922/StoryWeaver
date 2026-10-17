@@ -38,6 +38,45 @@ Locked keys: `palette`, `fonts`, `characters`, `camera`, `line`, `motion`.
 
 No lock file means the series is unlocked; the check passes and says so. To change the look, edit the lock (a direction decision for a person), not the episode.
 
+## v2: collection consistency
+
+A 10-episode collection also needs the things a visual lock cannot see: the same rig, the
+same voice, the same intro/outro, the same music bed and the same cover template. The v2
+schema keeps every v1 key at the top level (so v1 locks and the existing scene checks keep
+working) and adds:
+
+| Key | Purpose |
+|---|---|
+| `approval` | the person who approved the lock (`by`, `at`) |
+| `rig` | `render/rig.json` path and sha256; all episodes use the same rig |
+| `voice` | provider, voice_id, speech_rate, emotion range, sample hash |
+| `characters.<id>.voice_id` / `speech` | per-character voice and speech rules (the lint already reads `speech`) |
+| `open` / `close` | fixed or template intro/outro, hash, duration, music, credits/AI disclosure |
+| `music` / `mix` | theme, licence, BPM, loudnorm target (`I=-16`, `TP=-1.5`, `LRA=11`) |
+| `cover` | cover template and its fields (episode number/title) |
+| `glossary` | term/pronunciation table |
+
+Start from the first episode instead of typing the lock by hand:
+
+```bash
+node studio/cli.mjs series lock <series-dir> --from ep01
+node studio/cli.mjs series lock <series-dir> --check
+```
+
+`--from ep01` writes a **draft**: it measures the visual keys, the rig hash and the voice
+fields from the episode's render inputs and `lines.json`. It leaves every `approval` field
+empty; a person fills the lock approval and each character approval. The sections the
+measurement cannot infer (`open`, `close`, `music`, `mix`, `cover`, `glossary`) are
+warnings, not silent defaults. `--force` replaces an existing lock and is a direction
+decision for a person.
+
+In this slice `--check` validates the v2 lock and runs the existing visual check over every
+`epNN` folder. The full cross-episode audit (rig, voice, open/close, cover, loudness,
+glossary) and `series deliver` are the next slice; until they exist, a v2 lock with an
+empty `open`/`close` is a draft, not a collection guarantee.
+
+v1 remains valid. New collections should use v2. See `docs/series-workflow.md`.
+
 ## Drawing a technique inside the lock
 
 Example: a concept machine (`studio/techniques/concept-machine.json`).

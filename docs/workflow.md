@@ -4,6 +4,9 @@ Folder state is the source of truth. Chats scroll. Files do not.
 
 ```text
 <series-dir>/               outside this repository; optionally its own git repo
+  series.json               workspace marker; optional collection metadata
+  collection.json           fixed-size slate (series plan; default 10 slots)
+  series-style.json         series lock (v1, or v2 from series lock --from ep01)
   epNN/
     fact_card.md
     brief.md                creative brief; hash-locked when approved
@@ -30,6 +33,8 @@ Folder state is the source of truth. Chats scroll. Files do not.
 
 | Stage | In | Out | Stop if |
 |---|---|---|---|
+| Series plan | A fixed-size slate (default 10) | `collection.json`; no episode folders yet | Slot outside the plan, duplicate slot |
+| Series lock | First episode render inputs + voice | `series-style.json` draft, approvals empty | Agent-filled approval, missing rig/voice |
 | One thing | Topic note | One sentence + one action | Two mechanisms in one episode |
 | Fact card | Sources, optional `sim/` | A/B/C filled, B rows typed | Placeholder or unsourced number |
 | Creative brief | Fact card, `../series-style.json` | Approach (techniques or none), five-beat story, intuition table, storyboard, model budget, `requires:` | `BRIEF_INCOMPLETE` (style-lock deviation; a promised capability such as 3D that is undeclared or has no passing doctor sample) |
@@ -49,7 +54,12 @@ Folder state is the source of truth. Chats scroll. Files do not.
 ## Commands
 
 ```bash
-node studio/cli.mjs init-series <dir>
+node studio/cli.mjs init-series <dir> --collection --episodes 10
+node studio/cli.mjs series plan <series-dir> --episodes 10
+node studio/cli.mjs series status <series-dir>
+node studio/cli.mjs series next <series-dir>
+node studio/cli.mjs series lock <series-dir> --from ep01
+node studio/cli.mjs series lock <series-dir> --check
 node studio/cli.mjs init-episode <series-dir> epNN
 node studio/cli.mjs checkpoint <episode-dir> brief
 node studio/cli.mjs lint-script <file>

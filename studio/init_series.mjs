@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {fileExists} from './qc/checks.mjs';
+import {COLLECTION_FILE, ensureCollection} from './collection.mjs';
 
 const studioRoot = fileURLToPath(new URL('.', import.meta.url));
 
@@ -20,8 +21,14 @@ function fill(template, series) {
   return template.replaceAll('{{series}}', series);
 }
 
-export async function initSeries(dir) {
+export async function initSeries(dir, {collection = false, episodes = 10} = {}) {
   const seriesDir = path.resolve(dir);
+  if (collection) {
+    const count = Number(episodes);
+    if (!Number.isInteger(count) || count < 1 || count > 99) {
+      throw Object.assign(new Error('episodes must be an integer from 1 to 99'), {code: 'BAD_EPISODES'});
+    }
+  }
   if (isInsideToolRepo(seriesDir)) {
     throw Object.assign(new Error(
       'A series workspace must live outside the StoryWeaver repository. Pick a directory of its own.',
@@ -39,7 +46,13 @@ export async function initSeries(dir) {
     schema: 'storyweaver.series.v1',
     id,
     note: 'Workspace for episodes. Not part of the StoryWeaver tool repository.',
+    ...(collection ? {collection: {file: COLLECTION_FILE, episodes: Number(episodes)}} : {}),
   };
   await fs.writeFile(marker, `${JSON.stringify(doc, null, 2)}\n`);
-  return {seriesDir, id};
+  let collectionFile = null;
+  if (collection) {
+    const plan = await ensureCollection(seriesDir, {episodes});
+    collectionFile = plan.file;
+  }
+  return {seriesDir, id, ...(collectionFile ? {collection: collectionFile} : {})};
 }

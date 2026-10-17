@@ -7,7 +7,7 @@ import {evaluateCheckpoint, formatCheckpoint} from './checkpoint.mjs';
 import {initEpisode} from './init_episode.mjs';
 import {initSeries} from './init_series.mjs';
 import {briefBodyHash} from './brief.mjs';
-import {checkEpisodeStyle, formatStyle} from './style/style_lock.mjs';
+import {checkEpisodeStyle, checkSeriesLock, formatSeriesLock, formatStyle, measureLock, validateLock, writeLock} from './style/style_lock.mjs';
 import {checkLayout} from './layout.mjs';
 import {formatDoctor, runDoctor} from './doctor.mjs';
 import {verifyCapability} from './capabilities.mjs';
@@ -30,6 +30,9 @@ import {formatRenderStatus, renderStatus, startDetachedRender} from './jobs.mjs'
 import {formatRenderContract, lintRenderContract} from './lint/render_contract.mjs';
 import {formatMotionQc, runMotionQc} from './qc/motion_qc.mjs';
 import {formatQuality, runQuality} from './quality.mjs';
+import {ensureCollection} from './collection.mjs';
+import {fileExists} from './qc/checks.mjs';
+import {formatSeriesNext, formatSeriesStatus, seriesNext, seriesStatus} from './series/status.mjs';
 
 const args = process.argv.slice(2);
 
@@ -71,8 +74,13 @@ const help = `StoryWeaver
   node studio/cli.mjs checkpoint <episode-dir> <brief|lines|hook-sample|stills|render|publish>
   node studio/cli.mjs hash-brief <brief.md>
   node studio/cli.mjs style <episode-dir>      check the episode against ../series-style.json
-  node studio/cli.mjs init-series <dir>
+  node studio/cli.mjs init-series <dir> [--collection --episodes 10]
   node studio/cli.mjs init-episode <series-dir> <epNN>
+  node studio/cli.mjs series plan <series-dir> [--episodes 10] [--force]
+  node studio/cli.mjs series status <series-dir>
+  node studio/cli.mjs series next <series-dir>
+  node studio/cli.mjs series lock <series-dir> --from ep01 [--force]
+  node studio/cli.mjs series lock <series-dir> --check
   node studio/cli.mjs layout
   node studio/cli.mjs doctor [--episode <dir>] [--require-render]
   node studio/cli.mjs doctor --verify <capability>   run and record a capability sample (blender-3d)
@@ -169,8 +177,15 @@ async function main() {
   if (cmd === 'init-series') {
     const dir = positional[0];
     if (!dir) throw new Error('init-series needs a directory outside this repository');
-    const created = await initSeries(path.resolve(dir));
-    emit(created, `${created.seriesDir}\nNext: node studio/cli.mjs init-episode ${created.seriesDir} ep01`);
+    const created = await initSeries(path.resolve(dir), {
+      collection: Boolean(opts.collection),
+      episodes: opts.episodes ? Number(opts.episodes) : 10,
+    });
+    const collectionLine = created.collection ? `\nCollection: ${created.collection}` : '';
+    const next = created.collection
+      ? `Next: node studio/cli.mjs init-episode ${created.seriesDir} ep01\nAfter ep01 is rendered: node studio/cli.mjs series lock ${created.seriesDir} --from ep01`
+      : `Next: node studio/cli.mjs init-episode ${created.seriesDir} ep01`;
+    emit(created, `${created.seriesDir}${collectionLine}\n${next}`);
     return 0;
   }
   if (cmd === 'init-episode') {
@@ -179,6 +194,55 @@ async function main() {
     const created = await initEpisode(path.resolve(seriesDir), episodeId);
     emit(created, `${created.previous}\n${created.episodeDir}\nNext: fill fact_card.md and brief.md, then run checkpoint <dir> brief. Do not set status: approved yourself.`);
     return 0;
+  }
+  if (cmd === 'series') {
+    const [sub, dir] = positional;
+    if (!sub || !dir) throw new Error('series needs <plan|status|next|lock> <series-dir>');
+    const seriesDir = path.resolve(dir);
+    if (!(await fileExists(path.join(seriesDir, 'series.json')))) {
+      throw Object.assign(new Error(`${seriesDir} is not a series workspace. Run init-series first.`), {code: 'BAD_SERIES'});
+    }
+    if (sub === 'plan') {
+      const plan = await ensureCollection(seriesDir, {
+        episodes: opts.episodes ? Number(opts.episodes) : 10,
+        force: Boolean(opts.force),
+      });
+      emit(plan, `${plan.created ? 'COLLECTION_PLANNED' : 'COLLECTION_EXISTS'} ${plan.file}\nSlots: ${plan.collection.episodes.length}\nNext: node studio/cli.mjs series status ${seriesDir}`);
+      return 0;
+    }
+    if (sub === 'status') {
+      const report = await seriesStatus(seriesDir);
+      emit(report, formatSeriesStatus(report));
+      return 0;
+    }
+    if (sub === 'next') {
+      const report = await seriesNext(seriesDir);
+      emit(report, formatSeriesNext(report));
+      return report.exitCode ?? 0;
+    }
+    if (sub === 'lock') {
+      if (opts.check) {
+        const report = await checkSeriesLock(seriesDir);
+        emit(report, formatSeriesLock(report));
+        return report.ok ? 0 : 1;
+      }
+      const from = String(opts.from || '');
+      if (!/^ep\d{2}$/.test(from)) throw new Error('series lock needs --from epNN, or --check');
+      const episodeDir = path.join(seriesDir, from);
+      if (!(await fileExists(episodeDir))) throw new Error(`Episode not found: ${episodeDir}`);
+      const measured = await measureLock(episodeDir);
+      const written = await writeLock(seriesDir, measured.lock, {force: Boolean(opts.force)});
+      const issues = validateLock(measured.lock);
+      const text = [
+        `LOCK_DRAFT_WRITTEN ${written.file}`,
+        ...measured.warnings.map(warning => `- ${warning}`),
+        ...(issues.length ? ['Open before --check:', ...issues.map(issue => `  - ${issue}`)] : ['Lock is valid.']),
+        `Next: node studio/cli.mjs series lock ${seriesDir} --check`,
+      ].join('\n');
+      emit({file: written.file, warnings: measured.warnings, issues}, text);
+      return 0;
+    }
+    throw new Error(`Unknown series command: ${sub}`);
   }
   if (cmd === 'layout') {
     const report = await checkLayout();
