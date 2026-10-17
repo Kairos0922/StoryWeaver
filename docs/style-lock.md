@@ -51,10 +51,16 @@ working) and adds:
 | `rig` | `render/rig.json` path and sha256; all episodes use the same rig |
 | `voice` | provider, voice_id, speech_rate, emotion range, sample hash |
 | `characters.<id>.voice_id` / `speech` | per-character voice and speech rules (the lint already reads `speech`) |
-| `open` / `close` | fixed or template intro/outro, hash, duration, music, credits/AI disclosure |
+| `open` / `close` | scene-marker template id/sha256, duration, music; `close` also `credits` and `ai_disclosure` booleans |
 | `music` / `mix` | theme, licence, BPM, loudnorm target (`I=-16`, `TP=-1.5`, `LRA=11`) |
-| `cover` | cover template and its fields (episode number/title) |
+| `cover` | scene-marker template id/sha256 and fields (episode number/title) |
 | `glossary` | term/pronunciation table |
+
+The open/close/cover entries are **scene markers**, not a second renderer. Each episode's
+`render/scenes.json` carries one `role: "open"` scene first, one `role: "close"` scene last,
+and a `cover` object; each marker has `template: {id, sha256}`, `episode_number`,
+`episode_title` (open/close also `duration_s`). See `docs/series-workflow.md` for the exact
+shape.
 
 Start from the first episode instead of typing the lock by hand:
 
@@ -63,17 +69,24 @@ node studio/cli.mjs series lock <series-dir> --from ep01
 node studio/cli.mjs series lock <series-dir> --check
 ```
 
-`--from ep01` writes a **draft**: it measures the visual keys, the rig hash and the voice
-fields from the episode's render inputs and `lines.json`. It leaves every `approval` field
-empty; a person fills the lock approval and each character approval. The sections the
-measurement cannot infer (`open`, `close`, `music`, `mix`, `cover`, `glossary`) are
-warnings, not silent defaults. `--force` replaces an existing lock and is a direction
-decision for a person.
+`--from ep01` writes a **draft**: it measures the visual keys, rig hash, voice fields and
+the current mix target, and records `open`/`close`/`cover`/`music`/`glossary` when the first
+episode already has the markers and files. It leaves every `approval` field empty; a person
+fills the lock approval and each character approval, plus any section the measurement could
+not infer. `--force` replaces an existing lock and is a direction decision for a person.
 
-In this slice `--check` validates the v2 lock and runs the existing visual check over every
-`epNN` folder. The full cross-episode audit (rig, voice, open/close, cover, loudness,
-glossary) and `series deliver` are the next slice; until they exist, a v2 lock with an
-empty `open`/`close` is a draft, not a collection guarantee.
+`--check` validates the v2 lock and runs the existing visual check over every `epNN`
+folder. It is the fast visual gate. The full collection gate is:
+
+```bash
+node studio/cli.mjs series audit <series-dir>
+node studio/cli.mjs series deliver <series-dir>
+```
+
+`series audit` checks rig, voice, speech, open/close, cover, music, mix, glossary and the
+collection plan across the existing episodes. `series deliver` requires a deliverable
+per-episode package for every slot and aggregates them into one collection package. A v2
+lock with empty `open`/`close`/`cover` is a draft, not a collection guarantee.
 
 v1 remains valid. New collections should use v2. See `docs/series-workflow.md`.
 

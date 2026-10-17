@@ -29,7 +29,7 @@ cover become the series reference.
 ```
 
 Statuses: `planned`, `in-progress`, `delivered`. Titles may stay blank until the topic is
-fixed. `series plan` refuses to overwrite an existing plan without `--force`.
+fixed. `series plan` will not overwrite an existing plan without `--force`.
 
 ## See the slate
 
@@ -88,40 +88,108 @@ node studio/cli.mjs series lock <dir> --check
   `render/scenes.json` and `render/rig.json`;
 - the rig hash (`render/rig.json` sha256);
 - provider, voice id, speech rate, emotion range from `lines.json`;
-- camera ranges, transitions, eases and stroke widths from the render docs.
+- camera ranges, transitions, eases and stroke widths from the render docs;
+- `mix` defaults from the current render target (`I=-16`, `TP=-1.5`, `LRA=11`);
+- `open` / `close` / `cover` / `music` / `glossary` **only if the first episode already
+  has the scene markers and files** (see below).
 
 It writes `series-style.json` with **empty approval fields by design**. A person fills the
-lock approval and each character approval, and adds the sections the measurement cannot
-infer: `open`, `close`, `music`, `mix`, `cover`, `glossary`. The command prints every
-warning. `--force` replaces an existing lock; that is a direction decision for a person.
+lock approval and each character approval, and fills the sections the measurement could
+not infer. The command prints every warning. `--force` replaces an existing lock; that is
+a direction decision for a person.
 
 `--check` validates the lock and runs the existing per-episode visual check over every
-`epNN` folder. It does **not** yet run the full series audit (rig, voice, open/close,
-cover, loudness, glossary); that is the next slice.
+`epNN` folder. It is the fast visual gate, not the full collection audit.
 
 ### v2 sections
 
 v1 locks remain valid. v2 keeps the six v1 keys at the top level and adds:
 
-| Section | What it pins | Required by `--check` |
+| Section | What it pins | Required by `series audit` |
 |---|---|---|
 | `approval` | the person who approved the lock | yes |
 | `rig` | `render/rig.json` sha256 | yes |
 | `voice` | provider, voice_id, speech_rate, emotion range, sample | yes |
 | `characters.<id>` | visual approval + `voice_id` / `speech` | character approval yes |
-| `open` / `close` | fixed or template asset, hash, duration, music, credits/AI disclosure | optional in this slice |
-| `music` / `mix` | theme, licence, BPM, loudnorm target | optional in this slice |
-| `cover` | template and fields (episode number/title) | optional in this slice |
-| `glossary` | term/pronunciation table | optional in this slice |
+| `open` / `close` | template id/sha256, duration, music; close also credits/AI disclosure | yes |
+| `music` / `mix` | theme, licence, BPM, loudnorm target | yes |
+| `cover` | template id/sha256, fields (episode number/title) | yes |
+| `glossary` | term/pronunciation table | yes |
 
-The next slice adds `series audit` (the checks above across the whole season) and
-`series deliver` (one collection package with index, checksums, cover contact sheet and
-credits). Neither exists yet; do not describe a collection as delivered until it does.
+Open, close and cover are **scene markers** inside the normal `scenes.json`, so the
+existing `seek(t)` renderer draws them with no second assembly path. The marker contract:
+
+```json
+{
+  "id": "open",
+  "role": "open",
+  "template": {"id": "series-open", "sha256": "<sha256 of the template file>"},
+  "episode_number": 1,
+  "episode_title": "…",
+  "duration_s": 3,
+  "layers": ["…"]
+}
+```
+
+- `scenes.scenes[0]` is the `open` marker; `scenes.scenes.at(-1)` is the `close` marker.
+- `scenes.cover` (or `render/cover.json`) carries the same `template` and
+  `episode_number` / `episode_title` fields.
+- `scenes.bgm.id` is the series music theme; the renderer records it in
+  `render_report.json` as `bgm`.
+- `render_report.json.audio` now records the loudness target and the measured values.
+
+## Audit the collection
+
+```bash
+node studio/cli.mjs series audit <dir>
+```
+
+The audit is a machine gate for `series deliver`. It checks:
+
+| Check | What it reads |
+|---|---|
+| `lock` | v2 schema, human approvals, required sections |
+| `collection` | fixed slots, no extra `epNN` folders |
+| `style` | the existing per-episode visual lock |
+| `rig` | `render/rig.json` sha256 equals the lock |
+| `voice` | `lines.json` provider, speech rate, voice ids |
+| `speech` | `lint-script` on `script.md`, including series speech rules |
+| `open` / `close` | one marker each, first/last, template id/sha256, episode number/title |
+| `cover` | template id/sha256 and the lock's fields |
+| `music` | `render_report.json.bgm.id` equals `music.theme` (or `none`) |
+| `mix` | normalised full mix; measured LUFS within ±1 of `mix.target_lufs`; true peak within the cap |
+| `glossary` | no banned variant in the script or lines |
+
+`SERIES_AUDIT_OK` means the existing episodes are consistent. It does not mean every slot
+has been produced; `series deliver` checks that separately.
+
+## Deliver the collection
+
+```bash
+node studio/cli.mjs series deliver <dir>
+```
+
+`series deliver` runs the audit, then requires a deliverable package for every slot
+(`epNN/deliver/LATEST` with a valid `manifest.json`). It aggregates them into
+`series/deliver/<stamp>/`:
+
+```text
+index.json          order, titles, per-episode source + file hashes
+SHA256SUMS          every file in the collection package
+collection.md       episode table and AI-disclosure reminder
+covers.html         cover contact sheet (relative images)
+ep01/ … ep10/       the per-episode deliver packages, unchanged
+```
+
+It refuses with `SERIES_AUDIT_FAILED` or `SERIES_DELIVER_INCOMPLETE` rather than produce a
+partial package. It does not publish; the platform AI-generated-content declaration is
+still a human upload step.
 
 ## What this workflow does not do
 
 - It does not create ten folders at once.
 - It does not let an agent fill lock approvals.
 - It does not estimate playback numbers.
-- It does not render intro/outro; the v2 schema has slots for their assets/hashes, and
-  `series audit` will require them.
+- It does not generate open/close/cover artwork; it checks the template hashes and scene
+  markers a person authored.
+- It does not publish, and it does not replace the per-episode `deliver` gate.

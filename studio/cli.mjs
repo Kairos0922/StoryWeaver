@@ -33,6 +33,8 @@ import {formatQuality, runQuality} from './quality.mjs';
 import {ensureCollection} from './collection.mjs';
 import {fileExists} from './qc/checks.mjs';
 import {formatSeriesNext, formatSeriesStatus, seriesNext, seriesStatus} from './series/status.mjs';
+import {formatSeriesAudit, seriesAudit} from './series/audit.mjs';
+import {formatSeriesDeliver, seriesDeliver} from './series/deliver.mjs';
 
 const args = process.argv.slice(2);
 
@@ -81,6 +83,8 @@ const help = `StoryWeaver
   node studio/cli.mjs series next <series-dir>
   node studio/cli.mjs series lock <series-dir> --from ep01 [--force]
   node studio/cli.mjs series lock <series-dir> --check
+  node studio/cli.mjs series audit <series-dir>
+  node studio/cli.mjs series deliver <series-dir>
   node studio/cli.mjs layout
   node studio/cli.mjs doctor [--episode <dir>] [--require-render]
   node studio/cli.mjs doctor --verify <capability>   run and record a capability sample (blender-3d)
@@ -219,6 +223,16 @@ async function main() {
       const report = await seriesNext(seriesDir);
       emit(report, formatSeriesNext(report));
       return report.exitCode ?? 0;
+    }
+    if (sub === 'audit') {
+      const report = await seriesAudit(seriesDir);
+      emit(report, formatSeriesAudit(report));
+      return report.ok ? 0 : 1;
+    }
+    if (sub === 'deliver') {
+      const report = await seriesDeliver(seriesDir);
+      emit(report, formatSeriesDeliver(report));
+      return report.ok ? 0 : 1;
     }
     if (sub === 'lock') {
       if (opts.check) {

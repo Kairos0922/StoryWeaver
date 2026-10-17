@@ -75,11 +75,17 @@ export function validateLockV2(lock) {
   if (typeof voice.speech_rate !== 'number') issues.push('voice.speech_rate must be a number');
   if (lock?.open) {
     if (!['fixed', 'template', 'hybrid'].includes(lock.open.mode)) issues.push('open.mode must be fixed/template/hybrid');
+    if (!String(lock.open.template?.id || '').trim()) issues.push('open.template.id is required');
+    if (!isSha256(lock.open.template?.sha256)) issues.push('open.template.sha256 must be a sha256 hex digest');
     if (typeof lock.open.duration_s !== 'number' || lock.open.duration_s <= 0) issues.push('open.duration_s must be a positive number');
   }
   if (lock?.close) {
     if (!['fixed', 'template'].includes(lock.close.mode)) issues.push('close.mode must be fixed/template');
+    if (!String(lock.close.template?.id || '').trim()) issues.push('close.template.id is required');
+    if (!isSha256(lock.close.template?.sha256)) issues.push('close.template.sha256 must be a sha256 hex digest');
     if (typeof lock.close.duration_s !== 'number' || lock.close.duration_s <= 0) issues.push('close.duration_s must be a positive number');
+    if (typeof lock.close.credits !== 'boolean') issues.push('close.credits must be a boolean');
+    if (typeof lock.close.ai_disclosure !== 'boolean') issues.push('close.ai_disclosure must be a boolean');
   }
   if (lock?.music) {
     if (!String(lock.music.theme || '').trim()) issues.push('missing music.theme');
@@ -93,7 +99,8 @@ export function validateLockV2(lock) {
     }
   }
   if (lock?.cover) {
-    if (!String(lock.cover.template || '').trim()) issues.push('missing cover.template');
+    if (!String(lock.cover.template?.id || '').trim()) issues.push('cover.template.id is required');
+    if (!isSha256(lock.cover.template?.sha256)) issues.push('cover.template.sha256 must be a sha256 hex digest');
     if (!Array.isArray(lock.cover.fields)) issues.push('cover.fields must be an array');
   }
   if (lock?.glossary && !String(lock.glossary.file || '').trim()) issues.push('missing glossary.file');
@@ -365,10 +372,42 @@ export async function measureLock(episodeDir) {
     motion: {scene_eases: [...eases], tokens: []},
     rig: {file: 'render/rig.json', sha256: createHash('sha256').update(rigBytes).digest('hex')},
     voice,
+    mix: {target_lufs: -16, true_peak_db: -1.5, lra: 11},
     source: {measured_from: measuredFrom},
   };
 
-  warnings.push('open/close/cover/music/mix/glossary are not measured; add them before series audit');
+  const coverDoc = scenes?.cover || await readJson(path.join(dir, 'render', 'cover.json'));
+  if (coverDoc?.template?.id && coverDoc?.template?.sha256) {
+    lock.cover = {template: coverDoc.template, fields: ['episode_number', 'episode_title']};
+  } else {
+    warnings.push('cover: no template marker in scenes.cover or render/cover.json; add it before series audit');
+  }
+
+  for (const role of ['open', 'close']) {
+    const scene = (scenes?.scenes || []).find(item => item.role === role);
+    if (scene?.template?.id && scene?.template?.sha256 && typeof scene.duration_s === 'number' && scene.duration_s > 0) {
+      lock[role] = {mode: 'template', template: scene.template, duration_s: scene.duration_s};
+    } else {
+      warnings.push(`${role}: no role marker with template + duration_s in scenes.json; add it before series audit`);
+    }
+  }
+
+  const bgm = scenes?.bgm;
+  if (bgm?.id) {
+    lock.music = {theme: bgm.id, license: bgm.license || '', bpm: typeof bgm.bpm === 'number' ? bgm.bpm : 0};
+    if (!bgm.license) warnings.push('music.license is empty; fill it with self-synthesized/licensed/none');
+  } else {
+    warnings.push('music: no scenes.bgm.id; add it before series audit');
+  }
+
+  const glossaryFile = path.join(dir, '..', 'glossary.json');
+  if (await fileExists(glossaryFile)) {
+    const bytes = await fs.readFile(glossaryFile);
+    lock.glossary = {file: 'glossary.json', sha256: createHash('sha256').update(bytes).digest('hex')};
+  } else {
+    warnings.push('glossary: no glossary.json in the series directory; add it before series audit');
+  }
+
   warnings.push('approval fields are empty by design; a person fills lock approval and each character approval');
   return {lock, warnings, measuredFrom};
 }

@@ -25,6 +25,8 @@ export const REQUIRED_PATHS = [
   'studio/cli.mjs',
   'studio/collection.mjs',
   'studio/series/status.mjs',
+  'studio/series/audit.mjs',
+  'studio/series/deliver.mjs',
   'studio/templates/fact_card.md',
   'studio/templates/brief.md',
   'studio/templates/script.md',

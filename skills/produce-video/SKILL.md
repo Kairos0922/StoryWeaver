@@ -41,7 +41,7 @@ node studio/cli.mjs series status <series-dir>
 node studio/cli.mjs series next <series-dir>
 ```
 
-Do not create an episode outside the plan (`COLLECTION_FULL`) and do not bypass the previous episode's metrics gate. After the first episode is approved, a person runs `series lock --from ep01` (or reviews the draft it writes) and fills the lock/character approvals; an agent never fills them.
+Do not create an episode outside the plan (`COLLECTION_FULL`) and do not bypass the previous episode's metrics gate. After the first episode is approved, a person runs `series lock --from ep01` (or reviews the draft it writes) and fills the lock/character approvals; an agent never fills them. Before handing over a season, run `series audit <series-dir>` and `series deliver <series-dir>`; both are machine gates, not signatures.
 
 ## 1. One thing and fact card
 

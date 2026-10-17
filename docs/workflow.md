@@ -60,6 +60,8 @@ node studio/cli.mjs series status <series-dir>
 node studio/cli.mjs series next <series-dir>
 node studio/cli.mjs series lock <series-dir> --from ep01
 node studio/cli.mjs series lock <series-dir> --check
+node studio/cli.mjs series audit <series-dir>
+node studio/cli.mjs series deliver <series-dir>
 node studio/cli.mjs init-episode <series-dir> epNN
 node studio/cli.mjs checkpoint <episode-dir> brief
 node studio/cli.mjs lint-script <file>

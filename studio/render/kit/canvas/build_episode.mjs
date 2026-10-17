@@ -423,6 +423,8 @@ async function renderUnlocked(episodeDir, opts, {review, log, rel, t0}) {
         beat_clock: clock,
         fonts: fontReport.fonts.map(f => ({weight: f.weight, library_id: f.library_id || null, license: f.license || null, license_file: f.license_file || null, subset: f.subset, bytes: f.bytes, source: f.source, source_index: f.source_index, source_sha256: f.source_sha256, subset_sha256: f.sha256, glyphs: f.glyphs})),
         glyph_coverage: {chars: fontReport.chars, missing: fontReport.missing},
+        audio: loud,
+        bgm: doc.bgm || null,
         cost,
         contact_sheet: rel(sheetFile),
         cover: rel(coverFile),
