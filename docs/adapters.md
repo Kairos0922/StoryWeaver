@@ -22,6 +22,8 @@ Rules every provider must keep:
 - Refuse a full batch until the hook sample has a human ear pass.
 - Append `audio/usage.jsonl` with `chars` and `retake`, never the secret.
 
+Voice audition: `node scripts/audition-doubao.mjs <out-dir>` synthesizes the same hook with three candidate speakers. It is a local, key-holding utility; it does not touch `lines.json` or the fact-check gate. It spends three short calls.
+
 Cloud agents without keys stop at a silent draft preview. The machine that holds keys runs TTS, then the rest of the cut, from `handoff.json`.
 
 ## Render
