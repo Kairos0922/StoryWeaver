@@ -36,6 +36,7 @@ import {formatSeriesNext, formatSeriesStatus, seriesNext, seriesStatus} from './
 import {formatSeriesAudit, seriesAudit} from './series/audit.mjs';
 import {formatSeriesDeliver, seriesDeliver} from './series/deliver.mjs';
 import {checkFactCheck, formatFactCheck} from './fact_check.mjs';
+import {checkDirectorReview, formatDirectorReview} from './director_review.mjs';
 
 const args = process.argv.slice(2);
 
@@ -71,6 +72,7 @@ const help = `StoryWeaver
 
   node studio/cli.mjs lint-script <script.md|lines.json>
   node studio/cli.mjs fact-check <episode-dir>       claim ledger + human sign-off (blocks TTS)
+  node studio/cli.mjs director-review <episode-dir>  pre-export scorecard: every axis >= 8
   node studio/cli.mjs qc <episode-dir>
   node studio/cli.mjs quality <episode-dir>
   node studio/cli.mjs render-contract
@@ -97,7 +99,7 @@ const help = `StoryWeaver
   node studio/cli.mjs listen-pack <episode-dir>
   node studio/cli.mjs stills <episode-dir>          render review stills (needs approved brief)
   node studio/cli.mjs approval-hashes <episode-dir> [--voice <file>]   hashes a person puts in qc/approvals.json
-  node studio/cli.mjs render <episode-dir|shot-fixture> --mode draft|release [--cut preview|hook|full] [--review-only] [--foreground]
+  node studio/cli.mjs render <episode-dir|shot-fixture> --mode draft|release [--cut preview|hook|full] [--fps 30|60] [--motion-blur 1-8] [--review-only] [--foreground]
                     hook/full need stills (+ voice trial for full) approvals, CAPS.md, and the
                     episode render lock; they run detached and log to out/logs/
   node studio/cli.mjs render-status <episode-dir>
@@ -158,6 +160,13 @@ async function main() {
     if (!dir) throw new Error('fact-check needs an episode directory');
     const report = await checkFactCheck(path.resolve(dir));
     emit(report, formatFactCheck(report));
+    return report.ok ? 0 : 1;
+  }
+  if (cmd === 'director-review') {
+    const dir = positional[0];
+    if (!dir) throw new Error('director-review needs an episode directory');
+    const report = await checkDirectorReview(path.resolve(dir));
+    emit(report, formatDirectorReview(report));
     return report.ok ? 0 : 1;
   }
   if (cmd === 'qc') {
@@ -361,6 +370,8 @@ async function main() {
       reviewOnly: Boolean(opts['review-only']),
       noVideo: Boolean(opts['no-video']) || Boolean(opts['review-only']),
       frames: opts.frames ? String(opts.frames).split(',').map(Number) : undefined,
+      fps: opts.fps ? Number(opts.fps) : undefined,
+      motionBlur: opts['motion-blur'] ? Number(opts['motion-blur']) : undefined,
       rate: opts.rate ? Number(opts.rate) : undefined,
       until: opts.until ? Number(opts.until) : undefined,
     });

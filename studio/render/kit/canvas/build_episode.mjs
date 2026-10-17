@@ -28,6 +28,7 @@ import {writeDone} from '../../../state.mjs';
 import {parseFrontMatter} from '../../../brief.mjs';
 import {durationWindow, checkMeasured, readSeriesDuration} from '../../../duration.mjs';
 import {compareRenders, inputDigest, sampleFrames, writeDeterminism} from '../../browser/determinism.mjs';
+import {normalizeFps, normalizeMotionBlur} from '../../options.mjs';
 
 export {parseLoudnormJson};
 
@@ -46,7 +47,7 @@ const PUNCT = /[，。？！、…“”‘’：；,.?!:;—\-\s（）()「」�
 const HOOK_LINES = 3;
 
 function parseArgs(argv) {
-  const out = {mode: 'preview', rate: 4.2, workers: 0, fps: 30};
+  const out = {mode: 'preview', rate: 4.2, workers: 0, fps: 30, motionBlur: 1};
   const rest = [];
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
@@ -59,6 +60,8 @@ function parseArgs(argv) {
     else if (a === '--no-video') out.noVideo = true;
     else if (a === '--allow-beat-gaps') out.allowBeatGaps = true;
     else if (a === '--crf') out.crf = Number(argv[++i]);
+    else if (a === '--fps') out.fps = Number(argv[++i]);
+    else if (a === '--motion-blur') out.motionBlur = Number(argv[++i]);
     else if (a === '--frames') out.frames = argv[++i].split(',').map(Number);
     else if (a === '--review') out.review = argv[++i];
     else if (a === '--review-only') out.reviewOnly = true;
@@ -184,6 +187,37 @@ const BOOT = `
     await SWCompose.paintFrame(ctx, window.__spec, f, Object.assign({t}, frameOpts()));
     return png();
   };
+  // The external frame API named in the render contract: render(t) draws and returns a PNG.
+  // seek(t) is an alias for tools that expect a seek entry point.
+  window.render = t => window.__frame(t);
+  window.seek = t => window.__frame(t);
+  // Motion blur is multiple pure seeks inside one frame interval, averaged in-page. No CSS
+  // transition, timer or randomness is involved; the frame is still a function of t.
+  window.__frameBlur = async (t, samples) => {
+    const n = Math.max(1, Math.min(8, Math.round(Number(samples) || 1)));
+    if (n === 1) return window.__frame(t);
+    const span = 0.5 / Math.max(1, D.fps);
+    const urls = [];
+    for (let i = 0; i < n; i++) {
+      const tt = Math.max(0, t + span * (i / (n - 1) - 0.5));
+      urls.push(await window.__frame(tt));
+    }
+    const imgs = await Promise.all(urls.map(u => new Promise((resolve, reject) => {
+      const im = new Image();
+      im.onload = () => resolve(im);
+      im.onerror = () => reject(new Error('motion-blur subframe decode failed'));
+      im.src = 'data:image/png;base64,' + u;
+    })));
+    const c = document.createElement('canvas');
+    c.width = W;
+    c.height = H;
+    const x = c.getContext('2d');
+    for (const im of imgs) {
+      x.globalAlpha = 1 / n;
+      x.drawImage(im, 0, 0, W, H);
+    }
+    return c.toDataURL('image/png').slice(22);
+  };
   window.__cover = async () => {
     await SWCompose.paintStill(ctx, window.__spec, D.doc.cover, Object.assign({t: D.doc.cover.t ?? 1}, frameOpts(), {presetName: D.doc.cover.post || presetName}));
     return png();
@@ -214,7 +248,7 @@ const BOOT = `
 // Delivery profile for phones and desktop players: H.264 High@4.1, capped bitrate (CRF with a VBV ceiling).
 export const DELIVERY_VIDEO = ['-profile:v', 'high', '-level:v', '4.1', '-maxrate', '5500k', '-bufsize', '11000k'];
 
-async function renderFrames({browserPages, frames, fps, outFile, tmp, crf, onProgress}) {
+async function renderFrames({browserPages, frames, fps, motionBlur = 1, outFile, tmp, crf, onProgress}) {
   const n = browserPages.length;
   const chunk = Math.ceil(frames / n);
   let done = 0;
@@ -228,7 +262,7 @@ async function renderFrames({browserPages, frames, fps, outFile, tmp, crf, onPro
     let err = '';
     ff.stderr.on('data', d => (err += d));
     for (let i = a; i < b; i++) {
-      const b64 = await page.evaluate(t => window.__frame(t), i / fps);
+      const b64 = await page.evaluate(([tt, s]) => s > 1 ? window.__frameBlur(tt, s) : window.__frame(tt), [i / fps, motionBlur]);
       if (!ff.stdin.write(Buffer.from(b64, 'base64'))) await once(ff.stdin, 'drain');
       done++;
       if (onProgress && done % 60 === 0) onProgress(done, frames);
@@ -272,7 +306,8 @@ export async function buildEpisode(episodeDir, opts) {
   const rel = f => path.relative(repo, f);
   if (!['preview', 'hook', 'full'].includes(opts.mode)) throw new Error(`--cut must be preview, hook or full (got ${opts.mode})`);
   const reviewMode = opts.review || 'draft';
-  opts.fps = opts.fps || 30;
+  opts.fps = normalizeFps(opts.fps);
+  opts.motionBlur = normalizeMotionBlur(opts.motionBlur);
   opts.rate = opts.rate || 4.2;
 
   const doctor = await runDoctor({episodeDir, forRender: true});
@@ -355,6 +390,7 @@ async function renderUnlocked(episodeDir, opts, {review, log, rel, t0}) {
     doc, resolved, timing,
     review: review.review,
     fps,
+    motionBlur: opts.motionBlur,
     postPreset: doc.post_preset || 'explainer',
     sheetTitle: `${spec.hud.series} · ${review.review} ${opts.mode} · ${timing.duration.toFixed(1)} s · one frame / 2.5s`,
   };
@@ -395,10 +431,10 @@ async function renderUnlocked(episodeDir, opts, {review, log, rel, t0}) {
       indices: detIndices,
       fps,
       openPass: () => openPage(browsers[0], html, spec, {includeThree}),
-      frameAt: (page, t) => page.evaluate(tt => window.__frame(tt), t),
+      frameAt: (page, t) => page.evaluate(([tt, s]) => s > 1 ? window.__frameBlur(tt, s) : window.__frame(tt), [t, opts.motionBlur]),
     });
     const {file: detFile, report: detReport} = await writeDeterminism(episodeDir, {
-      result: detResult, inputs: detInputs, size: spec.size, fps, frames, mode: opts.mode, review: review.review,
+      result: detResult, inputs: detInputs, size: spec.size, fps, frames, mode: opts.mode, review: review.review, motionBlur: opts.motionBlur,
     });
     log(`determinism: ${detResult.frames.length} frames x2 fresh contexts, ${detResult.ok ? 'identical' : `MISMATCH at ${detReport.mismatches.join(', ')}`} (${detResult.elapsed_s} s)`);
     const cost = await buildCost(episodeDir);
@@ -420,6 +456,7 @@ async function renderUnlocked(episodeDir, opts, {review, log, rel, t0}) {
         gate: {stage: review.stage, code: review.gate},
         durations: Object.fromEntries(timing.order.map(id => [id, {start: timing.lines[id].start, end: timing.lines[id].end, seconds: durations[id].duration, source: durations[id].source, probe: durations[id].probe}])),
         duration_s: timing.duration, duration_check: durationCheck, fps, frames, size: spec.size,
+        motion_blur: {samples: opts.motionBlur, shutter_fraction: opts.motionBlur > 1 ? 0.5 : 0},
         beat_clock: clock,
         fonts: fontReport.fonts.map(f => ({weight: f.weight, library_id: f.library_id || null, license: f.license || null, license_file: f.license_file || null, subset: f.subset, bytes: f.bytes, source: f.source, source_index: f.source_index, source_sha256: f.source_sha256, subset_sha256: f.sha256, glyphs: f.glyphs})),
         glyph_coverage: {chars: fontReport.chars, missing: fontReport.missing},
@@ -458,7 +495,7 @@ async function renderUnlocked(episodeDir, opts, {review, log, rel, t0}) {
     }
 
     const videoOnly = path.join(tmp, 'video.mp4');
-    await renderFrames({browserPages: pages, frames, fps, outFile: videoOnly, tmp, crf: opts.crf ?? 18,
+    await renderFrames({browserPages: pages, frames, fps, motionBlur: opts.motionBlur, outFile: videoOnly, tmp, crf: opts.crf ?? 18,
       onProgress: (d, n) => (d % 300 === 0 ? log(`frames ${d}/${n}`) : null)});
     log(`video encoded: ${frames} frames @ ${fps} fps`);
 

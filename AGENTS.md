@@ -6,7 +6,7 @@ StoryWeaver is a production toolkit for fact-checked animated explainer videos o
 
 ## How to start
 
-1. Read `skills/produce-video/SKILL.md`.
+1. Read `skills/produce-video/SKILL.md`. Claude Code reads `CLAUDE.md`, which points here and to the render contract.
 2. Run `node studio/cli.mjs doctor` and `node studio/cli.mjs layout`.
 3. Create a series directory outside this repository: `node studio/cli.mjs init-series <dir>`, then `init-episode <series-dir> epNN`. Each series can be its own git repository. The only episode in this repo is the CI fixture under `tests/fixtures/sample-series/`. Do not add production scripts, renders, or character sheets here.
 
@@ -49,6 +49,7 @@ StoryWeaver is a production toolkit for fact-checked animated explainer videos o
 | One thing + fact card | Confirm the claim set | Draft A/B/C |
 | Creative brief | Approve and hash-lock | Draft, then stop at `BRIEF_READY_FOR_REVIEW` |
 | Storyboard stills | Look at the stills; record `stills` in `qc/approvals.json` | `stills` after brief approval; print `approval-hashes` |
+| Director scorecard | Look at stills/thumbs; sign `qc/director_review.json` with every axis ≥8 | Draft scores/notes, run `director-review`; never sign |
 | Voice trial (hook sample) | Listen; record `voice_trial`; first-watch with someone who has not read the script | Render ~12s in draft after stills are approved |
 | Full draft render | Set `CAPS.md` (`MAX_FULL_RENDERS`, `APPROVED`); listen to the phone pack | `render --cut full` (detached) after both approvals; never start a second one, check `render-status` |
 | Release | Sign `qc/release.json` after seeing the draft | Never. Agents cannot fill `signed_by` |
@@ -58,9 +59,9 @@ StoryWeaver is a production toolkit for fact-checked animated explainer videos o
 
 ## Rendering contract
 
-Every frame is `seek(t)` from one browser pipeline: Playwright captures the frame, ffmpeg encodes it. The picture stack is DOM/SVG, GSAP timelines created with `paused: true` and moved only by `timeline.seek(t)` or `totalProgress` from that external `t`, Lucide icons, sparse Lottie (`goToAndStop`), and Three.js only when a shot asks for it. Every shot then runs one WebGL post pass (grade, bloom, grain, vignette) from a named preset. No CSS transitions, no timers, no `requestAnimationFrame` in render mode, no unseeded `Math.random`. Fonts load from files, never from a CDN: Noto Sans CJK SC by default, or an optional OFL library font picked in the brief (`font_display` / `font_body`, see `studio/render/kit/fonts/README.md`), always subset per episode to WOFF2. A character without a glyph in any used face fails doctor and quality. Shot thumbnails and a contact sheet are written before the full encode. Something new appears every 2–4 seconds on the picture clock. Voice pace is a separate, slower clock.
+Every frame is `render(t)` / `seek(t)` from one browser pipeline: Playwright captures the frame, ffmpeg encodes it. `window.render(t)` and `window.seek(t)` are the external frame entry points. `--fps 30|60` is supported; `--motion-blur 1–8` averages pure sub-seeks inside a half-frame shutter, never a CSS effect. The picture stack is DOM/SVG, GSAP timelines created with `paused: true` and moved only by `timeline.seek(t)` or `totalProgress` from that external `t`, Lucide icons, sparse Lottie (`goToAndStop`), and Three.js only when a shot asks for it. Every shot then runs one WebGL post pass (grade, bloom, grain, vignette) from a named preset. No CSS transitions, no timers, no `requestAnimationFrame` in render mode, no unseeded `Math.random`. Fonts load from files, never from a CDN: Noto Sans CJK SC by default, or an optional OFL library font picked in the brief (`font_display` / `font_body`, see `studio/render/kit/fonts/README.md`), always subset per episode to WOFF2. A character without a glyph in any used face fails doctor and quality. Shot thumbnails and a contact sheet are written before the full encode. Something new appears every 2–4 seconds on the picture clock. Voice pace is a separate, slower clock.
 
-Remotion, Motion, and Rive are inspirations, not dependencies. Do not install them. The timing primitives and the GSAP seek pattern live in `studio/render/browser/dom/`. `docs/demo/title-card/` is a tool fixture, not a series.
+Remotion, Motion, and Rive are inspirations, not dependencies. p5, Manim, and a video model are also not dependencies of the core pipeline; do not install them. See `docs/stack-decision.md`. The timing primitives and the GSAP seek pattern live in `studio/render/browser/dom/`. `docs/demo/title-card/` is a tool fixture, not a series.
 
 Draft and release frames are identical: nothing marks the picture. The mode lives in `render_report.json` (`review.mode`) and draft files end in `_draft`. Release frames require a human sign-off written after the draft exists.
 

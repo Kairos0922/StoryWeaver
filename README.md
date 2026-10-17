@@ -2,7 +2,7 @@
 
 An AI-assisted toolkit and methodology for producing fact-checked animated explainer videos, from research and scripting to voiceover, rendering, and QC.
 
-It is not tied to one series, one language, or one model vendor. Drop the repository into Cursor, Claude Code, Codex, or any other coding agent. The agent reads `AGENTS.md` and `skills/produce-video/SKILL.md`, then stops at every human checkpoint.
+It is not tied to one series, one language, or one model vendor. Drop the repository into Cursor, Claude Code, Codex, or any other coding agent. Claude Code reads `CLAUDE.md`; every agent reads `AGENTS.md` and `skills/produce-video/SKILL.md`, then stops at every human checkpoint.
 
 ## What you get
 
@@ -11,7 +11,8 @@ It is not tied to one series, one language, or one model vendor. Drop the reposi
 - A creative brief that a person must approve before full voice or a full render.
 - Per-language voice-over lint (AI-flavored phrasing, list-reading, sentence length). The episode language selects the pack.
 - Speech-rate caps and a required pause after a key number.
-- One browser render pipeline. DOM/SVG, GSAP seek, Lucide, sparse Lottie, Three.js on demand, then a WebGL post pass. Remotion, Motion, and Rive are inspirations, not dependencies. A TTS provider interface for Doubao or a dry run. No secrets in the repo.
+- One browser render pipeline with `window.render(t)` / `window.seek(t)`: DOM/SVG, GSAP paused timelines, Lucide, sparse Lottie, Three.js on demand, one WebGL post pass. `--fps 30|60`; `--motion-blur 1–8`; stills + contact sheet + two-pass determinism before video. A TTS provider interface for Doubao or a dry run. No secrets in the repo.
+- An XML prompt control (`studio/templates/prompt.xml`) and a director scorecard (`qc/director_review.json`, every axis ≥8) before the full encode. A stack decision doc that keeps Remotion/p5/Manim/video models out of the core pipeline.
 - A fixed-size collection plan (`collection.json`, default 10 slots) with `series status/next`; episode folders are still created one at a time after the previous episode's sourced metrics.
 - A v2 series lock that a first episode can seed (`series lock --from ep01`): visual keys, rig hash, voice identity, and the scene markers for intro/outro, music, mix, cover and glossary. A person approves the lock; an agent never fills its approval.
 - `series audit` for cross-episode consistency (rig, voice, speech, open/close, cover, music, mix, glossary) and `series deliver` for one collection package with an index and checksums.
@@ -49,6 +50,7 @@ One thing
   → Human approval (hash-locked) = storyboard approval
   → Voice-over lint (series per-character speech rules; blocks TTS)
   → Stills → person approves (qc/approvals.json, bound to the files)
+  → Director scorecard (all axes >= 8; AI may draft, person signs)
   → Voice trial (hook recordings) → person approves → duration prediction
   → Full render: detached, one at a time, counted against CAPS.md
   → Human release sign-off → release render
@@ -71,6 +73,7 @@ Topic approval is not brief approval. Changing aspect, duration, or the five-bea
 ```bash
 node studio/cli.mjs lint-script <script.md|lines.json>
 node studio/cli.mjs fact-check <episode-dir>   claim ledger + human sign-off; blocks TTS
+node studio/cli.mjs director-review <episode-dir>  pre-export scorecard; every axis >= 8
 node studio/cli.mjs qc <episode-dir>
 node studio/cli.mjs checkpoint <episode-dir> <brief|lines|hook-sample|stills|render|publish>
 node studio/cli.mjs hash-brief <brief.md>
@@ -93,7 +96,7 @@ node studio/cli.mjs listen-pack <episode-dir>
 node studio/cli.mjs doctor --verify blender-3d          # record a capability sample
 node studio/cli.mjs stills <episode-dir>
 node studio/cli.mjs approval-hashes <episode-dir> [--voice <file>]
-node studio/cli.mjs render <episode-dir> --mode draft|release [--cut preview|hook|full] [--foreground]
+node studio/cli.mjs render <episode-dir> --mode draft|release [--cut preview|hook|full] [--fps 30|60] [--motion-blur 1-8] [--foreground]
 node studio/cli.mjs render-status <episode-dir>
 node studio/cli.mjs cover-check <episode-dir>
 node studio/cli.mjs deliver <episode-dir>

@@ -17,6 +17,7 @@ const COPIES = [
   ['sim/README.md', 'templates/sim_README.md'],
   ['qc/checklist.json', 'qc/checklist.json'],
   ['qc/fact_check.json', 'templates/fact_check.json'],
+  ['qc/director_review.json', 'templates/director_review.json'],
   ['qc/release.json', 'templates/release.json'],
   ['qc/approvals.json', 'templates/approvals.json'],
   ['CAPS.md', 'templates/CAPS.md'],

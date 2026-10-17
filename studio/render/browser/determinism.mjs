@@ -80,12 +80,12 @@ export async function compareRenders({indices, fps, openPass, frameAt, closePass
   return {frames, ok: frames.length > 0 && frames.every(f => f.match), elapsed_s: +((Date.now() - started) / 1000).toFixed(2)};
 }
 
-export async function writeDeterminism(episodeDir, {result, inputs, size, fps, frames, mode, review}) {
+export async function writeDeterminism(episodeDir, {result, inputs, size, fps, frames, mode, review, motionBlur = 1}) {
   const report = {
     schema: DETERMINISM_SCHEMA,
     created_by: DETERMINISM_CREATED_BY,
     method: 'two passes, fresh browser context each, every sampled frame drawn once to warm caches, then captured at full render resolution; sha256 of frame PNG',
-    render: {mode, review, size, fps, frames},
+    render: {mode, review, size, fps, frames, motion_blur: motionBlur},
     inputs,
     sample: result.frames.length,
     mismatches: result.frames.filter(f => !f.match).map(f => f.frame),

@@ -22,6 +22,9 @@ Every frame is a pure function of `t` and checked-in inputs. The contract is the
 | R12 | Springs are closed-form (`spring(t, zeta, freq)`), never simulated frame by frame. | `tokens.js` |
 | R13 | Beat or cue frames are computed from time and rounded per beat; never add rounded values. | `beatFrame`, `cueFrames` |
 | R14 | Deliverable mp4: H.264 High@4.1, bitrate capped (`DELIVERY_VIDEO`: maxrate 5.5 Mbps), AAC 48 kHz, faststart, no soft subtitle track (captions burned in plus a sidecar `.srt`). EP03 v2 shipped 8.5 Mbps with a `mov_text` track and stalled after the opening on the user's players. | `build_episode.mjs`, test `delivery_profile` |
+| R15 | `window.render(t)` draws and returns the frame at `t`; `window.seek(t)` is an alias. It is the only external frame entry point. | `build_episode.mjs` BOOT, pipeline |
+| R16 | Motion blur is pure sub-seeks centred on `t` inside a half-frame shutter, averaged in-page. `--motion-blur 1–8`; no CSS/timer path. | `build_episode.mjs` `__frameBlur`, `tests/render_options.test.js` |
+| R17 | `--fps` defaults to 30 and accepts 1–60 (30/60 are the common choices). `frames = round(duration * fps)`; the same fps feeds ffmpeg and the determinism sample. | `studio/render/options.mjs`, render report |
 
 ## Capture path
 

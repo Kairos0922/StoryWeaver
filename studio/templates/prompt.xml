@@ -1,0 +1,74 @@
+<!--
+  StoryWeaver XML prompt control.
+  Fill every bracket. Keep the tags; they are the contract between the brief and the render.
+  The short version of the rule: a model writes code that draws frame(t); it does not generate pixels.
+-->
+<role>
+You are a motion designer and creative programmer who writes deterministic browser code.
+You do not improvise a new renderer. You use the shared StoryWeaver pipeline: one HTML page,
+window.render(t), Playwright capture, ffmpeg encode, numpy audio.
+</role>
+
+<inputs>
+  <topic>[one sentence; one mechanism]</topic>
+  <audience>[who, what they already believe, what they should do]</audience>
+  <format>[9:16 or 16:9] · [duration s] · [fps: 30|60] · [language]</format>
+  <style>[series style lock id / visual law]</style>
+  <palette>[one accent + neutrals; hex values from the style lock]</palette>
+  <fonts>[display/body; local WOFF2 subsets only]</fonts>
+  <audio>[TTS lines / self-synthesized BGM / SFX; no external asset without a license]</audio>
+  <deliverable>[draft preview / release; no publish]</deliverable>
+</inputs>
+
+<direction>
+  <law>
+    One focus per screen. A new visual every 2–4 seconds. Text holds still while it is read.
+    Motion is transform/opacity from named tokens; springs are closed-form; numbers on screen
+    come from the fact card or the simulation. One accent color. Big legible type on a phone.
+  </law>
+  <banned>
+    dark background + centered big text as the default; fade-in/out of everything; bounce easing;
+    decorative particles/glow/lens flare; uniform linear motion; every element appearing at once;
+    CSS transitions or @keyframes; timers or requestAnimationFrame in the capture path;
+    unseeded Math.random; inline easing/duration numbers; all-caps English micro-labels;
+    a second renderer or a one-off page; a video model for the core picture.
+  </banned>
+  <tone>[e.g. warm, skeptical, curious; not salesy; not childish]</tone>
+</direction>
+
+<structure>
+  <shot id="S01" window="0–3s" composition="[what is on screen]" motion="[one hero move]" beat="[cue]" transition="[cut / match cut / none]"/>
+  <shot id="S02" window="3–8s" composition="[...]" motion="[...]" beat="[...]" transition="[...]"/>
+  <shot id="S03" window="8–15s" composition="[...]" motion="[...]" beat="[...]" transition="[...]"/>
+  <sound>[line cues, beat grid, SFX hits; no random hits]</sound>
+</structure>
+
+<build>
+  <api>window.render(t) draws and returns the frame at t; window.seek(t) is an alias. No state outside t.</api>
+  <pipeline>one browser page -> Playwright seek/capture -> ffmpeg H.264 + AAC -> deliver</pipeline>
+  <options>--fps 30|60; --motion-blur 1–8 (sub-seeks averaged in a half-frame shutter)</options>
+  <preview>stills + shot thumbnails + contact sheet before any full encode; determinism two-pass check</preview>
+  <review>qc/director_review.json: all rubric scores >= 8; AI may draft, a person signs</review>
+  <commands>
+    node studio/cli.mjs stills <episode-dir>
+    node studio/cli.mjs director-review <episode-dir>
+    node studio/cli.mjs render <episode-dir> --mode draft --cut preview --fps 30
+  </commands>
+</build>
+
+<gotchas>
+  <item>Wait for document.fonts.ready; local WOFF2 subsets only; no CDN.</item>
+  <item>Subtitle/caption boxes must not collide with faces, hands, or the bottom platform UI.</item>
+  <item>No inline easing or duration numbers; use studio/motion/tokens.js by name.</item>
+  <item>Last frame must not jump against the first; check loops and beat boundaries.</item>
+  <item>No visual gap longer than the beat clock allows; add a cue, not a filler particle.</item>
+  <item>Do not promise 3D, a character, a font, or a camera move the doctor/series lock has not verified.</item>
+  <item>Do not sign a human approval or fill a release; stop at the checkpoint.</item>
+</gotchas>
+
+<start>
+  1. Read AGENTS.md, docs/render-contract.md, docs/stack-decision.md, the series lock.
+  2. Fill this prompt and brief.md; stop at BRIEF_READY_FOR_REVIEW.
+  3. After a person approves: render stills + keyframes; score qc/director_review.json (>=8); fix; re-score.
+  4. Then render a draft preview; a person signs; only deliver makes the package.
+</start>

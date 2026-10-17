@@ -9,7 +9,7 @@ You are staffing a small studio, not improvising a clip. Value lives in the fact
 
 Read `docs/methodology.md`, `docs/workflow.md`, `docs/adapters.md`, and `docs/lessons.md`. The folder `tests/fixtures/sample-series/` is CI data, not a template and not a workspace. Do not copy its approval fields.
 
-This skill is tool-agnostic. Cursor, Claude Code, Codex, and other agents follow the same files.
+This skill is tool-agnostic. Cursor, Claude Code, Codex, and other agents follow the same files. For a new episode, fill `studio/templates/prompt.xml` and read `references/prompt-framework.md`; the XML sections are the control surface, not decoration.
 
 ## Do not
 
