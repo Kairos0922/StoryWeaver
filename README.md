@@ -81,6 +81,10 @@ node studio/cli.mjs init-series <dir> [--collection --episodes 10]
 node studio/cli.mjs series plan|status|next|lock|audit|deliver <series-dir>
 ```
 
+## Branch
+
+Use `main` for all changes. Do not create a feature branch.
+
 ## Compatibility
 
 The JSON schema IDs keep the `storyweaver.` prefix. The prefix is a compatibility namespace.

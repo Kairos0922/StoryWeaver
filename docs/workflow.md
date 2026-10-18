@@ -32,6 +32,11 @@
 | 4 | Render cap or lock refused |
 | 5 | Beat clock refused |
 
+## Branch
+
+Use `main` for all changes. Do not create a feature branch. Push to `origin/main`. The remote default
+is `main`.
+
 ## First episode
 
 ```bash

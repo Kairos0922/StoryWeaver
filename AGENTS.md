@@ -37,7 +37,8 @@ for any topic, series, or language. Do not optimize for one demo. Make each step
     when it fits the topic. Do not make a method a universal gate.
 14. Every episode stays inside its series style lock. The lock lives in the series directory.
     The repository keeps the schema, the checker, and a fictional fixture.
-15. Direct changes to `main` are acceptable. CI must pass before you declare delivery complete.
+15. Use `main` for all changes. Do not create a feature branch. Push to `origin/main`. CI must pass
+    before you declare delivery complete.
 
 ## Hard stops
 

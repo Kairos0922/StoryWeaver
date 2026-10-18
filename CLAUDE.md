@@ -69,6 +69,10 @@ node studio/cli.mjs render-contract
 node studio/cli.mjs layout
 ```
 
+## Branch policy
+
+Use `main` for all changes. Do not create a feature branch. Push to `origin/main`.
+
 ## Hard stops
 
 The hard stops in `AGENTS.md` apply. In particular:

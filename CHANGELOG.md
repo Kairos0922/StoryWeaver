@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Branch policy
+
+- Use `main` for all changes.
+- The feature branch `feat/collection-readiness` was removed after the merge.
+
 ### Rename
 
 - The project name is `knowledge-video-studio`. The old name was `StoryWeaver`.
