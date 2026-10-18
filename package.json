@@ -1,5 +1,5 @@
 {
-  "name": "storyweaver",
+  "name": "knowledge-video-studio",
   "version": "0.16.0",
   "private": true,
   "type": "module",
@@ -10,6 +10,7 @@
   "scripts": {
     "test": "node --test",
     "lint-script": "node studio/cli.mjs lint-script studio/templates/script.md",
+    "docs-lint": "node studio/cli.mjs docs-lint",
     "studio": "node studio/cli.mjs",
     "studio-layout": "node studio/cli.mjs layout",
     "doctor": "node studio/cli.mjs doctor",

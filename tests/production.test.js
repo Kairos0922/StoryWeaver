@@ -69,6 +69,6 @@ test('detached job: worker gets --foreground, logs to out/logs, job recorded', a
   const status = await renderStatus(dir);
   assert.equal(status.job.pid, job.pid);
   const log = await fs.readFile(status.job.log, 'utf8');
-  assert.ok(log.startsWith('StoryWeaver'));
+  assert.ok(log.startsWith('knowledge-video-studio'));
   assert.ok(log.includes('render-status'));
 });

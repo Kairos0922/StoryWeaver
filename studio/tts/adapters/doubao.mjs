@@ -74,7 +74,7 @@ function requestBody({text, speaker, speechRate, emotion, emotionScale, loudness
   if (emotion) audioParams.emotion = emotion;
   if (emotionScale != null) audioParams.emotion_scale = Number(emotionScale);
   return {
-    user: {uid: uid || 'storyweaver'},
+    user: {uid: uid || 'knowledge-video-studio'},
     req_params: {text, speaker, audio_params: audioParams},
   };
 }

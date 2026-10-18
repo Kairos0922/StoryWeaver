@@ -1,44 +1,53 @@
-# Methodology
+# Method
 
-StoryWeaver is a method first and a renderer second. The method holds when the topic, language, characters, and vendor change.
+The method makes one clear video. It does not make a slide deck.
 
-## One episode, one takeaway
+## One thing
 
-An episode teaches one mechanism and leaves one action. Two mechanisms are two episodes. A list of tips is a card, not a spoken inventory.
-
-## Five-beat story
-
-| Beat | Job |
-|---|---|
-| Hook | Offend a belief or show a paradox in the first 2–5 seconds. At most one new term. |
-| Break the assumption | Steelman the viewer’s private objection, then break it. |
-| Mechanism | One mechanism, one picture. |
-| Payoff | One number or one contrast. The stand-in character resists once. |
-| Audience stance | A vote this episode can answer. A next-episode teaser is a separate card. |
-
-This is a writing tool, not a brand name. Rename the beats in a series bible if you must; keep the jobs.
-
-## Evidence before a number
-
-Section A of the fact card is external reading. Section B is this episode’s simulation or another auditable field. Section C is what you will not say. A number that is not in A or B does not go on screen.
-
-Every B row has a **quantity type**: average, individual, fairness, tail-risk, or proportion. An average is spoken as an average. Fairness is not sold as speed.
+Each episode has one mechanism. Write it in one sentence. If the topic has a second mechanism,
+make a second episode.
 
 ## Viewer intuition
 
-Write the strongest objection in the viewer’s words before you pick a hook. The first “break” line cannot arrive before the acknowledgement. Impact is not the same as comprehension.
+Write the viewer's current belief in the viewer's words. Then answer it.
+Example: "White soup has more calcium." The answer: "The white color comes from scattered light."
 
-## Two clocks
+## Five beats
 
-- Picture clock: a new visual every 2.5 seconds; fail after 5 seconds of stillness.
-- Voice clock: slower than the picture. Chinese speech ≤ 4.0 characters/s average (4.6 on one line). English speech ≤ 2.8 words/s average (3.2 on one line). After a key number, hold ≥ 0.9s.
+| Beat | Job |
+|---|---|
+| Hook | Show the conflict in the first 3 seconds |
+| Break | State the strong objection. Then break it |
+| Mechanism | Show one cause and effect chain |
+| Payoff | Give one number or one comparison |
+| Stance | Give the viewer a vote or an action |
 
-Do not fix a dense voice-over by adding more cuts.
+## Fact card
 
-## Deterministic picture
+The fact card has three parts:
 
-`seek(t)` paints frame `t`. No CSS transitions, no timers, no unseeded randomness, no CDN fonts. The same inputs yield the same bytes on the same Chromium and font versions.
+- A: external sources and claims.
+- B: episode numbers from a simulation or a source.
+- C: claims that the video must not make.
 
-## Human checkpoints
+A number on the screen must come from A or B.
 
-An agent drafts. A person approves the brief, hears the hook, watches once without the script, looks at four stills, and clicks publish. Agents do not sign those items and do not post.
+## Brief
+
+The brief holds the one thing, the viewer intuition, the aspect, the duration, the storyboard, and
+the approval. A person approves the brief. The approval is hash-locked.
+
+## Render
+
+One browser page draws each frame at time `t`. Playwright captures the frame. ffmpeg encodes the
+frames. The same inputs make the same bytes.
+
+## Voice
+
+The voice is a separate clock. The script must pass the language pack and the speech-rate cap.
+A person hears the hook sample before the full render.
+
+## Quality
+
+Stills come before voice. Voice comes before the full render. A director scorecard comes before the
+full render. A person signs the release. `deliver` makes the publish package.

@@ -2,10 +2,17 @@
 
 ## Unreleased
 
+### Rename
+
+- The project name is `knowledge-video-studio`. The old name was `StoryWeaver`.
+- The local checkout directory can keep the name `StoryWeaver/`. The project, package, docs, and remote use the new name.
+- The JSON schema IDs keep the `storyweaver.` prefix. This prefix is a compatibility namespace. A future major release can migrate it.
+- The English documentation follows ASD-STE100. Run `node studio/cli.mjs docs-lint`.
+
 EP03 retro: each failure gets a gate in the tool, not a reminder.
 
 - Render API is now documented as `window.render(t)` / `window.seek(t)` in the BOOT; the pipeline still uses the same `__frame` capture. `--fps 30|60` (default 30) and `--motion-blur 1–8` (pure sub-seeks centred on `t`, averaged in a half-frame shutter) are available on `render`; the report and determinism record both. `studio/render/options.mjs` holds the pure validators; `tests/render_options.test.js` covers them.
-- Claude entry points: `StoryWeaver/CLAUDE.md` and the workspace-root `CLAUDE.md` point to `AGENTS.md`, the render contract, the stack decision and the XML prompt. The workspace root also states that series live outside the toolkit.
+- Claude entry points: `knowledge-video-studio/CLAUDE.md` and the workspace-root `CLAUDE.md` point to `AGENTS.md`, the render contract, the stack decision and the XML prompt. The workspace root also states that series live outside the toolkit.
 - XML prompt control: `studio/templates/prompt.xml` with `<role> <inputs> <direction> <structure> <build> <gotchas> <start>`, plus `skills/produce-video/references/prompt-framework.md` mapping it to brief/scenes/render. The banned list blocks the default dark-centered-fade template.
 - Director review: `qc/director_review.json`, `studio/director_review.mjs`, `node studio/cli.mjs director-review`, and `docs/director-review.md`. Nine axes (text overlap, focus, pacing, motion, legibility, loop, style law, closure, audio alignment) must each be >= 8; a person signs; an AI may draft. `init-episode` copies the template. The fixture and tests cover pass/low score/agent/missing frames.
 - Stack decision: `docs/stack-decision.md` keeps one browser pipeline; Canvas 2D/DOM/SVG/Three.js/WebGL post are core, Remotion/p5/Manim/video-model hybrid are not dependencies. Render contract gains R15 (`render(t)`), R16 (motion blur), R17 (fps).
@@ -83,7 +90,7 @@ Optional per-episode fonts, WOFF2 subsets, and a missing-glyph gate for every fa
 
 ### Added
 
-- `studio/render/kit/fonts/library.mjs`: resolves fonts from an external OFL library (`SW_FONT_LIBRARY`, default `~/.cache/storyweaver/fonts/qiaomu-cover-fonts`, layout compatible with joeseesun/qiaomu-cover-fonts). Checks presence, OFL license, sha256, and Reserved Font Names (reserved-name fonts are embedded whole, never subset). Font files are not vendored.
+- `studio/render/kit/fonts/library.mjs`: resolves fonts from an external OFL library (`SW_FONT_LIBRARY`, default `~/.cache/knowledge-video-studio/fonts/qiaomu-cover-fonts`, layout compatible with joeseesun/qiaomu-cover-fonts). Checks presence, OFL license, sha256, and Reserved Font Names (reserved-name fonts are embedded whole, never subset). Font files are not vendored.
 - Brief front matter `font_display` (weights 700/900) and `font_body` (400/500). Blank keeps Noto.
 - `studio/render/kit/fonts/glyphs.py` and `episodeGlyphCheck`: every on-screen character (lines + scene text + HUD) against every used face. New doctor check `glyph-coverage` (blocks render) and quality gate `glyph_coverage`.
 - Doctor checks `woff2-tools` (fontTools + brotli) and reports `font-library` with the fetch command.
@@ -237,7 +244,7 @@ One browser render pipeline, and a recoverable path from a cloud agent to the ma
 
 ## 0.6.0 — 2026-10-10
 
-Professionalization of StoryWeaver as a general, portable toolkit.
+Professionalization of knowledge-video-studio as a general, portable toolkit.
 
 ### Added
 

@@ -1,50 +1,45 @@
-# Lessons (generalized)
+# Lessons
 
-These are lessons learned from production reviews. They are not tied to one series. Spoken scripts stay in each series workspace, outside this repository. They are not published watch-time claims. Where a number is missing, the field stays blank.
+These lessons come from real failures. Each lesson has a gate in the tool.
 
-## What held
+## Delivery
 
-- A fact card with A/B/C stopped invented numbers.
-- Hash-locking the creative brief stopped full TTS before a person had seen the plan.
-- Voice-over lint cleared scaffold phrases (“in plain words”, “remember this one thing”, spoken ordinals).
-- A 2.5s picture clock kept the longest dead stretch under 5s.
-- Caching TTS by content hash avoided a second bill on a re-render.
-- Self-synthesized music avoided an unclear license.
+- "The render finished" is not delivery.
+- `deliver` encodes the publish file and plays it in Chrome.
+- A dark title on a dark cover fails the cover check at 320 px.
+- Use `deliver/<stamp>/` and compare the sha256.
 
-## What leaked
+## Script
 
-| Gap | What to do now |
-|---|---|
-| Lint caught words, not structure | Brief + first-watch. Scaffold-free copy can still be a lecture. |
-| Impact hook without the viewer’s rebuttal | Required intuition table. Acknowledge before the first break. |
-| Average sold as “you, this time” | Quantity type on every B row; average words are mandatory. |
-| Fairness mixed with speed | Do not answer “why bother?” with a speed number. |
-| Picture clock fixed, voice too fast | Separate caps. Chinese 4.0 characters/s; English 2.8 words/s. |
-| Agent signed a human item | `checked_by` rejects agent-like names. |
-| ASR “pass” on a dry line, fail in the mix | Ear on the mixed number lines. ASR is assistive. |
-| Cloud agent had no TTS key | Write `handoff.json`. Draft preview without voice. TTS on the machine that holds keys. |
-| Duration known only after a full record | Record the first three hook lines and run `predict-duration` before the rest. |
-| Agent filled a render sign-off to ship a file | Draft renders are allowed. Release needs `qc/release.json` from a person. |
-| “Speak fast” in emotion cues | Warning. Urgency is tone. |
+- A written register sounds wrong. Use the character's speech rules.
+- Do not use tidy parallel clauses.
+- Do not use "不是…而是", "你知道吗", "其实", "总结", or "首先".
+- TTS opens only after the lines checkpoint.
 
-## Stop doing
+## Spend
 
-1. Full TTS or a full render without an approved brief.
-2. Treating a self-check list as proof the structure is not AI-flavored.
-3. Reading “first, second, third” or “in plain words”.
-4. Two mechanisms in one episode.
-5. A one-off HTML page per episode.
-6. Reading the simulation method in the main voice.
-7. Characters standing still through an explanation.
-8. Music without a written license.
-9. Replacing a human ear with an ASR score.
-10. Estimating publish metrics.
-11. Using a next-episode teaser as the stance beat.
-12. Posting or commenting for the user.
-13. Planning at 4.5 Chinese characters/s.
-14. Opening on the most shocking number without first granting the viewer’s objection.
-15. Signing a human checkpoint as an agent, even locally, even if you plan to revert it.
+- A still needs the approved brief.
+- A hook render needs the approved stills.
+- A full render needs the stills and the voice trial.
+- `CAPS.md` counts the full renders.
+- One heavy render for each episode. Check `render-status`.
 
-## Studio ideas worth keeping
+## Promises
 
-From public motion-studio writeups (including the GrokBot / Opus 5.5 studio article): a skill is the playbook; the folder is the state machine; a human approval file is a real file; `seek(t)` is the only render entry; a contact sheet is judged before a full encode; banned defaults are named; one renderer, one queue; fonts come from disk. Those ideas are adopted as method, not as a vendor lock-in.
+- A 3D promise needs `requires: blender-3d`.
+- The doctor must record a passing sample.
+- Do not promise a character, font, or camera move that the lock does not list.
+
+## Metrics
+
+- A blank metrics sheet is valid.
+- A blank sheet blocks the next episode.
+- Do not estimate a playback number.
+
+## Design
+
+- A default dark background and centered text looks like a template.
+- Add a new visual every 2 to 4 seconds.
+- Use one accent color.
+- Keep text on whole pixels.
+- Do not use CSS transitions, timers, or random values.

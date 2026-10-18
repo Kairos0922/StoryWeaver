@@ -1,44 +1,48 @@
 # Stack decision
 
-The menu in the brief is not an install list. StoryWeaver has one render pipeline: a checked-in
-browser page draws frame(t); Playwright captures; ffmpeg encodes; numpy synthesizes audio. A second
-renderer doubles the determinism, font, and delivery surface. Do not add one for a single episode.
+The stack menu is not an install list. knowledge-video-studio has one render pipeline. A checked-in
+browser page draws frame(t). Playwright captures the frame. ffmpeg encodes the frames. numpy makes
+the audio. A second renderer doubles the determinism, font, and delivery surface. Do not add one for
+one episode.
 
-| Option | Role here | Decision |
+| Option | Role | Decision |
 |---|---|---|
-| Canvas 2D | pixel/flat/line art, the shared kit | **core** |
-| HTML/CSS/SVG | type, layout, UI motion, vector diagrams | **core** (deterministic seek only) |
-| WebGL shader | one post pass: grade, grain, vignette, bloom | **core** |
-| Three.js | a shot that explicitly declares a 3D layer | **opt-in per shot** |
-| p5.js + p5.brush | brush/paper texture experiments | **not a dependency**; implement a seeded Canvas brush if needed |
-| Remotion / HyperFrames | React video framework | **not used**; one page + Playwright is the pipeline |
-| Manim | math/geometry derivation | **not used**; the shared kit + SVG/Canvas covers it |
-| Code + video model hybrid | real people/dance/plate | **not default**; would break the pure-t frame. If ever needed, a licensed, checked-in clip with a deterministic seek layer and a new gate; not installed here |
+| Canvas 2D | Pixel, flat, and line art | Core |
+| HTML/CSS/SVG | Type, layout, and vector diagrams | Core |
+| WebGL shader | One post pass | Core |
+| Three.js | A shot that declares a 3D layer | Opt-in for each shot |
+| p5.js and p5.brush | Brush and paper texture | Not a dependency |
+| Remotion or HyperFrames | React video framework | Not used |
+| Manim | Math and geometry | Not used |
+| Code and video model | Real people or plates | Not the default |
 
 ## Why
 
-- The ep01–epNN contract is `window.render(t)` / `window.seek(t)`: a frame is a pure function of `t`
-  and checked-in inputs. A video model is a new source of nondeterminism, licensing, and AI-content
-  disclosure; it is not a drop-in layer.
-- The kit already covers the useful vocabulary: Canvas 2D, DOM/SVG, GSAP paused timelines, Lucide,
-  sparse Lottie, Three.js on demand, one WebGL post pass. New tech must add a measurable quality,
-  stability, cost, or production-time gain, and it must pass the render contract.
-- Audio is code too: `studio/render/kit/audio/mix.py` uses numpy for the bed and SFX; `beatClock` /
-  `cueFrames` align cuts to the beat. The TTS adapter is separate and gated by the fact check.
-- Reference-video analysis and beat detection are not in the core. `beat_clock` and `cue_frames`
-  already place cues on the episode's audio. A reference analyzer would be a separate, offline tool,
-  not a new dependency of the render.
+- The contract is `window.render(t)` or `window.seek(t)`. A frame is a pure function of `t` and
+  checked-in inputs.
+- A video model adds a source of nondeterminism, licensing, and AI disclosure. It is not a drop-in
+  layer.
+- The kit covers the useful vocabulary. Add a new technology only when it gives a measurable gain
+  in quality, stability, cost, or production time. The render contract must pass.
+- Audio is code. `studio/render/kit/audio/mix.py` uses numpy for the bed and the SFX. `beatClock` and
+  `cueFrames` put the cuts on the beat. The TTS adapter is separate and gated by the fact check.
+- Reference-video analysis is not in the core. `beat_clock` and `cue_frames` place the cues for the
+  episode audio. A reference analyzer is a separate offline tool. It is not a render dependency.
 
-## Options added in this optimization
+## Options
 
-- `--fps 30|60` (default 30).
-- `--motion-blur 1–8`: sub-seeks centred on `t` inside a half-frame shutter, averaged in-page.
-  This is a pure `t` effect, not a CSS transition.
-- `window.render(t)` and `window.seek(t)` are the documented external frame entry points.
-- `qc/director_review.json` + `director-review` CLI: the pre-export scorecard (all axes >= 8).
+- `--fps 30|60`. The default is 30.
+- `--motion-blur 1-8`. Sub-seeks centre on `t` in a half-frame shutter. The page averages them.
+- `window.render(t)` and `window.seek(t)` are the frame entry points.
+- `qc/director_review.json` and `director-review` are the pre-export scorecard. Each axis is at
+  least 8.
 
-## Non-negotiables
+## Non-negotiable rules
 
-No CSS transitions/keyframes, timers, `requestAnimationFrame`, or unseeded randomness in the capture
-path. No CDN fonts. No one-off HTML renderer. No unverified 3D/character/font/camera promise. No
-agent-signed human approval. No publish.
+- No CSS transition, keyframe, timer, `requestAnimationFrame`, or unseeded random value in the
+  capture path.
+- No CDN font.
+- No one-off HTML renderer.
+- No unverified 3D, character, font, or camera promise.
+- No agent-signed human approval.
+- No publish.

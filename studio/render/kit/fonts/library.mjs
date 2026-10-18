@@ -12,7 +12,7 @@ import os from 'node:os';
 import path from 'node:path';
 import {parseFrontMatter} from '../../../brief.mjs';
 
-export const DEFAULT_LIBRARY_DIR = path.join(os.homedir(), '.cache', 'storyweaver', 'fonts', 'qiaomu-cover-fonts');
+export const DEFAULT_LIBRARY_DIR = path.join(os.homedir(), '.cache', 'knowledge-video-studio', 'fonts', 'qiaomu-cover-fonts');
 export const LIBRARY_REPO = 'https://github.com/joeseesun/qiaomu-cover-fonts';
 export const FETCH_HINT = `git clone --depth 1 ${LIBRARY_REPO} ${DEFAULT_LIBRARY_DIR}  (or set SW_FONT_LIBRARY=/path)`;
 

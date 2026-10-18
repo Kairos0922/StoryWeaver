@@ -1,6 +1,6 @@
 # {{series}}
 
-This directory is a series workspace. It is not part of the StoryWeaver tool repository. It can be its own git repository.
+This directory is a series workspace. It is not part of the knowledge-video-studio tool repository. It can be its own git repository.
 
 Episodes are folders named `ep01`, `ep02`, and so on. Create the next one from the tool checkout:
 

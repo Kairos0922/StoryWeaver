@@ -1,102 +1,65 @@
 # Workflow
 
-Folder state is the source of truth. Chats scroll. Files do not.
+## Stages
 
-```text
-<series-dir>/               outside this repository; optionally its own git repo
-  series.json               workspace marker; optional collection metadata
-  collection.json           fixed-size slate (series plan; default 10 slots)
-  series-style.json         series lock (v1, or v2 from series lock --from ep01)
-  epNN/
-    fact_card.md
-    brief.md                creative brief; hash-locked when approved
-    script.md
-    lines.json
-    sim/                    optional
-    audio/                  WAV cache; not in git
-    render/                 stills.json, scenes.json, rig.json
-    CAPS.md                 MAX_FULL_RENDERS + APPROVED line from a person; enforced by the renderer
-    stills/                 four review frames
-    qc/checklist.json
-    qc/approvals.json       person approvals for stills and voice trial, bound to sha256
-    qc/release.json         human release sign-off; agents leave it blank
-    qc/listen_pack.md       phone checklist, 30 seconds or less
-    state/                  stage done markers, duration prediction, model usage,
-                            full_renders.jsonl (cap ledger), render.lock, render.job.json
-    handoff.json            commands for the machine that holds keys
-    post/metrics.md
-    out/                    draft and release renders, out/logs/ for detached renders; not in git
-    deliver/<stamp>/        the publish package from `deliver`; LATEST names the current one
-```
+| Stage | Command | Gate |
+|---|---|---|
+| Series | `init-series <dir>` | Directory outside this repository |
+| Episode | `init-episode <series-dir> epNN` | Previous metrics or first episode |
+| Fact card | Edit `fact_card.md` | A person confirms the claim set |
+| Brief | `checkpoint <episode> brief` | `BRIEF_READY_FOR_REVIEW` |
+| Approval | A person edits the front matter | Hash-locked approval |
+| Script | `lint-script <script.md>` | No lint error |
+| Lines | `lint-script <lines.json>` | No lint error |
+| Fact check | `fact-check <episode>` | Every claim is verified |
+| Stills | `stills <episode>` | A person records the stills |
+| Director review | `director-review <episode>` | Every axis is at least 8 |
+| Hook | `render --cut hook` | A person records the voice trial |
+| Full | `render --cut full` | `CAPS.md` and the phone pack |
+| Release | A person signs `qc/release.json` | Signed release |
+| Deliver | `deliver <episode>` | Package and sha256 |
+| Publish | A person publishes | AI declaration |
+| Metrics | Edit `post/metrics.md` | Real export or blank |
 
-## Inputs and outputs
+## Exit codes
 
-| Stage | In | Out | Stop if |
-|---|---|---|---|
-| Series plan | A fixed-size slate (default 10) | `collection.json`; no episode folders yet | Slot outside the plan, duplicate slot |
-| Series lock | First episode render inputs + voice | `series-style.json` draft, approvals empty | Agent-filled approval, missing rig/voice |
-| One thing | Topic note | One sentence + one action | Two mechanisms in one episode |
-| Fact card | Sources, optional `sim/` | A/B/C filled, B rows typed | Placeholder or unsourced number |
-| Creative brief | Fact card, `../series-style.json` | Approach (techniques or none), five-beat story, intuition table, storyboard, model budget, `requires:` | `BRIEF_INCOMPLETE` (style-lock deviation; a promised capability such as 3D that is undeclared or has no passing doctor sample) |
-| Brief approval (= storyboard) | `brief.md` | `status: approved` + matching hash | Agent wrote the approval |
-| Voice-over | Brief, series `characters.*.speech` + `dialogue` | `script.md`, `lines.json` | Lint errors (written register, per-character sentence length); TTS refuses (`openEpisodeTts`) |
-| Stills | Approved brief | `stills/*.png` | Person approval in `qc/approvals.json` (`stills.sha256` from `approval-hashes`) |
-| Voice trial | First 3 lines, approved stills | WAV files, hook render | Person approval `voice_trial` (file + sha256); no key on this machine |
-| Duration prediction | Those 3 recordings | `state/duration_prediction.json` | Prediction exceeds the brief limit |
-| Listen pack | Number lines, names, vote | `qc/listen_pack.md` and an m4a ≤ 30s | — |
-| Full render (draft) | Both approvals, `CAPS.md` | Detached job, `out/logs/`, `*_draft.mp4` | `STAGE_ORDER`, `RENDER_CAP`, `CAPS_CHANGED_UNAPPROVED`, `RENDER_LOCKED` |
-| Release | Human sign-off | Release mp4 (same picture, no `_draft` suffix) | `qc/release.json` missing or signed by an agent |
-| Deliver | Release render | `deliver/<stamp>/`: publish mp4 ≤30 MB, cover + 320 px thumb, srt, `manifest.json`, `SHA256SUMS` | Any check fails → `deliver/rejected-<stamp>/report.json`, no media |
-| Publish | The delivered files + copy; tick the platform AI-generated-content declaration | A person clicks | No deliverable package, or its files no longer hash; agent posted |
-| Git sync | The episode diff | Push and pull-request text | Retry this step alone; do not re-render |
-| Metrics | Platform export | `post/metrics.md` | Estimated playback numbers |
+| Code | Meaning |
+|---|---|
+| 0 | Pass or ready for review |
+| 1 | Incomplete or refused |
+| 2 | Brief missing, stale, or doctor blocked |
+| 3 | Quality gate, order, or duration refused |
+| 4 | Render cap or lock refused |
+| 5 | Beat clock refused |
 
-## Commands
+## First episode
 
 ```bash
-node studio/cli.mjs init-series <dir> --collection --episodes 10
-node studio/cli.mjs series plan <series-dir> --episodes 10
-node studio/cli.mjs series status <series-dir>
-node studio/cli.mjs series next <series-dir>
-node studio/cli.mjs series lock <series-dir> --from ep01
-node studio/cli.mjs series lock <series-dir> --check
-node studio/cli.mjs series audit <series-dir>
-node studio/cli.mjs series deliver <series-dir>
-node studio/cli.mjs init-episode <series-dir> epNN
-node studio/cli.mjs checkpoint <episode-dir> brief
-node studio/cli.mjs lint-script <file>
-node studio/cli.mjs handoff <episode-dir>
-node studio/cli.mjs resume <episode-dir>
-node studio/cli.mjs predict-duration <episode-dir>
-node studio/cli.mjs listen-pack <episode-dir>
-node studio/cli.mjs doctor --episode <episode-dir> --require-render
-node studio/cli.mjs stills <episode-dir>
-node studio/cli.mjs approval-hashes <episode-dir> --voice audio/trial.mp3
-node studio/cli.mjs render <episode-dir> --mode draft --cut preview --review-only
-node studio/cli.mjs render <episode-dir> --mode draft --cut full      # detached; prints log path
-node studio/cli.mjs render-status <episode-dir>
-node studio/cli.mjs render <episode-dir> --mode release --cut full
-node studio/cli.mjs deliver <episode-dir>
-node studio/cli.mjs checkpoint <episode-dir> publish
-node studio/cli.mjs git-sync <episode-dir>
+node studio/cli.mjs init-series /path/to/series
+node studio/cli.mjs init-episode /path/to/series ep01
 ```
 
-Exit 0: pass, ready for review, or the next resume step is identified. Exit 1: incomplete, over the duration limit, or the model budget has reached its stop ratio. Exit 2: brief missing or stale, or doctor blocked a render.
+Fill the fact card and the brief. Run the brief checkpoint. Stop for a person.
 
-Full renders are never retried by starting another one: `render-status` shows the running job and its log. A lock whose PID is gone is stale and the next render replaces it. Every full-render start counts against `CAPS.md`, finished or not.
+## Draft preview
 
-`resume` reads `state/<stage>.done.json`. It does not read the chat. If the input hash changed, that stage is open again. `git-sync --retry` rewrites the push step without repeating TTS or the render.
+A draft preview needs an approved brief. It does not need voice. Use it to check the picture.
 
-`init-series` and `init-episode` refuse a directory inside the tool repository. `init-episode` refuses the next episode until the previous `post/metrics.md` has a sourced number. A blank sheet blocks the next topic. Do not invent a number to open it.
+```bash
+node studio/cli.mjs render <episode-dir> --mode draft --cut preview
+```
 
-## Model budget
+## Full render
 
-Set `model_budget_calls` on the brief. Write `{ "calls": N }` to `state/model_usage.json` from a real log. At 70% (or `model_budget_stop_ratio`), `checkpoint` and `resume` stop on the current stage. Leave the file absent until you have a number. Do not invent one.
+A full render needs stills, a voice trial, `CAPS.md`, and the render lock. It runs detached.
+Check `render-status`.
 
-## Metrics sheet
+## Delivery
 
-Blank is valid. A filled playback number needs `source:` on the same line. Forbidden words: about, roughly, estimate, approx, expected.
+`deliver` is the only publish path. It encodes the file, plays it in Chrome, checks the cover,
+and writes `manifest.json` and `SHA256SUMS`. If a check fails, no package exists.
 
-Copy TTS cost and rework rate from `render_report.json` when that file exists. Leave them blank when it does not.
+## Metrics
 
-After publish, decide which hook types to keep. That decision is the input to the next brief, not a vibe.
+Paste the real export. Leave the sheet blank if you have no export. Do not estimate. A blank sheet
+blocks the next episode.

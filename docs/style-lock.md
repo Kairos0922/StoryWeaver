@@ -1,101 +1,58 @@
-# Series style lock
+# Style lock
 
-A universal Phase A rule: every episode of a series keeps one look, whatever technique it uses (`docs/techniques.md`). Techniques change per episode; the look does not.
+A series style lock keeps the episodes consistent. The lock lives in the series directory. The
+repository holds the schema, the checker, and a fictional fixture.
 
-## Series style lock (per series)
+## v1 keys
 
-A series keeps one look. The lock is `series-style.json` in the series working directory, next to the episode folders and outside this repository. Episodes inherit it. The repository ships only this schema, the checker (`studio/style/style_lock.mjs`), and a fictional fixture (`tests/fixtures/sample-series/series-style.json`).
-
-Derive the lock from shipped episodes: measure palettes, fonts, rig characters, camera values, and eases from the render inputs that produced published films. Do not invent values.
-
-```json
-{
-  "schema": "storyweaver.series_style.v1",
-  "series": "<id>",
-  "source": {"measured_from": ["<files>"]},
-  "palette": {"ink": "#13232E", "...": "..."},
-  "palette_aliases": [],
-  "fonts": {"families": ["Noto Sans CJK SC", "..."], "library_ids": [], "weights": [400, 500, 700, 900]},
-  "characters": {"<id>": {"name": "", "colors": [], "expressions": [], "approval": {"by": "<person>", "at": "YYYY-MM-DD", "evidence": ""}}},
-  "camera": {"zoom": [min, max], "max_rot_deg": 0, "max_shake": 0, "max_hit_zoom": 0, "transitions": [], "language": ""},
-  "line": {"ink": "#...", "stroke_px": [min, max], "shading": ""},
-  "motion": {"scene_eases": [], "tokens": []}
-}
-```
-
-Locked keys: `palette`, `fonts`, `characters`, `camera`, `line`, `motion`.
-
-`node studio/cli.mjs style <episode-dir>` (and QC item `style_lock`, and `checkpoint … brief`) fails when:
-
-- a scene or still uses a color name not in `palette`, or any hex not among the palette values;
-- `render/stills.json` `palette` adds a key or changes a value;
-- a font family is not in `fonts.families`, or the brief picks `font_display` / `font_body` outside `fonts.library_ids`;
-- a character, speaker, or rig entry is not in `characters`, or uses an expression the lock does not list;
-- a character in the lock has no human `approval` (agent-looking signers are rejected);
-- camera zoom leaves `camera.zoom`, rotation or shake exceed their caps, or a transition is not in `camera.transitions`;
-- a scene ease is not in `motion.scene_eases`;
-- the brief front matter sets a locked key (or any `style_*` key), or the body has a "Style override" section.
-
-No lock file means the series is unlocked; the check passes and says so. To change the look, edit the lock (a direction decision for a person), not the episode.
-
-## v2: collection consistency
-
-A 10-episode collection also needs the things a visual lock cannot see: the same rig, the
-same voice, the same intro/outro, the same music bed and the same cover template. The v2
-schema keeps every v1 key at the top level (so v1 locks and the existing scene checks keep
-working) and adds:
-
-| Key | Purpose |
+| Key | Content |
 |---|---|
-| `approval` | the person who approved the lock (`by`, `at`) |
-| `rig` | `render/rig.json` path and sha256; all episodes use the same rig |
-| `voice` | provider, voice_id, speech_rate, emotion range, sample hash |
-| `characters.<id>.voice_id` / `speech` | per-character voice and speech rules (the lint already reads `speech`) |
-| `open` / `close` | scene-marker template id/sha256, duration, music; `close` also `credits` and `ai_disclosure` booleans |
-| `music` / `mix` | theme, licence, BPM, loudnorm target (`I=-16`, `TP=-1.5`, `LRA=11`) |
-| `cover` | scene-marker template id/sha256 and fields (episode number/title) |
-| `glossary` | term/pronunciation table |
+| `palette` | Named colors |
+| `font` | Display and body font |
+| `line` | Stroke width and cap |
+| `camera` | Allowed moves |
+| `motion` | Named tokens |
+| `characters` | Character IDs |
 
-The open/close/cover entries are **scene markers**, not a second renderer. Each episode's
-`render/scenes.json` carries one `role: "open"` scene first, one `role: "close"` scene last,
-and a `cover` object; each marker has `template: {id, sha256}`, `episode_number`,
-`episode_title` (open/close also `duration_s`). See `docs/series-workflow.md` for the exact
-shape.
+## v2 keys
 
-Start from the first episode instead of typing the lock by hand:
+v2 adds these keys:
 
-```bash
-node studio/cli.mjs series lock <series-dir> --from ep01
-node studio/cli.mjs series lock <series-dir> --check
-```
+| Key | Content |
+|---|---|
+| `approval` | Person, date, hash |
+| `rig` | Character rig hash |
+| `voice` | Provider, voice ID, rate |
+| `characters` | Voice and speech rules |
+| `open` | Open marker template |
+| `close` | Close marker template |
+| `music` | Theme and license |
+| `mix` | Loudness and true peak |
+| `cover` | Cover template and fields |
+| `glossary` | Banned variants |
 
-`--from ep01` writes a **draft**: it measures the visual keys, rig hash, voice fields and
-the current mix target, and records `open`/`close`/`cover`/`music`/`glossary` when the first
-episode already has the markers and files. It leaves every `approval` field empty; a person
-fills the lock approval and each character approval, plus any section the measurement could
-not infer. `--force` replaces an existing lock and is a direction decision for a person.
+v1 locks stay valid. A new collection uses v2.
 
-`--check` validates the v2 lock and runs the existing visual check over every `epNN`
-folder. It is the fast visual gate. The full collection gate is:
+## Commands
 
 ```bash
-node studio/cli.mjs series audit <series-dir>
-node studio/cli.mjs series deliver <series-dir>
+node studio/cli.mjs series lock <series> --from ep01
+node studio/cli.mjs series lock <series> --check
+node studio/cli.mjs style <episode-dir>
 ```
 
-`series audit` checks rig, voice, speech, open/close, cover, music, mix, glossary and the
-collection plan across the existing episodes. `series deliver` requires a deliverable
-per-episode package for every slot and aggregates them into one collection package. A v2
-lock with empty `open`/`close`/`cover` is a draft, not a collection guarantee.
+The first command writes a draft. A person fills the approval fields. An agent never fills them.
+The second command checks the lock and the episode. The third command lists each deviation.
 
-v1 remains valid. New collections should use v2. See `docs/series-workflow.md`.
+## Scene markers
 
-## Drawing a technique inside the lock
+Open, close, and cover are scenes in `scenes.json`. They are not a second renderer.
 
-Example: a concept machine (`studio/techniques/concept-machine.json`).
+| Marker | Rule |
+|---|---|
+| Open | First scene, `role: "open"` |
+| Close | Last scene, `role: "close"` |
+| Cover | `cover.template` and `cover.fields` |
+| Episode | `episode_number` and `episode_title` |
 
-- Build the machine from kit layers and series palette names. New parts get palette names that already exist (`ink`, `teal`, `goods_a` …); a genuinely new color is a lock change, not an episode choice.
-- Treatment follows `line`: flat fills, one ink outline at the locked stroke range, one soft shadow. No gradients or glow (banned list).
-- The lit subject uses the series accent and the camera language; it is the only element with motion while a line is read.
-- Series characters operate or react to the machine. A new character needs series approval in the lock first.
-- Labels and readouts sit on cards in the locked fonts. Numbers on them come from the `Model` source.
+The lock checks the template ID and the sha256. A scene that does not match the lock fails.

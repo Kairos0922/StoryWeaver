@@ -1,37 +1,39 @@
 # Render contract
 
-Every frame is a pure function of `t` and checked-in inputs. The contract is the studio's memory: when a render bug is fixed, add the rule that would have prevented it here, and add a lint rule when it can be checked mechanically.
+A frame is a pure function of `t` and checked-in inputs. The contract records each render rule.
+When you fix a render bug, add the rule and a lint test. Run
+`node studio/cli.mjs render-contract`.
 
-`node studio/cli.mjs render-contract` (also `npm run render-contract`; CI runs it as its own step) enforces the mechanical rules.
-
-## Rules
-
-| # | Rule | Enforced by |
+| # | Rule | Check |
 |---|---|---|
-| R1 | No wall clock in the capture path: no `Date.now()`, `new Date()`, `performance.now()`. | lint `no-date` |
-| R2 | No browser frame callback: no `requestAnimationFrame`. The pipeline seeks; nothing plays. | lint `no-raf` |
-| R3 | No timers: no `setTimeout`, `setInterval`, `setImmediate`. | lint `no-timers` |
-| R4 | No unseeded randomness: no `Math.random()`. Use a seeded PRNG keyed by shot id. | lint `no-unseeded-random` |
-| R5 | No network requests from the capture page. Fonts and libraries load from local files. | lint `no-network` |
+| R1 | No wall clock in the capture path. No `Date.now()`, `new Date()`, or `performance.now()`. | lint `no-date` |
+| R2 | No `requestAnimationFrame`. The pipeline seeks. Nothing plays. | lint `no-raf` |
+| R3 | No `setTimeout`, `setInterval`, or `setImmediate`. | lint `no-timers` |
+| R4 | No unseeded `Math.random()`. Use a seeded PRNG with a shot ID. | lint `no-unseeded-random` |
+| R5 | No network request from the capture page. Load fonts and libraries from local files. | lint `no-network` |
 | R6 | No CSS `transition`, `animation`, or `@keyframes`. | lint `no-css-motion` |
-| R7 | Dependencies are pinned to exact versions in `package.json`. Parameter names change between versions (three r160 `TextGeometry` takes `height`; `depth` silently falls back to 50). | lint `pinned-versions` |
-| R8 | GSAP timelines are created `paused: true` and moved only by `seek(t)` / `totalProgress`. | `gsap_clock.js`, tests |
-| R9 | Wait for `document.fonts.ready` before the first capture; fonts use `font-display: block`. | doctor, pipeline |
-| R10 | Animate `transform` and `opacity` only. Resting text sits on whole pixels. | review |
-| R11 | Easing curves, springs, and durations come from `studio/motion/tokens.js` by name. | review, `docs/motion-tokens.md` |
-| R12 | Springs are closed-form (`spring(t, zeta, freq)`), never simulated frame by frame. | `tokens.js` |
-| R13 | Beat or cue frames are computed from time and rounded per beat; never add rounded values. | `beatFrame`, `cueFrames` |
-| R14 | Deliverable mp4: H.264 High@4.1, bitrate capped (`DELIVERY_VIDEO`: maxrate 5.5 Mbps), AAC 48 kHz, faststart, no soft subtitle track (captions burned in plus a sidecar `.srt`). EP03 v2 shipped 8.5 Mbps with a `mov_text` track and stalled after the opening on the user's players. | `build_episode.mjs`, test `delivery_profile` |
-| R15 | `window.render(t)` draws and returns the frame at `t`; `window.seek(t)` is an alias. It is the only external frame entry point. | `build_episode.mjs` BOOT, pipeline |
-| R16 | Motion blur is pure sub-seeks centred on `t` inside a half-frame shutter, averaged in-page. `--motion-blur 1–8`; no CSS/timer path. | `build_episode.mjs` `__frameBlur`, `tests/render_options.test.js` |
-| R17 | `--fps` defaults to 30 and accepts 1–60 (30/60 are the common choices). `frames = round(duration * fps)`; the same fps feeds ffmpeg and the determinism sample. | `studio/render/options.mjs`, render report |
+| R7 | Pin each dependency to an exact version. | lint `pinned-versions` |
+| R8 | Create each GSAP timeline with `paused: true`. Move it only with `seek(t)` or `totalProgress`. | `gsap_clock.js`, tests |
+| R9 | Wait for `document.fonts.ready` before the first capture. | doctor, pipeline |
+| R10 | Animate `transform` and `opacity` only. Put resting text on whole pixels. | review |
+| R11 | Use an easing curve, spring, or duration from `studio/motion/tokens.js` by name. | review |
+| R12 | Use a closed-form spring. Do not simulate it frame by frame. | `tokens.js` |
+| R13 | Compute a beat frame from time and round it for each beat. Do not add rounded values. | `beatFrame`, `cueFrames` |
+| R14 | Deliver an H.264 High@4.1 file with a bitrate cap, AAC 48 kHz, faststart, and no soft subtitle track. | `build_episode.mjs`, test |
+| R15 | `window.render(t)` draws and returns the frame at `t`. `window.seek(t)` is an alias. | BOOT, pipeline |
+| R16 | Motion blur uses pure sub-seeks in a half-frame shutter and an average in the page. | `__frameBlur`, test |
+| R17 | `--fps` defaults to 30 and accepts 1 to 60. `frames = round(duration * fps)`. | `options.mjs` |
 
 ## Capture path
 
-The lint scans `studio/render/browser/dom/`, `compositor.js`, `post.js`, `three_layer.js`, `studio/render/kit/canvas/kit.js`, `timeline.js`, and `studio/motion/tokens.js`. Node-side drivers (logging elapsed time, spawning ffmpeg) are outside the capture path. Comments are ignored.
+The lint scans `studio/render/browser/dom/`, `compositor.js`, `post.js`, `three_layer.js`,
+`studio/render/kit/canvas/kit.js`, `timeline.js`, and `studio/motion/tokens.js`.
+Node-side drivers are outside the capture path. The lint ignores comments.
 
-## Adding a rule
+## Add a rule
 
-1. Write the failure with the frame number where it showed.
-2. Add a row above.
-3. If it can be matched in source, add it to `RULES` in `studio/lint/render_contract.mjs` with a test.
+1. Write the failure and the frame number.
+2. Add a row to the table.
+3. Add a rule to `studio/lint/render_contract.mjs` when a machine can match it.
+4. Add a test.
+5. Run `node studio/cli.mjs render-contract`.

@@ -1,6 +1,6 @@
 # Browser pipeline
 
-StoryWeaver has one renderer. Playwright seeks to time `t`, captures the frame, and ffmpeg encodes the sequence. A shot may stack layers. Every frame then runs the same WebGL post pass.
+knowledge-video-studio has one renderer. Playwright seeks to time `t`, captures the frame, and ffmpeg encodes the sequence. A shot may stack layers. Every frame then runs the same WebGL post pass.
 
 | Layer | What it draws |
 |---|---|

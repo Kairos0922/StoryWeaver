@@ -1,22 +1,28 @@
-# StoryWeaver
+# knowledge-video-studio
 
-An AI-assisted toolkit and methodology for producing fact-checked animated explainer videos, from research and scripting to voiceover, rendering, and QC.
+A toolkit and method for fact-checked animated explainer videos. The toolkit covers research,
+script, voice-over, render, and quality control. One browser pipeline draws every frame.
 
-It is not tied to one series, one language, or one model vendor. Drop the repository into Cursor, Claude Code, Codex, or any other coding agent. Claude Code reads `CLAUDE.md`; every agent reads `AGENTS.md` and `skills/produce-video/SKILL.md`, then stops at every human checkpoint.
+The project is not tied to one series, one language, or one model vendor. Use Cursor, Claude Code,
+Codex, or another coding agent. The agent reads `CLAUDE.md`, `AGENTS.md`, and
+`skills/produce-video/SKILL.md`. The agent stops at each human checkpoint.
 
 ## What you get
 
-- A five-beat story method (hook → break the assumption → mechanism → payoff → audience stance).
-- A fact card that separates sources, this-episode numbers, and forbidden claims.
-- A creative brief that a person must approve before full voice or a full render.
-- Per-language voice-over lint (AI-flavored phrasing, list-reading, sentence length). The episode language selects the pack.
-- Speech-rate caps and a required pause after a key number.
-- One browser render pipeline with `window.render(t)` / `window.seek(t)`: DOM/SVG, GSAP paused timelines, Lucide, sparse Lottie, Three.js on demand, one WebGL post pass. `--fps 30|60`; `--motion-blur 1–8`; stills + contact sheet + two-pass determinism before video. A TTS provider interface for Doubao or a dry run. No secrets in the repo.
-- An XML prompt control (`studio/templates/prompt.xml`) and a director scorecard (`qc/director_review.json`, every axis ≥8) before the full encode. A stack decision doc that keeps Remotion/p5/Manim/video models out of the core pipeline.
-- A fixed-size collection plan (`collection.json`, default 10 slots) with `series status/next`; episode folders are still created one at a time after the previous episode's sourced metrics.
-- A v2 series lock that a first episode can seed (`series lock --from ep01`): visual keys, rig hash, voice identity, and the scene markers for intro/outro, music, mix, cover and glossary. A person approves the lock; an agent never fills its approval.
-- `series audit` for cross-episode consistency (rig, voice, speech, open/close, cover, music, mix, glossary) and `series deliver` for one collection package with an index and checksums.
-- Commands that create a series workspace outside this repository.
+- A five-beat story method: hook, break the assumption, mechanism, payoff, audience stance.
+- A fact card. It separates sources, episode numbers, and forbidden claims.
+- A creative brief. A person must approve the brief before full voice or a full render.
+- A voice-over lint for each language. It checks AI-flavored phrases, list reading, and sentence length.
+- A speech-rate cap. The script holds for 0.9 seconds after a key number.
+- One browser pipeline. It uses DOM/SVG, paused GSAP timelines, Lucide, sparse Lottie, and Three.js
+  on demand. One WebGL post pass follows.
+- `window.render(t)` and `window.seek(t)`. `--fps 30|60`. `--motion-blur 1-8`.
+- Stills, shot thumbnails, a contact sheet, and a two-pass determinism check. They come before video.
+- An XML prompt control in `studio/templates/prompt.xml`.
+- A director scorecard. All nine axes must be at least 8. A person signs the scorecard.
+- A fixed-size collection plan with `series status`, `series next`, and `series audit`.
+- A v2 series style lock. A person approves the lock. An agent never fills its approval.
+- A TTS adapter for Doubao. A dry-run provider is also available. No secret is in the repository.
 
 ## Quick start
 
@@ -26,11 +32,10 @@ npm test
 node studio/cli.mjs layout
 node studio/cli.mjs doctor
 node studio/cli.mjs checkpoint tests/fixtures/sample-series/ep01 brief
-node studio/cli.mjs doctor --episode docs/demo/title-card --require-render
 node studio/cli.mjs render docs/demo/title-card --mode draft --cut preview --review-only
 ```
 
-The fixture should print `BRIEF_APPROVED`. It is test data, not a film.
+The fixture prints `BRIEF_APPROVED`. The fixture is test data. It is not a film.
 
 Start a series outside this repository:
 
@@ -39,88 +44,49 @@ node studio/cli.mjs init-series /path/to/my-series
 node studio/cli.mjs init-episode /path/to/my-series ep01
 ```
 
-Fill `fact_card.md` and `brief.md`. Run `checkpoint … brief` until you see `BRIEF_READY_FOR_REVIEW`. Stop. A person approves. Agents do not write `status: approved`.
+Fill `fact_card.md` and `brief.md`. Run `checkpoint <episode> brief` until you see
+`BRIEF_READY_FOR_REVIEW`. Stop. A person approves the brief. An agent does not write
+`status: approved`.
 
 ## Production path
 
-```text
-One thing
-  → Fact card (A sources / B numbers / C do-not-say)
-  → Creative brief (viewer intuition, five-beat story, storyboard, `requires:` capabilities)
-  → Human approval (hash-locked) = storyboard approval
-  → Voice-over lint (series per-character speech rules; blocks TTS)
-  → Stills → person approves (qc/approvals.json, bound to the files)
-  → Director scorecard (all axes >= 8; AI may draft, person signs)
-  → Voice trial (hook recordings) → person approves → duration prediction
-  → Full render: detached, one at a time, counted against CAPS.md
-  → Human release sign-off → release render
-  → `studio deliver` (the only publish package: encode, real-Chrome playback, cover at 320 px, sha256)
-  → Human publish + platform AI-generated-content declaration
-  → Metrics review (blank if the export is missing)
-```
+| Stage | Gate |
+|---|---|
+| One thing | A person confirms the claim set |
+| Fact card | Sources, numbers, and forbidden claims are complete |
+| Brief | A person approves and hash-locks the brief |
+| Stills | A person sees the stills and records the approval |
+| Director scorecard | Every axis is at least 8; a person signs |
+| Voice trial | A person hears the hook sample |
+| Full render | A person sets `CAPS.md` and the phone pack is ready |
+| Release | A person signs `qc/release.json` |
+| Deliver | `deliver` builds the only publish package |
+| Publish | A person publishes and ticks the AI declaration |
+| Metrics | A person pastes the real export or leaves it blank |
 
-What each gate exists to stop (EP03 retro):
-
-- **Delivery** is never "the render finished". `deliver` encodes the publish file (H.264 High@4.1, ≤30 MB, faststart, no soft subtitle track), plays it end to end and seeks it in real Google Chrome, measures the cover's glyph pixels at 320 px (a dark fill inside a dark outline fails), and writes `manifest.json` + `SHA256SUMS`. If anything fails there is no package. Hand over only `deliver/<stamp>/`, with its byte size and sha256 so a truncated download is caught.
-- **Script register.** `series-style.json` holds each character's age, identity, and speech (`characters.<id>.speech`, `dialogue`). Lint flags written register: tidy parallel clauses (没…，没…，只能…), 不是…而是, 你知道吗, 其实, 总结, 首先, sentences longer than that character speaks, and too many tidy lines overall. TTS opens only through `openEpisodeTts`, behind checkpoint `lines`.
-- **Spend.** Stills need the approved brief; a hook render needs approved stills; a full render needs approved stills and voice trial. `CAPS.md` (`MAX_FULL_RENDERS`, `APPROVED: <person> <date>`) is enforced by the renderer from `state/full_renders.jsonl`; raising it needs a new approval line. `state/render.lock` allows one hook/full render per episode (a dead PID is stale). Hook/full renders run detached and log to `out/logs/`; check with `render-status`.
-- **Promises.** A brief or `acceptance.md` that mentions 3D/Blender must declare `requires: blender-3d`, and that capability must have a passing sample recorded by `doctor --verify blender-3d`. Otherwise the brief stage fails before any work.
-
-Topic approval is not brief approval. Changing aspect, duration, or the five-beat structure voids the brief and sends the episode back.
+A blank or unsourced `post/metrics.md` blocks the next episode.
 
 ## Commands
 
 ```bash
 node studio/cli.mjs lint-script <script.md|lines.json>
-node studio/cli.mjs fact-check <episode-dir>   claim ledger + human sign-off; blocks TTS
-node studio/cli.mjs director-review <episode-dir>  pre-export scorecard; every axis >= 8
+node studio/cli.mjs fact-check <episode-dir>
+node studio/cli.mjs director-review <episode-dir>
+node studio/cli.mjs docs-lint
 node studio/cli.mjs qc <episode-dir>
 node studio/cli.mjs checkpoint <episode-dir> <brief|lines|hook-sample|stills|render|publish>
-node studio/cli.mjs hash-brief <brief.md>
-node studio/cli.mjs init-series <dir> [--collection --episodes 10]
-node studio/cli.mjs series plan <series-dir> --episodes 10
-node studio/cli.mjs series status <series-dir>
-node studio/cli.mjs series next <series-dir>
-node studio/cli.mjs series lock <series-dir> --from ep01
-node studio/cli.mjs series lock <series-dir> --check
-node studio/cli.mjs series audit <series-dir>
-node studio/cli.mjs series deliver <series-dir>
-node studio/cli.mjs init-episode <series-dir> <epNN>
-node studio/cli.mjs pace <episode-dir>
-node studio/cli.mjs layout
-node studio/cli.mjs doctor [--episode <dir>] [--require-render]
-node studio/cli.mjs handoff <episode-dir>
-node studio/cli.mjs resume <episode-dir>
-node studio/cli.mjs predict-duration <episode-dir>
-node studio/cli.mjs listen-pack <episode-dir>
-node studio/cli.mjs doctor --verify blender-3d          # record a capability sample
-node studio/cli.mjs stills <episode-dir>
-node studio/cli.mjs approval-hashes <episode-dir> [--voice <file>]
 node studio/cli.mjs render <episode-dir> --mode draft|release [--cut preview|hook|full] [--fps 30|60] [--motion-blur 1-8] [--foreground]
-node studio/cli.mjs render-status <episode-dir>
-node studio/cli.mjs cover-check <episode-dir>
 node studio/cli.mjs deliver <episode-dir>
-node studio/cli.mjs git-sync <episode-dir>
+node studio/cli.mjs init-series <dir> [--collection --episodes 10]
+node studio/cli.mjs series plan|status|next|lock|audit|deliver <series-dir>
 ```
 
-Exit codes: 0 pass or ready for review; 1 incomplete or refused (stage order, caps, lock, delivery check); 2 brief missing or stale; 3 human review pending, a render is running (`render-status`), or the next collection slot is blocked by the previous metrics sheet (`series next`).
+## Compatibility
 
-## Layout
+The JSON schema IDs keep the `storyweaver.` prefix. The prefix is a compatibility namespace.
+Do not change it without a migration. The project name is `knowledge-video-studio`.
 
-```text
-AGENTS.md                 house rules for any coding agent
-skills/produce-video/     step-by-step playbook
-docs/                     methodology, workflow, adapters, lessons
-studio/                   CLI, templates, lint packs, QC, browser pipeline
-tests/fixtures/           fictional episode used only by tests
-docs/demo/title-card/     10s kinetic-type shot on the seek clock; not a series
-tests/                    contract tests
-```
+## Documentation language
 
-## Secrets
-
-None in git. Copy `.env.example` on the machine that synthesizes voice. Cloud agents without keys stop at a silent draft and write `handoff.json`. `doctor` reports whether a variable is set. It never prints the value.
-
-## Archive
-
-The old SVG physics compiler, T01, the hot-air balloon fixture, method-proof, production-01, Vercel leftovers, and the parked Pages workflow were removed in this revision. Git history is the archive. See `CHANGELOG.md`.
+The English documentation follows ASD-STE100. See `docs/ste100.md`. Run `node studio/cli.mjs docs-lint`
+to check the mechanical rules.

@@ -1,78 +1,114 @@
-# AGENTS.md
+# AGENTS.md — knowledge-video-studio
 
 ## Mission
 
-StoryWeaver is a production toolkit for fact-checked animated explainer videos of any topic, series, or language. Do not optimize for a one-off demo that cannot be repeated.
+knowledge-video-studio is a production toolkit. It makes fact-checked animated explainer videos
+for any topic, series, or language. Do not optimize for one demo. Make each step repeatable.
 
 ## How to start
 
-1. Read `skills/produce-video/SKILL.md`. Claude Code reads `CLAUDE.md`, which points here and to the render contract.
+1. Read `skills/produce-video/SKILL.md`. Claude Code reads `CLAUDE.md`. That file points here and
+   to the render contract.
 2. Run `node studio/cli.mjs doctor` and `node studio/cli.mjs layout`.
-3. Create a series directory outside this repository: `node studio/cli.mjs init-series <dir>`, then `init-episode <series-dir> epNN`. Each series can be its own git repository. The only episode in this repo is the CI fixture under `tests/fixtures/sample-series/`. Do not add production scripts, renders, or character sheets here.
+3. Create a series directory outside this repository. Run
+   `node studio/cli.mjs init-series <dir>`, then `init-episode <series-dir> epNN`.
+   A series can have its own Git repository.
+4. The CI fixture is `tests/fixtures/sample-series/`. It is test data. Do not add production
+   scripts, renders, or character sheets to this repository.
 
 ## House rules
 
-1. Content value precedes implementation convenience.
-2. Material claims need a source or an explicit hypothesis label.
-3. Model output is untrusted input: validate before compile or render.
-4. Rendering is a pure function of time and checked-in inputs. It does not depend on the model vendor.
-5. Prefer a structured edit of one beat over regenerating the film.
-6. Do not add a feature without a measurable quality, stability, cost, or production-time benefit.
-7. Keep schemas backward-compatible or document the migration in `CHANGELOG.md`.
-8. Keep research, observations, hypotheses, and decisions distinct.
-9. Use `AGENTS.md` exactly; do not create `Agents.md`.
-10. The render contract (`docs/render-contract.md`) is binding. When you fix a render bug, add the rule that would have caught it, and a lint rule when it can be matched. Run `node studio/cli.mjs render-contract`.
-11. Motion numbers come from `studio/motion/tokens.js` by name (`docs/motion-tokens.md`). No inline easing curves or durations.
-12. `docs/quality-standard.md` (v1) is the release bar. `node studio/cli.mjs quality <episode-dir>` aggregates the existing gates; add a gate to its source check, not a second copy. Audience rules go in `studio/profiles/<id>.json`, never in general code.
-13. Methods are opt-in techniques (`studio/techniques/<id>.json`, `docs/techniques.md`), chosen per episode in the brief's `## Approach` only where they fit; never make a situational method a universal gate. Universal gates (quality standard, style lock, pace, text hold, render contract, glyph coverage) apply to every episode. Every episode stays inside its series style lock (`docs/style-lock.md`). The lock lives in the series directory, never in this repository; the repo keeps the schema, checker, and a fictional fixture.
-14. Direct changes to `main` are acceptable; CI must pass before delivery is declared complete.
+1. Content value comes before implementation convenience.
+2. A material claim needs a source or an explicit hypothesis label.
+3. Treat model output as untrusted input. Validate it before compile or render.
+4. A frame is a pure function of time and checked-in inputs. It does not depend on the model vendor.
+5. Prefer a structured edit of one beat to a full regeneration.
+6. Add no feature without a measurable gain in quality, stability, cost, or production time.
+7. Keep schemas backward-compatible. Document a migration in `CHANGELOG.md`.
+8. Keep research, observations, hypotheses, and decisions separate.
+9. Use `AGENTS.md` exactly. Do not create `Agents.md`.
+10. The render contract is binding. When you fix a render bug, add the rule and a lint test.
+    Run `node studio/cli.mjs render-contract`.
+11. Use motion values from `studio/motion/tokens.js` by name. Do not write an inline easing curve
+    or duration.
+12. `docs/quality-standard.md` is the release bar. `node studio/cli.mjs quality <episode-dir>`
+    runs the machine gates. Add a gate to the source check. Do not make a second copy.
+13. Methods are opt-in techniques in `studio/techniques/`. Select a technique in the brief only
+    when it fits the topic. Do not make a method a universal gate.
+14. Every episode stays inside its series style lock. The lock lives in the series directory.
+    The repository keeps the schema, the checker, and a fictional fixture.
+15. Direct changes to `main` are acceptable. CI must pass before you declare delivery complete.
 
 ## Hard stops
 
-- Do not set `brief.md` `status` to `approved`, and do not fill `approved_by` or the body hash. That is a person’s job.
-- Do not run full TTS or a full render before `BRIEF_APPROVED`. A draft preview after approval is allowed. A release is not.
-- Do not call a paid TTS API from a cloud agent that does not hold keys. Stop at a silent draft and write `handoff.json`.
-- Do not invent playback metrics. A blank `post/metrics.md` is valid and blocks the next topic.
-- Do not publish, comment, or post on behalf of the user.
-- Do not sign a human checklist item, and do not fill `qc/release.json` (including `quality_review`). `checked_by` and `signed_by` values that look like an agent are rejected. Use `agent_precheck` for ASR or pace notes.
-- Do not write a one-off HTML renderer for one episode (covers included). Use the browser pipeline and the shared kit; the cover is `render/cover.json` or `scenes.json` `cover`.
-- Do not hand over a draft or a render from `out/` as final, and do not encode a publish file by hand. `deliver` is the only path; if it rejects, fix the cause and run it again.
-- Do not edit `CAPS.md`, `qc/approvals.json`, or the render ledger/lock to get past a refusal. Stop and report.
-- Do not promise a capability (e.g. 3D) in a brief or acceptance standard unless `doctor` shows it ready.
-- Do not add a character, color, font, or camera move to an episode that the series lock does not list. Do not edit a lock's `approval` fields.
+- Do not set `brief.md` `status` to `approved`. Do not fill `approved_by` or the body hash.
+- Do not run full TTS or a full render before `BRIEF_APPROVED`. The pipeline allows a draft preview.
+- Do not call a paid TTS API from a cloud agent without keys. Stop at a silent draft and write
+  `handoff.json`.
+- Do not invent playback metrics. A blank `post/metrics.md` is valid. It blocks the next topic.
+- Do not publish, comment, or post for the user.
+- Do not sign a human checklist item. Do not fill `qc/release.json` or `quality_review`.
+  The tools reject a signer name that looks like an agent. Use `agent_precheck` for ASR notes.
+- Do not write a one-off HTML renderer. Use the browser pipeline and the shared kit.
+- Do not hand over a draft or a file from `out/` as final. `deliver` is the only publish path.
+- Do not edit `CAPS.md`, `qc/approvals.json`, the render ledger, or a lock to bypass a refusal.
+- Do not promise a capability that `doctor` has not verified. A 3D promise needs
+  `requires: blender-3d` and a recorded sample.
+- Do not add a character, color, font, or camera move that the series lock does not list.
 - Do not put secrets in files, prompts, or logs.
 
-## Checkpoints (plain names)
+## Checkpoints
 
 | Stage | Person must | Agent may |
 |---|---|---|
-| One thing + fact card | Confirm the claim set | Draft A/B/C |
-| Creative brief | Approve and hash-lock | Draft, then stop at `BRIEF_READY_FOR_REVIEW` |
-| Storyboard stills | Look at the stills; record `stills` in `qc/approvals.json` | `stills` after brief approval; print `approval-hashes` |
-| Director scorecard | Look at stills/thumbs; sign `qc/director_review.json` with every axis ≥8 | Draft scores/notes, run `director-review`; never sign |
-| Voice trial (hook sample) | Listen; record `voice_trial`; first-watch with someone who has not read the script | Render ~12s in draft after stills are approved |
-| Full draft render | Set `CAPS.md` (`MAX_FULL_RENDERS`, `APPROVED`); listen to the phone pack | `render --cut full` (detached) after both approvals; never start a second one, check `render-status` |
-| Release | Sign `qc/release.json` after seeing the draft | Never. Agents cannot fill `signed_by` |
-| Delivery | Download `deliver/<stamp>/`, compare bytes/sha256 | `deliver` only. Never hand out a file from `out/` |
-| Publish | Click publish; tick the platform AI-generated-content declaration | Hand over copy. `git-sync` is a separate retry |
-| Metrics review | Paste a real export or leave blanks | Never estimate |
+| One thing and fact card | Confirm the claim set | Draft A/B/C |
+| Creative brief | Approve and hash-lock | Draft to `BRIEF_READY_FOR_REVIEW` |
+| Storyboard stills | Look at the stills and record `stills` | Run `stills` after brief approval |
+| Director scorecard | Look at the frames and sign | Draft scores and notes |
+| Voice trial | Hear the hook and record `voice_trial` | Render a 12-second draft |
+| Full draft render | Set `CAPS.md` and hear the phone pack | Run `render --cut full` after approval |
+| Release | Sign `qc/release.json` | Never |
+| Delivery | Download the package and compare sha256 | Run `deliver` only |
+| Publish | Publish and tick the AI declaration | Hand over the copy |
+| Metrics | Paste the real export or leave it blank | Never estimate |
 
-## Rendering contract
+## Render contract
 
-Every frame is `render(t)` / `seek(t)` from one browser pipeline: Playwright captures the frame, ffmpeg encodes it. `window.render(t)` and `window.seek(t)` are the external frame entry points. `--fps 30|60` is supported; `--motion-blur 1–8` averages pure sub-seeks inside a half-frame shutter, never a CSS effect. The picture stack is DOM/SVG, GSAP timelines created with `paused: true` and moved only by `timeline.seek(t)` or `totalProgress` from that external `t`, Lucide icons, sparse Lottie (`goToAndStop`), and Three.js only when a shot asks for it. Every shot then runs one WebGL post pass (grade, bloom, grain, vignette) from a named preset. No CSS transitions, no timers, no `requestAnimationFrame` in render mode, no unseeded `Math.random`. Fonts load from files, never from a CDN: Noto Sans CJK SC by default, or an optional OFL library font picked in the brief (`font_display` / `font_body`, see `studio/render/kit/fonts/README.md`), always subset per episode to WOFF2. A character without a glyph in any used face fails doctor and quality. Shot thumbnails and a contact sheet are written before the full encode. Something new appears every 2–4 seconds on the picture clock. Voice pace is a separate, slower clock.
+Every frame comes from one browser pipeline. Playwright captures the frame. ffmpeg encodes the
+frames. `window.render(t)` and `window.seek(t)` are the frame entry points.
 
-Remotion, Motion, and Rive are inspirations, not dependencies. p5, Manim, and a video model are also not dependencies of the core pipeline; do not install them. See `docs/stack-decision.md`. The timing primitives and the GSAP seek pattern live in `studio/render/browser/dom/`. `docs/demo/title-card/` is a tool fixture, not a series.
+The picture stack has DOM/SVG, GSAP timelines, Lucide icons, sparse Lottie, and Three.js on demand.
+Create each timeline with `paused: true`. Only `seek(t)` or `totalProgress` moves it.
 
-Draft and release frames are identical: nothing marks the picture. The mode lives in `render_report.json` (`review.mode`) and draft files end in `_draft`. Release frames require a human sign-off written after the draft exists.
+Every shot runs one WebGL post pass. Use a named preset.
+
+Do not use CSS transitions, timers, `requestAnimationFrame`, or unseeded `Math.random` in the
+capture path. Load fonts from files. Use Noto Sans CJK SC by default. Subset each font to WOFF2.
+
+Write shot thumbnails and a contact sheet before the full encode. Add a new visual every 2 to 4
+seconds. Voice pace is a separate clock.
+
+`--fps` defaults to 30. The renderer supports `--fps 60`. `--motion-blur 1-8` averages pure sub-seeks in a
+half-frame shutter. Motion blur is not a CSS effect.
+
+Remotion, Motion, and Rive are inspirations, not dependencies. p5, Manim, and a video model are
+also not dependencies of the core pipeline. Do not install them. See `docs/stack-decision.md`.
+
+Draft and release frames are identical. The mode is in `render_report.json`. Release frames need
+a human sign-off after the draft exists.
 
 ## Stage recovery
 
-Each finished machine stage writes `state/<stage>.done.json` with the hashes of its inputs and outputs. `node studio/cli.mjs resume <episode-dir>` continues from the last intact stage. It does not read the chat. Pushing and editing a pull request are the `git-sync` step, which can be retried on its own.
+Each machine stage writes `state/<stage>.done.json`. The file holds input and output hashes.
+`node studio/cli.mjs resume <episode-dir>` continues from the last intact stage. It does not read
+the chat. The `git-sync` step can push and edit a pull request. You can retry that step alone.
 
-A cloud agent with no keys writes `handoff.json` (commit, commands, expected files) and stops. The machine that holds keys runs doctor, the hook recordings, duration prediction, the listen pack, and the draft render.
+A cloud agent without keys writes `handoff.json` and stops. The machine with keys runs `doctor`,
+the hook recordings, duration prediction, the listen pack, and the draft render.
 
-Set `model_budget_calls` on the brief. When recorded usage reaches 70%, stop at the current checkpoint.
+Set `model_budget_calls` in the brief. Stop at the current checkpoint when usage reaches 70%.
 
 ## Acceptance
 
-A change is complete only when automated checks pass and the documented quality checkpoint is satisfied.
+A change is complete only when the automated checks pass and the documented quality checkpoint
+passes.

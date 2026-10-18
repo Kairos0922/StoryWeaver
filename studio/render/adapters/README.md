@@ -1,6 +1,6 @@
 # Render pipeline
 
-StoryWeaver renders in the browser and encodes with ffmpeg. It does not write a physics engine, and it does not write a fresh page per episode. Episodes pass parameters to the shared kit.
+knowledge-video-studio renders in the browser and encodes with ffmpeg. It does not write a physics engine, and it does not write a fresh page per episode. Episodes pass parameters to the shared kit.
 
 The contract:
 

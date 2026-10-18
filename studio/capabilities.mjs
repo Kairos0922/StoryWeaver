@@ -13,7 +13,7 @@ import {parseFrontMatter} from './brief.mjs';
 const here = path.dirname(fileURLToPath(import.meta.url));
 
 export function capabilityDir() {
-  return process.env.SW_CAPABILITY_DIR || path.join(os.homedir(), '.cache', 'storyweaver', 'capabilities');
+  return process.env.SW_CAPABILITY_DIR || path.join(os.homedir(), '.cache', 'knowledge-video-studio', 'capabilities');
 }
 
 function which(bin) {

@@ -31,7 +31,7 @@ export async function initSeries(dir, {collection = false, episodes = 10} = {}) 
   }
   if (isInsideToolRepo(seriesDir)) {
     throw Object.assign(new Error(
-      'A series workspace must live outside the StoryWeaver repository. Pick a directory of its own.',
+      'A series workspace must live outside the knowledge-video-studio repository. Pick a directory of its own.',
     ), {code: 'WORKSPACE_INSIDE_REPO'});
   }
   const marker = path.join(seriesDir, 'series.json');
@@ -45,7 +45,7 @@ export async function initSeries(dir, {collection = false, episodes = 10} = {}) 
   const doc = {
     schema: 'storyweaver.series.v1',
     id,
-    note: 'Workspace for episodes. Not part of the StoryWeaver tool repository.',
+    note: 'Workspace for episodes. Not part of the knowledge-video-studio tool repository.',
     ...(collection ? {collection: {file: COLLECTION_FILE, episodes: Number(episodes)}} : {}),
   };
   await fs.writeFile(marker, `${JSON.stringify(doc, null, 2)}\n`);

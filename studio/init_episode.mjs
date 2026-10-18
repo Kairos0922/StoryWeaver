@@ -33,7 +33,7 @@ export async function initEpisode(seriesDir, episodeId) {
   }
   if (isInsideToolRepo(seriesDir)) {
     throw Object.assign(new Error(
-      'A series workspace must live outside the StoryWeaver repository. Pick a directory of its own.',
+      'A series workspace must live outside the knowledge-video-studio repository. Pick a directory of its own.',
     ), {code: 'WORKSPACE_INSIDE_REPO'});
   }
   if (!(await fileExists(seriesDir))) {

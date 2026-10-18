@@ -12,12 +12,12 @@ Example sizes: a 376-character Chinese text gives a 115 KB Noto Regular subset a
 
 ## Optional font library (per episode)
 
-A curated OFL font library can be used for display or body text. It lives **outside the repo**; StoryWeaver never vendors font files.
+A curated OFL font library can be used for display or body text. It lives **outside the repo**; knowledge-video-studio never vendors font files.
 
 Fetch (any library with the same layout works):
 
 ```sh
-git clone --depth 1 https://github.com/joeseesun/qiaomu-cover-fonts ~/.cache/storyweaver/fonts/qiaomu-cover-fonts
+git clone --depth 1 https://github.com/joeseesun/qiaomu-cover-fonts ~/.cache/knowledge-video-studio/fonts/qiaomu-cover-fonts
 # or put it anywhere and export SW_FONT_LIBRARY=/path/to/library
 ```
 

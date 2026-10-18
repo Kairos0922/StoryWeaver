@@ -37,6 +37,7 @@ import {formatSeriesAudit, seriesAudit} from './series/audit.mjs';
 import {formatSeriesDeliver, seriesDeliver} from './series/deliver.mjs';
 import {checkFactCheck, formatFactCheck} from './fact_check.mjs';
 import {checkDirectorReview, formatDirectorReview} from './director_review.mjs';
+import {checkDocs, formatSte100} from './lint/ste100.mjs';
 
 const args = process.argv.slice(2);
 
@@ -68,11 +69,12 @@ function emit(payload, text) {
   else console.log(text);
 }
 
-const help = `StoryWeaver
+const help = `knowledge-video-studio
 
   node studio/cli.mjs lint-script <script.md|lines.json>
   node studio/cli.mjs fact-check <episode-dir>       claim ledger + human sign-off (blocks TTS)
   node studio/cli.mjs director-review <episode-dir>  pre-export scorecard: every axis >= 8
+  node studio/cli.mjs docs-lint                      check the English docs against the STE100 rules
   node studio/cli.mjs qc <episode-dir>
   node studio/cli.mjs quality <episode-dir>
   node studio/cli.mjs render-contract
@@ -160,6 +162,11 @@ async function main() {
     if (!dir) throw new Error('fact-check needs an episode directory');
     const report = await checkFactCheck(path.resolve(dir));
     emit(report, formatFactCheck(report));
+    return report.ok ? 0 : 1;
+  }
+  if (cmd === 'docs-lint') {
+    const report = await checkDocs();
+    emit(report, formatSte100(report));
     return report.ok ? 0 : 1;
   }
   if (cmd === 'director-review') {

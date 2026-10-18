@@ -183,7 +183,7 @@ VOLC_TTS_API_KEY=
 # SW_FONT_700=
 # SW_FONT_900=
 # Optional font library (fonts picked per episode with font_body / font_display in brief.md)
-# SW_FONT_LIBRARY=~/.cache/storyweaver/fonts/qiaomu-cover-fonts
+# SW_FONT_LIBRARY=~/.cache/knowledge-video-studio/fonts/qiaomu-cover-fonts
 `;
   await fs.writeFile(dest, text);
 }

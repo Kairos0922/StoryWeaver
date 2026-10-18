@@ -53,7 +53,7 @@
   }
  },
  "dialogue": {
-  "note": "Speech rules read by StoryWeaver lint-script (blocks before TTS). Calibrated on EP03: v1 89% tidy lines, v2 62%, v3 (accepted) 23%.",
+  "note": "Speech rules read by knowledge-video-studio lint-script (blocks before TTS). Calibrated on EP03: v1 89% tidy lines, v2 62%, v3 (accepted) 23%.",
   "register": "kids_chat",
   "max_tidy_line_ratio": 0.4,
   "tidy_min_chars": 8
